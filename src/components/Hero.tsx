@@ -1,55 +1,57 @@
-import Image from "next/image";
-import Link from "next/link";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+"use client";
 
-export default function Hero() {
+import Link from "next/link";
+import { SparklesIcon } from "@heroicons/react/24/outline";
+
+interface HeroProps {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  ctaText?: string;
+  ctaLink?: string;
+}
+
+export default function Hero({ 
+  title = "Donat Kentang Spesial Keluarga",
+  subtitle = "Homemade & Freshly Baked",
+  description = "Nikmati kelembutan donat ragi premium kami yang dibuat dengan resep rahasia keluarga. Tekstur yang lembut lumer di mulut dengan varian rasa mewah yang memanjakan lidah.",
+  ctaText = "Lihat Menu",
+  ctaLink = "/catalog"
+}: HeroProps) {
   return (
-    <section className="relative overflow-hidden px-4 md:px-20 lg:px-40 py-12 lg:py-24 bg-background border-b border-border transition-colors duration-300">
-      <div className="relative z-10 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
-        <div className="w-full lg:w-3/5 flex flex-col gap-8 lg:gap-10">
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-3">
-              <span className="h-px w-8 bg-primary"></span>
-              <span className="text-primary text-sm font-bold uppercase tracking-[0.2em]">
-                Artisan Bakery
-              </span>
-            </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-heading">
-              Resep <span className="text-primary italic font-serif">Tradisional</span>, Rasa Internasional
-            </h1>
-            <p className="text-lg md:text-xl text-subheading max-w-prose leading-relaxed">
-              Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut, kaya rasa, dan dibuat dengan cinta.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link 
-              href="/catalog"
-              className="h-16 px-10 bg-primary text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-primary/90 transition-all duration-300 shadow-lg shadow-primary/20"
-            >
-              <span>Pesan Sekarang</span>
-              <ShoppingCartIcon className="w-6 h-6" />
-            </Link>
-            <Link 
-              href="/catalog"
-              className="h-16 px-10 bg-card-bg text-heading border border-border rounded-2xl font-bold text-lg flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300"
-            >
-              Lihat Menu
-            </Link>
-          </div>
+    <section className="relative flex min-h-[85vh] w-full items-center justify-center bg-white px-6 py-20 lg:px-40 overflow-hidden">
+      {/* Background Ornaments - Keeping them clean/flat */}
+      <div className="absolute top-20 right-[10%] w-64 h-64 bg-primary/5 rounded-full pointer-events-none" />
+      <div className="absolute bottom-20 left-[5%] w-96 h-96 bg-primary/5 rounded-full pointer-events-none" />
+      
+      <div className="relative z-10 flex flex-col items-center text-center max-w-[900px]">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold mb-6 animate-fade-in">
+          <SparklesIcon className="w-4 h-4" />
+          <span className="uppercase tracking-wider">{subtitle}</span>
         </div>
-        <div className="w-full lg:w-2/5 relative">
-          <div className="relative aspect-square w-full max-w-[500px] mx-auto">
-            <div className="relative h-full w-full rounded-[40px] overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800 z-10">
-              <Image
-                alt="Donat Keluarga Premium Artisan"
-                className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAI3IWpmYHgR98Ur1-66YxZ2ryIyIMVbqVUoLdFr_AISaIzl_5mFliSL7D44I1BdbXx60LPMFIl-bS6BZY5LFWAFAri2laAcBuvA7x7gRW-eW9_CRkI84H6N4LgIm79LyxSjXLSqyDznSbejoRSVEE4YEz-p_5xDL13LdS7uX6RUVwV1GuAxlJEypis0wUXADkzEQic7vMV1sqN1tc63rYrBeorYtS6J5YpG4yphV3LbR9rHJOkkzxKdYGLd7GPWOASaPR9KjvvC-BZ"
-                width={800}
-                height={800}
-                priority
-              />
-            </div>
-          </div>
+        
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-heading leading-[1.1] tracking-tight mb-8">
+          {title}
+        </h1>
+        
+        <p className="text-lg md:text-xl text-slate-600 leading-relaxed max-w-prose mb-10">
+          {description}
+        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <Link 
+            href={ctaLink}
+            className="group relative flex items-center justify-center gap-2 rounded-2xl h-16 px-10 bg-primary text-white text-lg font-bold hover:scale-105 transition-all duration-300 shadow-xl shadow-primary/25"
+          >
+            {ctaText}
+            <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+          </Link>
+          <Link 
+            href="#how-to-order"
+            className="flex items-center justify-center rounded-2xl h-16 px-10 border-2 border-slate-200 text-slate-700 text-lg font-bold hover:bg-slate-50 transition-all duration-300"
+          >
+            Pelajari Cara Pesan
+          </Link>
         </div>
       </div>
     </section>

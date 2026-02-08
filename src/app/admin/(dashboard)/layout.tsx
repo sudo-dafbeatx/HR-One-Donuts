@@ -30,14 +30,34 @@ export default async function AdminLayout({
             <h1 className="text-xl font-black text-heading">Donat Keluarga</h1>
             <p className="text-xs text-slate-500">Admin Dashboard</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
+            <Link 
+              href="/admin" 
+              className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors"
+            >
+              Dashboard
+            </Link>
+            <Link 
+              href="/admin/products" 
+              className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors"
+            >
+              Produk
+            </Link>
+            <Link 
+              href="/admin/content" 
+              className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors"
+            >
+              Konten
+            </Link>
             <Link 
               href="/" 
               target="_blank"
-              className="text-sm text-slate-600 hover:text-primary transition-colors"
+              className="text-sm text-slate-400 hover:text-primary transition-colors border-l border-slate-200 pl-6"
             >
-              View Website
+              View Site
             </Link>
+          </div>
+          <div className="flex items-center gap-4">
             <div className="text-sm text-slate-600">
               {user.email}
             </div>
