@@ -15,7 +15,6 @@ export default function HeroEditor({ initialData }: { initialData?: HeroData }) 
     cta_link: '/catalog',
     image_url: '',
   });
-  const [imagePath, setImagePath] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -70,9 +69,8 @@ export default function HeroEditor({ initialData }: { initialData?: HeroData }) 
           </div>
           <ImageUploader
             currentImage={data.image_url}
-            onImageUploaded={(url, path) => {
+            onImageUploaded={(url) => {
               setData({...data, image_url: url});
-              setImagePath(path);
             }}
             label="Hero Background Image"
             aspectRatio="video"

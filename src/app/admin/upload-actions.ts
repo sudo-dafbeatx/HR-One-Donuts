@@ -62,7 +62,19 @@ export async function uploadImage(formData: FormData) {
     };
   } catch (error: unknown) {
     console.error('Image upload error:', error);
-    throw new Error(error instanceof Error ? error.message : 'Gagal upload gambar');
+    
+    // Better error messages
+    if (error instanceof Error) {
+      if (error.message.includes('Bucket not found')) {
+        throw new Error('Storage bucket "images" belum dibuat. Silakan buat bucket di Supabase Dashboard terlebih dahulu.');
+      }
+      if (error.message.includes('new row violates row-level security')) {
+        throw new Error('Akses ditolak. Pastikan RLS policies sudah di-set dengan benar.');
+      }
+      throw new Error(error.message);
+    }
+    
+    throw new Error('Gagal upload gambar. Cek console untuk detail error.');
   }
 }
 

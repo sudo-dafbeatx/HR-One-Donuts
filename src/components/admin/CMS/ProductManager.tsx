@@ -10,7 +10,6 @@ import ImageUploader from '../ImageUploader';
 export default function ProductManager({ initialProducts }: { initialProducts: Product[] }) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
-  const [imagePath, setImagePath] = useState<string>('');  
   const [loading, setLoading] = useState(false);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -138,9 +137,8 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
               />
               <ImageUploader
                 currentImage={editingProduct.image_url}
-                onImageUploaded={(url, path) => {
+                onImageUploaded={(url) => {
                   setEditingProduct({...editingProduct, image_url: url});
-                  setImagePath(path);
                 }}
                 label="Product Image"
                 aspectRatio="square"
