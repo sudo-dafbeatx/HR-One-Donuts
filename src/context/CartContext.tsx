@@ -33,7 +33,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const savedCart = localStorage.getItem("donut-cart");
     if (savedCart) {
       try {
-        setCart(JSON.parse(savedCart));
+        const timer = setTimeout(() => {
+          setCart(JSON.parse(savedCart));
+        }, 0);
+        return () => clearTimeout(timer);
       } catch (e) {
         console.error("Failed to parse cart from localStorage", e);
       }
