@@ -4,7 +4,7 @@ import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden px-4 md:px-20 lg:px-40 py-12 lg:py-24 bg-white dark:bg-background-dark border-b border-slate-100 dark:border-slate-800">
+    <section className="relative overflow-hidden px-4 md:px-20 lg:px-40 py-12 lg:py-24 bg-background border-b border-border transition-colors duration-300">
       <div className="relative z-10 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
         <div className="w-full lg:w-3/5 flex flex-col gap-8 lg:gap-10">
           <div className="flex flex-col gap-6">
@@ -14,10 +14,10 @@ export default function Hero() {
                 Artisan Bakery
               </span>
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-heading">
               Resep <span className="text-primary italic font-serif">Tradisional</span>, Rasa Internasional
             </h1>
-            <p className="text-lg md:text-xl text-slate-700 dark:text-slate-400 max-w-prose leading-relaxed">
+            <p className="text-lg md:text-xl text-subheading max-w-prose leading-relaxed">
               Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut, kaya rasa, dan dibuat dengan cinta.
             </p>
           </div>
@@ -31,7 +31,7 @@ export default function Hero() {
             </Link>
             <Link 
               href="/#top-picks"
-              className="h-16 px-10 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-lg flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300"
+              className="h-16 px-10 bg-card-bg text-heading border border-border rounded-2xl font-bold text-lg flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300"
             >
               Lihat Menu
             </Link>

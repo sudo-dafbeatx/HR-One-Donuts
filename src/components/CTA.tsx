@@ -5,13 +5,13 @@ export default function CTA() {
   return (
     <section className="px-4 md:px-20 lg:px-40 py-20 bg-slate-50 dark:bg-slate-900/30">
       <div className="bg-slate-900 dark:bg-slate-800 rounded-[2rem] p-8 md:p-16 flex flex-col md:flex-row items-center gap-10 overflow-hidden relative border border-slate-800">
-        <div className="flex-1 z-10">
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
-            Nikmati Kelembutan Donat Hari Ini
-          </h2>
-          <p className="text-slate-200 dark:text-slate-300 text-lg md:text-xl mb-8 max-w-prose leading-relaxed">
-            Jangan sampai kehabisan menu terlaris kami. Pesan sekarang melalui WhatsApp untuk pengiriman instan.
-          </p>
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+        <h2 className="text-3xl md:text-5xl lg:text-8xl font-black text-white mb-6 leading-[1.05] tracking-tight">
+          Bawa Kebahagiaan ke Rumah Anda
+        </h2>
+        <p className="text-slate-200 text-lg md:text-xl mb-8 max-w-prose mx-auto leading-relaxed">
+          Pesan sekarang dan nikmati kelembutan donat artisan terbaik kami bersama keluarga tercinta.
+        </p>
           <Link 
             href="/catalog"
             className="inline-flex h-14 px-10 bg-primary text-white font-bold rounded-xl text-lg items-center gap-3 shadow-lg shadow-primary/40 hover:scale-105 transition-transform"

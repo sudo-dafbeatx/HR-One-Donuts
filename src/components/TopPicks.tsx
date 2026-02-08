@@ -41,11 +41,11 @@ export default function TopPicks() {
   ];
 
   return (
-    <section className="px-4 md:px-20 lg:px-40 py-16" id="top-picks">
+    <section className="bg-section-bg transition-colors duration-300 px-4 md:px-20 lg:px-40 py-16" id="top-picks">
       <div className="flex items-end justify-between mb-10">
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-heading dark:text-white">Favorit Keluarga</h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">Varian donat yang paling banyak dicari minggu ini.</p>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-heading">Favorit Keluarga</h2>
+          <p className="text-lg text-subheading leading-relaxed">Varian donat yang paling banyak dicari minggu ini.</p>
         </div>
         <Link href="/catalog" className="text-primary font-bold flex items-center gap-2 hover:underline">
           Lihat Semua Menu
@@ -56,9 +56,9 @@ export default function TopPicks() {
         {products.map((product) => (
           <div
             key={product.id}
-            className="flex-none w-[280px] bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-[#e7edf3] dark:border-slate-700 overflow-hidden snap-start hover:shadow-xl transition-all duration-300 group"
+            className="flex-none w-[280px] bg-card-bg rounded-2xl shadow-sm border border-border overflow-hidden snap-start hover:shadow-xl transition-all duration-300 group"
           >
-            <div className="aspect-square bg-slate-100 relative overflow-hidden">
+            <div className="aspect-square bg-slate-100 dark:bg-slate-900 relative overflow-hidden">
               <Image
                 alt={product.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -74,7 +74,7 @@ export default function TopPicks() {
             </div>
             <div className="p-5 flex flex-col gap-4">
               <div>
-                <h4 className="text-lg font-bold truncate">{product.name}</h4>
+                <h4 className="text-lg font-bold truncate text-heading">{product.name}</h4>
                 <p className="text-primary font-extrabold text-xl">Rp {product.price.toLocaleString("id-ID")}</p>
               </div>
               <button 

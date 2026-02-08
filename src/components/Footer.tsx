@@ -2,7 +2,7 @@ import { MapPinIcon, PhoneIcon, EnvelopeIcon, CameraIcon, VideoCameraIcon } from
 
 export default function Footer() {
   return (
-    <footer className="bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 px-4 md:px-20 lg:px-40 py-12 transition-colors duration-300">
+    <footer className="bg-footer-bg border-t border-border px-4 md:px-20 lg:px-40 py-12 transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
         <div className="col-span-1 md:col-span-1 flex flex-col gap-4">
           <div className="flex items-center gap-3 text-primary">
@@ -14,15 +14,15 @@ export default function Footer() {
                 ></path>
               </svg>
             </div>
-            <h2 className="text-xl font-extrabold text-heading dark:text-white">Donat Keluarga</h2>
+            <h2 className="text-xl font-extrabold text-heading">Donat Keluarga</h2>
           </div>
-          <p className="text-slate-600 dark:text-slate-400 text-sm">
+          <p className="text-subheading text-sm">
             Resep tradisional yang menghadirkan kebahagiaan di setiap rumah sejak 2010.
           </p>
         </div>
         <div>
-          <h5 className="font-bold mb-4">Link Cepat</h5>
-          <ul className="flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-400">
+          <h5 className="font-bold mb-4 text-heading">Link Cepat</h5>
+          <ul className="flex flex-col gap-2 text-sm text-subheading">
             <li>
               <a className="hover:text-primary transition-colors" href="#">
                 Home
@@ -46,8 +46,8 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h5 className="font-bold mb-4">Hubungi Kami</h5>
-          <ul className="flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-400">
+          <h5 className="font-bold mb-4 text-heading">Hubungi Kami</h5>
+          <ul className="flex flex-col gap-2 text-sm text-subheading">
             <li className="flex items-center gap-2">
               <MapPinIcon className="w-4 h-4" /> Jakarta, Indonesia
             </li>
@@ -60,7 +60,7 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h5 className="font-bold mb-4">Ikuti Kami</h5>
+          <h5 className="font-bold mb-4 text-heading">Ikuti Kami</h5>
           <div className="flex gap-4">
             <div className="w-10 h-10 rounded-lg bg-[#e7edf3] dark:bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-all cursor-pointer">
               <CameraIcon className="w-5 h-5" />

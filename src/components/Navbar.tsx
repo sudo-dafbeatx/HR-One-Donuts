@@ -14,7 +14,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-solid border-[#e7edf3] dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 md:px-20 lg:px-40 py-3">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-header-bg backdrop-blur-md px-4 md:px-20 lg:px-40 py-3 transition-colors duration-300">
       <div className="flex items-center justify-between whitespace-nowrap">
         <div className="flex items-center gap-3 text-primary">
           <div className="size-8">
@@ -25,21 +25,21 @@ export default function Navbar() {
               ></path>
             </svg>
           </div>
-          <h2 className="text-heading dark:text-white text-xl font-extrabold leading-tight tracking-tight">
+          <h2 className="text-heading text-xl font-extrabold leading-tight tracking-tight">
             Donat Keluarga
           </h2>
         </div>
         <div className="hidden md:flex flex-1 justify-center gap-8">
-          <Link href="#" className="text-sm font-semibold hover:text-primary transition-colors">
+          <Link href="#" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
             Home
           </Link>
-          <Link href="/catalog" className="text-sm font-semibold hover:text-primary transition-colors">
+          <Link href="/catalog" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
             Menu
           </Link>
-          <Link href="#top-picks" className="text-sm font-semibold hover:text-primary transition-colors">
+          <Link href="#top-picks" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
             Top Picks
           </Link>
-          <Link href="#about" className="text-sm font-semibold hover:text-primary transition-colors">
+          <Link href="#about" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
             About
           </Link>
         </div>

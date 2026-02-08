@@ -2,9 +2,14 @@
 
 @theme {
   --color-primary: #2b8cee;
-  --color-background-light: #f6f7f8;
-  --color-background-dark: #101922;
-  --color-heading: #0d141b;
+  --color-background: var(--background);
+  --color-header-bg: var(--header-bg);
+  --color-footer-bg: var(--footer-bg);
+  --color-section-bg: var(--section-bg);
+  --color-card-bg: var(--card-bg);
+  --color-heading: var(--heading);
+  --color-subheading: var(--subheading);
+  --color-border: var(--border-color);
 
   --font-sans: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
@@ -17,17 +22,31 @@
 :root {
   --background: #f6f7f8;
   --foreground: #0f172a; /* slate-900 */
+  --heading: #0d141b;
+  --subheading: #334155; /* slate-700 */
+  --header-bg: rgba(255, 255, 255, 0.8);
+  --footer-bg: #ffffff;
+  --section-bg: #f6f7f8;
+  --card-bg: #ffffff;
+  --border-color: #e7edf3;
 }
 
 .dark {
   --background: #101922;
   --foreground: #f1f5f9; /* slate-100 */
+  --heading: #ffffff;
+  --subheading: #94a3b8; /* slate-400 */
+  --header-bg: rgba(16, 25, 34, 0.8);
+  --footer-bg: #0d141b;
+  --section-bg: #101922;
+  --card-bg: #1e293b; /* slate-800 */
+  --border-color: #1e293b;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -38,7 +57,7 @@ body {
 
 /* Production Gradient Safeguard */
 section {
-  background-color: var(--background);
+  background-color: var(--section-bg);
 }
 
 button,
