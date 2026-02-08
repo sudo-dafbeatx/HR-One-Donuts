@@ -30,7 +30,7 @@ export default function Hero() {
               <ShoppingCartIcon className="w-6 h-6" />
             </Link>
             <Link 
-              href="/#top-picks"
+              href="/catalog"
               className="h-16 px-10 bg-card-bg text-heading border border-border rounded-2xl font-bold text-lg flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300"
             >
               Lihat Menu
