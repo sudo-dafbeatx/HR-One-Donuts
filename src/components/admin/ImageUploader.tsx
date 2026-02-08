@@ -45,10 +45,14 @@ export default function ImageUploader({
       const formData = new FormData();
       formData.append('file', file);
       
+      console.log('📤 [ImageUploader] Calling uploadImage...');
       const result = await uploadImage(formData);
+      console.log('✅ [ImageUploader] Upload success:', result);
       onImageUploaded(result.url, result.path);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Upload gagal');
+      console.error('❌ [ImageUploader] Upload failed:', err);
+      const errorMsg = err instanceof Error ? err.message : 'Upload gagal. Cek console untuk detail.';
+      setError(errorMsg);
       setPreview(currentImage || null);
     } finally {
       setIsUploading(false);
