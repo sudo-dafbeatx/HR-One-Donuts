@@ -25,12 +25,12 @@ export default function CatalogNavbar() {
               Donat Keluarga
             </h2>
           </Link>
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden sm:flex items-center gap-8">
             <Link href="/" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">
               Home
             </Link>
             <Link href="/catalog" className="text-primary text-sm font-bold border-b-2 border-primary pb-0.5">
-              Catalog
+              Menu
             </Link>
             <Link href="/#about" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">
               About Us

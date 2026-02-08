@@ -17,32 +17,34 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-header-bg backdrop-blur-md px-4 md:px-20 lg:px-40 py-3 transition-colors duration-300">
       <div className="flex items-center justify-between whitespace-nowrap">
-        <div className="flex items-center gap-3 text-primary">
-          <div className="size-8">
-            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z"
-                fill="currentColor"
-              ></path>
-            </svg>
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-3 text-primary">
+            <div className="size-8">
+              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+            </div>
+            <h2 className="text-heading text-xl font-extrabold leading-tight tracking-tight">
+              Donat Keluarga
+            </h2>
           </div>
-          <h2 className="text-heading text-xl font-extrabold leading-tight tracking-tight">
-            Donat Keluarga
-          </h2>
-        </div>
-        <div className="hidden md:flex flex-1 justify-center gap-8">
-          <Link href="#" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
-            Home
-          </Link>
-          <Link href="/catalog" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
-            Menu
-          </Link>
-          <Link href="#top-picks" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
-            Top Picks
-          </Link>
-          <Link href="#about" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
-            About
-          </Link>
+          <nav className="hidden sm:flex items-center gap-8">
+            <Link href="/" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
+              Home
+            </Link>
+            <Link href="/catalog" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
+              Menu
+            </Link>
+            <Link href="/#about" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
+              About Us
+            </Link>
+            <Link href="/#how-to-order" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
+              How to Order
+            </Link>
+          </nav>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           <button 
