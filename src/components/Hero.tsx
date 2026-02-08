@@ -4,11 +4,7 @@ import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden px-4 md:px-20 lg:px-40 py-12 lg:py-24 bg-linear-to-b from-white via-white to-slate-50 dark:from-background-dark dark:to-slate-900/50">
-      {/* Background Ornaments - Safe for Production Rendering */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none select-none"></div>
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none select-none"></div>
-
+    <section className="relative overflow-hidden px-4 md:px-20 lg:px-40 py-12 lg:py-24 bg-white dark:bg-background-dark border-b border-slate-100 dark:border-slate-800">
       <div className="relative z-10 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
         <div className="w-full lg:w-3/5 flex flex-col gap-8 lg:gap-10">
           <div className="flex flex-col gap-6">
@@ -19,7 +15,7 @@ export default function Hero() {
               </span>
             </div>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-slate-900 dark:text-white">
-              Resep <span className="text-primary italic">Tradisional</span>, Rasa Internasional
+              Resep <span className="text-primary italic font-serif">Tradisional</span>, Rasa Internasional
             </h1>
             <p className="text-lg md:text-xl text-slate-700 dark:text-slate-400 max-w-prose leading-relaxed">
               Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut, kaya rasa, dan dibuat dengan cinta.
@@ -28,27 +24,25 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link 
               href="/catalog"
-              className="h-16 px-10 bg-primary text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-3 hover:translate-y-[-4px] hover:shadow-2xl hover:shadow-primary/40 transition-all duration-300"
+              className="h-16 px-10 bg-primary text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-primary/90 transition-all duration-300 shadow-lg shadow-primary/20"
             >
               <span>Pesan Sekarang</span>
               <ShoppingCartIcon className="w-6 h-6" />
             </Link>
             <Link 
               href="/#top-picks"
-              className="h-16 px-10 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border-2 border-slate-100 dark:border-slate-700 rounded-2xl font-bold text-lg flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300"
+              className="h-16 px-10 bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-lg flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300"
             >
               Lihat Menu
             </Link>
           </div>
         </div>
         <div className="w-full lg:w-2/5 relative">
-          <div className="relative aspect-square w-full max-w-[500px] mx-auto group">
-            <div className="absolute inset-0 bg-primary/20 rounded-[40px] rotate-6 scale-95 blur-sm transition-transform group-hover:rotate-12 duration-500"></div>
-            <div className="absolute inset-0 bg-slate-100 dark:bg-slate-800 rounded-[40px] -rotate-3 transition-transform group-hover:-rotate-6 duration-500"></div>
-            <div className="relative h-full w-full rounded-[40px] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.15)] dark:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.4)] border-4 border-white dark:border-slate-700 z-10 transition-transform group-hover:scale-[1.02] duration-500">
+          <div className="relative aspect-square w-full max-w-[500px] mx-auto">
+            <div className="relative h-full w-full rounded-[40px] overflow-hidden shadow-2xl border border-slate-100 dark:border-slate-800 z-10">
               <Image
                 alt="Donat Keluarga Premium Artisan"
-                className="w-full h-full object-cover transform transition-transform group-hover:scale-110 duration-700"
+                className="w-full h-full object-cover"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAI3IWpmYHgR98Ur1-66YxZ2ryIyIMVbqVUoLdFr_AISaIzl_5mFliSL7D44I1BdbXx60LPMFIl-bS6BZY5LFWAFAri2laAcBuvA7x7gRW-eW9_CRkI84H6N4LgIm79LyxSjXLSqyDznSbejoRSVEE4YEz-p_5xDL13LdS7uX6RUVwV1GuAxlJEypis0wUXADkzEQic7vMV1sqN1tc63rYrBeorYtS6J5YpG4yphV3LbR9rHJOkkzxKdYGLd7GPWOASaPR9KjvvC-BZ"
                 width={800}
                 height={800}

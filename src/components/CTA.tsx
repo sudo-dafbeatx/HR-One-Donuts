@@ -3,9 +3,8 @@ import Link from "next/link";
 
 export default function CTA() {
   return (
-    <section className="px-4 md:px-20 lg:px-40 py-20">
-      <div className="bg-slate-900 rounded-[2rem] p-8 md:p-16 flex flex-col md:flex-row items-center gap-10 overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/20 blur-[100px] pointer-events-none select-none"></div>
+    <section className="px-4 md:px-20 lg:px-40 py-20 bg-slate-50 dark:bg-slate-900/30">
+      <div className="bg-slate-900 dark:bg-slate-800 rounded-[2rem] p-8 md:p-16 flex flex-col md:flex-row items-center gap-10 overflow-hidden relative border border-slate-800">
         <div className="flex-1 z-10">
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
             Nikmati Kelembutan Donat Hari Ini

@@ -2,7 +2,7 @@ import { HeartIcon, StarIcon, ClockIcon } from "@heroicons/react/24/solid";
 
 export default function Features() {
   return (
-    <section className="bg-white dark:bg-slate-900/50 py-16 px-4 md:px-20 lg:px-40">
+    <section className="bg-white dark:bg-background-dark py-16 px-4 md:px-20 lg:px-40 border-b border-slate-100 dark:border-slate-800">
       <div className="max-w-4xl mx-auto text-center mb-12 flex flex-col items-center">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-heading dark:text-white mb-6">
           Mengapa Memilih Donat Keluarga?
