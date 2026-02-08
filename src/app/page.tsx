@@ -5,7 +5,7 @@ import TopPicks from "@/components/TopPicks";
 import OrderSteps from "@/components/OrderSteps";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import ChatbotWidget from "@/components/ChatbotWidget";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export default async function Home() {
@@ -35,7 +35,7 @@ export default async function Home() {
         <CTA />
       </main>
       <Footer />
-      <WhatsAppButton />
+      <ChatbotWidget />
     </div>
   );
 }
