@@ -12,14 +12,14 @@ export default async function AdminLayout({
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {
-    redirect('/login');
+    redirect('/admin/login');
   }
 
   const handleSignOut = async () => {
     'use server';
     const supabase = await createServerSupabaseClient();
     await supabase.auth.signOut();
-    redirect('/login');
+    redirect('/admin/login');
   };
 
   return (

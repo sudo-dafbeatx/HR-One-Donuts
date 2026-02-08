@@ -56,7 +56,7 @@ export default function CatalogNavbar() {
               )}
             </button>
             <Link
-              href="/login"
+              href="/admin/login"
               className="flex items-center justify-center p-2 rounded-xl bg-card-bg text-subheading border border-border hover:bg-primary/10 hover:text-primary transition-all shadow-sm"
               title="Admin Login"
             >
