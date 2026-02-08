@@ -20,10 +20,10 @@ export default function CatalogCTA() {
           <div className="flex flex-wrap justify-center gap-4">
             <button className="flex items-center justify-center gap-3 rounded-xl h-14 px-8 bg-white text-primary text-base font-bold hover:bg-slate-100 transition-all shadow-md">
               <ChatBubbleLeftIcon className="w-5 h-5" />
-              <span>Order via WhatsApp</span>
+              <span>Pesan via WhatsApp</span>
             </button>
             <button className="flex items-center justify-center gap-3 rounded-xl h-14 px-8 bg-primary/20 border border-white/30 text-white text-base font-bold hover:bg-primary/30 transition-all">
-              <span>Download Price List</span>
+              <span>Unduh Daftar Harga</span>
               <ArrowDownTrayIcon className="w-5 h-5" />
             </button>
           </div>

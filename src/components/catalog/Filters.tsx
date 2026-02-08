@@ -1,10 +1,10 @@
 export default function CatalogFilters() {
   const tabs = [
-    "All Flavors",
-    "Classic Collection",
-    "Premium Range",
-    "Seasonal Specials",
-    "Party Boxes",
+    "Semua Rasa",
+    "Koleksi Klasik",
+    "Seri Premium",
+    "Spesial Musiman",
+    "Paket Pesta",
   ];
 
   return (

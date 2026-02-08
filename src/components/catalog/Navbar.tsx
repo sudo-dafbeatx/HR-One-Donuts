@@ -27,16 +27,16 @@ export default function CatalogNavbar() {
           </Link>
           <nav className="hidden sm:flex items-center gap-8">
             <Link href="/" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">
-              Home
+              Beranda
             </Link>
             <Link href="/catalog" className="text-primary text-sm font-bold border-b-2 border-primary pb-0.5">
               Menu
             </Link>
             <Link href="/#about" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">
-              About Us
+              Tentang Kami
             </Link>
             <Link href="/#how-to-order" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">
-              How to Order
+              Cara Pesan
             </Link>
           </nav>
         </div>
@@ -64,7 +64,7 @@ export default function CatalogNavbar() {
             </Link>
             <button className="hidden sm:flex items-center justify-center gap-2 rounded-xl h-10 px-5 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all shadow-sm">
               <ChatBubbleLeftIcon className="w-5 h-5" />
-              <span className="truncate">Order via WhatsApp</span>
+              <span className="truncate">Pesan via WhatsApp</span>
             </button>
           </div>
       </div>

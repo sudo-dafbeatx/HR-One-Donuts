@@ -33,16 +33,16 @@ export default function Navbar() {
           </div>
           <nav className="hidden sm:flex items-center gap-8">
             <Link href="/" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
-              Home
+              Beranda
             </Link>
             <Link href="/catalog" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
               Menu
             </Link>
             <Link href="/#about" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
-              About Us
+              Tentang Kami
             </Link>
             <Link href="/#how-to-order" className="text-sm font-semibold text-subheading hover:text-primary transition-colors">
-              How to Order
+              Cara Pesan
             </Link>
           </nav>
         </div>
@@ -69,7 +69,7 @@ export default function Navbar() {
             <UserCircleIcon className="w-6 h-6" />
           </Link>
           <button className="hidden sm:flex min-w-[140px] cursor-pointer items-center justify-center rounded-xl h-10 px-5 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
-            <span>Order via WhatsApp</span>
+            <span>Pesan via WhatsApp</span>
           </button>
         </div>
       </div>

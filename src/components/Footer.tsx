@@ -25,7 +25,7 @@ export default function Footer() {
           <ul className="flex flex-col gap-2 text-sm text-subheading">
             <li>
               <a className="hover:text-primary transition-colors" href="#">
-                Home
+                Beranda
               </a>
             </li>
             <li>
@@ -72,7 +72,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="mt-12 pt-8 border-t border-[#e7edf3] dark:border-slate-800 text-center text-sm text-slate-500">
-        © 2024 Donat Keluarga. All rights reserved. Made with love for your family.
+        © 2024 Donat Keluarga. Hak cipta dilindungi undang-undang. Dibuat dengan kasih sayang untuk keluarga Anda.
       </div>
     </footer>
   );

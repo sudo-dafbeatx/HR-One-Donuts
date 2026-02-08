@@ -68,7 +68,7 @@ export default function TopPicks() {
               />
               {product.bestSeller && (
                 <span className="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-primary">
-                  Best Seller
+                  Terlaris
                 </span>
               )}
             </div>

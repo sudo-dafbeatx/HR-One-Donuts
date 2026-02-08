@@ -98,17 +98,17 @@ export default async function AdminDashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatsCard 
-          title="Total Orders" 
+          title="Total Pesanan" 
           value={totalOrders}
           trend="Semua waktu"
         />
         <StatsCard 
-          title="Total Revenue" 
+          title="Total Pendapatan" 
           value={`Rp ${totalRevenue.toLocaleString('id-ID')}`}
           trend="Semua waktu"
         />
         <StatsCard 
-          title="Total Items Sold" 
+          title="Total Item Terjual" 
           value={totalItems}
           trend="Semua waktu"
         />

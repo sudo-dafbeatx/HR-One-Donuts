@@ -10,7 +10,8 @@ export default function CartDrawer() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   if (!mounted) return null;
@@ -54,7 +55,7 @@ export default function CartDrawer() {
               <ShoppingBagIcon className="w-6 h-6 text-primary" />
               Pesanan Saya
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Family Business - Handcrafted with Love</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Bisnis Keluarga - Dibuat dengan Kasih Sayang</p>
           </div>
           <button 
             onClick={() => setIsCartOpen(false)}
@@ -158,7 +159,7 @@ export default function CartDrawer() {
               <span className="text-[10px] uppercase tracking-wider opacity-90 font-medium">Kirim rincian pesanan otomatis</span>
             </button>
             <p className="mt-4 text-[10px] text-center text-slate-500 dark:text-slate-400 leading-relaxed uppercase tracking-tighter">
-              Layanan Pickup & Delivery Jakarta Area Only
+              Layanan Pengambilan & Pengiriman Area Jakarta Saja
             </p>
           </div>
         )}

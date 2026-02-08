@@ -40,7 +40,7 @@ export default function ProductCard({ id, name, price, description, image, tag }
         />
         {tag && (
           <span className={`absolute top-2 left-2 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider z-10 ${
-            tag === 'Best Seller' ? 'bg-white/90 dark:bg-slate-900/90 text-primary' : 
+            tag === 'Terlaris' ? 'bg-white/90 dark:bg-slate-900/90 text-primary' : 
             tag === 'Premium' ? 'bg-primary text-white' : 'bg-orange-500 text-white'
           }`}>
             {tag}

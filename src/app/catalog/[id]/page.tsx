@@ -36,14 +36,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   };
 
   const productNames: Record<string, string> = {
-    "classic-glazed": "Classic Glazed",
-    "chocolate-dream": "Chocolate Dream",
+    "classic-glazed": "Glazed Klasik",
+    "chocolate-dream": "Cokelat Impian",
     "lotus-biscoff": "Lotus Biscoff",
-    "strawberry-sparkle": "Strawberry Sparkle",
-    "pistachio-perfection": "Pistachio Perfection",
+    "strawberry-sparkle": "Kilau Stroberi",
+    "pistachio-perfection": "Pistachio Sempurna",
     "nutella-heaven": "Nutella Heaven",
-    "blueberry-blast": "Blueberry Blast",
-    "cinnamon-sugar": "Cinnamon Sugar",
+    "blueberry-blast": "Ledakan Blueberry",
+    "cinnamon-sugar": "Gula Kayu Manis",
   };
 
   const name = productNames[productId] || "Strawberry Dream Glazed";
@@ -54,7 +54,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     id: productId,
     name: name,
     price: price,
-    description: `A fluffy, handcrafted yeast donut (${name}) dipped in our signature glaze and topped with premium ingredients. Every bite is a balance of sweet, gourmet flavors and the soft, melt-in-your-mouth texture of our secret family dough recipe.`,
+    description: `Donat ragi buatan tangan yang empuk (${name}) dibalut dalam glaze madu khas kami dan ditaburi bahan-bahan premium. Setiap gigitan adalah keseimbangan rasa manis, cita rasa mewah, dan tekstur yang lembut lumer di mulut dari resep rahasia keluarga kami.`,
     reviews: 48,
     images: [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCnobsGwq4QbPlht6jD-95PfuFMS55s0j6zSoLBd7_Ijl6z7ZYQyvibbbONOxnzt5M4HVhYCLlkA0VwzEMH_V2e2HeDFBg6zWqHgTOgOWZXtK1D1MrBV8b4Bd0Ft9zdV7K0SNxGLDExZnxmuWoxFV-omInyHIbJUUZg_4Vucl8cxL1k5qV3BnPduPdrfPsMeZMI-bJAbVB7ZOadL-z3zw2cV7kMx-ohbWv3RSdAr3sSEh7SscwzhdZzpqZWn17BIhzHNFi0ShYnexXi",
@@ -73,11 +73,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 mb-8 text-sm font-medium">
             <Link href="/" className="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">
-              Home
+              Beranda
             </Link>
             <span className="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
             <Link href="/catalog" className="dark:text-slate-400 hover:text-primary transition-colors">
-              Catalog
+              Katalog
             </Link>
             <span className="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
             <span className="text-primary truncate max-w-[200px] md:max-w-none">{product.name}</span>
@@ -107,7 +107,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       >
         <span className="font-bold flex items-center gap-2">
            <span className="material-symbols-outlined">chat</span>
-           Chat to Order
+           Chat untuk Pesan
         </span>
       </a>
 
