@@ -110,7 +110,7 @@ export default function ImageUploader({
             <p className="text-sm font-medium text-slate-600">
               Drag & drop atau klik untuk upload
             </p>
-            <p className="text-xs text-slate-400">JPG, PNG, WEBP, HEIC (Max 5MB)</p>
+            <p className="text-xs text-slate-400">JPG, PNG, WEBP, HEIC (Max 2MB)</p>
             <p className="text-xs text-slate-500">Auto-convert ke WebP</p>
           </div>
         )}
