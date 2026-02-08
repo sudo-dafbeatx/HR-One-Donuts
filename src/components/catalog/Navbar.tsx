@@ -22,7 +22,7 @@ export default function CatalogNavbar() {
           <Link href="/" className="flex items-center gap-2 text-primary group">
             <CakeIcon className="w-8 h-8 transition-transform group-hover:rotate-12" />
             <h2 className="text-heading text-lg font-extrabold leading-tight tracking-tight">
-              Donat Keluarga
+              HR-One Donuts
             </h2>
           </Link>
           <nav className="hidden sm:flex items-center gap-8">

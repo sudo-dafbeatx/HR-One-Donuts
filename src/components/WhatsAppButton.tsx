@@ -8,12 +8,12 @@ export default function WhatsAppButton() {
   const { cart, totalPrice } = useCart();
 
   const handleWhatsAppClick = async () => {
-    const phoneNumber = "6285810658117"; // Nomor WhatsApp Donat Keluarga
+    const phoneNumber = "6285810658117"; // Nomor WhatsApp HR-One Donuts
     
     if (cart.length === 0) {
       // Jika cart kosong, kirim pesan umum
       const message = encodeURIComponent(
-        "Halo Donat Keluarga! 👋\n\nSaya tertarik untuk memesan donat. Boleh info menu dan harganya?"
+        "Halo HR-One Donuts! 👋\n\nSaya tertarik untuk memesan donat. Boleh info menu dan harganya?"
       );
       window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
     } else {
@@ -40,7 +40,7 @@ export default function WhatsAppButton() {
       }
       
       // Jika ada item di cart, kirim detail pesanan
-      let message = "Halo Donat Keluarga! 👋\n\n";
+      let message = "Halo HR-One Donuts! 👋\n\n";
       message += "Saya ingin memesan:\n\n";
       
       cart.forEach((item, index) => {

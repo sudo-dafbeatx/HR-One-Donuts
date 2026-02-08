@@ -73,7 +73,7 @@ export default function AdminLogin() {
       <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-2xl border border-slate-200">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-black text-heading mb-2">Login Admin</h1>
-          <p className="text-slate-600">Donat Keluarga Dashboard</p>
+          <p className="text-slate-600">HR-One Donuts Dashboard</p>
         </div>
 
         {error && (

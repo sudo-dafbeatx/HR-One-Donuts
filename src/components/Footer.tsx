@@ -14,7 +14,7 @@ export default function Footer() {
                 ></path>
               </svg>
             </div>
-            <h2 className="text-xl font-extrabold text-heading">Donat Keluarga</h2>
+            <h2 className="text-xl font-extrabold text-heading">HR-One Donuts</h2>
           </div>
           <p className="text-subheading text-sm">
             Resep tradisional yang menghadirkan kebahagiaan di setiap rumah sejak 2010.
@@ -72,7 +72,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="mt-12 pt-8 border-t border-[#e7edf3] dark:border-slate-800 text-center text-sm text-slate-500">
-        © 2024 Donat Keluarga. Hak cipta dilindungi undang-undang. Dibuat dengan kasih sayang untuk keluarga Anda.
+        © 2024 HR-One Donuts. Hak cipta dilindungi undang-undang. Dibuat dengan kasih sayang untuk keluarga Anda.
       </div>
     </footer>
   );

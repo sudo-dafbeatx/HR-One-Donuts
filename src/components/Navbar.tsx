@@ -28,7 +28,7 @@ export default function Navbar() {
               </svg>
             </div>
             <h2 className="text-heading text-xl font-extrabold leading-tight tracking-tight">
-              Donat Keluarga
+              HR-One Donuts
             </h2>
           </div>
           <nav className="hidden sm:flex items-center gap-8">

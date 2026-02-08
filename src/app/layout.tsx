@@ -11,7 +11,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Donat Keluarga - Resep Tradisional, Rasa Internasional",
+  title: "HR-One Donuts - Resep Tradisional, Rasa Internasional",
   description: "Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut dan kaya rasa.",
 };
 

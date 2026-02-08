@@ -12,7 +12,7 @@ interface HeroProps {
 }
 
 export default function Hero({ 
-  title = "Donat Kentang Spesial Keluarga",
+  title = "HR-One Donuts",
   subtitle = "Homemade & Freshly Baked",
   description = "Nikmati kelembutan donat ragi premium kami yang dibuat dengan resep rahasia keluarga. Tekstur yang lembut lumer di mulut dengan varian rasa mewah yang memanjakan lidah.",
   ctaText = "Lihat Menu",

@@ -18,7 +18,7 @@ export default function CartDrawer() {
 
   const handleWhatsAppOrder = () => {
     const phone = "6281234567890"; // Example business phone
-    let message = "Halo Donat Keluarga! 🍩 Saya ingin memesan:\n\n";
+    let message = "Halo HR-One Donuts! 🍩 Saya ingin memesan:\n\n";
     
     cart.forEach((item) => {
       message += `✅ *${item.name}*\n   ${item.quantity}x @ Rp ${item.price.toLocaleString("id-ID")} = Rp ${(item.price * item.quantity).toLocaleString("id-ID")}\n\n`;

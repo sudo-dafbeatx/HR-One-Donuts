@@ -27,7 +27,7 @@ export default async function AdminLayout({
       <nav className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-40">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <div>
-            <h1 className="text-xl font-black text-heading">Donat Keluarga</h1>
+            <h1 className="text-xl font-black text-heading">HR-One Donuts</h1>
             <p className="text-xs text-slate-500">Admin Dashboard</p>
           </div>
           <div className="flex items-center gap-6">
