@@ -8,15 +8,32 @@ import { HeroData, Product, Reason } from '@/types/cms';
 export async function updateHero(data: HeroData) {
   const supabase = await createServerSupabaseClient();
   
+  // First, check if a hero record exists
+  const { data: existing } = await supabase
+    .from('hero')
+    .select('id')
+    .single();
+  
+  const heroData = {
+    ...data,
+    updated_at: new Date().toISOString()
+  };
+  
+  // Include ID if record exists to ensure update instead of insert
+  if (existing?.id) {
+    heroData.id = existing.id;
+  }
+  
   const { error } = await supabase
     .from('hero')
-    .upsert({ ...data, updated_at: new Date().toISOString() })
+    .upsert(heroData)
     .select()
     .single();
 
   if (error) throw new Error(error.message);
   
   revalidatePath('/');
+  revalidatePath('/admin/(dashboard)/content');
   return { success: true };
 }
 
@@ -24,14 +41,22 @@ export async function updateHero(data: HeroData) {
 export async function saveProduct(data: Partial<Product>) {
   const supabase = await createServerSupabaseClient();
   
+  // Generate ID for new products if not provided
+  const productData = {
+    ...data,
+    id: data.id || crypto.randomUUID(),
+    updated_at: new Date().toISOString()
+  };
+  
   const { error } = await supabase
     .from('products')
-    .upsert({ ...data, updated_at: new Date().toISOString() });
+    .upsert(productData);
 
   if (error) throw new Error(error.message);
   
   revalidatePath('/catalog');
   revalidatePath('/admin/products');
+  revalidatePath('/admin/(dashboard)/content');
   return { success: true };
 }
 
@@ -54,18 +79,26 @@ export async function deleteProduct(id: string) {
 export async function saveReason(data: Partial<Reason>) {
   const supabase = await createServerSupabaseClient();
   
+  // Generate ID for new reasons if not provided
+  const reasonData = {
+    ...data,
+    id: data.id || crypto.randomUUID(),
+    updated_at: new Date().toISOString()
+  };
+  
   const { error } = await supabase
     .from('reasons')
-    .upsert(data);
+    .upsert(reasonData);
 
   if (error) throw new Error(error.message);
   
   revalidatePath('/');
+  revalidatePath('/admin/(dashboard)/content');
   return { success: true };
 }
 
 // --- Settings Actions ---
-export async function updateSettings(key: string, value: any) {
+export async function updateSettings(key: string, value: Record<string, unknown>) {
   const supabase = await createServerSupabaseClient();
   
   const { error } = await supabase
