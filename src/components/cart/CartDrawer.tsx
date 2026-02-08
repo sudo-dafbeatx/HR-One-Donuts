@@ -2,12 +2,16 @@
 
 import { useCart } from "@/context/CartContext";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingBagIcon, XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 export default function CartDrawer() {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart } = useCart();
-  const [mounted] = useState(() => typeof window !== "undefined");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   if (!mounted) return null;
 

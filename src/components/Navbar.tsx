@@ -2,12 +2,16 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingBagIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar() {
   const { totalItems, setIsCartOpen } = useCart();
-  const [mounted] = useState(() => typeof window !== "undefined");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-solid border-[#e7edf3] dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 md:px-20 lg:px-40 py-3">
