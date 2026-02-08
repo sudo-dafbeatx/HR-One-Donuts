@@ -18,10 +18,10 @@ export default function Hero() {
                 Artisan Bakery
               </span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black leading-[1.1] tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-slate-900 dark:text-white">
               Resep <span className="text-primary italic">Tradisional</span>, Rasa Internasional
             </h1>
-            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-[550px] leading-relaxed">
+            <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-prose leading-relaxed">
               Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut, kaya rasa, dan dibuat dengan cinta.
             </p>
           </div>

@@ -44,8 +44,8 @@ export default function TopPicks() {
     <section className="px-4 md:px-20 lg:px-40 py-16" id="top-picks">
       <div className="flex items-end justify-between mb-10">
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-extrabold text-heading dark:text-white">Favorit Keluarga</h2>
-          <p className="text-slate-600 dark:text-slate-400">Varian donat yang paling banyak dicari minggu ini.</p>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-heading dark:text-white">Favorit Keluarga</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">Varian donat yang paling banyak dicari minggu ini.</p>
         </div>
         <Link href="/catalog" className="text-primary font-bold flex items-center gap-2 hover:underline">
           Lihat Semua Menu

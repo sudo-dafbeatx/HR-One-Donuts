@@ -4,10 +4,10 @@ export default function Features() {
   return (
     <section className="bg-white dark:bg-slate-900/50 py-16 px-4 md:px-20 lg:px-40">
       <div className="max-w-4xl mx-auto text-center mb-12 flex flex-col items-center">
-        <h2 className="text-3xl font-extrabold text-heading dark:text-white mb-4">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-heading dark:text-white mb-6">
           Mengapa Memilih Donat Keluarga?
         </h2>
-        <p className="text-slate-600 dark:text-slate-400">
+        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
           Kami menjaga kualitas dengan bahan-bahan pilihan untuk senyum keluarga Anda.
         </p>
       </div>
@@ -17,7 +17,7 @@ export default function Features() {
             <HeartIcon className="w-10 h-10" />
           </div>
           <h3 className="text-xl font-bold mb-2">Homemade</h3>
-          <p className="text-slate-600 dark:text-slate-400">
+          <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
             Dibuat dengan kasih sayang menggunakan resep turun temurun setiap harinya.
           </p>
         </div>
