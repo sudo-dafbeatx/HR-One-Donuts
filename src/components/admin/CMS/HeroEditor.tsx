@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { HeroData } from '@/types/cms';
 import { AdminCard, AdminInput, AdminButton } from './Shared';
 import { updateHero } from '@/app/admin/actions';
+import ImageUploader from '../ImageUploader';
 
 export default function HeroEditor({ initialData }: { initialData?: HeroData }) {
   const [data, setData] = useState<HeroData>(initialData || {
@@ -14,6 +15,7 @@ export default function HeroEditor({ initialData }: { initialData?: HeroData }) 
     cta_link: '/catalog',
     image_url: '',
   });
+  const [imagePath, setImagePath] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -24,8 +26,9 @@ export default function HeroEditor({ initialData }: { initialData?: HeroData }) 
     try {
       await updateHero(data);
       setMessage({ type: 'success', text: 'Hero section updated successfully!' });
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Failed to update hero' });
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update hero';
+      setMessage({ type: 'error', text: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -65,10 +68,14 @@ export default function HeroEditor({ initialData }: { initialData?: HeroData }) 
               onChange={e => setData({...data, cta_link: e.target.value})}
             />
           </div>
-          <AdminInput 
-            label="Hero Image URL (or path)" 
-            value={data.image_url} 
-            onChange={e => setData({...data, image_url: e.target.value})}
+          <ImageUploader
+            currentImage={data.image_url}
+            onImageUploaded={(url, path) => {
+              setData({...data, image_url: url});
+              setImagePath(path);
+            }}
+            label="Hero Background Image"
+            aspectRatio="video"
           />
           
           <div className="flex justify-end pt-4">

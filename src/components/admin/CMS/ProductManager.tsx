@@ -5,10 +5,12 @@ import { Product } from '@/types/cms';
 import { AdminCard, AdminInput, AdminButton } from './Shared';
 import { saveProduct, deleteProduct } from '@/app/admin/actions';
 import { TrashIcon, PencilIcon, PlusIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import ImageUploader from '../ImageUploader';
 
 export default function ProductManager({ initialProducts }: { initialProducts: Product[] }) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
+  const [imagePath, setImagePath] = useState<string>('');  
   const [loading, setLoading] = useState(false);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -134,10 +136,14 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
                 value={editingProduct.description || ''} 
                 onChange={e => setEditingProduct({...editingProduct, description: e.target.value})}
               />
-              <AdminInput 
-                label="Image URL" 
-                value={editingProduct.image_url || ''} 
-                onChange={e => setEditingProduct({...editingProduct, image_url: e.target.value})}
+              <ImageUploader
+                currentImage={editingProduct.image_url}
+                onImageUploaded={(url, path) => {
+                  setEditingProduct({...editingProduct, image_url: url});
+                  setImagePath(path);
+                }}
+                label="Product Image"
+                aspectRatio="square"
               />
               
               <div className="flex justify-end gap-3 pt-6">
