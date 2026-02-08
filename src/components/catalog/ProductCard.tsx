@@ -28,7 +28,7 @@ export default function ProductCard({ id, name, price, description, image, tag }
   return (
     <Link 
       href={`/catalog/${id}`}
-      className="group flex flex-col gap-4 bg-white dark:bg-slate-900 p-3 rounded-xl shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary/20"
+      className="group flex flex-col gap-4 bg-card-bg p-3 rounded-xl shadow-sm hover:shadow-md transition-all border border-border hover:border-primary/20"
     >
       <div className="relative w-full aspect-square bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden">
         <Image
@@ -55,10 +55,10 @@ export default function ProductCard({ id, name, price, description, image, tag }
       </div>
       <div className="flex flex-col gap-1 px-1">
         <div className="flex justify-between items-start gap-2">
-          <p className="text-heading dark:text-white text-base font-bold leading-tight truncate">{name}</p>
+          <p className="text-heading text-base font-bold leading-tight truncate">{name}</p>
           <p className="text-primary text-base font-extrabold shrink-0">Rp {price.toLocaleString("id-ID")}</p>
         </div>
-        <p className="text-[#4c739a] dark:text-slate-400 text-xs line-clamp-2">
+        <p className="text-subheading text-xs line-clamp-2">
           {description}
         </p>
         <div className="mt-3 w-full flex items-center justify-center gap-2 rounded-lg h-10 bg-primary/10 text-primary text-sm font-bold group-hover:bg-primary group-hover:text-white transition-all">

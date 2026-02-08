@@ -10,7 +10,8 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
@@ -46,7 +47,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 md:gap-4">
           <button 
             onClick={() => setIsCartOpen(true)}
-            className="relative flex items-center justify-center p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-primary/10 hover:text-primary transition-all"
+            className="relative flex items-center justify-center p-2 rounded-xl bg-card-bg text-subheading border border-border hover:bg-primary/10 hover:text-primary transition-all shadow-sm"
           >
             <ShoppingBagIcon className="w-6 h-6" />
             {/* Always render badge with same structure to avoid hydration mismatch */}
@@ -60,7 +61,7 @@ export default function Navbar() {
           </button>
           <Link
             href="/admin/login"
-            className="flex items-center justify-center p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-primary/10 hover:text-primary transition-all"
+            className="flex items-center justify-center p-2 rounded-xl bg-card-bg text-subheading border border-border hover:bg-primary/10 hover:text-primary transition-all shadow-sm"
             title="Admin Login"
           >
             <UserCircleIcon className="w-6 h-6" />

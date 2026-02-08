@@ -10,11 +10,11 @@ export default function CatalogCTA() {
         </div>
         <div className="relative z-10 flex flex-col items-center gap-6">
           <div className="flex flex-col gap-2">
-            <h2 className="text-white text-3xl md:text-4xl font-black tracking-tight leading-tight">
-              Ready to Indulge?
+            <h2 className="text-white text-3xl md:text-5xl lg:text-7xl font-black tracking-tight leading-[1.05]">
+              Siap untuk Mencoba?
             </h2>
-            <p className="text-white/90 text-base md:text-lg max-w-xl mx-auto">
-              Finalize your selection and place your order directly with our family via WhatsApp. We&apos;ll confirm your pick-up or delivery time!
+            <p className="text-white/90 text-lg md:text-xl max-w-xl mx-auto leading-relaxed">
+              Pilih donat favorit Anda dan pesan langsung melalui WhatsApp. Kami akan mengonfirmasi pesanan Anda segera!
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-4">
