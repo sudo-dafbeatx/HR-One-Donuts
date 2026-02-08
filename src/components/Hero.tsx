@@ -9,6 +9,7 @@ interface HeroProps {
   description?: string;
   ctaText?: string;
   ctaLink?: string;
+  imageUrl?: string;
 }
 
 export default function Hero({ 
@@ -16,13 +17,28 @@ export default function Hero({
   subtitle = "Homemade & Freshly Baked",
   description = "Nikmati kelembutan donat ragi premium kami yang dibuat dengan resep rahasia keluarga. Tekstur yang lembut lumer di mulut dengan varian rasa mewah yang memanjakan lidah.",
   ctaText = "Lihat Menu",
-  ctaLink = "/catalog"
+  ctaLink = "/catalog",
+  imageUrl
 }: HeroProps) {
   return (
-    <section className="relative flex min-h-[85vh] w-full items-center justify-center bg-white px-6 py-20 lg:px-40 overflow-hidden">
-      {/* Background Ornaments - Keeping them clean/flat */}
-      <div className="absolute top-20 right-[10%] w-64 h-64 bg-primary/5 rounded-full pointer-events-none" />
-      <div className="absolute bottom-20 left-[5%] w-96 h-96 bg-primary/5 rounded-full pointer-events-none" />
+    <section className="relative flex min-h-[85vh] w-full items-center justify-center px-6 py-20 lg:px-40 overflow-hidden">
+      {/* Background Image with Overlay */}
+      {imageUrl && (
+        <>
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${imageUrl})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/90 to-white/80" />
+        </>
+      )}
+      
+      {!imageUrl && (
+        <>
+          {/* Fallback: Clean ornaments when no image */}
+          <div className="absolute inset-0 bg-white" />
+        </>
+      )}
       
       <div className="relative z-10 flex flex-col items-center text-center max-w-[900px]">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold mb-6 animate-fade-in">

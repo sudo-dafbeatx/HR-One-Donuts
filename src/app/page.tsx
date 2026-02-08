@@ -28,6 +28,7 @@ export default async function Home() {
           description={heroData?.description}
           ctaText={heroData?.cta_text}
           ctaLink={heroData?.cta_link}
+          imageUrl={heroData?.image_url}
         />
         <Features />
         <TopPicks />
