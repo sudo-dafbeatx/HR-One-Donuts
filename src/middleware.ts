@@ -2,21 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
   // =====================================================
-  // PAYMENT PROTECTION SYSTEM
+  // PAYMENT PROTECTION SYSTEM - Environment Variable
   // =====================================================
   
   // UNTUK DEVELOPER:
-  // Setelah client bayar, update NEXT_PAYMENT_DUE ke bulan berikutnya
-  // Format: YYYY-MM-DD
-  // Contoh: Jika client bayar di Feb 2026, set ke "2026-03-14"
+  // Control dari Vercel Environment Variables
+  // LICENSE_STATUS: "ACTIVE" atau "EXPIRED"
+  // Kalau EXPIRED, website langsung block
   
-  const NEXT_PAYMENT_DUE = new Date('2026-02-14'); // 🔴 UPDATE TANGGAL INI SETELAH CLIENT BAYAR
-  const currentDate = new Date();
+  const LICENSE_STATUS = process.env.LICENSE_STATUS || 'ACTIVE';
   
-  // Check apakah sudah melewati due date
-  if (currentDate >= NEXT_PAYMENT_DUE) {
-    // Redirect ke halaman license expired
-    // KECUALI user sudah di halaman license-expired
+  // Check license status
+  if (LICENSE_STATUS === 'EXPIRED') {
+    // Website disabled, redirect ke halaman peringatan
     if (!request.nextUrl.pathname.startsWith('/license-expired')) {
       return NextResponse.redirect(new URL('/license-expired', request.url));
     }
