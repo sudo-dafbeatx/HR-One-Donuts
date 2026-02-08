@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SparklesIcon } from "@heroicons/react/24/outline";
+import { SparklesIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 
 interface HeroProps {
   title?: string;
@@ -44,7 +44,7 @@ export default function Hero({
             className="group relative flex items-center justify-center gap-2 rounded-2xl h-16 px-10 bg-primary text-white text-lg font-bold hover:scale-105 transition-all duration-300 shadow-xl shadow-primary/25"
           >
             {ctaText}
-            <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Link>
           <Link 
             href="#how-to-order"
