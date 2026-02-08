@@ -5,9 +5,9 @@ import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 export default function Hero() {
   return (
     <section className="relative overflow-hidden px-4 md:px-20 lg:px-40 py-12 lg:py-24 bg-linear-to-b from-white via-white to-slate-50 dark:from-background-dark dark:to-slate-900/50">
-      {/* Background Ornaments */}
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+      {/* Background Ornaments - Safe for Production Rendering */}
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none select-none"></div>
+      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none select-none"></div>
 
       <div className="relative z-10 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center">
         <div className="w-full lg:w-3/5 flex flex-col gap-8 lg:gap-10">
@@ -21,7 +21,7 @@ export default function Hero() {
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[1.05] tracking-tight text-slate-900 dark:text-white">
               Resep <span className="text-primary italic">Tradisional</span>, Rasa Internasional
             </h1>
-            <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-prose leading-relaxed">
+            <p className="text-lg md:text-xl text-slate-700 dark:text-slate-400 max-w-prose leading-relaxed">
               Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut, kaya rasa, dan dibuat dengan cinta.
             </p>
           </div>

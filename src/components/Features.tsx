@@ -7,7 +7,7 @@ export default function Features() {
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-heading dark:text-white mb-6">
           Mengapa Memilih Donat Keluarga?
         </h2>
-        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
+        <p className="text-lg md:text-xl text-slate-700 dark:text-slate-400 leading-relaxed max-w-2xl">
           Kami menjaga kualitas dengan bahan-bahan pilihan untuk senyum keluarga Anda.
         </p>
       </div>
@@ -17,7 +17,7 @@ export default function Features() {
             <HeartIcon className="w-10 h-10" />
           </div>
           <h3 className="text-xl font-bold mb-2">Homemade</h3>
-          <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+          <p className="text-slate-700 dark:text-slate-400 leading-relaxed">
             Dibuat dengan kasih sayang menggunakan resep turun temurun setiap harinya.
           </p>
         </div>
@@ -26,7 +26,7 @@ export default function Features() {
             <StarIcon className="w-10 h-10" />
           </div>
           <h3 className="text-xl font-bold mb-2">Bahan Premium</h3>
-          <p className="text-slate-600 dark:text-slate-400">
+          <p className="text-slate-700 dark:text-slate-400">
             Hanya menggunakan tepung, mentega, dan topping kualitas grade A.
           </p>
         </div>
@@ -35,7 +35,7 @@ export default function Features() {
             <ClockIcon className="w-10 h-10" />
           </div>
           <h3 className="text-xl font-bold mb-2">Fresh Daily</h3>
-          <p className="text-slate-600 dark:text-slate-400">
+          <p className="text-slate-700 dark:text-slate-400">
             Selalu segar dari oven kami, menjamin kelembutan tekstur hingga ke tangan Anda.
           </p>
         </div>
