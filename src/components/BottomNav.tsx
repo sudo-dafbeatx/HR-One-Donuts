@@ -6,17 +6,46 @@ import {
   HomeIcon, 
   ShoppingBagIcon, 
   InformationCircleIcon,
-  QuestionMarkCircleIcon
+  QuestionMarkCircleIcon,
+  UserCircleIcon
 } from "@heroicons/react/24/outline";
 import { 
   HomeIcon as HomeIconSolid, 
   ShoppingBagIcon as ShoppingBagIconSolid,
   InformationCircleIcon as InformationCircleIconSolid,
-  QuestionMarkCircleIcon as QuestionMarkCircleIconSolid
+  QuestionMarkCircleIcon as QuestionMarkCircleIconSolid,
+  UserCircleIcon as UserCircleIconSolid
 } from "@heroicons/react/24/solid";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const [profileLink, setProfileLink] = useState("/login");
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile?.role === 'admin') {
+          setProfileLink('/admin');
+        } else {
+          setProfileLink('/profile');
+        }
+      } else {
+        setProfileLink('/login');
+      }
+    };
+
+    checkUser();
+  }, [supabase]);
 
   const navItems = [
     { 
@@ -33,15 +62,21 @@ export default function BottomNav() {
     },
     { 
       label: "Tentang", 
-      href: "#about", 
+      href: "/#about", 
       icon: InformationCircleIcon, 
       activeIcon: InformationCircleIconSolid 
     },
     { 
       label: "Cara Pesan", 
-      href: "#how-to-order", 
+      href: "/#how-to-order", 
       icon: QuestionMarkCircleIcon, 
       activeIcon: QuestionMarkCircleIconSolid 
+    },
+    { 
+      label: "Akun", 
+      href: profileLink, 
+      icon: UserCircleIcon, 
+      activeIcon: UserCircleIconSolid 
     },
   ];
 
