@@ -12,12 +12,20 @@ export async function uploadImage(formData: FormData) {
   
   const supabase = await createServerSupabaseClient();
   
-  // Check authentication
+  // Check authentication & role
   const { data: { user } } = await supabase.auth.getUser();
-  console.log('👤 [uploadImage] User:', user ? `${user.id} (${user.email})` : 'NOT AUTHENTICATED');
-  
   if (!user) {
-    throw new Error('Unauthorized: Anda harus login sebagai admin');
+    throw new Error('Unauthorized');
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.role !== 'admin') {
+    throw new Error('Forbidden: Akses ditolak. Hanya admin yang boleh upload gambar.');
   }
   
   const file = formData.get('file') as File;
@@ -109,6 +117,16 @@ export async function deleteImage(filePath: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     throw new Error('Unauthorized');
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.role !== 'admin') {
+    throw new Error('Forbidden');
   }
   
   const { error } = await supabase.storage

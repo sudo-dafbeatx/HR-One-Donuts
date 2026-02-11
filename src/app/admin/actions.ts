@@ -4,9 +4,27 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { HeroData, Product, Reason } from '@/types/cms';
 
+// Helper to verify admin role
+async function checkAdmin() {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Unauthorized');
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.role !== 'admin') {
+    throw new Error('Forbidden: Admin access only');
+  }
+  return supabase;
+}
+
 // --- Hero Actions ---
 export async function updateHero(data: HeroData) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await checkAdmin();
   
   // First, check if a hero record exists
   const { data: existing } = await supabase
@@ -39,7 +57,7 @@ export async function updateHero(data: HeroData) {
 
 // --- Product Actions ---
 export async function saveProduct(data: Partial<Product>) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await checkAdmin();
   
   // Basic validation for mandatory fields
   if (!data.name || data.price === undefined || data.price < 0) {
@@ -70,7 +88,7 @@ export async function saveProduct(data: Partial<Product>) {
 }
 
 export async function deleteProduct(id: string) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await checkAdmin();
   
   const { error } = await supabase
     .from('products')
@@ -86,7 +104,7 @@ export async function deleteProduct(id: string) {
 
 // --- Reasons Actions ---
 export async function saveReason(data: Partial<Reason>) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await checkAdmin();
   
   // Generate ID for new reasons if not provided
   const reasonData = {
@@ -108,7 +126,7 @@ export async function saveReason(data: Partial<Reason>) {
 
 // --- Settings Actions ---
 export async function updateSettings(key: string, value: Record<string, unknown>) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = await checkAdmin();
   
   const { error } = await supabase
     .from('settings')

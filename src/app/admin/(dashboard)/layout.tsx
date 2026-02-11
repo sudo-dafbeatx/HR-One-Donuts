@@ -23,6 +23,17 @@ export default async function AdminLayout({
     redirect('/admin/login');
   }
 
+  // Check user role
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.role !== 'admin') {
+    redirect('/');
+  }
+
   const handleSignOut = async () => {
     'use server';
     const supabase = await createServerSupabaseClient();
