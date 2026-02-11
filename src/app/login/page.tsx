@@ -77,7 +77,8 @@ function LoginContent() {
       });
 
       if (otpError) {
-        setError(otpError.message);
+        console.error('OTP Send Error:', otpError);
+        setError(`Gagal mengirim kode: ${otpError.message}. (Tips: Cek apakah limit pengiriman email Supabase sudah habis, biasanya 3 email/jam jika belum pakai custom SMTP)`);
         setLoading(false);
       } else {
         setOtpStep(true);
@@ -118,28 +119,19 @@ function LoginContent() {
       return;
     }
 
-    const { data: { user }, error: verifyError } = await supabase.auth.verifyOtp({
+    // Use 'email' type for OTP codes sent via signInWithOtp
+    const { data: authData, error: verifyError } = await supabase.auth.verifyOtp({
       email,
       token,
-      type: 'signup'
+      type: 'email'
     });
 
     if (verifyError) {
-      // Try 'signin' type if signup fails (case for existing users trying to log in with OTP)
-      const { data: loginData, error: loginError } = await supabase.auth.verifyOtp({
-        email,
-        token,
-        type: 'magiclink' // Supabase passwordless also uses magiclink or signin
-      });
-
-      if (loginError) {
-        setError('Kode verifikasi salah atau kedaluwarsa.');
-        setLoading(false);
-      } else if (loginData.user) {
-        finishOtpLogin(loginData.user.id);
-      }
-    } else if (user) {
-      finishOtpLogin(user.id);
+      console.error('OTP Verify Error:', verifyError);
+      setError('Kode verifikasi salah atau sudah kedaluwarsa. Silakan coba lagi.');
+      setLoading(false);
+    } else if (authData.user) {
+      finishOtpLogin(authData.user.id);
     }
   };
 
