@@ -6,18 +6,25 @@ import { AdminCard } from '@/components/admin/CMS/Shared';
 export default async function ContentPage() {
   const supabase = await createServerSupabaseClient();
   
-  // Fetch hero data
-  const { data: hero } = await supabase
+  // Fetch hero data - using maybeSingle to avoid error if empty
+  const { data: hero, error: heroError } = await supabase
     .from('hero')
     .select('*')
-    .limit(1)
-    .single();
+    .maybeSingle();
+
+  if (heroError && heroError.code !== 'PGRST116') {
+    console.error('Error fetching hero:', heroError);
+  }
 
   // Fetch reasons
-  const { data: reasons } = await supabase
+  const { data: reasons, error: reasonsError } = await supabase
     .from('reasons')
     .select('*')
     .order('order_index', { ascending: true });
+
+  if (reasonsError) {
+    console.error('Error fetching reasons:', reasonsError);
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
