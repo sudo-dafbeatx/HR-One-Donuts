@@ -41,10 +41,17 @@ export async function updateHero(data: HeroData) {
 export async function saveProduct(data: Partial<Product>) {
   const supabase = await createServerSupabaseClient();
   
-  // Generate ID for new products if not provided
+  // Basic validation for mandatory fields
+  if (!data.name || data.price === undefined || data.price < 0) {
+    throw new Error('Name and a valid price are required');
+  }
+
   const productData = {
     ...data,
     id: data.id || crypto.randomUUID(),
+    category: data.category || 'Uncategorized',
+    stock: data.stock ?? 0,
+    is_active: data.is_active ?? true,
     updated_at: new Date().toISOString()
   };
   
@@ -54,9 +61,9 @@ export async function saveProduct(data: Partial<Product>) {
 
   if (error) throw new Error(error.message);
   
+  revalidatePath('/');
   revalidatePath('/catalog');
   revalidatePath('/admin/products');
-  revalidatePath('/admin/(dashboard)/content');
   return { success: true };
 }
 

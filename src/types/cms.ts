@@ -15,9 +15,13 @@ export interface Product {
   price: number;
   description?: string;
   image_url?: string;
-  tag?: string;
-  category?: string;
+  category: string;
+  stock: number;
   is_active: boolean;
+  variants?: {
+    name: string;
+    price_adjustment: number;
+  }[];
   created_at?: string;
   updated_at?: string;
 }

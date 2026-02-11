@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { Product } from '@/types/cms';
-import { AdminCard, AdminInput, AdminButton } from './Shared';
+import { AdminInput, AdminButton } from './Shared';
 import { saveProduct, deleteProduct } from '@/app/admin/actions';
 import { TrashIcon, PencilIcon, PlusIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import ImageUploader from '../ImageUploader';
+import Image from 'next/image';
 
 export default function ProductManager({ initialProducts }: { initialProducts: Product[] }) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -19,9 +20,8 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
     setLoading(true);
     try {
       await saveProduct(editingProduct);
-      // Refresh list would be better, but for now simple local update or reload
       window.location.reload();
-    } catch (error) {
+    } catch (_error) {
       alert('Error saving product');
     } finally {
       setLoading(false);
@@ -33,16 +33,35 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
     try {
       await deleteProduct(id);
       setProducts(products.filter(p => p.id !== id));
-    } catch (error) {
+    } catch (_error) {
       alert('Error deleting product');
     }
+  };
+
+  const addVariant = () => {
+    if (!editingProduct) return;
+    const variants = [...(editingProduct.variants || []), { name: '', price_adjustment: 0 }];
+    setEditingProduct({ ...editingProduct, variants });
+  };
+
+  const removeVariant = (index: number) => {
+    if (!editingProduct || !editingProduct.variants) return;
+    const variants = editingProduct.variants.filter((_, i) => i !== index);
+    setEditingProduct({ ...editingProduct, variants });
+  };
+
+  const updateVariant = (index: number, field: string, value: string | number) => {
+    if (!editingProduct || !editingProduct.variants) return;
+    const variants = [...editingProduct.variants];
+    variants[index] = { ...variants[index], [field]: value };
+    setEditingProduct({ ...editingProduct, variants });
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-black text-heading">Menu Produk</h2>
-        <AdminButton onClick={() => setEditingProduct({ name: '', price: 0, is_active: true })}>
+        <AdminButton onClick={() => setEditingProduct({ name: '', price: 0, category: '', stock: 0, is_active: true, variants: [] })}>
           <PlusIcon className="w-5 h-5" />
           Tambah Produk
         </AdminButton>
@@ -50,10 +69,10 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
-          <div key={product.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group">
+          <div key={product.id} className={`bg-white rounded-2xl border ${product.is_active ? 'border-slate-200' : 'border-red-100 opacity-75'} shadow-sm overflow-hidden group`}>
             <div className="aspect-square bg-slate-100 relative overflow-hidden">
               {product.image_url ? (
-                <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                <Image src={product.image_url} alt={product.name} fill className="object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-slate-400">
                   <PhotoIcon className="w-12 h-12" />
@@ -73,18 +92,26 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
                   <TrashIcon className="w-4 h-4" />
                 </button>
               </div>
+              {!product.is_active && (
+                <div className="absolute top-3 left-3 px-2 py-1 bg-red-500 text-white text-[10px] font-black rounded uppercase">
+                  Nonaktif
+                </div>
+              )}
             </div>
             <div className="p-4">
               <div className="flex justify-between items-start mb-1">
                 <h4 className="font-bold text-slate-800">{product.name}</h4>
-                <span className="text-primary font-black text-sm">Rp {product.price.toLocaleString()}</span>
+                <div className="text-right">
+                  <p className="text-primary font-black text-sm">Rp {product.price.toLocaleString()}</p>
+                  <p className="text-[10px] font-bold text-slate-400">Stok: {product.stock}</p>
+                </div>
               </div>
-              <p className="text-xs text-slate-500 line-clamp-2">{product.description}</p>
-              {product.tag && (
-                <span className="mt-3 inline-block px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase tracking-wider">
-                  {product.tag}
+              <p className="text-xs text-slate-500 line-clamp-2 mb-2">{product.description}</p>
+              <div className="flex gap-2">
+                <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded uppercase tracking-wider">
+                  {product.category || 'No Category'}
                 </span>
-              )}
+              </div>
             </div>
           </div>
         ))}
@@ -92,9 +119,9 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
 
       {/* Edit Modal / Form overlay */}
       {editingProduct && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden scale-in-center">
-            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+          <div className="my-8 w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden scale-in-center">
+            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <h3 className="text-xl font-black text-heading">
                 {editingProduct.id ? 'Edit Produk' : 'Tambah Produk Baru'}
               </h3>
@@ -102,49 +129,124 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
                 onClick={() => setEditingProduct(null)}
                 className="text-slate-400 hover:text-slate-600 transition-colors"
               >
-                <span className="material-symbols-outlined">close</span>
+                <TrashIcon className="w-6 h-6 rotate-45" />
               </button>
             </div>
             
-            <form onSubmit={handleSave} className="p-8 space-y-4">
-              <AdminInput 
-                label="Nama Produk" 
-                value={editingProduct.name} 
-                onChange={e => setEditingProduct({...editingProduct, name: e.target.value})}
-                required 
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <AdminInput 
-                  label="Harga (Rp)" 
-                  type="number"
-                  value={editingProduct.price} 
-                  onChange={e => setEditingProduct({...editingProduct, price: Number(e.target.value)})}
-                  required 
-                />
-                <AdminInput 
-                  label="Tag (opsional)" 
-                  placeholder="Terlaris, Baru, dll"
-                  value={editingProduct.tag || ''} 
-                  onChange={e => setEditingProduct({...editingProduct, tag: e.target.value})}
-                />
+            <form onSubmit={handleSave} className="p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <AdminInput 
+                    label="Nama Produk *" 
+                    value={editingProduct.name} 
+                    onChange={e => setEditingProduct({...editingProduct, name: e.target.value})}
+                    required 
+                  />
+                  <AdminInput 
+                    label="Kategori" 
+                    placeholder="Donat Coklat, Donat Keju, dll"
+                    value={editingProduct.category || ''} 
+                    onChange={e => setEditingProduct({...editingProduct, category: e.target.value})}
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <AdminInput 
+                      label="Harga Dasar *" 
+                      type="number"
+                      value={editingProduct.price} 
+                      onChange={e => setEditingProduct({...editingProduct, price: Number(e.target.value)})}
+                      required 
+                    />
+                    <AdminInput 
+                      label="Stok" 
+                      type="number"
+                      value={editingProduct.stock || 0} 
+                      onChange={e => setEditingProduct({...editingProduct, stock: Number(e.target.value)})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <label className="block text-sm font-semibold text-slate-700">Status Produk</label>
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className={`text-xs font-bold uppercase transition-colors ${editingProduct.is_active ? 'text-primary' : 'text-slate-400'}`}>
+                      {editingProduct.is_active ? 'Aktif' : 'Nonaktif'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setEditingProduct({...editingProduct, is_active: !editingProduct.is_active})}
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${editingProduct.is_active ? 'bg-primary' : 'bg-slate-300'}`}
+                    >
+                      <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${editingProduct.is_active ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </button>
+                  </div>
+
+                  <ImageUploader
+                    currentImage={editingProduct.image_url}
+                    onImageUploaded={(url) => {
+                      setEditingProduct({...editingProduct, image_url: url});
+                    }}
+                    label="Foto Produk"
+                    aspectRatio="square"
+                  />
+                </div>
               </div>
+
               <AdminInput 
-                label="Deskripsi" 
+                label="Deskripsi Singkat" 
                 multiline 
-                rows={3}
+                rows={2}
                 value={editingProduct.description || ''} 
                 onChange={e => setEditingProduct({...editingProduct, description: e.target.value})}
               />
-              <ImageUploader
-                currentImage={editingProduct.image_url}
-                onImageUploaded={(url) => {
-                  setEditingProduct({...editingProduct, image_url: url});
-                }}
-                label="Product Image"
-                aspectRatio="square"
-              />
+
+              {/* Variants Section */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <label className="text-sm font-semibold text-slate-700">Varian</label>
+                  <button 
+                    type="button" 
+                    onClick={addVariant}
+                    className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+                  >
+                    <PlusIcon className="w-3 h-3" /> Tambah Varian
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {editingProduct.variants?.map((variant, index) => (
+                    <div key={index} className="flex gap-2 items-end">
+                      <div className="flex-1">
+                        <AdminInput 
+                          label="" 
+                          placeholder="Nama Varian (Coklat, Keju...)"
+                          value={variant.name} 
+                          onChange={e => updateVariant(index, 'name', e.target.value)}
+                        />
+                      </div>
+                      <div className="w-32">
+                        <AdminInput 
+                          label="" 
+                          type="number"
+                          placeholder="+ Harga"
+                          value={variant.price_adjustment} 
+                          onChange={e => updateVariant(index, 'price_adjustment', Number(e.target.value))}
+                        />
+                      </div>
+                      <button 
+                        type="button" 
+                        onClick={() => removeVariant(index)}
+                        className="p-2.5 mb-1.5 text-red-400 hover:text-red-600 bg-red-50 rounded-lg transition-colors"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                  {(!editingProduct.variants || editingProduct.variants.length === 0) && (
+                    <p className="text-xs text-slate-400 italic">Belum ada varian produk.</p>
+                  )}
+                </div>
+              </div>
               
-              <div className="flex justify-end gap-3 pt-6">
+              <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
                 <AdminButton type="button" variant="secondary" onClick={() => setEditingProduct(null)}>
                   Batal
                 </AdminButton>

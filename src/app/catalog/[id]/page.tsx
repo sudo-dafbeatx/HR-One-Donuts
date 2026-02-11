@@ -1,112 +1,75 @@
 import Link from "next/link";
-import CatalogNavbar from "@/components/catalog/Navbar";
+import Navbar from "@/components/Navbar";
 import ProductGallery from "@/components/detail/Gallery";
 import ProductInfo from "@/components/detail/Info";
-import ProductDetailFeatures from "@/components/detail/Features";
 import Footer from "@/components/Footer";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { notFound } from "next/navigation";
 
-// This is required for static export if you use it, otherwise dynamic is fine
-export function generateStaticParams() {
-  return [
-    { id: "classic-glazed" },
-    { id: "chocolate-dream" },
-    { id: "lotus-biscoff" },
-    { id: "strawberry-sparkle" },
-    { id: "pistachio-perfection" },
-    { id: "nutella-heaven" },
-    { id: "blueberry-blast" },
-    { id: "cinnamon-sugar" },
-  ];
-}
+// Use dynamic rendering to ensure we always get the latest data
+export const dynamic = 'force-dynamic';
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: productId } = await params;
-  console.log("Viewing product:", productId);
+  const supabase = await createServerSupabaseClient();
 
-  // Simple lookup for demo purposes
-  const productPrices: Record<string, number> = {
-    "classic-glazed": 12000,
-    "chocolate-dream": 15000,
-    "lotus-biscoff": 18000,
-    "strawberry-sparkle": 15000,
-    "pistachio-perfection": 22000,
-    "nutella-heaven": 20000,
-    "blueberry-blast": 15000,
-    "cinnamon-sugar": 12000,
-  };
+  const { data: product, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', productId)
+    .single();
 
-  const productNames: Record<string, string> = {
-    "classic-glazed": "Glazed Klasik",
-    "chocolate-dream": "Cokelat Impian",
-    "lotus-biscoff": "Lotus Biscoff",
-    "strawberry-sparkle": "Kilau Stroberi",
-    "pistachio-perfection": "Pistachio Sempurna",
-    "nutella-heaven": "Nutella Heaven",
-    "blueberry-blast": "Ledakan Blueberry",
-    "cinnamon-sugar": "Gula Kayu Manis",
-  };
+  if (error || !product) {
+    return notFound();
+  }
 
-  const name = productNames[productId] || "Strawberry Dream Glazed";
-  const price = productPrices[productId] || 15000;
-
-  // Mock product data – in a real app, you'd fetch this based on productId
-  const product = {
-    id: productId,
-    name: name,
-    price: price,
-    description: `Donat ragi buatan tangan yang empuk (${name}) dibalut dalam glaze madu khas kami dan ditaburi bahan-bahan premium. Setiap gigitan adalah keseimbangan rasa manis, cita rasa mewah, dan tekstur yang lembut lumer di mulut dari resep rahasia keluarga kami.`,
-    reviews: 48,
-    images: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCnobsGwq4QbPlht6jD-95PfuFMS55s0j6zSoLBd7_Ijl6z7ZYQyvibbbONOxnzt5M4HVhYCLlkA0VwzEMH_V2e2HeDFBg6zWqHgTOgOWZXtK1D1MrBV8b4Bd0Ft9zdV7K0SNxGLDExZnxmuWoxFV-omInyHIbJUUZg_4Vucl8cxL1k5qV3BnPduPdrfPsMeZMI-bJAbVB7ZOadL-z3zw2cV7kMx-ohbWv3RSdAr3sSEh7SscwzhdZzpqZWn17BIhzHNFi0ShYnexXi",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuC9IxhAli4I-TMjxE692bAf8q9XdhZ_4yfNnCPitnKGJKHkLR0_Y-kf8uY5sdjRrIgfsGEMfphCkIGgeWESlOzF9t-z9LB8Nm3bGY6lPHRMV73fn-KAWVWXsZHSpGeqUN3OWFFuNyxwOROPlZn4xNLAQN001HvvEa-Fl9g59dv5jO2SZSOs8gf85FyMOBcaSXZxwDEW7BRBT0NTB7mPFIcne93b2l-rtv-ux3EjXNX9UdMby8oH_qDMrB3rMYSQZ6bes0Kymbf4apQ1",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDPaXUDhSNr1X7zbmQ_E0Oq8Xp8ukGARa58dQdt_frYmlZiLLDsvxHiMk9_LG2EaBpCqQf76d7yBeVa3zogMhqUmHZoHv_ROgGDPQB1R-a5ezZAdWKwLffIikZWEolMQH2wYKRGNOAqwOYK1mWdk1Rjnih3EMuvzTedN8iVxi0SuVOIv9FARN0YuJ9PKyZOca4tbWsxcloF-IY1EMvQToCM_g0xF8xyFryRz7OQ0T3QGxUhveZwH5gejnMGgG2QdAirdYnDQdzw5zpf",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBRDLo54-4k0wSoBME_wZUa6OCPHPeasMDWzAsZdE2onEFhaLo1EdXIn4yQzKY5Z6t4QM9lkOimBJp1OV0-QaN1ZTlmHx_emzV9s-b16mR6V0b3mZ0LTHsRmvqaw8uqznB9-vVzfI6lPRmc2y3hsQIyO1lnadUHaWrdv0HiYbNYCTuh0rJ6vqJSS_WXtHL_YBq3NWP5f1h_Hy1USWYRQTUIU-IcQ4R5OyPJim6wJDb_l5BHr4aKRuBQj63xwxTVCY9aQx2V6UEfUCcl",
-    ]
-  };
+  // Fallback for missing image
+  const displayImages = product.image_url ? [product.image_url] : [];
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-      <CatalogNavbar />
+    <div className="relative flex min-h-screen w-full flex-col bg-white">
+      <Navbar />
       
-      <main className="flex-1 flex flex-col items-center py-8 px-6 lg:px-40">
+      <main className="flex-1 flex flex-col items-center py-8 px-4 md:px-8">
         <div className="max-w-[1200px] w-full">
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 mb-8 text-sm font-medium">
-            <Link href="/" className="text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">
+            <Link href="/" className="text-slate-500 hover:text-primary transition-colors">
               Beranda
             </Link>
-            <span className="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
-            <Link href="/catalog" className="dark:text-slate-400 hover:text-primary transition-colors">
-              Katalog
-            </Link>
-            <span className="material-symbols-outlined text-slate-400 text-sm">chevron_right</span>
-            <span className="text-primary truncate max-w-[200px] md:max-w-none">{product.name}</span>
+            <span className="text-slate-400">/</span>
+            <span className="text-slate-400 uppercase tracking-widest text-[10px]">{product.category}</span>
+            <span className="text-slate-400">/</span>
+            <span className="text-primary font-bold truncate max-w-[200px]">{product.name}</span>
           </nav>
  
           {/* Product Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            <ProductGallery images={product.images} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+            <ProductGallery images={displayImages} />
             <ProductInfo 
               id={product.id}
               name={product.name} 
               price={product.price} 
-              description={product.description} 
-              reviews={product.reviews} 
-              image={product.images[0]}
+              description={product.description || ""} 
+              image={product.image_url || ""}
+              stock={product.stock}
+              variants={product.variants || []}
             />
           </div>
-
-          <ProductDetailFeatures />
         </div>
       </main>
 
       {/* Floating WhatsApp Action */}
       <a
-        href="#"
-        className="fixed bottom-8 right-8 z-50 flex items-center gap-3 bg-[#25D366] text-white px-6 py-4 rounded-full shadow-2xl hover:scale-105 transition-transform duration-300"
+        href={`https://wa.me/628123456789?text=Halo HR-One Donuts, saya tertarik dengan ${product.name}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white px-6 py-4 rounded-full shadow-2xl hover:scale-105 transition-transform"
       >
         <span className="font-bold flex items-center gap-2">
-           <span className="material-symbols-outlined">chat</span>
+           <svg className="size-5 fill-current" viewBox="0 0 24 24">
+             <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+           </svg>
            Chat untuk Pesan
         </span>
       </a>

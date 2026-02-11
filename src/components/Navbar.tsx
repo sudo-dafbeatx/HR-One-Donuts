@@ -3,55 +3,51 @@
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
-import { ShoppingBagIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { ShoppingBagIcon, UserCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar() {
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(timer);
+    setMounted(true);
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-header-bg/80 backdrop-blur-xl px-6 md:px-20 lg:px-40 py-5 transition-all duration-300 border-b border-border">
-      <div className="flex items-center justify-between whitespace-nowrap">
-        <div className="flex items-center gap-12">
-          <Link href="/" className="flex items-center gap-3 text-primary group">
-            <div className="size-10 group-hover:rotate-12 transition-transform duration-300">
-              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z"
-                  fill="currentColor"
-                ></path>
-              </svg>
-            </div>
-            <h2 className="text-heading text-2xl font-black leading-tight tracking-tighter">
-              HR-One<span className="text-primary">.</span>
-            </h2>
-          </Link>
-          <nav className="hidden lg:flex items-center gap-10">
-            {['Beranda', 'Menu', 'Tentang Kami', 'Cara Pesan'].map((item) => (
-              <Link 
-                key={item}
-                href={item === 'Beranda' ? '/' : item === 'Menu' ? '/catalog' : `/#${item.toLowerCase().replace(' ', '-')}`} 
-                className="text-sm font-bold text-subheading hover:text-primary transition-all relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-primary after:transition-all"
-              >
-                {item}
-              </Link>
-            ))}
-          </nav>
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 px-4 md:px-8 py-3 md:py-4 flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-4 md:gap-8">
+        {/* Brand & Tagline */}
+        <Link href="/" className="flex flex-col shrink-0">
+          <h1 className="text-primary text-xl md:text-2xl font-black leading-tight tracking-tighter">
+            HR-One Donuts
+          </h1>
+          <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest -mt-1">
+            Fresh and Smooth
+          </p>
+        </Link>
+
+        {/* Search Bar - Hidden on Mobile, shown in second row below */}
+        <div className="hidden md:flex flex-1 max-w-2xl relative">
+          <input
+            type="text"
+            placeholder="Cari donat favoritmu..."
+            className="w-full h-11 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 size-5" />
         </div>
-        
-        <div className="flex items-center gap-3 md:gap-5">
+
+        {/* Right Icons */}
+        <div className="flex items-center gap-2 md:gap-4 shrink-0">
           <button 
             onClick={() => setIsCartOpen(true)}
-            className="relative flex items-center justify-center p-3 rounded-2xl bg-card-bg text-subheading border border-border hover:border-primary/50 hover:text-primary transition-all shadow-sm"
+            className="group relative p-2.5 rounded-xl text-slate-600 hover:text-primary hover:bg-primary/5 transition-all"
           >
-            <ShoppingBagIcon className="w-6 h-6" />
+            <ShoppingBagIcon className="size-6" />
             <span 
-              className={`absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[11px] font-black text-white shadow-lg border-2 border-white transition-all duration-500 ${
+              className={`absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-black text-white shadow-lg border-2 border-white transition-all duration-300 ${
                 !mounted || totalItems === 0 ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
               }`}
             >
@@ -61,16 +57,24 @@ export default function Navbar() {
           
           <Link
             href="/admin/login"
-            className="flex items-center justify-center p-3 rounded-2xl bg-card-bg text-subheading border border-border hover:border-primary/50 hover:text-primary transition-all shadow-sm"
+            className="p-2.5 rounded-xl text-slate-600 hover:text-primary hover:bg-primary/5 transition-all"
             title="Admin Login"
           >
-            <UserCircleIcon className="w-6 h-6" />
+            <UserCircleIcon className="size-6" />
           </Link>
-
-          <button className="hidden md:flex items-center justify-center rounded-2xl h-12 px-7 bg-primary text-white text-sm font-black shadow-xl shadow-primary/25 hover:bg-primary hover:scale-105 active:scale-95 transition-all">
-            Pesan via WhatsApp
-          </button>
         </div>
+      </div>
+
+      {/* Mobile Search Bar - Visible only on Mobile */}
+      <div className="md:hidden relative">
+        <input
+          type="text"
+          placeholder="Cari donat favoritmu..."
+          className="w-full h-10 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-xs"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 size-4" />
       </div>
     </header>
   );
