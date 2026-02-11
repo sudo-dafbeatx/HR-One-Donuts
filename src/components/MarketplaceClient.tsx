@@ -6,6 +6,7 @@ import Promotions from './Promotions';
 import CategoryFilter, { FilterValue } from './CategoryFilter';
 import Image from 'next/image';
 import Link from 'next/link';
+import { isPromoActive, getEffectivePrice } from '@/lib/product-utils';
 
 interface MarketplaceClientProps {
   initialProducts: Product[];
@@ -18,7 +19,7 @@ export default function MarketplaceClient({ initialProducts }: MarketplaceClient
     let result = [...initialProducts];
     
     if (filter.type === 'sale_type' && filter.value) {
-      result = result.filter(p => p.sale_type === filter.value);
+      result = result.filter(p => p.sale_type === filter.value && isPromoActive(p));
       // Flash sale products at the top
       if (filter.value === 'flash_sale') {
         result.sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0));
@@ -55,10 +56,9 @@ export default function MarketplaceClient({ initialProducts }: MarketplaceClient
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {filteredProducts.map((product) => {
-            const hasDiscount = product.discount_percent && product.discount_percent > 0;
-            const discountedPrice = hasDiscount 
-              ? product.price * (1 - (product.discount_percent || 0) / 100) 
-              : product.price;
+            const hasActivePromo = isPromoActive(product);
+            const hasDiscount = hasActivePromo && product.discount_percent && product.discount_percent > 0;
+            const discountedPrice = getEffectivePrice(product);
 
             return (
               <div 
@@ -67,7 +67,7 @@ export default function MarketplaceClient({ initialProducts }: MarketplaceClient
               >
                 {/* Badges */}
                 <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
-                  {product.sale_type !== 'normal' && (
+                  {hasActivePromo && (
                     <span className="bg-primary text-white text-[8px] md:text-[10px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm">
                       {product.sale_type.replace('_', ' ')}
                     </span>

@@ -1,24 +1,29 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { Product } from '@/types/cms';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { isPromoActive } from '@/lib/product-utils';
 
-interface PromotionBannerProps {
+interface PromotionsProps {
   products: Product[];
-  onSelectSaleType: (type: string | null) => void;
+  onSelectSaleType: (type: 'flash_sale' | 'jumat_berkah' | 'takjil') => void;
 }
 
-export default function Promotions({ products, onSelectSaleType }: PromotionBannerProps) {
+export default function Promotions({ products, onSelectSaleType }: PromotionsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   
+  const promoProducts = useMemo(() => {
+    return products.filter(p => isPromoActive(p));
+  }, [products]);
+
   // Group products by sale_type to identify active events
   const activeEvents = [
     { type: 'flash_sale', title: 'Flash Sale Special', icon: '⚡' },
     { type: 'jumat_berkah', title: 'Jumat Berkah', icon: '🙏' },
     { type: 'takjil', title: 'Menu Takjil Ramadan', icon: '🌙' },
   ].filter(event => 
-    products.some(p => p.sale_type === event.type && p.is_active)
+    promoProducts.some(p => p.sale_type === event.type)
   );
 
   const scroll = (direction: 'left' | 'right') => {
@@ -69,12 +74,12 @@ export default function Promotions({ products, onSelectSaleType }: PromotionBann
                 <h2 className="text-2xl md:text-3xl font-black mb-2">{event.title}</h2>
                 <p className="text-white/80 text-sm font-medium mb-6 max-w-[280px]"> Nikmati penawaran spesial {event.title} hanya untuk waktu terbatas!</p>
 
-                <button 
-                  onClick={() => onSelectSaleType(event.type)}
-                  className="mt-auto w-fit bg-white text-primary px-6 py-3 rounded-xl font-black text-sm hover:bg-opacity-90 transition-all flex items-center gap-2"
+                <button
+                  key={event.type}
+                  onClick={() => onSelectSaleType(event.type as 'flash_sale' | 'jumat_berkah' | 'takjil')}
+                  className="mt-4 px-6 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg font-bold text-sm transition-colors backdrop-blur-sm border border-white/30 active:scale-95"
                 >
                   Lihat Promo
-                  <ChevronRightIcon className="size-4" />
                 </button>
               </div>
             </div>

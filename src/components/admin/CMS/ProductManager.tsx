@@ -7,6 +7,7 @@ import { saveProduct, deleteProduct } from '@/app/admin/actions';
 import { TrashIcon, PencilIcon, PlusIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import ImageUploader from '../ImageUploader';
 import Image from 'next/image';
+import { isPromoActive } from '@/lib/product-utils';
 
 export default function ProductManager({ initialProducts }: { initialProducts: Product[] }) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
@@ -21,7 +22,7 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
     try {
       await saveProduct(editingProduct);
       window.location.reload();
-    } catch (_error) {
+    } catch (_) {
       alert('Error saving product');
     } finally {
       setLoading(false);
@@ -33,7 +34,7 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
     try {
       await deleteProduct(id);
       setProducts(products.filter(p => p.id !== id));
-    } catch (_error) {
+    } catch (_) {
       alert('Error deleting product');
     }
   };
@@ -69,7 +70,7 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
-          <div key={product.id} className={`bg-white rounded-2xl border ${product.is_active ? 'border-slate-200' : 'border-red-100 opacity-75'} shadow-sm overflow-hidden group`}>
+          <div key={product.id} className={`bg-white rounded-2xl border ${product.is_active ? 'border-slate-200' : 'border-red-100 opacity-75'} shadow-sm overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300`}>
             <div className="aspect-square bg-slate-100 relative overflow-hidden">
               {product.image_url ? (
                 <Image src={product.image_url} alt={product.name} fill className="object-cover" />
@@ -115,8 +116,9 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
                   {product.package_type}
                 </span>
                 {product.sale_type !== 'normal' && (
-                  <span className="px-2 py-0.5 bg-primary text-white text-[10px] font-bold rounded uppercase tracking-wider">
+                  <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider ${isPromoActive(product) ? 'bg-primary text-white' : 'bg-slate-200 text-slate-500'}`}>
                     {product.sale_type.replace('_', ' ')}
+                    {!isPromoActive(product) && ' (Inactive)'}
                   </span>
                 )}
               </div>

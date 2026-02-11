@@ -1,4 +1,17 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { 
+  ShoppingBagIcon, 
+  CurrencyDollarIcon, 
+  ArchiveBoxIcon, 
+  CheckBadgeIcon, 
+  ExclamationTriangleIcon,
+  PlusIcon,
+  ListBulletIcon,
+  ClockIcon
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Product } from '@/types/cms';
 
 interface OrderItem {
   product_id: string;
@@ -19,19 +32,25 @@ interface Order {
 interface StatsCardProps {
   title: string;
   value: string | number;
-  icon?: React.ReactNode;
-  trend?: string;
+  icon: React.ElementType;
+  color: string;
+  description?: string;
 }
 
-function StatsCard({ title, value, icon, trend }: StatsCardProps) {
+function StatsCard({ title, value, icon: Icon, color, description }: StatsCardProps) {
   return (
-    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-      <div className="flex items-start justify-between mb-4">
-        <h3 className="text-sm font-medium text-slate-600">{title}</h3>
-        {icon && <div className="text-primary">{icon}</div>}
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
+      <div className={`h-1.5 w-full ${color}`} />
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className={`p-2 rounded-lg bg-slate-50 text-slate-600 group-hover:scale-110 transition-transform`}>
+            <Icon className="size-6" />
+          </div>
+          <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">{title}</h3>
+        </div>
+        <p className="text-4xl font-black text-slate-800 tracking-tight mb-1">{value}</p>
+        {description && <p className="text-xs font-medium text-slate-500">{description}</p>}
       </div>
-      <p className="text-3xl font-black text-heading">{value}</p>
-      {trend && <p className="text-xs text-slate-500 mt-2">{trend}</p>}
     </div>
   );
 }
@@ -45,130 +64,194 @@ export default async function AdminDashboard() {
     .select('*')
     .order('created_at', { ascending: false });
 
+  // Fetch products for extra stats
+  const { data: productsData } = await supabase
+    .from('products')
+    .select('*');
+
   const orders = ordersData as Order[] | null;
+  const products = productsData as Product[] | null;
 
   // Calculate stats
   const totalOrders = orders?.length || 0;
   const totalRevenue = orders?.reduce((sum, o) => sum + (o.total_amount || 0), 0) || 0;
-  const totalItems = orders?.reduce((sum, o) => sum + (o.total_items || 0), 0) || 0;
-
-  // Get recent orders (last 10)
-  const recentOrders = orders?.slice(0, 10) || [];
-
-  // Calculate top products
-  const productSales: Record<string, { name: string; count: number; revenue: number }> = {};
+  const totalItemsSold = orders?.reduce((sum, o) => sum + (o.total_items || 0), 0) || 0;
   
-  orders?.forEach(order => {
-    if (order.items && Array.isArray(order.items)) {
-      order.items.forEach((item: OrderItem) => {
-        const productId = item.product_id || item.name;
-        if (!productSales[productId]) {
-          productSales[productId] = {
-            name: item.name,
-            count: 0,
-            revenue: 0
-          };
-        }
-        productSales[productId].count += item.quantity || 0;
-        productSales[productId].revenue += (item.price * item.quantity) || 0;
-      });
-    }
-  });
-
-  const topProducts = Object.entries(productSales)
-    .map(([id, data]) => ({ id, ...data }))
-    .sort((a, b) => b.count - a.count)
+  const activeProducts = products?.filter(p => p.is_active).length || 0;
+  const lowStockProducts = products?.filter(p => p.stock <= 5 && p.stock > 0).length || 0;
+  
+  // Get recently added products
+  const recentlyAddedProducts = [...(products || [])]
+    .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
     .slice(0, 5);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-black text-heading">Dashboard</h1>
-        <div className="text-sm text-slate-500">
-          {new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+    <div className="space-y-8 max-w-7xl mx-auto pb-20">
+      {/* Header section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-black text-slate-800 tracking-tight">Ringkasan Bisnis</h1>
+          <p className="text-slate-500 font-medium mt-1">
+            Selamat datang kembali! Ini yang terjadi dengan toko Anda hari ini.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link 
+            href="/admin/products"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-all text-sm shadow-sm"
+          >
+            <ListBulletIcon className="size-4" />
+            Kelola Produk
+          </Link>
+          <Link 
+            href="/admin/products"
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all text-sm shadow-lg shadow-primary/20"
+          >
+            <PlusIcon className="size-4" />
+            Tambah Produk
+          </Link>
         </div>
       </div>
 
       {ordersError && (
-        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-sm text-yellow-800">
-          <strong>Database belum setup:</strong> Tabel belum dibuat. Silakan buat tabel di Supabase SQL Editor.
+        <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-800 flex items-center gap-3">
+          <ExclamationTriangleIcon className="size-5 shrink-0" />
+          <p><strong>Koneksi Bermasalah:</strong> Pastikan tabel database sudah siap di Supabase.</p>
         </div>
       )}
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatsCard 
-          title="Total Pesanan" 
-          value={totalOrders}
-          trend="Semua waktu"
-        />
+      {/* Primary Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatsCard 
           title="Total Pendapatan" 
           value={`Rp ${totalRevenue.toLocaleString('id-ID')}`}
-          trend="Semua waktu"
+          icon={CurrencyDollarIcon}
+          color="bg-primary"
+          description="Total akumulasi semua pesanan"
         />
         <StatsCard 
-          title="Total Item Terjual" 
-          value={totalItems}
-          trend="Semua waktu"
+          title="Total Pesanan" 
+          value={totalOrders}
+          icon={ShoppingBagIcon}
+          color="bg-primary"
+          description="Jumlah paket yang telah dipesan"
+        />
+        <StatsCard 
+          title="Item Terjual" 
+          value={totalItemsSold}
+          icon={ArchiveBoxIcon}
+          color="bg-primary"
+          description="Total donat yang keluar dari dapur"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Products */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <h2 className="text-xl font-bold text-heading mb-4">Produk Terlaris</h2>
-          {topProducts.length > 0 ? (
-            <div className="space-y-3">
-              {topProducts.map((product, index) => (
-                <div key={product.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
-                      {index + 1}
+      {/* Secondary Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-2xl border border-blue-100 shadow-sm flex items-center gap-6 group hover:border-primary/30 transition-colors">
+          <div className="size-14 rounded-2xl bg-blue-50 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+            <CheckBadgeIcon className="size-8" />
+          </div>
+          <div>
+            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Produk Aktif</p>
+            <p className="text-3xl font-black text-slate-800">{activeProducts}</p>
+            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">Muncul di Katalog Publik</p>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-2xl border border-red-100 shadow-sm flex items-center gap-6 group hover:border-red-300 transition-colors">
+          <div className="size-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <ExclamationTriangleIcon className="size-8" />
+          </div>
+          <div>
+            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Stok Menipis</p>
+            <p className="text-3xl font-black text-red-600">{lowStockProducts}</p>
+            <p className="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tighter">Perlu Restock Segera!</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        {/* Recently Added Products */}
+        <div className="lg:col-span-3 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
+              <ClockIcon className="size-5 text-primary" />
+              Produk Terbaru
+            </h2>
+            <Link href="/admin/products" className="text-xs font-bold text-primary hover:underline uppercase tracking-widest">
+              Lihat Semua
+            </Link>
+          </div>
+          
+          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+            {recentlyAddedProducts.length > 0 ? (
+              <div className="divide-y divide-slate-100 text-sm">
+                {recentlyAddedProducts.map((product) => (
+                  <div key={product.id} className="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group">
+                    <div className="size-12 rounded-xl bg-slate-100 flex-shrink-0 relative overflow-hidden">
+                      {product.image_url ? (
+                        <Image src={product.image_url} alt={product.name} fill className="object-cover" />
+                      ) : (
+                        <div className="size-full flex items-center justify-center text-xl">🍩</div>
+                      )}
                     </div>
-                    <div>
-                      <p className="font-semibold text-slate-800">{product.name}</p>
-                      <p className="text-xs text-slate-500">
-                        Rp {product.revenue.toLocaleString('id-ID')}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-slate-800 truncate group-hover:text-primary transition-colors">{product.name}</p>
+                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{product.category}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-black text-slate-800">Rp {product.price.toLocaleString('id-ID')}</p>
+                      <p className={`text-[10px] font-black uppercase tracking-widest ${product.stock > 5 ? 'text-green-500' : 'text-red-500'}`}>
+                        Stok: {product.stock}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-primary">{product.count}</p>
-                    <p className="text-xs text-slate-500">terjual</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-slate-500 text-center py-8">Belum ada data penjualan</p>
-          )}
+                ))}
+              </div>
+            ) : (
+              <div className="p-12 text-center">
+                <div className="size-20 mx-auto bg-slate-50 rounded-full flex items-center justify-center text-4xl mb-4 border border-slate-100">🍩</div>
+                <p className="text-slate-800 font-black text-lg">Belum ada produk</p>
+                <p className="text-slate-500 text-sm mb-6">Mulai isi tokomu dengan donat-donat lezat.</p>
+                <Link 
+                  href="/admin/products"
+                  className="px-6 py-3 bg-primary text-white rounded-xl font-bold inline-flex items-center gap-2 shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all"
+                >
+                  <PlusIcon className="size-5" />
+                  Tambah Produk Pertama
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Recent Orders */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-          <h2 className="text-xl font-bold text-heading mb-4">Pesanan Terbaru</h2>
-          {recentOrders.length > 0 ? (
-            <div className="space-y-2 max-h-[400px] overflow-y-auto">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="p-3 border border-slate-100 rounded-lg hover:border-primary/30 transition-colors">
-                  <div className="flex justify-between items-start mb-1">
-                    <p className="text-xs text-slate-500">
-                      {new Date(order.created_at).toLocaleString('id-ID')}
-                    </p>
-                    <p className="text-sm font-bold text-primary">
-                      Rp {order.total_amount.toLocaleString('id-ID')}
-                    </p>
-                  </div>
-                  <p className="text-sm text-slate-700">
-                    {order.total_items} item
+        {/* Top Product Summary */}
+        <div className="lg:col-span-2 space-y-4">
+          <h2 className="text-xl font-black text-slate-800">Ringkasan Aktivitas</h2>
+          <div className="bg-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+             {/* Background decoration */}
+             <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 size-40 bg-primary rounded-full blur-[80px] opacity-40"></div>
+            
+             <div className="relative z-10 space-y-6">
+                <div>
+                  <p className="text-xs font-black text-white/40 uppercase tracking-[0.2em] mb-4">Tips Operasional</p>
+                  <p className="text-sm font-medium leading-relaxed text-white/80">
+                    Gunakan fitur <strong>Flash Sale</strong> untuk menghabiskan stok berlebih di akhir hari dengan cepat!
                   </p>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-slate-500 text-center py-8">Belum ada pesanan</p>
-          )}
+                
+                <div className="pt-6 border-t border-white/10 space-y-4">
+                  <div className="flex items-center gap-4 text-sm font-bold">
+                    <div className="size-2 rounded-full bg-green-500"></div>
+                    Pesanan diproses otomatis via WA
+                  </div>
+                  <div className="flex items-center gap-4 text-sm font-bold text-white/60">
+                    <div className="size-2 rounded-full bg-blue-500"></div>
+                    Sistem dalam kondisi optimal
+                  </div>
+                </div>
+             </div>
+          </div>
         </div>
       </div>
     </div>
