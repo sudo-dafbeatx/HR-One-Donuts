@@ -176,14 +176,13 @@ function LoginContent() {
       .update({
         full_name: fullName,
         phone,
-        address,
-        updated_at: new Date().toISOString()
+        address
       })
       .eq('id', user.id);
 
     if (updateError) {
-      console.error('Profile update error:', updateError);
-      setError('Gagal menyimpan profil. Silakan coba lagi.');
+      console.error('Profile update error detail:', updateError);
+      setError(`Gagal menyimpan profil: ${updateError.message} (Kode: ${updateError.code})`);
       setLoading(false);
     } else {
       setLoading(false);
