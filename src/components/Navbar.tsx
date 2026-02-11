@@ -4,15 +4,39 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { ShoppingBagIcon, UserCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Navbar() {
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [profileLink, setProfileLink] = useState("/login");
+  const supabase = createClient();
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile?.role === 'admin') {
+          setProfileLink('/admin');
+        } else {
+          setProfileLink('/profile');
+        }
+      } else {
+        setProfileLink('/login');
+      }
+    };
+
+    checkUser();
+  }, [supabase]);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 px-4 md:px-8 py-3 md:py-4 flex flex-col gap-3">
@@ -56,9 +80,9 @@ export default function Navbar() {
           </button>
           
           <Link
-            href="/admin/login"
+            href={profileLink}
             className="p-2.5 rounded-xl text-slate-600 hover:text-primary hover:bg-primary/5 transition-all"
-            title="Admin Login"
+            title={profileLink === '/admin' ? 'Admin Dashboard' : (profileLink === '/profile' ? 'My Profile' : 'Login')}
           >
             <UserCircleIcon className="size-6" />
           </Link>

@@ -20,8 +20,11 @@ export default function WhatsAppButton() {
       // Record order to Supabase BEFORE opening WhatsApp
       try {
         const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        
         const { error } = await supabase.from('orders').insert({
           session_id: getSessionId(),
+          user_id: user?.id, // Link to user if logged in
           items: cart.map(item => ({
             product_id: item.id,
             name: item.name,

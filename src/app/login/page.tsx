@@ -17,7 +17,14 @@ function LoginContent() {
   // New State for Registration & OTP
   const [isRegistering, setIsRegistering] = useState(false);
   const [otpStep, setOtpStep] = useState(false);
+  const [profileCompletionStep, setProfileCompletionStep] = useState(false);
   const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
+  
+  // Profile Form State
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
@@ -29,21 +36,25 @@ function LoginContent() {
       // Check user role in profiles table
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, full_name')
         .eq('id', userId)
         .single();
 
       if (profile?.role === 'admin') {
         router.push('/admin');
+        router.refresh();
+      } else if (!profile?.full_name && !profileCompletionStep) {
+        // Only if we haven't already decided to show the completion step
+        setProfileCompletionStep(true);
       } else {
         router.push(redirectTo);
+        router.refresh();
       }
-      router.refresh();
     } catch (err) {
       console.error('Redirection error:', err);
       router.push('/');
     }
-  }, [supabase, router, redirectTo]);
+  }, [supabase, router, redirectTo, profileCompletionStep]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -131,7 +142,52 @@ function LoginContent() {
       setError('Kode verifikasi salah atau sudah kedaluwarsa. Silakan coba lagi.');
       setLoading(false);
     } else if (authData.user) {
-      finishOtpLogin(authData.user.id);
+      setLoading(false);
+      // Explicitly check for profile completion after OTP
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', authData.user.id)
+        .single();
+      
+      if (!profile?.full_name) {
+        setOtpStep(false);
+        setProfileCompletionStep(true);
+      } else {
+        finishOtpLogin(authData.user.id);
+      }
+    }
+  };
+
+  const handleProfileCompletion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setError('Sesi telah berakhir. Silakan login kembali.');
+      setLoading(false);
+      return;
+    }
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({
+        full_name: fullName,
+        phone,
+        address,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', user.id);
+
+    if (updateError) {
+      console.error('Profile update error:', updateError);
+      setError('Gagal menyimpan profil. Silakan coba lagi.');
+      setLoading(false);
+    } else {
+      setLoading(false);
+      finishOtpLogin(user.id);
     }
   };
 
@@ -186,6 +242,72 @@ function LoginContent() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white">
         <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // Profile Completion Screen
+  if (profileCompletionStep) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white p-6">
+        <div className="w-full max-w-[440px]">
+          <div className="mb-10 text-center">
+            <h1 className="text-3xl font-black text-slate-900 mb-2">Lengkapi Profil</h1>
+            <p className="text-slate-500 font-medium">Bantu kami mengenal Anda lebih baik untuk pengiriman Donat yang pas!</p>
+          </div>
+
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold animate-shake">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleProfileCompletion} className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Nama Lengkap</label>
+              <input
+                type="text"
+                placeholder="Masukkan nama Anda"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full h-14 px-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Nomor WhatsApp</label>
+              <input
+                type="tel"
+                placeholder="0812xxxx"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full h-14 px-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Alamat Pengiriman</label>
+              <textarea
+                placeholder="Alamat lengkap Anda"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full min-h-[120px] p-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium resize-none"
+                required
+              />
+            </div>
+
+            <button 
+              type="submit"
+              disabled={loading}
+              className="w-full h-14 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group"
+            >
+              {loading ? 'Menyimpan...' : 'Selesai & Ke Beranda'}
+              {!loading && <svg className="size-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>}
+            </button>
+          </form>
+        </div>
       </div>
     );
   }
