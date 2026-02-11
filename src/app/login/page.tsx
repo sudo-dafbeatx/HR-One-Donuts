@@ -10,8 +10,14 @@ function LoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+  
+  // New State for Registration & OTP
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [otpStep, setOtpStep] = useState(false);
+  const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
@@ -60,6 +66,28 @@ function LoginContent() {
     setError('');
     setLoading(true);
 
+    if (isRegistering) {
+      // Step 1: Send OTP for Registration
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
+        }
+      });
+
+      if (otpError) {
+        setError(otpError.message);
+        setLoading(false);
+      } else {
+        setOtpStep(true);
+        setLoading(false);
+        setSuccess(`Kode verifikasi telah dikirim ke ${email}`);
+      }
+      return;
+    }
+
+    // Normal Login with Password
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -75,6 +103,73 @@ function LoginContent() {
         user_id: authData.user.id,
       });
       handleRedirection(authData.user.id);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    const token = otpCode.join('');
+    if (token.length < 6) {
+      setError('Harap masukkan kode verifikasi lengkap (6 angka)');
+      setLoading(false);
+      return;
+    }
+
+    const { data: { user }, error: verifyError } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: 'signup'
+    });
+
+    if (verifyError) {
+      // Try 'signin' type if signup fails (case for existing users trying to log in with OTP)
+      const { data: loginData, error: loginError } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'magiclink' // Supabase passwordless also uses magiclink or signin
+      });
+
+      if (loginError) {
+        setError('Kode verifikasi salah atau kedaluwarsa.');
+        setLoading(false);
+      } else if (loginData.user) {
+        finishOtpLogin(loginData.user.id);
+      }
+    } else if (user) {
+      finishOtpLogin(user.id);
+    }
+  };
+
+  const finishOtpLogin = async (userId: string) => {
+    await logTraffic({
+      event_type: 'login_success',
+      path: '/login',
+      user_id: userId,
+    });
+    handleRedirection(userId);
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (!/^\d*$/.test(value)) return;
+    
+    const newCode = [...otpCode];
+    newCode[index] = value.slice(-1);
+    setOtpCode(newCode);
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      nextInput?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !otpCode[index] && index > 0) {
+      const prevInput = document.getElementById(`otp-${index - 1}`);
+      prevInput?.focus();
     }
   };
 
@@ -103,6 +198,67 @@ function LoginContent() {
     );
   }
 
+  // OTP Verification Screen
+  if (otpStep) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white p-6">
+        <div className="w-full max-w-[400px]">
+          <button 
+            onClick={() => {
+              setOtpStep(false);
+              setSuccess('');
+            }}
+            className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-primary mb-8 transition-colors"
+          >
+            <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+            Kembali
+          </button>
+
+          <div className="mb-10 text-center">
+            <h1 className="text-3xl font-black text-slate-900 mb-2">Verifikasi Email</h1>
+            <p className="text-slate-500 font-medium">Masukkan 6 digit kode yang dikirim ke <br/><span className="text-slate-900 font-bold">{email}</span></p>
+          </div>
+
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold text-center">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleVerifyOtp} className="space-y-8">
+            <div className="flex justify-between gap-2">
+              {otpCode.map((digit, index) => (
+                <input
+                  key={index}
+                  id={`otp-${index}`}
+                  type="text"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  className="size-12 sm:size-14 text-center text-2xl font-black bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                  autoFocus={index === 0}
+                />
+              ))}
+            </div>
+
+            <button 
+              type="submit"
+              disabled={loading}
+              className="w-full h-14 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
+            >
+              {loading ? 'Memverifikasi...' : 'Verifikasi & Lanjut'}
+            </button>
+          </form>
+
+          <p className="mt-8 text-center text-sm font-medium text-slate-400">
+            Belum menerima kode? <button onClick={() => setOtpStep(false)} className="text-primary font-bold hover:underline">Kirim ulang</button>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col md:flex-row bg-white">
       {/* Left Decoration - Desktop Only */}
@@ -115,7 +271,7 @@ function LoginContent() {
           </div>
           <h2 className="text-4xl font-black text-slate-800 mb-4 tracking-tight">HR-One <span className="text-primary">Donuts</span></h2>
           <p className="text-slate-500 text-lg leading-relaxed">
-            Hadirkan kebahagiaan di setiap gigitan. Login sekarang untuk mulai memesan donat artisan favorit keluarga Anda.
+            Hadirkan kebahagiaan di setiap gigitan. {isRegistering ? 'Daftar sekarang untuk mulai menikmati donat artisan kami.' : 'Login sekarang untuk mulai memesan donat artisan favorit keluarga Anda.'}
           </p>
         </div>
       </div>
@@ -124,13 +280,23 @@ function LoginContent() {
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-[400px]">
           <div className="mb-10 text-center md:text-left">
-            <h1 className="text-3xl font-black text-slate-900 mb-2">Masuk ke HR-One Donuts</h1>
-            <p className="text-slate-500 font-medium tracking-tight">Login dulu biar bisa pesan donat</p>
+            <h1 className="text-3xl font-black text-slate-900 mb-2">
+              {isRegistering ? 'Daftar Akun Baru' : 'Masuk ke HR-One Donuts'}
+            </h1>
+            <p className="text-slate-500 font-medium tracking-tight">
+              {isRegistering ? 'Biar pesan donat makin gampang' : 'Login dulu biar bisa pesan donat'}
+            </p>
           </div>
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold animate-shake">
               {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-2xl text-sm font-bold">
+              {success}
             </div>
           )}
 
@@ -146,7 +312,7 @@ function LoginContent() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Masuk dengan Google
+              {isRegistering ? 'Daftar dengan Google' : 'Masuk dengan Google'}
             </button>
 
             <div className="relative py-4">
@@ -168,35 +334,51 @@ function LoginContent() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Password</label>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-14 px-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium"
-                  required
-                  disabled={loading}
-                />
-              </div>
+              {!isRegistering && (
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Password</label>
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full h-14 px-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium"
+                    required
+                    disabled={loading}
+                  />
+                </div>
+              )}
 
               <button 
                 type="submit"
                 disabled={loading}
                 className="w-full h-14 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center gap-2"
               >
-                {loading ? 'Sedang masuk...' : 'Masuk dengan Email'}
+                {loading ? 'Sabar ya...' : (isRegistering ? 'Kirim Kode Verifikasi' : 'Masuk dengan Email')}
                 {!loading && <svg className="size-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>}
               </button>
             </form>
 
-            <div className="pt-8 text-center">
+            <div className="pt-8 text-center space-y-4">
+              <p className="text-sm font-medium text-slate-500">
+                {isRegistering ? 'Sudah punya akun?' : 'Belum punya akun?'}
+                <button 
+                  onClick={() => {
+                    setIsRegistering(!isRegistering);
+                    setError('');
+                    setSuccess('');
+                  }}
+                  className="ml-2 text-primary font-black hover:underline"
+                >
+                  {isRegistering ? 'Masuk Sekarang' : 'Daftar Sekarang'}
+                </button>
+              </p>
+
               <Link 
                 href="/" 
                 className="text-sm font-bold text-slate-400 hover:text-primary transition-colors flex items-center justify-center gap-2 group"
               >
-                Lihat-lihat dulu, tanpa login
+                Liat-liat dulu, tanpa login
                 <svg className="size-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </Link>
             </div>
