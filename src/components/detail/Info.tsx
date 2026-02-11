@@ -14,16 +14,26 @@ interface ProductInfoProps {
     name: string;
     price_adjustment: number;
   }[];
+  discount_percent?: number;
+  sale_type: string;
+  package_type: string;
 }
 
-export default function ProductInfo({ id, name, price, description, image, stock, variants }: ProductInfoProps) {
+export default function ProductInfo({ 
+  id, name, price, description, image, stock, variants, 
+  discount_percent, sale_type, package_type 
+}: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<{ name: string, price_adjustment: number } | null>(
     variants.length > 0 ? variants[0] : null
   );
   const { addToCart } = useCart();
 
-  const currentPrice = price + (selectedVariant?.price_adjustment || 0);
+  const hasDiscount = discount_percent && discount_percent > 0;
+  const basePriceWithVariant = price + (selectedVariant?.price_adjustment || 0);
+  const currentPrice = hasDiscount 
+    ? basePriceWithVariant * (1 - (discount_percent || 0) / 100)
+    : basePriceWithVariant;
 
   const handleAddToCart = () => {
     const itemToAdd = {
@@ -38,10 +48,20 @@ export default function ProductInfo({ id, name, price, description, image, stock
   return (
     <div className="flex flex-col gap-6 w-full max-w-xl">
       <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="bg-primary/10 text-primary text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-[0.2em]">
             Freshly Baked
           </span>
+          {sale_type !== 'normal' && (
+            <span className="bg-primary text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-[0.2em]">
+              {sale_type.replace('_', ' ')}
+            </span>
+          )}
+          {package_type === 'box' && (
+            <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-[0.2em]">
+              BOX
+            </span>
+          )}
           {stock <= 5 && stock > 0 && (
             <span className="bg-red-50 text-red-500 text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-[0.2em]">
               Stok Terbatas
@@ -62,10 +82,15 @@ export default function ProductInfo({ id, name, price, description, image, stock
           <p className="text-3xl font-black text-primary">
             Rp {currentPrice.toLocaleString("id-ID")}
           </p>
-          {selectedVariant && selectedVariant.price_adjustment > 0 && (
-            <p className="text-sm font-medium text-slate-400 line-through">
-              Rp {price.toLocaleString("id-ID")}
+          {(hasDiscount || (selectedVariant && selectedVariant.price_adjustment > 0)) && (
+            <p className="text-sm md:text-base font-medium text-slate-400 line-through">
+              Rp {basePriceWithVariant.toLocaleString("id-ID")}
             </p>
+          )}
+          {hasDiscount && (
+            <span className="bg-red-100 text-red-600 text-xs font-black px-2 py-1 rounded-lg">
+              Hemat {discount_percent}%
+            </span>
           )}
         </div>
       </div>

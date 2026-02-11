@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Product } from '@/types/cms';
-import { AdminInput, AdminButton } from './Shared';
+import { AdminInput, AdminButton, AdminSelect } from './Shared';
 import { saveProduct, deleteProduct } from '@/app/admin/actions';
 import { TrashIcon, PencilIcon, PlusIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import ImageUploader from '../ImageUploader';
@@ -107,10 +107,18 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
                 </div>
               </div>
               <p className="text-xs text-slate-500 line-clamp-2 mb-2">{product.description}</p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded uppercase tracking-wider">
                   {product.category || 'No Category'}
                 </span>
+                <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider ${product.package_type === 'box' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
+                  {product.package_type}
+                </span>
+                {product.sale_type !== 'normal' && (
+                  <span className="px-2 py-0.5 bg-primary text-white text-[10px] font-bold rounded uppercase tracking-wider">
+                    {product.sale_type.replace('_', ' ')}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -163,6 +171,29 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
                       onChange={e => setEditingProduct({...editingProduct, stock: Number(e.target.value)})}
                     />
                   </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <AdminSelect 
+                      label="Tipe Penjualan"
+                      value={editingProduct.package_type || 'satuan'}
+                      onChange={e => setEditingProduct({...editingProduct, package_type: e.target.value as 'satuan' | 'box'})}
+                      options={[
+                        { label: 'Satuan', value: 'satuan' },
+                        { label: 'Box', value: 'box' },
+                      ]}
+                    />
+                    <AdminSelect 
+                      label="Tipe Promo"
+                      value={editingProduct.sale_type || 'normal'}
+                      onChange={e => setEditingProduct({...editingProduct, sale_type: e.target.value as 'normal' | 'flash_sale' | 'jumat_berkah' | 'takjil' })}
+                      options={[
+                        { label: 'Normal', value: 'normal' },
+                        { label: 'Flash Sale', value: 'flash_sale' },
+                        { label: 'Jumat Berkah', value: 'jumat_berkah' },
+                        { label: 'Takjil', value: 'takjil' },
+                      ]}
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -178,6 +209,30 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
                     >
                       <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${editingProduct.is_active ? 'translate-x-5' : 'translate-x-0'}`} />
                     </button>
+                  </div>
+
+                  <div className="p-4 bg-primary/5 rounded-xl border border-primary/10 space-y-3">
+                    <AdminInput 
+                      label="Diskon (%)" 
+                      type="number"
+                      placeholder="0"
+                      value={editingProduct.discount_percent || ''} 
+                      onChange={e => setEditingProduct({...editingProduct, discount_percent: e.target.value ? Number(e.target.value) : undefined})}
+                    />
+                    <div className="grid grid-cols-1 gap-3">
+                      <AdminInput 
+                        label="Mulai Promo" 
+                        type="datetime-local"
+                        value={editingProduct.promo_start ? editingProduct.promo_start.slice(0, 16) : ''} 
+                        onChange={e => setEditingProduct({...editingProduct, promo_start: e.target.value})}
+                      />
+                      <AdminInput 
+                        label="Berakhir Promo" 
+                        type="datetime-local"
+                        value={editingProduct.promo_end ? editingProduct.promo_end.slice(0, 16) : ''} 
+                        onChange={e => setEditingProduct({...editingProduct, promo_end: e.target.value})}
+                      />
+                    </div>
                   </div>
 
                   <ImageUploader

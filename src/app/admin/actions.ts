@@ -52,6 +52,8 @@ export async function saveProduct(data: Partial<Product>) {
     category: data.category || 'Uncategorized',
     stock: data.stock ?? 0,
     is_active: data.is_active ?? true,
+    sale_type: data.sale_type || 'normal',
+    package_type: data.package_type || 'satuan',
     updated_at: new Date().toISOString()
   };
   

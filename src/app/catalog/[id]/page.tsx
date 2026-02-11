@@ -54,6 +54,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               image={product.image_url || ""}
               stock={product.stock}
               variants={product.variants || []}
+              discount_percent={product.discount_percent}
+              sale_type={product.sale_type}
+              package_type={product.package_type}
             />
           </div>
         </div>

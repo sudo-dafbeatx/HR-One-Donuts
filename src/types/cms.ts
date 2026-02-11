@@ -24,6 +24,11 @@ export interface Product {
   }[];
   created_at?: string;
   updated_at?: string;
+  sale_type: 'normal' | 'flash_sale' | 'jumat_berkah' | 'takjil';
+  package_type: 'satuan' | 'box';
+  discount_percent?: number;
+  promo_start?: string;
+  promo_end?: string;
 }
 
 export interface Reason {
