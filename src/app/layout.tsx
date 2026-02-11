@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import CartDrawer from "@/components/cart/CartDrawer";
 import TrafficTracker from "@/components/tracking/TrafficTracker";
+import BottomNav from "@/components/BottomNav";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -24,12 +25,13 @@ export default function RootLayout({
   return (
     <html lang="id" className="overflow-x-hidden" suppressHydrationWarning>
       <body
-        className={`${plusJakartaSans.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300`}
+        className={`${plusJakartaSans.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
       >
         <CartProvider>
           <TrafficTracker />
           {children}
           <CartDrawer />
+          <BottomNav />
         </CartProvider>
       </body>
     </html>

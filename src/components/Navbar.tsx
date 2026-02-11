@@ -51,11 +51,19 @@ export default function Navbar() {
           </p>
         </Link>
 
+        {/* Desktop Navigation */}
+        <nav className="hidden lg:flex items-center gap-6">
+          <Link href="/" className="text-sm font-bold text-slate-600 hover:text-primary transition-all">Beranda</Link>
+          <Link href="/catalog" className="text-sm font-bold text-slate-600 hover:text-primary transition-all">Menu</Link>
+          <Link href="/#about" className="text-sm font-bold text-slate-600 hover:text-primary transition-all">Tentang Kami</Link>
+          <Link href="/#how-to-order" className="text-sm font-bold text-slate-600 hover:text-primary transition-all">Cara Pesan</Link>
+        </nav>
+
         {/* Search Bar - Hidden on Mobile, shown in second row below */}
-        <div className="hidden md:flex flex-1 max-w-2xl relative">
+        <div className="hidden md:flex flex-1 max-w-sm relative">
           <input
             type="text"
-            placeholder="Cari donat favoritmu..."
+            placeholder="Cari donat..."
             className="w-full h-11 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
