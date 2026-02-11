@@ -1,4 +1,4 @@
-import { PlusIcon } from '@heroicons/react/24/outline';
+import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
@@ -21,24 +21,40 @@ export function AdminButton({ variant = 'primary', isLoading, children, classNam
   );
 }
 
-interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
+type FormInputBaseProps = {
   label: string;
   error?: string;
-  multiline?: boolean;
-  rows?: number;
-}
+};
 
-export function AdminInput({ label, error, multiline, rows, className, ...props }: FormInputProps) {
-  const InputTag = multiline ? 'textarea' : 'input';
+type FormInputAsInputProps = FormInputBaseProps & {
+  multiline?: false;
+} & React.InputHTMLAttributes<HTMLInputElement>;
+
+type FormInputAsTextAreaProps = FormInputBaseProps & {
+  multiline: true;
+} & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+export type FormInputProps = FormInputAsInputProps | FormInputAsTextAreaProps;
+
+export function AdminInput(props: FormInputProps) {
+  const { label, error, className = '', multiline, ...rest } = props;
   
+  const commonClasses = "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-800";
+
   return (
     <div className={`space-y-1.5 ${className}`}>
       <label className="block text-sm font-semibold text-slate-700">{label}</label>
-      <InputTag
-        rows={rows}
-        className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-800"
-        {...(props as any)}
-      />
+      {multiline ? (
+        <textarea
+          className={commonClasses}
+          {...(rest as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+        />
+      ) : (
+        <input
+          className={commonClasses}
+          {...(rest as React.InputHTMLAttributes<HTMLInputElement>)}
+        />
+      )}
       {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
     </div>
   );
