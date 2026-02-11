@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { logTraffic } from '@/app/actions/traffic-actions';
 
-export default function LoginPage() {
+function LoginContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -43,11 +43,8 @@ export default function LoginPage() {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        // Log successful login if we just landed here and already have a session
-        // (This handles the case where user navigates to /login while already logged in)
         handleRedirection(user.id);
       } else {
-        // Log login_view event
         logTraffic({
           event_type: 'login_view',
           path: '/login',
@@ -72,7 +69,6 @@ export default function LoginPage() {
       setError('Email atau password salah. Silakan coba lagi.');
       setLoading(false);
     } else if (authData.user) {
-      // Log login_success
       await logTraffic({
         event_type: 'login_success',
         path: '/login',
@@ -139,7 +135,6 @@ export default function LoginPage() {
           )}
 
           <div className="space-y-4">
-            {/* Google Sign-In */}
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
@@ -209,5 +204,17 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
