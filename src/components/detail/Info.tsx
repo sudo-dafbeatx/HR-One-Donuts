@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { logTraffic } from "@/app/actions/traffic-actions";
 
 interface ProductInfoProps {
   id: string;
@@ -28,6 +31,8 @@ export default function ProductInfo({
     variants.length > 0 ? variants[0] : null
   );
   const { addToCart } = useCart();
+  const router = useRouter();
+  const supabase = createClient();
 
   const hasDiscount = discount_percent && discount_percent > 0;
   const basePriceWithVariant = price + (selectedVariant?.price_adjustment || 0);
@@ -35,7 +40,23 @@ export default function ProductInfo({
     ? basePriceWithVariant * (1 - (discount_percent || 0) / 100)
     : basePriceWithVariant;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // Log click_buy event regardless of login status
+    await logTraffic({
+      event_type: 'click_buy',
+      path: window.location.pathname,
+      user_id: user?.id
+    });
+
+    if (!user) {
+      // Redirect to login with current path as next
+      const currentPath = window.location.pathname;
+      router.push(`/login?next=${currentPath}`);
+      return;
+    }
+
     const itemToAdd = {
       id,
       name: selectedVariant ? `${name} (${selectedVariant.name})` : name,
