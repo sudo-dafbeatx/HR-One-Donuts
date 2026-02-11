@@ -5,15 +5,39 @@ import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { ShoppingBagIcon, ChatBubbleLeftIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { CakeIcon } from "@heroicons/react/24/solid";
+import { createClient } from "@/lib/supabase/client";
 
 export default function CatalogNavbar() {
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
+  const [profileLink, setProfileLink] = useState("/login");
+  const supabase = createClient();
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
+    
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile?.role === 'admin') {
+          setProfileLink('/admin');
+        } else {
+          setProfileLink('/profile');
+        }
+      } else {
+        setProfileLink('/login');
+      }
+    };
+
+    checkUser();
     return () => clearTimeout(timer);
-  }, []);
+  }, [supabase]);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-header-bg backdrop-blur-md px-6 md:px-10 lg:px-40 py-3 transition-colors duration-300">
@@ -56,9 +80,9 @@ export default function CatalogNavbar() {
               )}
             </button>
             <Link
-              href="/admin/login"
+              href={profileLink}
               className="flex items-center justify-center p-2 rounded-xl bg-card-bg text-subheading border border-border hover:bg-primary/10 hover:text-primary transition-all shadow-sm"
-              title="Admin Login"
+              title={profileLink === '/admin' ? 'Admin Dashboard' : (profileLink === '/profile' ? 'My Profile' : 'Login')}
             >
               <UserCircleIcon className="w-6 h-6" />
             </Link>

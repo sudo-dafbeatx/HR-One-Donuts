@@ -1,8 +1,5 @@
 import CatalogNavbar from "@/components/catalog/Navbar";
-import CatalogHero from "@/components/catalog/Hero";
-import CatalogFilters from "@/components/catalog/Filters";
 import ProductCard from "@/components/catalog/ProductCard";
-import CatalogCTA from "@/components/catalog/CTA";
 import Footer from "@/components/Footer";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
@@ -40,8 +37,6 @@ export default async function CatalogPage() {
     <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
       <CatalogNavbar />
       <main className="flex-1 max-w-[1280px] mx-auto w-full px-6 md:px-10 lg:px-40 py-10 transition-colors duration-300">
-        <CatalogHero />
-        <CatalogFilters />
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-8">
           {productsToDisplay.map((product) => (
@@ -56,8 +51,6 @@ export default async function CatalogPage() {
             />
           ))}
         </div>
-        
-        <CatalogCTA />
       </main>
       <Footer />
     </div>

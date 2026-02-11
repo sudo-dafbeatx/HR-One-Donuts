@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { Product } from '@/types/cms';
-import Promotions from './Promotions';
-import CategoryFilter, { FilterValue } from './CategoryFilter';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isPromoActive, getEffectivePrice } from '@/lib/product-utils';
@@ -13,45 +11,13 @@ interface MarketplaceClientProps {
 }
 
 export default function MarketplaceClient({ initialProducts }: MarketplaceClientProps) {
-  const [filter, setFilter] = useState<FilterValue>({ type: 'all', value: null });
-
-  const filteredProducts = useMemo(() => {
-    let result = [...initialProducts];
-    
-    if (filter.type === 'sale_type' && filter.value) {
-      result = result.filter(p => p.sale_type === filter.value && isPromoActive(p));
-      // Flash sale products at the top
-      if (filter.value === 'flash_sale') {
-        result.sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0));
-      }
-    } else if (filter.type === 'package_type' && filter.value) {
-      result = result.filter(p => p.package_type === filter.value);
-    }
-    
-    return result;
-  }, [initialProducts, filter]);
+  const filteredProducts = initialProducts;
 
   return (
     <div className="flex flex-col">
-      <Promotions 
-        products={initialProducts} 
-        onSelectSaleType={(type) => setFilter({ type: 'sale_type', value: type })} 
-      />
-      
-      <CategoryFilter 
-        currentFilter={filter} 
-        onFilterChange={setFilter} 
-      />
-
       {filteredProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-          <p className="text-xl font-medium">Tidak ada produk yang sesuai dengan filter ini.</p>
-          <button 
-            onClick={() => setFilter({ type: 'all', value: null })}
-            className="mt-4 text-primary font-black hover:underline"
-          >
-            Bersihkan Filter
-          </button>
+          <p className="text-xl font-medium">Tidak ada produk yang tersedia saat ini.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
