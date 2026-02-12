@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { PhotoIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { PhotoIcon, ArrowUpTrayIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { uploadImage } from '@/app/admin/upload-actions';
 import { validateImageFile } from '@/lib/image-utils';
+import LoadingSpinner from '../ui/LoadingSpinner';
 
 interface ImageUploaderProps {
   currentImage?: string;
@@ -21,6 +22,7 @@ export default function ImageUploader({
   const [preview, setPreview] = useState<string | null>(currentImage || null);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,19 +41,19 @@ export default function ImageUploader({
 
     // Upload
     setIsUploading(true);
+    setIsSuccess(false);
     setError(null);
     
     try {
       const formData = new FormData();
       formData.append('file', file);
       
-      console.log('📤 [ImageUploader] Calling uploadImage...');
       const result = await uploadImage(formData);
-      console.log('✅ [ImageUploader] Upload success:', result);
       onImageUploaded(result.url, result.path);
+      setIsSuccess(true);
+      setTimeout(() => setIsSuccess(false), 3000);
     } catch (err: unknown) {
-      console.error('❌ [ImageUploader] Upload failed:', err);
-      const errorMsg = err instanceof Error ? err.message : 'Upload gagal. Cek console untuk detail.';
+      const errorMsg = err instanceof Error ? err.message : 'Upload gagal.';
       setError(errorMsg);
       setPreview(currentImage || null);
     } finally {
@@ -87,31 +89,40 @@ export default function ImageUploader({
         } ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
       >
         {preview ? (
-          <div className={`relative ${aspectClass} group`}>
+          <div className={`relative ${aspectClass} group uppercase`}>
             <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <div className="text-center">
                 <ArrowUpTrayIcon className="w-8 h-8 text-white mx-auto mb-2" />
-                <p className="text-white text-sm font-medium">Klik untuk ganti gambar</p>
+                <p className="text-white text-[10px] font-black tracking-widest uppercase">Ganti Gambar</p>
               </div>
             </div>
             {isUploading && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                  <p className="text-white text-sm font-medium">Uploading...</p>
+              <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center">
+                <LoadingSpinner color="border-white" />
+              </div>
+            )}
+            {isSuccess && (
+              <div className="absolute inset-0 bg-primary/20 backdrop-blur-[2px] flex items-center justify-center animate-scale-in">
+                <div className="bg-white p-3 rounded-full shadow-2xl">
+                  <CheckCircleIcon className="w-8 h-8 text-primary" />
                 </div>
               </div>
             )}
           </div>
         ) : (
           <div className={`${aspectClass} flex flex-col items-center justify-center gap-2 py-10`}>
-            <PhotoIcon className="w-12 h-12 text-slate-400" />
-            <p className="text-sm font-medium text-slate-600">
-              Drag & drop atau klik untuk upload
-            </p>
-            <p className="text-xs text-slate-400">JPG, PNG, WEBP, HEIC (Max 2MB)</p>
-            <p className="text-xs text-slate-500">Auto-convert ke WebP</p>
+            {isUploading ? (
+              <LoadingSpinner />
+            ) : (
+              <>
+                <PhotoIcon className="w-12 h-12 text-slate-400" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">
+                  Upload Gambar
+                </p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase">JPG, PNG, WEBP, HEIC</p>
+              </>
+            )}
           </div>
         )}
         
@@ -124,17 +135,9 @@ export default function ImageUploader({
         />
       </div>
       
-      {error && (
-        <div className="p-3 rounded-xl bg-red-50 border border-red-200">
-          <p className="text-sm text-red-600 font-medium">{error}</p>
-        </div>
-      )}
-      
-      {isUploading && (
-        <div className="p-3 rounded-xl bg-blue-50 border border-blue-200">
-          <p className="text-sm text-blue-600 font-medium">
-            ⚙️ Converting ke WebP format...
-          </p>
+      {error && !isUploading && (
+        <div className="px-4 py-2 rounded-xl bg-red-50 border border-red-100 animate-scale-in">
+          <p className="text-[10px] font-bold text-red-600 uppercase tracking-tight">{error}</p>
         </div>
       )}
     </div>
