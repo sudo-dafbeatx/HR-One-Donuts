@@ -5,24 +5,26 @@ import { usePathname } from "next/navigation";
 import { 
   HomeIcon, 
   ShoppingBagIcon, 
-  InformationCircleIcon,
+  ShoppingCartIcon,
   QuestionMarkCircleIcon,
   UserCircleIcon
 } from "@heroicons/react/24/outline";
 import { 
   HomeIcon as HomeIconSolid, 
   ShoppingBagIcon as ShoppingBagIconSolid,
-  InformationCircleIcon as InformationCircleIconSolid,
+  ShoppingCartIcon as ShoppingCartIconSolid,
   QuestionMarkCircleIcon as QuestionMarkCircleIconSolid,
   UserCircleIcon as UserCircleIconSolid
 } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useCart } from "@/context/CartContext";
 
 export default function BottomNav() {
   const pathname = usePathname();
   const [profileLink, setProfileLink] = useState("/login");
   const supabase = createClient();
+  const { totalItems, setIsCartOpen } = useCart();
 
   useEffect(() => {
     const checkUser = async () => {
@@ -61,10 +63,11 @@ export default function BottomNav() {
       activeIcon: ShoppingBagIconSolid 
     },
     { 
-      label: "Tentang", 
-      href: "/#about", 
-      icon: InformationCircleIcon, 
-      activeIcon: InformationCircleIconSolid 
+      label: "Keranjang", 
+      href: "#cart", 
+      icon: ShoppingCartIcon, 
+      activeIcon: ShoppingCartIconSolid,
+      isCart: true
     },
     { 
       label: "Cara Pesan", 
@@ -87,6 +90,37 @@ export default function BottomNav() {
           const isActive = pathname === item.href || (item.href.startsWith('#') && pathname === '/');
           const Icon = isActive ? item.activeIcon : item.icon;
 
+          const content = (
+            <>
+              <div className="relative">
+                <Icon className="size-6" />
+                {item.isCart && totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-scale-in">
+                    {totalItems}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-tight text-center px-1 truncate w-full">
+                {item.label}
+              </span>
+              {isActive && (
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 size-1 bg-primary rounded-full" />
+              )}
+            </>
+          );
+
+          if (item.isCart) {
+            return (
+              <button
+                key={item.label}
+                onClick={() => setIsCartOpen(true)}
+                className={`relative flex flex-col items-center justify-center gap-1 w-full h-full transition-all text-slate-400`}
+              >
+                {content}
+              </button>
+            );
+          }
+
           return (
             <Link 
               key={item.label} 
@@ -95,13 +129,7 @@ export default function BottomNav() {
                 isActive ? "text-primary" : "text-slate-400"
               }`}
             >
-              <Icon className="size-6" />
-              <span className="text-[10px] font-bold uppercase tracking-tight text-center px-1 truncate w-full">
-                {item.label}
-              </span>
-              {isActive && (
-                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 size-1 bg-primary rounded-full" />
-              )}
+              {content}
             </Link>
           );
         })}
