@@ -166,7 +166,7 @@ export default function ChatbotWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-50 group animate-pulse hover:animate-none"
+          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-16 h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-50 group hover:animate-none"
           aria-label="Chat dengan Dona AI"
         >
           <SparklesIcon className="w-8 h-8 group-hover:rotate-12 transition-transform" />
@@ -182,7 +182,7 @@ export default function ChatbotWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[400px] h-[600px] max-w-[calc(100vw-3rem)] max-h-[calc(100vh-3rem)] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden z-50 animate-scale-in border border-slate-200">
+        <div className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-[400px] h-[600px] max-w-[calc(100vw-3rem)] max-h-[calc(100vh-10rem)] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden z-50 animate-scale-in border border-slate-200">
           {/* Header */}
           <div className="bg-gradient-to-r from-primary to-blue-600 text-white px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">

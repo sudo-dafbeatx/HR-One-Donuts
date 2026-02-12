@@ -82,7 +82,7 @@ export default function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/80 backdrop-blur-xl border-t border-slate-100 pb-safe-area-inset-bottom">
-      <div className="flex items-center justify-around h-16 px-4">
+      <div className="grid grid-cols-5 h-16">
         {navItems.map((item) => {
           const isActive = pathname === item.href || (item.href.startsWith('#') && pathname === '/');
           const Icon = isActive ? item.activeIcon : item.icon;
@@ -91,14 +91,16 @@ export default function BottomNav() {
             <Link 
               key={item.label} 
               href={item.href}
-              className={`flex flex-col items-center justify-center gap-1 w-full h-full transition-all ${
+              className={`relative flex flex-col items-center justify-center gap-1 w-full h-full transition-all ${
                 isActive ? "text-primary" : "text-slate-400"
               }`}
             >
               <Icon className="size-6" />
-              <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
+              <span className="text-[10px] font-bold uppercase tracking-tight text-center px-1 truncate w-full">
+                {item.label}
+              </span>
               {isActive && (
-                <span className="absolute bottom-1 size-1 bg-primary rounded-full" />
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 size-1 bg-primary rounded-full" />
               )}
             </Link>
           );
