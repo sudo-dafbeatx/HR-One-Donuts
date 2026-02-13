@@ -26,6 +26,51 @@ export default function ImageUploader({
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const MAX_SIZE = 1200;
+
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob(
+            (blob) => {
+              if (blob) resolve(blob);
+              else reject(new Error('Canvas toBlob failed'));
+            },
+            'image/webp',
+            0.7 // quality
+          );
+        };
+        img.onerror = () => reject(new Error('Failed to load image for compression'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleFile = async (file: File) => {
     // Validate
     const validation = validateImageFile(file);
@@ -45,8 +90,18 @@ export default function ImageUploader({
     setError(null);
     
     try {
+      console.log(`📦 [Uploader] Original size: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+      
+      // Client-side compression
+      const compressedBlob = await compressImage(file);
+      console.log(`✨ [Uploader] Compressed size: ${(compressedBlob.size / 1024 / 1024).toFixed(2)} MB`);
+      
       const formData = new FormData();
-      formData.append('file', file);
+      // We convert blob back to file so it has a name
+      const compressedFile = new File([compressedBlob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {
+        type: 'image/webp'
+      });
+      formData.append('file', compressedFile);
       
       const result = await uploadImage(formData);
       onImageUploaded(result.url, result.path);

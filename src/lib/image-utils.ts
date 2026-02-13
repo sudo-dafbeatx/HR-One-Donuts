@@ -1,4 +1,4 @@
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB (match Supabase bucket limit)
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB (Allow large files for client-side compression)
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
 
 export function validateImageFile(file: File): { valid: boolean; error?: string } {
@@ -15,7 +15,7 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
     const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
     return { 
       valid: false, 
-      error: `Ukuran file terlalu besar (${sizeMB}MB). Maksimal 2MB.` 
+      error: `Ukuran file terlalu besar (${sizeMB}MB). Maksimal 50MB.` 
     };
   }
   
