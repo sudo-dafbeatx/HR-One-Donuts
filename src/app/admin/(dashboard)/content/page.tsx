@@ -44,7 +44,7 @@ export default async function ContentPage() {
   const categories = (categoryData?.value as any)?.categories as string[] | undefined;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-12 pb-20">
+    <div className="max-w-4xl mx-auto space-y-12 pt-10 pb-24 px-4 sm:px-0">
       <div>
         <h1 className="text-3xl font-black text-heading mb-2">Manajemen Konten</h1>
         <p className="text-slate-500">Sesuaikan informasi toko dan konten utama website Anda.</p>

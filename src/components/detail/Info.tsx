@@ -5,6 +5,12 @@ import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { logTraffic } from "@/app/actions/traffic-actions";
+import { 
+  MinusIcon, 
+  PlusIcon, 
+  ShoppingBagIcon, 
+  ShieldCheckIcon 
+} from "@heroicons/react/24/outline";
 
 interface ProductInfoProps {
   id: string;
@@ -153,14 +159,14 @@ export default function ProductInfo({
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 className="size-10 flex items-center justify-center rounded-lg hover:bg-white text-slate-400 hover:text-primary transition-all active:scale-90"
               >
-                <span className="material-symbols-outlined font-black">remove</span>
+                <MinusIcon className="size-6 font-black" />
               </button>
               <span className="w-8 text-center font-black text-slate-800 text-lg">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
                 className="size-10 flex items-center justify-center rounded-lg hover:bg-white text-slate-400 hover:text-primary transition-all active:scale-90"
               >
-                <span className="material-symbols-outlined font-black">add</span>
+                <PlusIcon className="size-6 font-black" />
               </button>
             </div>
           </div>
@@ -182,14 +188,14 @@ export default function ProductInfo({
               : "bg-primary text-white hover:bg-primary/90 hover:-translate-y-0.5 shadow-primary/20 active:translate-y-0"
           }`}
         >
-          <span className="material-symbols-outlined font-black">shopping_basket</span>
+          <ShoppingBagIcon className="size-6 font-black" />
           Beli Sekarang
         </button>
       </div>
 
       <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
         <div className="size-10 rounded-full bg-white flex items-center justify-center shadow-sm text-primary">
-          <span className="material-symbols-outlined text-xl">verified_user</span>
+          <ShieldCheckIcon className="size-6" />
         </div>
         <div className="flex-1">
           <p className="text-xs font-black text-slate-800">Garansi Kualitas</p>
