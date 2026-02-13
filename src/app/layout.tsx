@@ -35,6 +35,33 @@ export default function RootLayout({
           {children}
           <CartDrawer />
           <BottomNav />
+          
+          {/* Global Accessibility Fix for Google Identity Services (One Tap) */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                      if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+                        const target = mutation.target;
+                        if (target.getAttribute('aria-hidden') === 'true' && (target.id === 'credential_picker_container' || target.classList.contains('google-one-tap'))) {
+                          // Only remove if it's the known Google GSI container that causes focus conflicts
+                          target.removeAttribute('aria-hidden');
+                        }
+                      }
+                    });
+                  });
+
+                  observer.observe(document.body, {
+                    attributes: true,
+                    subtree: true,
+                    attributeFilter: ['aria-hidden']
+                  });
+                })();
+              `
+            }}
+          />
         </CartProvider>
       </body>
     </html>
