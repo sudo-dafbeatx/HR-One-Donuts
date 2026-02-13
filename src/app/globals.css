@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap");
 
+/* 
+  Tailwind CSS v4 Theme Configuration 
+  NOTE: The "Unknown at rule @theme" warning is expected as some IDE linters 
+  do not yet recognize the new Tailwind v4 syntax. It does not affect the build.
+*/
 @theme {
   --color-primary: #2b8cee;
   --color-background: var(--background);
