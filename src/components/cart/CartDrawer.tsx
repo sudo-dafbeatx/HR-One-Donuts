@@ -6,7 +6,9 @@ import { useState, useEffect } from "react";
 import { ShoppingBagIcon, XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { incrementSoldCount } from "@/app/admin/actions";
 
-export default function CartDrawer() {
+import { SiteSettings } from "@/types/cms";
+
+export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart } = useCart();
   const [mounted, setMounted] = useState(false);
 
@@ -26,8 +28,8 @@ export default function CartDrawer() {
       console.error('Failed to track sales:', e);
     }
 
-    const phone = "6281234567890"; // Example business phone
-    let message = "Halo HR-One Donuts! 🍩 Saya ingin memesan:\n\n";
+    const phone = siteSettings?.whatsapp_number || "6281234567890";
+    let message = `Halo ${siteSettings?.store_name || "HR-One Donuts"}! 🍩 Saya ingin memesan:\n\n`;
     
     cart.forEach((item) => {
       message += `✅ *${item.name}*\n   ${item.quantity}x @ Rp ${item.price.toLocaleString("id-ID")} = Rp ${(item.price * item.quantity).toLocaleString("id-ID")}\n\n`;

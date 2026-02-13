@@ -6,7 +6,9 @@ import { useState, useEffect } from "react";
 import { ShoppingBagIcon, UserCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 
-export default function Navbar() {
+import { SiteSettings } from "@/types/cms";
+
+export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,10 +46,10 @@ export default function Navbar() {
         {/* Brand & Tagline */}
         <Link href="/" className="flex flex-col shrink-0">
           <h1 className="text-primary text-xl md:text-2xl font-black leading-tight tracking-tighter">
-            HR-One Donuts
+            {siteSettings?.store_name || "HR-One Donuts"}
           </h1>
           <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest -mt-1">
-            Fresh and Smooth
+            {siteSettings?.tagline || "Fresh and Smooth"}
           </p>
         </Link>
 

@@ -1,31 +1,33 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
-import HeroEditor from '@/components/admin/CMS/HeroEditor';
-import ReasonsEditor from '@/components/admin/CMS/ReasonsEditor';
+import SiteSettingsEditor from '@/components/admin/CMS/SiteSettingsEditor';
+import OrderStepsEditor from '@/components/admin/CMS/OrderStepsEditor';
+import CategoryManager from '@/components/admin/CMS/CategoryManager';
 import EventManager from '@/components/admin/CMS/EventManager';
-import { AdminCard } from '@/components/admin/CMS/Shared';
+import { SiteSettings, OrderStep } from '@/types/cms';
 
 export default async function ContentPage() {
   const supabase = await createServerSupabaseClient();
   
-  // Fetch hero data - using maybeSingle to avoid error if empty
-  const { data: hero, error: heroError } = await supabase
-    .from('hero')
-    .select('*')
+  // Fetch site info
+  const { data: siteInfoData } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'site_info')
     .maybeSingle();
 
-  if (heroError && heroError.code !== 'PGRST116') {
-    console.error('Error fetching hero:', heroError);
-  }
+  // Fetch order steps
+  const { data: orderStepsData } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'order_steps')
+    .maybeSingle();
 
-  // Fetch reasons
-  const { data: reasons, error: reasonsError } = await supabase
-    .from('reasons')
-    .select('*')
-    .order('order_index', { ascending: true });
-
-  if (reasonsError) {
-    console.error('Error fetching reasons:', reasonsError);
-  }
+  // Fetch categories
+  const { data: categoryData } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'product_categories')
+    .maybeSingle();
 
   // Fetch events
   const { data: events, error: eventsError } = await supabase
@@ -37,23 +39,36 @@ export default async function ContentPage() {
     console.error('Error fetching events:', eventsError);
   }
 
+  const siteSettings = siteInfoData?.value as unknown as SiteSettings | undefined;
+  const orderSteps = (orderStepsData?.value as any)?.steps as OrderStep[] | undefined;
+  const categories = (categoryData?.value as any)?.categories as string[] | undefined;
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-12 pb-20">
       <div>
         <h1 className="text-3xl font-black text-heading mb-2">Manajemen Konten</h1>
-        <p className="text-slate-500">Kelola hagian-hagian utama website Anda.</p>
+        <p className="text-slate-500">Sesuaikan informasi toko dan konten utama website Anda.</p>
       </div>
 
-      <HeroEditor initialData={hero || undefined} />
+      <section className="space-y-6">
+        <h2 className="text-xl font-bold text-slate-800">1. Pengaturan Toko</h2>
+        <SiteSettingsEditor initialData={siteSettings} />
+      </section>
 
-      <EventManager initialEvents={events || []} />
+      <section className="space-y-6">
+        <h2 className="text-xl font-bold text-slate-800">2. Promo & Event</h2>
+        <EventManager initialEvents={events || []} />
+      </section>
 
-      <ReasonsEditor initialReasons={reasons || []} />
-      
-      {/* Placeholder for other sections */}
-      <AdminCard title="About Us & Footer">
-        <p className="text-slate-500 text-sm">Fitur pengaturan footer dan tentang kami sedang dalam pengembangan.</p>
-      </AdminCard>
+      <section className="space-y-6">
+        <h2 className="text-xl font-bold text-slate-800">3. Katalog & Kategori</h2>
+        <CategoryManager initialCategories={categories || []} />
+      </section>
+
+      <section className="space-y-6">
+        <h2 className="text-xl font-bold text-slate-800">4. Alur Pemesanan</h2>
+        <OrderStepsEditor initialSteps={orderSteps || []} />
+      </section>
     </div>
   );
 }

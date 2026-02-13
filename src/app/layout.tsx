@@ -17,11 +17,23 @@ export const metadata: Metadata = {
   description: "Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut dan kaya rasa.",
 };
 
-export default function RootLayout({
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { SiteSettings } from "@/types/cms";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createServerSupabaseClient();
+  const { data: settingsData } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'site_info')
+    .maybeSingle();
+  
+  const siteSettings = settingsData?.value as unknown as SiteSettings | undefined;
+
   return (
     <html lang="id" className="overflow-x-hidden" suppressHydrationWarning>
       <body
@@ -30,7 +42,7 @@ export default function RootLayout({
         <CartProvider>
           <TrafficTracker />
           {children}
-          <CartDrawer />
+          <CartDrawer siteSettings={siteSettings} />
           <BottomNav />
           
           {/* Global Accessibility Fix for Google Identity Services (One Tap) */}

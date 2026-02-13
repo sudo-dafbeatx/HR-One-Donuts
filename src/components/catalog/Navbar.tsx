@@ -7,7 +7,9 @@ import { ShoppingBagIcon, ChatBubbleLeftIcon, UserCircleIcon } from "@heroicons/
 import { CakeIcon } from "@heroicons/react/24/solid";
 import { createClient } from "@/lib/supabase/client";
 
-export default function CatalogNavbar() {
+import { SiteSettings } from "@/types/cms";
+
+export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
   const [profileLink, setProfileLink] = useState("/login");
@@ -46,7 +48,7 @@ export default function CatalogNavbar() {
           <Link href="/" className="flex items-center gap-2 text-primary group">
             <CakeIcon className="w-8 h-8 transition-transform group-hover:rotate-12" />
             <h2 className="text-heading text-lg font-extrabold leading-tight tracking-tight">
-              HR-One Donuts
+              {siteSettings?.store_name || "HR-One Donuts"}
             </h2>
           </Link>
           <nav className="hidden sm:flex items-center gap-8">
@@ -86,10 +88,15 @@ export default function CatalogNavbar() {
             >
               <UserCircleIcon className="w-6 h-6" />
             </Link>
-            <button className="hidden sm:flex items-center justify-center gap-2 rounded-xl h-10 px-5 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all shadow-sm">
+            <a 
+              href={`https://wa.me/${siteSettings?.whatsapp_number || '6281234567890'}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:flex items-center justify-center gap-2 rounded-xl h-10 px-5 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all shadow-sm"
+            >
               <ChatBubbleLeftIcon className="w-5 h-5" />
               <span className="truncate">Pesan via WhatsApp</span>
-            </button>
+            </a>
           </div>
       </div>
     </header>

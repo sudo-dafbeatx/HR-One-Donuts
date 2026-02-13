@@ -1,14 +1,3 @@
-export interface HeroData {
-  id?: string;
-  title: string;
-  subtitle?: string;
-  description?: string;
-  cta_text?: string;
-  cta_link?: string;
-  image_url?: string;
-  updated_at?: string;
-}
-
 export interface Product {
   id: string;
   name: string;
@@ -26,10 +15,11 @@ export interface Product {
   updated_at?: string;
   sale_type: 'normal' | 'flash_sale' | 'jumat_berkah' | 'takjil';
   package_type: 'satuan' | 'box';
-  discount_percent?: number;
+  discount_percent?: number | null;
   promo_start?: string;
   promo_end?: string;
   sold_count: number;
+  tag?: string;
 }
 
 export interface PromoEvent {
@@ -37,7 +27,7 @@ export interface PromoEvent {
   title: string;
   event_type: 'flash_sale' | 'jumat_berkah' | 'takjil' | 'seasonal';
   banner_image_url?: string;
-  discount_percent?: number;
+  discount_percent?: number | null;
   start_at?: string;
   end_at?: string;
   is_active: boolean;
@@ -45,31 +35,24 @@ export interface PromoEvent {
   updated_at?: string;
 }
 
-export interface Reason {
+export interface OrderStep {
   id: string;
+  step_number: number;
   title: string;
   description: string;
-  icon?: string;
-  order_index: number;
 }
 
 export interface SiteSettings {
-  seo: {
-    title: string;
-    description: string;
-    keywords?: string[];
-  };
-  contact: {
-    whatsapp: string;
-    address: string;
-    openingHours: string;
-    email: string;
-  };
-  social: {
-    instagram?: string;
-    facebook?: string;
-    tiktok?: string;
-  };
+  store_name: string;
+  tagline: string;
+  whatsapp_number: string;
+  phone_number: string;
+  email: string;
+  address: string;
+  opening_hours: string;
+  instagram_url?: string;
+  facebook_url?: string;
+  tiktok_url?: string;
 }
 
-export type CMSContentKey = 'hero' | 'products' | 'reasons' | 'settings' | 'featured_products';
+export type CMSContentKey = 'site_info' | 'order_steps' | 'product_categories' | 'products' | 'events';

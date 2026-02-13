@@ -1,9 +1,15 @@
-export default function OrderSteps() {
-  const steps = [
+import { OrderStep } from "@/types/cms";
+
+export default function OrderSteps({ steps: cmsSteps }: { steps?: OrderStep[] }) {
+  const defaultSteps = [
     { num: 1, title: "Pilih Donat", desc: "Lihat menu katalog kami dan pilih favorit Anda." },
     { num: 2, title: "Pesan WhatsApp", desc: "Kirim list pesanan Anda ke nomor WhatsApp kami." },
     { num: 3, title: "Donat Diantar", desc: "Selesaikan pembayaran dan donat akan segera meluncur." }
   ];
+
+  const steps = cmsSteps && cmsSteps.length > 0 
+    ? cmsSteps.map(s => ({ num: s.step_number, title: s.title, desc: s.description }))
+    : defaultSteps;
 
   return (
     <section className="bg-section-bg py-24 px-6 md:px-20 lg:px-40 transition-colors duration-300" id="how-to-order">

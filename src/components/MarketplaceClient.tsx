@@ -10,24 +10,51 @@ import { isPromoActive, getEffectivePrice } from '@/lib/product-utils';
 
 interface MarketplaceClientProps {
   initialProducts: Product[];
+  categories?: string[];
 }
 
-export default function MarketplaceClient({ initialProducts }: MarketplaceClientProps) {
+export default function MarketplaceClient({ initialProducts, categories = [] }: MarketplaceClientProps) {
   const { addToCart } = useCart();
+  const [activeCategory, setActiveCategory] = React.useState<string>('Semua');
   
   // Sort products: focus on active promos first, then recent
-  const filteredProducts = [...initialProducts].sort((a, b) => {
+  const sortedProducts = [...initialProducts].sort((a, b) => {
     const isAPromo = isPromoActive(a) ? 1 : 0;
     const isBPromo = isPromoActive(b) ? 1 : 0;
     if (isAPromo !== isBPromo) return isBPromo - isAPromo;
     return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
   });
 
+  const filteredProducts = activeCategory === 'Semua' 
+    ? sortedProducts 
+    : sortedProducts.filter(p => p.category === activeCategory);
+
+  const allCategories = ['Semua', ...categories];
+
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-8">
+      {/* Category Filter Bar */}
+      {categories.length > 0 && (
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none no-scrollbar">
+          {allCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                activeCategory === cat 
+                  ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105' 
+                  : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
+
       {filteredProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-          <p className="text-xl font-medium">Tidak ada produk yang tersedia saat ini.</p>
+          <p className="text-xl font-medium">Tidak ada produk di kategori ini.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
@@ -56,6 +83,11 @@ export default function MarketplaceClient({ initialProducts }: MarketplaceClient
                   
                   {/* Badges Overlay */}
                   <div className="absolute top-3 left-3 flex flex-col gap-2">
+                    {product.tag && (
+                      <div className="bg-orange-500 text-white px-2 py-1 rounded-lg font-black text-[8px] uppercase tracking-widest shadow-lg">
+                        {product.tag}
+                      </div>
+                    )}
                     {hasActivePromo && (
                       <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-lg ${
                         product.sale_type === 'flash_sale' ? 'bg-primary text-white' : 

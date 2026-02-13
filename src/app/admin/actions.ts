@@ -2,7 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { HeroData, Product, Reason, PromoEvent } from '@/types/cms';
+import { Product, PromoEvent } from '@/types/cms';
 
 // Helper to verify admin role
 async function checkAdmin() {
@@ -22,38 +22,6 @@ async function checkAdmin() {
   return supabase;
 }
 
-// --- Hero Actions ---
-export async function updateHero(data: HeroData) {
-  const supabase = await checkAdmin();
-  
-  // First, check if a hero record exists
-  const { data: existing } = await supabase
-    .from('hero')
-    .select('id')
-    .single();
-  
-  const heroData = {
-    ...data,
-    updated_at: new Date().toISOString()
-  };
-  
-  // Include ID if record exists to ensure update instead of insert
-  if (existing?.id) {
-    heroData.id = existing.id;
-  }
-  
-  const { error } = await supabase
-    .from('hero')
-    .upsert(heroData)
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message);
-  
-  revalidatePath('/');
-  revalidatePath('/admin/(dashboard)/content');
-  return { success: true };
-}
 
 // --- Product Actions ---
 export async function saveProduct(data: Partial<Product>) {
@@ -75,16 +43,18 @@ export async function saveProduct(data: Partial<Product>) {
     updated_at: new Date().toISOString()
   };
   
-  const { error } = await supabase
+  const { data: savedData, error } = await supabase
     .from('products')
-    .upsert(productData);
+    .upsert(productData)
+    .select()
+    .single();
 
   if (error) throw new Error(error.message);
   
   revalidatePath('/');
   revalidatePath('/catalog');
   revalidatePath('/admin/products');
-  return { success: true };
+  return { success: true, data: savedData as Product };
 }
 
 export async function deleteProduct(id: string) {
@@ -99,30 +69,9 @@ export async function deleteProduct(id: string) {
   
   revalidatePath('/catalog');
   revalidatePath('/admin/products');
-  return { success: true };
+  return { success: true, id };
 }
 
-// --- Reasons Actions ---
-export async function saveReason(data: Partial<Reason>) {
-  const supabase = await checkAdmin();
-  
-  // Generate ID for new reasons if not provided
-  const reasonData = {
-    ...data,
-    id: data.id || crypto.randomUUID(),
-    updated_at: new Date().toISOString()
-  };
-  
-  const { error } = await supabase
-    .from('reasons')
-    .upsert(reasonData);
-
-  if (error) throw new Error(error.message);
-  
-  revalidatePath('/');
-  revalidatePath('/admin/(dashboard)/content');
-  return { success: true };
-}
 
 // --- Settings Actions ---
 export async function updateSettings(key: string, value: Record<string, unknown>) {
