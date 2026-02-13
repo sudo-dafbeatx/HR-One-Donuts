@@ -4,6 +4,7 @@ import React from 'react';
 import { Product } from '@/types/cms';
 import { useCart } from "@/context/CartContext";
 import Link from 'next/link';
+import Image from 'next/image';
 import { isPromoActive, getEffectivePrice } from '@/lib/product-utils';
 
 
@@ -13,7 +14,14 @@ interface MarketplaceClientProps {
 
 export default function MarketplaceClient({ initialProducts }: MarketplaceClientProps) {
   const { addToCart } = useCart();
-  const filteredProducts = initialProducts;
+  
+  // Sort products: focus on active promos first, then recent
+  const filteredProducts = [...initialProducts].sort((a, b) => {
+    const isAPromo = isPromoActive(a) ? 1 : 0;
+    const isBPromo = isPromoActive(b) ? 1 : 0;
+    if (isAPromo !== isBPromo) return isBPromo - isAPromo;
+    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+  });
 
   return (
     <div className="flex flex-col">
@@ -32,32 +40,60 @@ export default function MarketplaceClient({ initialProducts }: MarketplaceClient
                 key={product.id} 
                 className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all overflow-hidden flex flex-col relative"
               >
-                {/* Content */}
-                <div className="p-6 flex flex-col h-full gap-4">
-                  <div className="flex justify-between items-start gap-3">
-                    <div className="flex flex-col gap-1 w-full">
-                      <div className="flex flex-wrap gap-1 mb-1">
-                        {hasActivePromo && (
-                          <span className="bg-primary/10 text-primary text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">
-                            {product.sale_type.replace('_', ' ')}
-                          </span>
-                        )}
-                        {product.package_type === 'box' && (
-                          <span className="bg-orange-500/10 text-orange-600 text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">
-                            Box
-                          </span>
-                        )}
-                        {product.package_type === 'satuan' && product.sale_type === 'normal' && (
-                          <span className="bg-blue-500/10 text-blue-600 text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">
-                            Satuan
-                          </span>
-                        )}
+                {/* Image Container */}
+                <div className="aspect-square relative overflow-hidden bg-slate-50 border-b border-slate-50">
+                  {product.image_url ? (
+                    <Image 
+                      src={product.image_url} 
+                      alt={product.name} 
+                      fill 
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-500" 
+                    />
+                  ) : (
+                    <div className="size-full flex items-center justify-center text-5xl">🍩</div>
+                  )}
+                  
+                  {/* Badges Overlay */}
+                  <div className="absolute top-3 left-3 flex flex-col gap-2">
+                    {hasActivePromo && (
+                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-lg ${
+                        product.sale_type === 'flash_sale' ? 'bg-primary text-white' : 
+                        product.sale_type === 'jumat_berkah' ? 'bg-green-600 text-white' :
+                        'bg-blue-600 text-white'
+                      }`}>
+                        {product.sale_type === 'flash_sale' && <span className="text-sm">🔥</span>}
+                        {product.sale_type.replace('_', ' ')}
                       </div>
-                      <Link href={`/catalog/${product.id}`}>
-                        <h3 className="font-black text-slate-800 text-lg line-clamp-2 leading-tight group-hover:text-primary transition-colors uppercase">
+                    )}
+                    {hasDiscount && (
+                      <div className="bg-red-500 text-white px-2 py-1 rounded font-black text-[10px] shadow-lg">
+                        -{product.discount_percent}%
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="absolute bottom-3 right-3 flex gap-2">
+                    <span className={`px-2 py-1 text-[8px] font-black rounded uppercase tracking-wider shadow-md ${
+                      product.package_type === 'box' ? 'bg-orange-500 text-white' : 'bg-slate-700 text-white'
+                    }`}>
+                      {product.package_type}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-5 flex flex-col h-full gap-3">
+                  <div className="flex flex-col gap-1 w-full">
+                    <div className="flex justify-between items-start gap-2">
+                      <Link href={`/catalog/${product.id}`} className="flex-1">
+                        <h3 className="font-black text-slate-800 text-lg line-clamp-2 leading-tight group-hover:text-primary transition-colors uppercase tracking-tight">
                           {product.name}
                         </h3>
                       </Link>
+                      <div className="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-slate-50 px-2 py-1 rounded">
+                        Terjual {product.sold_count || 0}+
+                      </div>
                     </div>
                   </div>
 

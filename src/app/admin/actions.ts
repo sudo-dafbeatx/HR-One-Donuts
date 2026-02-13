@@ -2,7 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { HeroData, Product, Reason } from '@/types/cms';
+import { HeroData, Product, Reason, PromoEvent } from '@/types/cms';
 
 // Helper to verify admin role
 async function checkAdmin() {
@@ -135,5 +135,61 @@ export async function updateSettings(key: string, value: Record<string, unknown>
   if (error) throw new Error(error.message);
   
   revalidatePath('/');
+  return { success: true };
+}
+
+// --- Event Actions ---
+export async function saveEvent(data: Partial<PromoEvent>) {
+  const supabase = await checkAdmin();
+  
+  const eventData = {
+    ...data,
+    id: data.id || crypto.randomUUID(),
+    updated_at: new Date().toISOString()
+  };
+  
+  const { error } = await supabase
+    .from('events')
+    .upsert(eventData);
+
+  if (error) throw new Error(error.message);
+  
+  revalidatePath('/');
+  revalidatePath('/admin/(dashboard)/content');
+  return { success: true };
+}
+
+export async function deleteEvent(id: string) {
+  const supabase = await checkAdmin();
+  
+  const { error } = await supabase
+    .from('events')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+  
+  revalidatePath('/');
+  revalidatePath('/admin/(dashboard)/content');
+  return { success: true };
+}
+
+// --- Sales Tracking ---
+export async function incrementSoldCount(productIds: string[]) {
+  const supabase = await createServerSupabaseClient();
+  
+  // We don't check admin here because this is called by public users on order
+  for (const id of productIds) {
+    const { error } = await supabase.rpc('increment_product_sold', { product_id: id });
+    
+    if (error) {
+      // Fallback if RPC is not defined yet
+      const { data: p } = await supabase.from('products').select('sold_count').eq('id', id).single();
+      await supabase.from('products').update({ sold_count: (p?.sold_count || 0) + 1 }).eq('id', id);
+    }
+  }
+  
+  revalidatePath('/');
+  revalidatePath('/catalog');
   return { success: true };
 }

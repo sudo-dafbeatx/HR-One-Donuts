@@ -4,6 +4,7 @@ import { useCart } from "@/context/CartContext";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { ShoppingBagIcon, XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { incrementSoldCount } from "@/app/admin/actions";
 
 export default function CartDrawer() {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart } = useCart();
@@ -16,7 +17,15 @@ export default function CartDrawer() {
 
   if (!mounted) return null;
 
-  const handleWhatsAppOrder = () => {
+  const handleWhatsAppOrder = async () => {
+    // Track sales volume
+    try {
+      const productIds = cart.map(item => item.id);
+      await incrementSoldCount(productIds);
+    } catch (e) {
+      console.error('Failed to track sales:', e);
+    }
+
     const phone = "6281234567890"; // Example business phone
     let message = "Halo HR-One Donuts! 🍩 Saya ingin memesan:\n\n";
     

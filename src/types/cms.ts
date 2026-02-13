@@ -29,6 +29,20 @@ export interface Product {
   discount_percent?: number;
   promo_start?: string;
   promo_end?: string;
+  sold_count: number;
+}
+
+export interface PromoEvent {
+  id: string;
+  title: string;
+  event_type: 'flash_sale' | 'jumat_berkah' | 'takjil' | 'seasonal';
+  banner_image_url?: string;
+  discount_percent?: number;
+  start_at?: string;
+  end_at?: string;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Reason {

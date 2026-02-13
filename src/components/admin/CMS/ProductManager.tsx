@@ -22,8 +22,8 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
     try {
       await saveProduct(editingProduct);
       window.location.reload();
-    } catch (_) {
-      alert('Error saving product');
+    } catch (error) {
+      alert('Error saving product: ' + (error as any).message);
     } finally {
       setLoading(false);
     }
@@ -34,8 +34,8 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
     try {
       await deleteProduct(id);
       setProducts(products.filter(p => p.id !== id));
-    } catch (_) {
-      alert('Error deleting product');
+    } catch (error) {
+      alert('Error deleting product: ' + (error as any).message);
     }
   };
 
@@ -104,7 +104,10 @@ export default function ProductManager({ initialProducts }: { initialProducts: P
                 <h4 className="font-bold text-slate-800">{product.name}</h4>
                 <div className="text-right">
                   <p className="text-primary font-black text-sm">Rp {product.price.toLocaleString()}</p>
-                  <p className="text-[10px] font-bold text-slate-400">Stok: {product.stock}</p>
+                  <div className="flex flex-col items-end">
+                    <p className="text-[10px] font-bold text-slate-400 leading-none">Stok: {product.stock}</p>
+                    <p className="text-[10px] font-bold text-primary leading-none mt-1">Terjual: {product.sold_count || 0}+</p>
+                  </div>
                 </div>
               </div>
               <p className="text-xs text-slate-500 line-clamp-2 mb-2">{product.description}</p>

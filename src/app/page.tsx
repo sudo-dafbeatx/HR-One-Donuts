@@ -1,8 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { Product } from "@/types/cms";
+import { Product, PromoEvent } from "@/types/cms";
 import MarketplaceClient from "@/components/MarketplaceClient";
+import PromoBanner from "@/components/PromoBanner";
 
 export default async function Home() {
   const supabase = await createServerSupabaseClient();
@@ -14,11 +15,28 @@ export default async function Home() {
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
+  // Fetch active events
+  const { data: events } = await supabase
+    .from('events')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at', { ascending: false });
+
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-white">
       <Navbar />
       
       <main className="flex-1 container mx-auto px-4 py-8">
+        {events && events.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-xl font-black text-slate-800 mb-6 uppercase tracking-wider flex items-center gap-2">
+               <span className="w-8 h-1 bg-primary rounded-full"></span>
+               Promo Terkini
+            </h2>
+            <PromoBanner events={events as PromoEvent[]} />
+          </div>
+        )}
+
         {!products || products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-slate-500">
             <div className="size-20 mb-4 opacity-20">

@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import HeroEditor from '@/components/admin/CMS/HeroEditor';
 import ReasonsEditor from '@/components/admin/CMS/ReasonsEditor';
+import EventManager from '@/components/admin/CMS/EventManager';
 import { AdminCard } from '@/components/admin/CMS/Shared';
 
 export default async function ContentPage() {
@@ -26,6 +27,16 @@ export default async function ContentPage() {
     console.error('Error fetching reasons:', reasonsError);
   }
 
+  // Fetch events
+  const { data: events, error: eventsError } = await supabase
+    .from('events')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (eventsError) {
+    console.error('Error fetching events:', eventsError);
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
@@ -34,6 +45,8 @@ export default async function ContentPage() {
       </div>
 
       <HeroEditor initialData={hero || undefined} />
+
+      <EventManager initialEvents={events || []} />
 
       <ReasonsEditor initialReasons={reasons || []} />
       
