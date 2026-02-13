@@ -62,7 +62,7 @@ export default function EventManager({ initialEvents }: { initialEvents: PromoEv
                    <MegaphoneIcon className="w-12 h-12 opacity-20" />
                 </div>
               )}
-              <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+              <div className="absolute inset-0 bg-slate-900/20 sm:bg-slate-900/40 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                 <button 
                   onClick={() => setEditingEvent(event)}
                   className="p-3 bg-white rounded-xl shadow-lg text-primary hover:scale-110 transition-transform"
