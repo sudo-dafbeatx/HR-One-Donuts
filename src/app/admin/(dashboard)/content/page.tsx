@@ -40,8 +40,8 @@ export default async function ContentPage() {
   }
 
   const siteSettings = siteInfoData?.value as unknown as SiteSettings | undefined;
-  const orderSteps = (orderStepsData?.value as any)?.steps as OrderStep[] | undefined;
-  const categories = (categoryData?.value as any)?.categories as string[] | undefined;
+  const orderSteps = (orderStepsData?.value as unknown as { steps: OrderStep[] } | null)?.steps;
+  const categories = (categoryData?.value as unknown as { categories: string[] } | null)?.categories;
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 pt-10 pb-24 px-4 sm:px-0">
