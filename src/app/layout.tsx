@@ -39,15 +39,25 @@ export default function RootLayout({
               __html: `
                 (function() {
                   const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
+                    for (const mutation of mutations) {
                       if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
                         const target = mutation.target;
-                        if (target.getAttribute('aria-hidden') === 'true' && (target.id === 'credential_picker_container' || target.classList.contains('google-one-tap'))) {
-                          // Only remove if it's the known Google GSI container that causes focus conflicts
-                          target.removeAttribute('aria-hidden');
+                        const isGoogleContainer = target.id === 'credential_picker_container' || 
+                                              target.classList.contains('google-one-tap') ||
+                                              target.getAttribute('data-gsi-container') === 'true';
+                        
+                        if (isGoogleContainer && target.getAttribute('aria-hidden') === 'true') {
+                          // Allow the attribute to be false/removed, but prevent 'true' from sticking
+                          // if focus might be inside. Using requestAnimationFrame to let Google's script
+                          // finish its internal work first.
+                          requestAnimationFrame(() => {
+                            if (target.getAttribute('aria-hidden') === 'true') {
+                              target.removeAttribute('aria-hidden');
+                            }
+                          });
                         }
                       }
-                    });
+                    }
                   });
 
                   observer.observe(document.body, {
