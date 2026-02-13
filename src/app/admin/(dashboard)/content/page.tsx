@@ -46,7 +46,7 @@ export default async function ContentPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-20">
       <div>
-        <h1 className="text-3xl font-black text-heading mb-2">Manajemen Konten</h1>
+        <h1 className="text-2xl sm:text-3xl font-black text-heading mb-2">Manajemen Konten</h1>
         <p className="text-slate-500">Sesuaikan informasi toko dan konten utama website Anda.</p>
       </div>
 

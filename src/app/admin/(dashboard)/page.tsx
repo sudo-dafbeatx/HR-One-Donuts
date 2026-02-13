@@ -90,7 +90,7 @@ export default async function AdminDashboard() {
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-slate-800 tracking-tight">Ringkasan Bisnis</h1>
+          <h1 className="text-2xl sm:text-4xl font-black text-slate-800 tracking-tight">Ringkasan Bisnis</h1>
           <p className="text-slate-500 font-medium mt-1">
             Selamat datang kembali! Ini yang terjadi dengan toko Anda hari ini.
           </p>
