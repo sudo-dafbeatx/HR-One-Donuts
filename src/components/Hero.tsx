@@ -32,9 +32,9 @@ export default function Hero({
           
           {/* Text Content: 7/12 on Desktop */}
           <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 md:space-y-8 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/40 dark:bg-slate-900/40 border border-primary/10 backdrop-blur-md shadow-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md shadow-sm">
               <SparklesIcon className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-primary/80">{subtitle}</span>
+              <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-primary">{subtitle}</span>
             </div>
             
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-heading leading-[1.1] tracking-tight">
@@ -45,7 +45,7 @@ export default function Hero({
               ))}
             </h1>
             
-            <p className="text-base md:text-lg text-subheading/80 leading-relaxed max-w-lg">
+            <p className="text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-lg">
               {description}
             </p>
             
@@ -84,9 +84,9 @@ export default function Hero({
                   />
                   
                   {/* Subtle glass overlay on image corner */}
-                  <div className="absolute bottom-6 left-6 right-6 p-4 rounded-3xl bg-white/20 dark:bg-black/20 backdrop-blur-md border border-white/20 text-white md:block hidden animate-scale-in">
-                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Signature Recipe</p>
-                    <p className="text-sm font-bold">Dibuat dengan bahan premium pilihan</p>
+                  <div className="absolute bottom-6 left-6 right-6 p-4 rounded-3xl bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 shadow-2xl animate-scale-in">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-primary drop-shadow-sm">Signature Recipe</p>
+                    <p className="text-sm font-black text-slate-800 dark:text-white leading-tight mt-1">Dibuat dengan bahan premium pilihan</p>
                   </div>
                 </div>
               ) : (

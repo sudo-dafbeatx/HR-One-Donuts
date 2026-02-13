@@ -16,8 +16,12 @@ export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }
   const supabase = createClient();
 
   useEffect(() => {
-    setMounted(true);
-    
+    // Defer setting mounted to avoid synchronous cascading renders
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -48,7 +52,7 @@ export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }
           <h1 className="text-primary text-xl md:text-2xl font-black leading-tight tracking-tighter">
             {siteSettings?.store_name || "HR-One Donuts"}
           </h1>
-          <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest -mt-1">
+          <p className="text-[10px] md:text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest -mt-1 group-hover:text-primary/70 transition-colors">
             {siteSettings?.tagline || "Fresh and Smooth"}
           </p>
         </Link>

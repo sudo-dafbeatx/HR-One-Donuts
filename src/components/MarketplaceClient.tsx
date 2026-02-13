@@ -123,13 +123,13 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                           {product.name}
                         </h3>
                       </Link>
-                      <div className="text-[10px] font-bold text-slate-400 whitespace-nowrap bg-slate-50 px-2 py-1 rounded">
+                      <div className="text-[10px] font-black text-slate-600 dark:text-slate-300 whitespace-nowrap bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded shadow-sm">
                         Terjual {product.sold_count || 0}+
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-slate-500 text-xs line-clamp-2 leading-relaxed opacity-80">
+                  <p className="text-slate-600 dark:text-slate-400 text-xs line-clamp-2 leading-relaxed font-medium">
                     {product.description}
                   </p>
                   
