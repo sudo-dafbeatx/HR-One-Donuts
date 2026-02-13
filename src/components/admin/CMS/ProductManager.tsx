@@ -154,7 +154,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
               <div className="flex justify-between items-start mb-1">
                 <h4 className="font-bold text-slate-800">{product.name}</h4>
                 <div className="text-right">
-                  <p className="text-primary font-black text-sm">Rp {product.price.toLocaleString()}</p>
+                  <p className="text-primary font-black text-sm">Rp {product.price?.toLocaleString() || '0'}</p>
                   <div className="flex flex-col items-end">
                     <p className={`text-[10px] font-bold leading-none ${product.stock < 5 ? 'text-red-500' : 'text-slate-400'}`}>Stok: {product.stock}</p>
                     <p className="text-[10px] font-bold text-primary leading-none mt-1">Terjual: {product.sold_count || 0}+</p>

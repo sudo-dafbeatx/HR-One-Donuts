@@ -42,7 +42,7 @@ export default async function ProductsAdminPage() {
 
         <ProductManager 
           initialProducts={(productsRes.data as Product[]) || []} 
-          categories={(categoriesRes.data as Category[]) || []} 
+          categories={categories} 
         />
       </div>
     );
