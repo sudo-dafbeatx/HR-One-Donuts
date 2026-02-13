@@ -1,15 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Product } from '@/types/cms';
 import { AdminInput, AdminButton, AdminSelect } from './Shared';
 import { saveProduct, deleteProduct } from '@/app/admin/actions';
 import { TrashIcon, PencilIcon, PlusIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import ImageUploader from '../ImageUploader';
 import Image from 'next/image';
+import { Product, Category } from '@/types/cms';
 import { isPromoActive } from '@/lib/product-utils';
 
-export default function ProductManager({ initialProducts, categories }: { initialProducts: Product[], categories: string[] }) {
+export default function ProductManager({ initialProducts, categories }: { initialProducts: Product[], categories: Category[] }) {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [editingProduct, setEditingProduct] = useState<Partial<Product> | null>(null);
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,8 @@ export default function ProductManager({ initialProducts, categories }: { initia
 
   const validate = (data: Partial<Product>) => {
     if (!data.name?.trim()) return "Nama produk wajib diisi";
-    if (!data.price || data.price <= 0) return "Harga harus lebih dari 0";
+    if (!data.category) return "Kategori wajib dipilih";
+    if (data.price === undefined || data.price <= 0) return "Harga harus lebih dari 0";
     if (data.stock !== undefined && data.stock < 0) return "Stok tidak boleh negatif";
     if (data.discount_percent && (data.discount_percent < 0 || data.discount_percent > 100)) return "Diskon harus antara 0-100%";
     return null;
@@ -222,7 +223,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
                     onChange={e => setEditingProduct({...editingProduct, category: e.target.value})}
                     options={[
                       { label: '-- Pilih Kategori --', value: '' },
-                      ...categories.map(cat => ({ label: cat, value: cat }))
+                      ...categories.map(cat => ({ label: cat.name, value: cat.name }))
                     ]}
                   />
                   <AdminInput 

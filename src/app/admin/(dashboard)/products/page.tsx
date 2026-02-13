@@ -1,31 +1,41 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import ProductManager from '@/components/admin/CMS/ProductManager';
+import { Product, Category } from '@/types/cms';
 
 export default async function ProductsAdminPage() {
   const supabase = await createServerSupabaseClient();
   
-  const { data: products } = await supabase
-    .from('products')
-    .select('*')
-    .order('created_at', { ascending: false });
+  try {
+    const [productsRes, categoriesRes] = await Promise.all([
+      supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('categories')
+        .select('*')
+        .order('name', { ascending: true })
+    ]);
 
-  // Fetch categories
-  const { data: categoryData } = await supabase
-    .from('settings')
-    .select('value')
-    .eq('key', 'product_categories')
-    .maybeSingle();
+    if (productsRes.error) throw productsRes.error;
+    if (categoriesRes.error) throw categoriesRes.error;
 
-  const categories = (categoryData?.value as { categories: string[] } | null)?.categories;
+    return (
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black text-heading mb-2">Manajemen Menu</h1>
+          <p className="text-slate-500">Tambah, edit, atau hapus produk dari menu katalog Anda.</p>
+        </div>
 
-  return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-heading mb-2">Manajemen Menu</h1>
-        <p className="text-slate-500">Tambah, edit, atau hapus produk dari menu katalog Anda.</p>
+        <ProductManager 
+          initialProducts={(productsRes.data as Product[]) || []} 
+          categories={(categoriesRes.data as Category[]) || []} 
+        />
       </div>
-
-      <ProductManager initialProducts={products || []} categories={categories || []} />
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error('CRITICAL: Error loading ProductsAdminPage:', error);
+    // This will be caught by the error.tsx boundary
+    throw error;
+  }
 }

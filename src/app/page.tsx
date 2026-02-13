@@ -40,14 +40,14 @@ export default async function Home() {
 
   // Fetch categories
   const { data: categoryData } = await supabase
-    .from('settings')
-    .select('value')
-    .eq('key', 'product_categories')
-    .maybeSingle();
+    .from('categories')
+    .select('name')
+    .eq('is_active', true)
+    .order('name', { ascending: true });
 
   const siteSettings = siteInfoData?.value as unknown as SiteSettings | undefined;
   const orderSteps = (orderStepsData?.value as { steps: OrderStep[] } | null)?.steps;
-  const categories = (categoryData?.value as { categories: string[] } | null)?.categories;
+  const categories = categoryData?.map(c => c.name) || [];
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-white">

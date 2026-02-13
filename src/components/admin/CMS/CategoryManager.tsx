@@ -2,38 +2,47 @@
 
 import { useState } from 'react';
 import { AdminInput, AdminButton, AdminCard } from './Shared';
-import { updateSettings } from '@/app/admin/actions';
+import { saveCategory, deleteCategory } from '@/app/admin/actions';
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { Category } from '@/types/cms';
 
-export default function CategoryManager({ initialCategories }: { initialCategories: string[] }) {
-  const [categories, setCategories] = useState<string[]>(initialCategories.length > 0 ? initialCategories : ['Signature', 'Box', 'Satuan', 'Minuman']);
-  const [newCategory, setNewCategory] = useState('');
+export default function CategoryManager({ initialCategories }: { initialCategories: Category[] }) {
+  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [newCategoryName, setNewCategoryName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
 
-  const addCategory = () => {
-    if (!newCategory.trim()) return;
-    if (categories.includes(newCategory.trim())) {
+  const handleAdd = async () => {
+    if (!newCategoryName.trim()) return;
+    if (categories.some(c => c.name.toLowerCase() === newCategoryName.trim().toLowerCase())) {
       alert('Kategori sudah ada');
       return;
     }
-    setCategories([...categories, newCategory.trim()]);
-    setNewCategory('');
-  };
-
-  const removeCategory = (cat: string) => {
-    setCategories(categories.filter(c => c !== cat));
-  };
-
-  const handleSave = async () => {
+    
     setLoading(true);
-    setSuccess(false);
     try {
-      await updateSettings('product_categories', { categories } as unknown as Record<string, unknown>);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      const result = await saveCategory(newCategoryName.trim());
+      if (result.success) {
+        // Refresh would be ideal, but for now we just re-sync or wait for revalidate
+        window.location.reload();
+      }
     } catch (error) {
-      alert('Error updating categories: ' + (error as Error).message);
+      alert('Gagal menambah kategori: ' + (error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Hapus kategori ini? Produk dengan kategori ini mungkin tidak akan muncul di filter.')) return;
+    
+    setLoading(true);
+    try {
+      const result = await deleteCategory(id);
+      if (result.success) {
+        setCategories(categories.filter(c => c.id !== id));
+      }
+    } catch (error) {
+      alert('Gagal menghapus kategori: ' + (error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -47,43 +56,38 @@ export default function CategoryManager({ initialCategories }: { initialCategori
             <AdminInput 
               label="Tambah Kategori Baru" 
               placeholder="Contoh: Donat Asin"
-              value={newCategory}
-              onChange={e => setNewCategory(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addCategory())}
+              value={newCategoryName}
+              onChange={e => setNewCategoryName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), !loading && handleAdd())}
+              disabled={loading}
             />
           </div>
-          <AdminButton type="button" onClick={addCategory} className="mt-8">
+          <AdminButton type="button" onClick={handleAdd} className="mt-8" isLoading={loading}>
             <PlusIcon className="w-4 h-4" />
           </AdminButton>
         </div>
 
         <div className="flex flex-wrap gap-2">
           {categories.map((cat) => (
-            <div key={cat} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-xl group transition-all hover:border-primary/30">
-              <span className="text-sm font-bold text-slate-700">{cat}</span>
+            <div key={cat.id} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-xl group transition-all hover:border-primary/30">
+              <span className="text-sm font-bold text-slate-700">{cat.name}</span>
               <button 
-                onClick={() => removeCategory(cat)}
-                className="text-slate-400 hover:text-red-500 transition-colors"
+                onClick={() => handleDelete(cat.id)}
+                disabled={loading}
+                className="text-slate-400 hover:text-red-500 transition-colors disabled:opacity-50"
               >
                 <TrashIcon className="w-4 h-4" />
               </button>
             </div>
           ))}
           {categories.length === 0 && (
-            <p className="text-sm text-slate-400 italic">Belum ada kategori.</p>
+            <p className="text-sm text-slate-400 italic">Belum ada kategori. Tambahkan minimal satu untuk menu.</p>
           )}
         </div>
 
-        <div className="flex items-center gap-4 pt-4 border-t border-slate-100">
-          <AdminButton onClick={handleSave} isLoading={loading}>
-            Simpan Daftar Kategori
-          </AdminButton>
-          {success && (
-            <span className="text-green-600 font-bold animate-bounce text-sm">
-              ✅ Kategori berhasil disimpan!
-            </span>
-          )}
-        </div>
+        <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
+          * Perubahan kategori akan langsung tersimpan di database.
+        </p>
       </div>
     </AdminCard>
   );

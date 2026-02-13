@@ -16,13 +16,13 @@ export default async function CatalogPage() {
 
   // Fetch categories
   const { data: categoryData } = await supabase
-    .from('settings')
-    .select('value')
-    .eq('key', 'product_categories')
-    .maybeSingle();
+    .from('categories')
+    .select('name')
+    .eq('is_active', true)
+    .order('name', { ascending: true });
   
   const siteSettings = settingsData?.value as unknown as SiteSettings | undefined;
-  const categories = (categoryData?.value as { categories: string[] } | null)?.categories;
+  const categories = categoryData?.map(c => c.name) || [];
 
   const { data: dbProducts } = await supabase
     .from('products')

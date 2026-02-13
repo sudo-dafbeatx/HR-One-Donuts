@@ -30,8 +30,12 @@ export async function saveProduct(data: Partial<Product>) {
   const supabase = await checkAdmin();
   
   // Basic validation for mandatory fields
-  if (!data.name || data.price === undefined || data.price < 0) {
-    throw new Error('Name and a valid price are required');
+  if (!data.name?.trim() || data.price === undefined || data.price < 0) {
+    throw new Error('Nama produk dan harga yang valid wajib diisi');
+  }
+
+  if (!data.category || data.category === '') {
+    throw new Error('Kategori wajib dipilih');
   }
 
   const productData = {
@@ -174,5 +178,39 @@ export async function incrementSoldCount(productIds: string[]) {
   
   revalidatePath('/');
   revalidatePath('/catalog');
+  return { success: true };
+}
+
+// --- Category Actions ---
+export async function saveCategory(name: string, id?: string) {
+  const supabase = await checkAdmin();
+  
+  const { error } = await supabase
+    .from('categories')
+    .upsert({ 
+      id: id || crypto.randomUUID(), 
+      name, 
+      updated_at: new Date().toISOString() 
+    });
+
+  if (error) throw new Error(error.message);
+  
+  revalidatePath('/admin/products');
+  revalidatePath('/admin/content');
+  return { success: true };
+}
+
+export async function deleteCategory(id: string) {
+  const supabase = await checkAdmin();
+  
+  const { error } = await supabase
+    .from('categories')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+  
+  revalidatePath('/admin/products');
+  revalidatePath('/admin/content');
   return { success: true };
 }
