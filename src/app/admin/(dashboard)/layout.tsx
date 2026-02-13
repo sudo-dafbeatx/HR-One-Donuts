@@ -9,6 +9,7 @@ import {
   ArrowRightOnRectangleIcon,
   UserCircleIcon
 } from '@heroicons/react/24/outline';
+import AdminMobileNav from '@/components/admin/AdminMobileNav';
 
 export default async function AdminLayout({
   children,
@@ -46,7 +47,9 @@ export default async function AdminLayout({
       <nav className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
-            <div className="flex items-center gap-10">
+            <div className="flex items-center gap-4 sm:gap-10">
+              <AdminMobileNav userEmail={user.email || undefined} />
+              
               <div className="flex flex-col">
                 <span className="text-lg sm:text-xl font-black text-slate-800 tracking-tighter">HR-One <span className="text-primary">Donuts</span></span>
                 <span className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Administrator</span>
