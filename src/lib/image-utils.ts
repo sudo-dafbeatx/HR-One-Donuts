@@ -28,3 +28,11 @@ export function generateImageName(_originalName: string): string {
   const ext = 'webp'; // Always WebP output
   return `${timestamp}-${random}.${ext}`;
 }
+
+export function extractStoragePath(url: string | null | undefined): string | null {
+  if (!url) return null;
+  // Format: https://[ID].supabase.co/storage/v1/object/public/images/[path]
+  const parts = url.split('/public/images/');
+  if (parts.length < 2) return null;
+  return parts[1];
+}

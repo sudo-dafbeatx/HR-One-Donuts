@@ -4,8 +4,8 @@ import sharp from 'sharp';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { generateImageName } from '@/lib/image-utils';
 
-const MAX_WIDTH = 1200;
-const WEBP_QUALITY = 85;
+const MAX_WIDTH = 1000;
+const WEBP_QUALITY = 75;
 
 export async function uploadImage(formData: FormData) {
   console.log('🚀 [uploadImage] Starting upload process...');

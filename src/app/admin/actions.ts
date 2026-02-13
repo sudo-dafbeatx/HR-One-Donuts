@@ -3,6 +3,8 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { Product, PromoEvent } from '@/types/cms';
+import { extractStoragePath } from '@/lib/image-utils';
+import { deleteImage } from './upload-actions';
 
 // Helper to verify admin role
 async function checkAdmin() {
@@ -43,6 +45,15 @@ export async function saveProduct(data: Partial<Product>) {
     updated_at: new Date().toISOString()
   };
   
+  // Cleanup old image if the URL changed
+  if (data.id && data.image_url) {
+    const { data: oldData } = await supabase.from('products').select('image_url').eq('id', data.id).single();
+    if (oldData?.image_url && oldData.image_url !== data.image_url) {
+      const oldPath = extractStoragePath(oldData.image_url);
+      if (oldPath) await deleteImage(oldPath).catch(err => console.error('Cleanup error:', err));
+    }
+  }
+
   const { data: savedData, error } = await supabase
     .from('products')
     .upsert(productData)
@@ -60,6 +71,13 @@ export async function saveProduct(data: Partial<Product>) {
 export async function deleteProduct(id: string) {
   const supabase = await checkAdmin();
   
+  // Cleanup image first
+  const { data: product } = await supabase.from('products').select('image_url').eq('id', id).single();
+  if (product?.image_url) {
+    const path = extractStoragePath(product.image_url);
+    if (path) await deleteImage(path).catch(err => console.error('Cleanup error:', err));
+  }
+
   const { error } = await supabase
     .from('products')
     .delete()
@@ -97,6 +115,15 @@ export async function saveEvent(data: Partial<PromoEvent>) {
     updated_at: new Date().toISOString()
   };
   
+  // Cleanup old image if URL changed
+  if (data.id && data.banner_image_url) {
+    const { data: oldData } = await supabase.from('events').select('banner_image_url').eq('id', data.id).single();
+    if (oldData?.banner_image_url && oldData.banner_image_url !== data.banner_image_url) {
+      const oldPath = extractStoragePath(oldData.banner_image_url);
+      if (oldPath) await deleteImage(oldPath).catch(err => console.error('Cleanup error:', err));
+    }
+  }
+
   const { error } = await supabase
     .from('events')
     .upsert(eventData);
@@ -111,6 +138,13 @@ export async function saveEvent(data: Partial<PromoEvent>) {
 export async function deleteEvent(id: string) {
   const supabase = await checkAdmin();
   
+  // Cleanup image first
+  const { data: event } = await supabase.from('events').select('banner_image_url').eq('id', id).single();
+  if (event?.banner_image_url) {
+    const path = extractStoragePath(event.banner_image_url);
+    if (path) await deleteImage(path).catch(err => console.error('Cleanup error:', err));
+  }
+
   const { error } = await supabase
     .from('events')
     .delete()
