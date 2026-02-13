@@ -17,8 +17,21 @@ export default async function ProductsAdminPage() {
         .order('name', { ascending: true })
     ]);
 
-    if (productsRes.error) throw productsRes.error;
-    if (categoriesRes.error) throw categoriesRes.error;
+    if (productsRes.error) {
+      console.error('❌ [ProductsPage] Error fetching products:', productsRes.error);
+      throw productsRes.error;
+    }
+
+    let categories: Category[] = [];
+    if (categoriesRes.error) {
+      console.warn('⚠️ [ProductsPage] Error fetching categories (maybe table not created yet?):', categoriesRes.error);
+      // Don't throw if it's just categories missing, just show empty or default
+      if (categoriesRes.error.code === '42P01' || categoriesRes.error.message?.includes('does not exist')) {
+        console.error('💡 TIP: Run the SQL migration in supabase/migrations/20260213_create_categories_table.sql');
+      }
+    } else {
+      categories = (categoriesRes.data as Category[]) || [];
+    }
 
     return (
       <div className="space-y-4">

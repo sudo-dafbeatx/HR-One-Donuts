@@ -19,9 +19,15 @@ export default async function ContentPage() {
 
     if (eventsRes.error) console.error('Error fetching events:', eventsRes.error);
 
+    let categories: Category[] = [];
+    if (categoryRes.error) {
+      console.warn('⚠️ [ContentPage] Error fetching categories:', categoryRes.error);
+    } else {
+      categories = (categoryRes.data as Category[]) || [];
+    }
+
     const siteSettings = siteInfoRes.data?.value as unknown as SiteSettings | undefined;
     const orderSteps = (orderStepsRes.data?.value as unknown as { steps: OrderStep[] } | null)?.steps;
-    const categories = (categoryRes.data as Category[]) || [];
     const events = eventsRes.data || [];
 
     return (

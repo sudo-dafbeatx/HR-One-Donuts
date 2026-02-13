@@ -15,12 +15,16 @@ export default async function CatalogPage() {
     .maybeSingle();
 
   // Fetch categories
-  const { data: categoryData } = await supabase
+  const { data: categoryData, error: categoryError } = await supabase
     .from('categories')
     .select('name')
     .eq('is_active', true)
     .order('name', { ascending: true });
   
+  if (categoryError) {
+    console.warn('⚠️ [CatalogPage] Missing categories table:', categoryError);
+  }
+
   const siteSettings = settingsData?.value as unknown as SiteSettings | undefined;
   const categories = categoryData?.map(c => c.name) || [];
 

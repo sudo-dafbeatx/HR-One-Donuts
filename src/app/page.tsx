@@ -39,11 +39,15 @@ export default async function Home() {
     .order('created_at', { ascending: false });
 
   // Fetch categories
-  const { data: categoryData } = await supabase
+  const { data: categoryData, error: categoryError } = await supabase
     .from('categories')
     .select('name')
     .eq('is_active', true)
     .order('name', { ascending: true });
+
+  if (categoryError) {
+    console.warn('⚠️ [HomePage] Missing categories table:', categoryError);
+  }
 
   const siteSettings = siteInfoData?.value as unknown as SiteSettings | undefined;
   const orderSteps = (orderStepsData?.value as { steps: OrderStep[] } | null)?.steps;
