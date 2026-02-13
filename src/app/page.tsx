@@ -3,9 +3,9 @@ import Footer from "@/components/Footer";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { Product, PromoEvent, SiteSettings, OrderStep } from "@/types/cms";
 import MarketplaceClient from "@/components/MarketplaceClient";
-import PromoBanner from "@/components/PromoBanner";
 import OrderSteps from "@/components/OrderSteps";
 import Hero from "@/components/Hero";
+import FlashSaleSection from "@/components/FlashSaleSection";
 
 export default async function Home() {
   const supabase = await createServerSupabaseClient();
@@ -63,16 +63,11 @@ export default async function Home() {
           subtitle={siteSettings?.tagline}
         />
 
+        {events && events.length > 0 && (
+          <FlashSaleSection events={events as PromoEvent[]} />
+        )}
+
         <div className="container mx-auto px-4 py-12">
-          {events && events.length > 0 && (
-            <div className="mb-16">
-              <h2 className="text-xl font-black text-slate-800 mb-6 uppercase tracking-wider flex items-center gap-2">
-                 <span className="w-8 h-1 bg-primary rounded-full"></span>
-                 Promo Terkini
-              </h2>
-              <PromoBanner events={events as PromoEvent[]} />
-            </div>
-          )}
 
           <div className="mb-16">
             <h2 className="text-xl font-black text-slate-800 mb-8 uppercase tracking-wider flex items-center gap-2">
