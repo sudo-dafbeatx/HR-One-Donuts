@@ -1,11 +1,13 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { Product, PromoEvent, SiteSettings, OrderStep } from "@/types/cms";
+import { Product, SiteSettings, OrderStep } from "@/types/cms";
 import MarketplaceClient from "@/components/MarketplaceClient";
 import OrderSteps from "@/components/OrderSteps";
 import Hero from "@/components/Hero";
-import FlashSaleSection from "@/components/FlashSaleSection";
+import FlashSaleServer from "@/components/FlashSaleServer";
+import FlashSaleSkeleton from "@/components/FlashSaleSkeleton";
+import { Suspense } from "react";
 
 export default async function Home() {
   const supabase = await createServerSupabaseClient();
@@ -27,13 +29,6 @@ export default async function Home() {
   // Only fetch active products
   const { data: products } = await supabase
     .from('products')
-    .select('*')
-    .eq('is_active', true)
-    .order('created_at', { ascending: false });
-
-  // Fetch active events
-  const { data: events } = await supabase
-    .from('events')
     .select('*')
     .eq('is_active', true)
     .order('created_at', { ascending: false });
@@ -63,9 +58,9 @@ export default async function Home() {
           subtitle={siteSettings?.tagline}
         />
 
-        {events && events.length > 0 && (
-          <FlashSaleSection events={events as PromoEvent[]} />
-        )}
+        <Suspense fallback={<FlashSaleSkeleton />}>
+          <FlashSaleServer />
+        </Suspense>
 
         <div className="container mx-auto px-4 py-12">
 
