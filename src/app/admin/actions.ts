@@ -38,38 +38,60 @@ export async function saveProduct(data: Partial<Product>) {
     throw new Error('Kategori wajib dipilih');
   }
 
+  // Ensure and sanitize product data
   const productData = {
-    ...data,
     id: data.id || crypto.randomUUID(),
+    name: data.name.trim(),
+    price: data.price,
+    description: data.description || '',
+    image_url: data.image_url || null,
     category: data.category || 'Uncategorized',
     stock: data.stock ?? 0,
     is_active: data.is_active ?? true,
     sale_type: data.sale_type || 'normal',
     package_type: data.package_type || 'satuan',
+    discount_percent: data.discount_percent ?? 0,
+    promo_start: data.promo_start || null,
+    promo_end: data.promo_end || null,
+    tag: data.tag || null,
+    variants: data.variants || [],
+    sold_count: data.sold_count ?? 0,
     updated_at: new Date().toISOString()
   };
   
   // Cleanup old image if the URL changed
   if (data.id && data.image_url) {
-    const { data: oldData } = await supabase.from('products').select('image_url').eq('id', data.id).single();
-    if (oldData?.image_url && oldData.image_url !== data.image_url) {
-      const oldPath = extractStoragePath(oldData.image_url);
-      if (oldPath) await deleteImage(oldPath).catch(err => console.error('Cleanup error:', err));
+    try {
+      const { data: oldData } = await supabase.from('products').select('image_url').eq('id', data.id).single();
+      if (oldData?.image_url && oldData.image_url !== data.image_url) {
+        const oldPath = extractStoragePath(oldData.image_url);
+        if (oldPath) await deleteImage(oldPath).catch(err => console.error('Cleanup error:', err));
+      }
+    } catch (e) {
+      console.error('Image cleanup error:', e);
     }
   }
 
-  const { data: savedData, error } = await supabase
-    .from('products')
-    .upsert(productData)
-    .select()
-    .single();
+  try {
+    const { data: savedData, error } = await supabase
+      .from('products')
+      .upsert(productData)
+      .select()
+      .single();
 
-  if (error) throw new Error(error.message);
-  
-  revalidatePath('/');
-  revalidatePath('/catalog');
-  revalidatePath('/admin/products');
-  return { success: true, data: savedData as Product };
+    if (error) {
+      console.error('Supabase Upsert Error:', error);
+      throw new Error(`Gagal menyimpan produk: ${error.message}`);
+    }
+    
+    revalidatePath('/');
+    revalidatePath('/catalog');
+    revalidatePath('/admin/products');
+    return { success: true, data: savedData as Product };
+  } catch (err: unknown) {
+    console.error('SaveProduct Crash:', err);
+    throw err instanceof Error ? err : new Error('An unexpected error occurred during saveProduct');
+  }
 }
 
 export async function deleteProduct(id: string) {
