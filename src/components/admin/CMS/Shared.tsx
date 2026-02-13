@@ -101,3 +101,47 @@ export function AdminSelect({
     </div>
   );
 }
+export function AdminCurrencyInput({ 
+  label, 
+  value, 
+  onChange, 
+  error, 
+  className = '',
+  ...props 
+}: { 
+  label: string; 
+  value: number; 
+  onChange: (value: number) => void;
+  error?: string;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'>) {
+  
+  const formatDisplay = (val: number) => {
+    return val.toLocaleString('id-ID');
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Remove all non-digits
+    const rawValue = e.target.value.replace(/\D/g, '');
+    const numericValue = rawValue === '' ? 0 : parseInt(rawValue, 10);
+    onChange(numericValue);
+  };
+
+  return (
+    <div className={`space-y-1.5 ${className}`}>
+      <label className="block text-sm font-semibold text-slate-700">{label}</label>
+      <div className="relative group">
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm pointer-events-none group-focus-within:text-primary transition-colors">
+          Rp
+        </span>
+        <input
+          type="text"
+          className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-800 font-bold"
+          value={formatDisplay(value)}
+          onChange={handleChange}
+          {...props}
+        />
+      </div>
+      {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
+    </div>
+  );
+}

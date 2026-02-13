@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { AdminInput, AdminButton, AdminSelect } from './Shared';
+import { AdminInput, AdminButton, AdminSelect, AdminCurrencyInput } from './Shared';
 import { saveProduct, deleteProduct } from '@/app/admin/actions';
 import { TrashIcon, PencilIcon, PlusIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import ImageUploader from '../ImageUploader';
@@ -232,11 +232,10 @@ export default function ProductManager({ initialProducts, categories }: { initia
                     onChange={e => setEditingProduct({...editingProduct, tag: e.target.value})}
                   />
                   <div className="grid grid-cols-2 gap-4">
-                    <AdminInput 
+                    <AdminCurrencyInput 
                       label="Harga Dasar *" 
-                      type="number"
-                      value={editingProduct.price} 
-                      onChange={e => setEditingProduct({...editingProduct, price: Number(e.target.value)})}
+                      value={editingProduct.price || 0} 
+                      onChange={val => setEditingProduct({...editingProduct, price: val})}
                       required 
                     />
                     <AdminInput 
@@ -361,12 +360,11 @@ export default function ProductManager({ initialProducts, categories }: { initia
                         />
                       </div>
                       <div className="w-full sm:w-32">
-                        <AdminInput 
+                        <AdminCurrencyInput 
                           label={index === 0 ? "Harga +" : ""} 
-                          type="number"
                           placeholder="Adjustment"
                           value={variant.price_adjustment} 
-                          onChange={e => updateVariant(index, 'price_adjustment', Number(e.target.value))}
+                          onChange={val => updateVariant(index, 'price_adjustment', val)}
                         />
                       </div>
                       <button 
