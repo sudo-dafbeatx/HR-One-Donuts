@@ -86,7 +86,7 @@ export default async function AdminDashboard() {
     .slice(0, 5);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-20">
+    <div className="space-y-6 max-w-7xl mx-auto pb-20">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>

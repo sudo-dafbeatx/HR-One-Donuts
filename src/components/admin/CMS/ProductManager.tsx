@@ -96,15 +96,14 @@ export default function ProductManager({ initialProducts, categories }: { initia
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-black text-heading">Menu Produk</h2>
+      <div className="flex justify-end">
         <AdminButton onClick={() => {
           setErrorStatus(null);
           setSuccessStatus(null);
           setEditingProduct({ name: '', price: 0, category: '', tag: '', stock: 0, is_active: true, sale_type: 'normal', package_type: 'satuan', variants: [] });
         }}>
           <PlusIcon className="w-5 h-5" />
-          Tambah Produk
+          Tambah Produk Baru
         </AdminButton>
       </div>
 

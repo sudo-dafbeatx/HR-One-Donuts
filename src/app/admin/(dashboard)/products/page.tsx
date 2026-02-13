@@ -19,7 +19,7 @@ export default async function ProductsAdminPage() {
   const categories = (categoryData?.value as { categories: string[] } | null)?.categories;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       <div>
         <h1 className="text-3xl font-black text-heading mb-2">Manajemen Menu</h1>
         <p className="text-slate-500">Tambah, edit, atau hapus produk dari menu katalog Anda.</p>
