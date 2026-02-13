@@ -48,8 +48,8 @@ export default async function AdminLayout({
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-10">
               <div className="flex flex-col">
-                <span className="text-xl font-black text-slate-800 tracking-tighter">HR-One <span className="text-primary">Donuts</span></span>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Administrator</span>
+                <span className="text-lg sm:text-xl font-black text-slate-800 tracking-tighter">HR-One <span className="text-primary">Donuts</span></span>
+                <span className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Administrator</span>
               </div>
               
               <div className="hidden md:flex items-center gap-1">
@@ -98,7 +98,7 @@ export default async function AdminLayout({
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-20">
         {children}
       </main>
     </div>

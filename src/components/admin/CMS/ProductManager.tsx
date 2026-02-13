@@ -184,9 +184,9 @@ export default function ProductManager({ initialProducts, categories }: { initia
       {/* Edit Modal / Form overlay */}
       {editingProduct && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-          <div className="my-8 w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden scale-in-center">
-            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h3 className="text-xl font-black text-heading">
+          <div className="my-auto w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden scale-in-center">
+            <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h3 className="text-lg sm:text-xl font-black text-heading">
                 {editingProduct.id ? 'Edit Produk' : 'Tambah Produk Baru'}
               </h3>
               <button 
@@ -197,7 +197,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
               </button>
             </div>
             
-            <form onSubmit={handleSave} className="p-8 space-y-6">
+            <form onSubmit={handleSave} className="p-5 sm:p-8 space-y-6">
               {/* Status Messages */}
               {errorStatus && (
                 <div className="p-3 bg-red-50 border border-red-100 text-red-600 text-xs font-bold rounded-xl animate-shake">
@@ -351,20 +351,20 @@ export default function ProductManager({ initialProducts, categories }: { initia
                 </div>
                 <div className="space-y-2">
                   {editingProduct.variants?.map((variant, index) => (
-                    <div key={index} className="flex gap-2 items-end">
-                      <div className="flex-1">
+                    <div key={index} className="flex flex-col sm:flex-row gap-2 items-start sm:items-end p-3 bg-slate-50 rounded-xl border border-slate-100 sm:bg-transparent sm:p-0 sm:border-0 relative">
+                      <div className="flex-1 w-full">
                         <AdminInput 
-                          label="" 
-                          placeholder="Nama Varian (Coklat, Keju...)"
+                          label={index === 0 ? "Nama Varian" : ""} 
+                          placeholder="Contoh: Coklat, Keju..."
                           value={variant.name} 
                           onChange={e => updateVariant(index, 'name', e.target.value)}
                         />
                       </div>
-                      <div className="w-32">
+                      <div className="w-full sm:w-32">
                         <AdminInput 
-                          label="" 
+                          label={index === 0 ? "Harga +" : ""} 
                           type="number"
-                          placeholder="+ Harga"
+                          placeholder="Adjustment"
                           value={variant.price_adjustment} 
                           onChange={e => updateVariant(index, 'price_adjustment', Number(e.target.value))}
                         />
@@ -372,7 +372,8 @@ export default function ProductManager({ initialProducts, categories }: { initia
                       <button 
                         type="button" 
                         onClick={() => removeVariant(index)}
-                        className="p-2.5 mb-1.5 text-red-400 hover:text-red-600 bg-red-50 rounded-lg transition-colors"
+                        className="absolute top-2 right-2 sm:static p-2 text-red-400 hover:text-red-600 bg-red-50 sm:bg-transparent rounded-lg transition-colors sm:mb-1.5"
+                        title="Hapus Varian"
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>

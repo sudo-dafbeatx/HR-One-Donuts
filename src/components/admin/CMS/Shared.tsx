@@ -63,10 +63,10 @@ export function AdminInput(props: FormInputProps) {
 export function AdminCard({ title, children, className }: { title: string; children: React.ReactNode; className?: string }) {
   return (
     <div className={`bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
-      <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-        <h3 className="font-bold text-slate-800">{title}</h3>
+      <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-slate-100 bg-slate-50/50">
+        <h3 className="font-bold text-slate-800 text-sm sm:text-base">{title}</h3>
       </div>
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {children}
       </div>
     </div>

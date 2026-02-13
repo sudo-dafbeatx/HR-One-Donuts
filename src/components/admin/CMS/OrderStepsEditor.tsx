@@ -62,31 +62,31 @@ export default function OrderStepsEditor({ initialSteps }: { initialSteps: Order
       <div className="space-y-4">
         {steps.map((step, index) => (
           <AdminCard key={step.id} title={`Langkah ${step.step_number}`}>
-            <div className="flex gap-6 items-start">
-               <div className="flex-1 space-y-4">
-                  <AdminInput 
-                    label="Judul Langkah" 
-                    value={step.title} 
-                    onChange={e => updateStep(step.id, 'title', e.target.value)}
-                    placeholder="Contoh: Pilih Donat"
-                  />
-                  <AdminInput 
-                    label="Deskripsi" 
-                    value={step.description} 
-                    onChange={e => updateStep(step.id, 'description', e.target.value)}
-                    multiline
-                    rows={2}
-                    placeholder="Jelaskan apa yang harus dilakukan pelanggan..."
-                  />
-               </div>
-               <button 
-                onClick={() => removeStep(step.id)}
-                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors mt-8"
-                title="Hapus Langkah"
-               >
-                 <TrashIcon className="w-5 h-5" />
-               </button>
-            </div>
+             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
+                <div className="flex-1 w-full space-y-4">
+                   <AdminInput 
+                     label="Judul Langkah" 
+                     value={step.title} 
+                     onChange={e => updateStep(step.id, 'title', e.target.value)}
+                     placeholder="Contoh: Pilih Donat"
+                   />
+                   <AdminInput 
+                     label="Deskripsi" 
+                     value={step.description} 
+                     onChange={e => updateStep(step.id, 'description', e.target.value)}
+                     multiline
+                     rows={2}
+                     placeholder="Jelaskan apa yang harus dilakukan pelanggan..."
+                   />
+                </div>
+                <button 
+                 onClick={() => removeStep(step.id)}
+                 className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors sm:mt-8 self-end sm:self-start"
+                 title="Hapus Langkah"
+                >
+                  <TrashIcon className="w-5 h-5" />
+                </button>
+             </div>
           </AdminCard>
         ))}
       </div>

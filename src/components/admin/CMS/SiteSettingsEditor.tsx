@@ -36,7 +36,7 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
   return (
     <form onSubmit={handleSave} className="space-y-6">
       <AdminCard title="Informasi Toko & Kontak">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
             <AdminInput 
               label="Nama Toko" 
@@ -86,7 +86,7 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
       </AdminCard>
 
       <AdminCard title="Social Media Links">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <AdminInput 
             label="Instagram URL" 
             placeholder="https://instagram.com/..."

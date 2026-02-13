@@ -22,7 +22,7 @@ export default function EventManager({ initialEvents }: { initialEvents: PromoEv
       await saveEvent(editingEvent);
       window.location.reload();
     } catch (error) {
-      alert('Error saving event: ' + (error as any).message);
+      alert('Error saving event: ' + (error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -34,7 +34,7 @@ export default function EventManager({ initialEvents }: { initialEvents: PromoEv
       await deleteEvent(id);
       setEvents(events.filter(e => e.id !== id));
     } catch (error) {
-      alert('Error deleting event: ' + (error as any).message);
+      alert('Error deleting event: ' + (error as Error).message);
     }
   };
 
@@ -109,9 +109,9 @@ export default function EventManager({ initialEvents }: { initialEvents: PromoEv
 
       {editingEvent && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-          <div className="my-8 w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden scale-in-center">
-            <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h3 className="text-xl font-black text-heading">
+          <div className="my-auto w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden scale-in-center">
+            <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h3 className="text-lg sm:text-xl font-black text-heading">
                 {editingEvent.id ? 'Edit Event' : 'Tambah Event Baru'}
               </h3>
               <button onClick={() => setEditingEvent(null)} className="text-slate-400 hover:text-slate-600">
@@ -119,7 +119,7 @@ export default function EventManager({ initialEvents }: { initialEvents: PromoEv
               </button>
             </div>
             
-            <form onSubmit={handleSave} className="p-8 space-y-6">
+            <form onSubmit={handleSave} className="p-5 sm:p-8 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <AdminInput 
