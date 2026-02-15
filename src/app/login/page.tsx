@@ -13,6 +13,7 @@ function LoginContent() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   
   // New State for Registration & OTP
   const [isRegistering, setIsRegistering] = useState(false);
@@ -33,7 +34,6 @@ function LoginContent() {
 
   const handleRedirection = useCallback(async (userId: string) => {
     try {
-      // Check user role in profiles table
       const { data: profile } = await supabase
         .from('profiles')
         .select('role, full_name')
@@ -44,7 +44,6 @@ function LoginContent() {
         router.push('/admin');
         router.refresh();
       } else if (!profile?.full_name && !profileCompletionStep) {
-        // Only if we haven't already decided to show the completion step
         setProfileCompletionStep(true);
       } else {
         router.push(redirectTo);
@@ -78,7 +77,6 @@ function LoginContent() {
     setLoading(true);
 
     if (isRegistering) {
-      // Step 1: Send OTP for Registration
       const { error: otpError } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -99,7 +97,6 @@ function LoginContent() {
       return;
     }
 
-    // Normal Login with Password
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -130,7 +127,6 @@ function LoginContent() {
       return;
     }
 
-    // Use 'email' type for OTP codes sent via signInWithOtp
     const { data: authData, error: verifyError } = await supabase.auth.verifyOtp({
       email,
       token,
@@ -143,7 +139,6 @@ function LoginContent() {
       setLoading(false);
     } else if (authData.user) {
       setLoading(false);
-      // Explicitly check for profile completion after OTP
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')
@@ -206,7 +201,6 @@ function LoginContent() {
     newCode[index] = value.slice(-1);
     setOtpCode(newCode);
 
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       nextInput?.focus();
@@ -237,189 +231,221 @@ function LoginContent() {
     }
   };
 
+  // ─── Loading State ───
   if (checking) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="bg-[#eef5ff] min-h-screen flex items-center justify-center p-6">
         <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
-  // Profile Completion Screen
+  // ─── Profile Completion Screen ───
   if (profileCompletionStep) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white p-6">
-        <div className="w-full max-w-[440px]">
-          <div className="mb-10 text-center">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Lengkapi Profil</h1>
-            <p className="text-slate-500 font-medium">Bantu kami mengenal Anda lebih baik untuk pengiriman Donat yang pas!</p>
+      <div className="bg-[#eef5ff] min-h-screen flex items-center justify-center p-6">
+        <div className="w-full max-w-[480px]">
+          {/* Brand */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
+              <span className="material-symbols-outlined text-white text-4xl">donut_large</span>
+            </div>
+            <h1 className="text-primary font-bold text-2xl tracking-tight">HR-One Donuts</h1>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold animate-shake">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleProfileCompletion} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-slate-500 pl-1">Nama Lengkap</label>
-              <input
-                type="text"
-                placeholder="Masukkan nama Anda"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full h-14 px-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium"
-                required
-              />
+          {/* Card */}
+          <div className="bg-white rounded-[1.5rem] shadow-2xl shadow-primary/5 p-8 md:p-10 border border-white/20">
+            <div className="mb-8">
+              <h2 className="text-[#0e141b] text-3xl font-bold leading-tight tracking-tight">Lengkapi Profil</h2>
+              <p className="text-slate-500 text-base mt-2">Bantu kami mengenal Anda lebih baik untuk pengiriman Donat yang pas!</p>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-slate-500 pl-1">Nomor WhatsApp</label>
-              <input
-                type="tel"
-                placeholder="0812xxxx"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full h-14 px-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium"
-                required
-              />
-            </div>
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-semibold">
+                {error}
+              </div>
+            )}
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-slate-500 pl-1">Alamat Pengiriman</label>
-              <textarea
-                placeholder="Alamat lengkap Anda"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full min-h-[120px] p-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium resize-none"
-                required
-              />
-            </div>
+            <form onSubmit={handleProfileCompletion} className="space-y-5">
+              <div className="flex flex-col gap-2">
+                <label className="text-[#0e141b] text-sm font-semibold ml-1">Nama Lengkap</label>
+                <div className="relative group">
+                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">person</span>
+                  <input
+                    type="text"
+                    placeholder="Masukkan nama Anda"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full h-14 pl-12 pr-4 bg-[#f6f7f8] border border-slate-200 rounded-full focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-[#0e141b] placeholder:text-slate-400"
+                    required
+                  />
+                </div>
+              </div>
 
-            <button 
-              type="submit"
-              disabled={loading}
-              className="w-full h-14 bg-primary text-white font-semibold rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group"
-            >
-              {loading ? 'Menyimpan...' : 'Selesai & Ke Beranda'}
-              {!loading && <svg className="size-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>}
-            </button>
-          </form>
+              <div className="flex flex-col gap-2">
+                <label className="text-[#0e141b] text-sm font-semibold ml-1">Nomor WhatsApp</label>
+                <div className="relative group">
+                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">phone</span>
+                  <input
+                    type="tel"
+                    placeholder="0812xxxx"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full h-14 pl-12 pr-4 bg-[#f6f7f8] border border-slate-200 rounded-full focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-[#0e141b] placeholder:text-slate-400"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-[#0e141b] text-sm font-semibold ml-1">Alamat Pengiriman</label>
+                <div className="relative group">
+                  <span className="material-symbols-outlined absolute left-4 top-4 text-slate-400 group-focus-within:text-primary transition-colors">location_on</span>
+                  <textarea
+                    placeholder="Alamat lengkap Anda"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="w-full min-h-[120px] pl-12 pr-4 py-4 bg-[#f6f7f8] border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-[#0e141b] placeholder:text-slate-400 resize-none"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button 
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-14 bg-primary hover:bg-[#145fb8] text-white font-bold text-lg rounded-full shadow-lg shadow-primary/30 transition-all transform active:scale-[0.98] disabled:opacity-50"
+                >
+                  {loading ? 'Menyimpan...' : 'Selesai & Ke Beranda'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     );
   }
 
-  // OTP Verification Screen
+  // ─── OTP Verification Screen ───
   if (otpStep) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white p-6">
-        <div className="w-full max-w-[400px]">
-          <button 
-            onClick={() => {
-              setOtpStep(false);
-              setSuccess('');
-            }}
-            className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-primary mb-8 transition-colors"
-          >
-            <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
-            Kembali
-          </button>
-
-          <div className="mb-10 text-center">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Verifikasi Email</h1>
-            <p className="text-slate-500 font-medium">Masukkan 6 digit kode yang dikirim ke <br/><span className="text-slate-900 font-bold">{email}</span></p>
+      <div className="bg-[#eef5ff] min-h-screen flex items-center justify-center p-6">
+        <div className="w-full max-w-[480px]">
+          {/* Brand */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
+              <span className="material-symbols-outlined text-white text-4xl">donut_large</span>
+            </div>
+            <h1 className="text-primary font-bold text-2xl tracking-tight">HR-One Donuts</h1>
           </div>
 
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold text-center">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleVerifyOtp} className="space-y-8">
-            <div className="flex justify-between gap-2">
-              {otpCode.map((digit, index) => (
-                <input
-                  key={index}
-                  id={`otp-${index}`}
-                  type="text"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleOtpChange(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="size-12 sm:size-14 text-center text-2xl font-bold bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all"
-                  autoFocus={index === 0}
-                />
-              ))}
-            </div>
-
+          {/* Card */}
+          <div className="bg-white rounded-[1.5rem] shadow-2xl shadow-primary/5 p-8 md:p-10 border border-white/20">
             <button 
-              type="submit"
-              disabled={loading}
-              className="w-full h-14 bg-primary text-white font-semibold rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
+              onClick={() => {
+                setOtpStep(false);
+                setSuccess('');
+              }}
+              className="flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-primary mb-6 transition-colors"
             >
-              {loading ? 'Memverifikasi...' : 'Verifikasi & Lanjut'}
+              <span className="material-symbols-outlined text-lg">arrow_back</span>
+              Kembali
             </button>
-          </form>
 
-          <p className="mt-8 text-center text-sm font-medium text-slate-400">
-            Belum menerima kode? <button onClick={() => setOtpStep(false)} className="text-primary font-bold hover:underline">Kirim ulang</button>
-          </p>
+            <div className="mb-8">
+              <h2 className="text-[#0e141b] text-3xl font-bold leading-tight tracking-tight">Verifikasi Email</h2>
+              <p className="text-slate-500 text-base mt-2">Masukkan 6 digit kode yang dikirim ke <br/><span className="text-[#0e141b] font-bold">{email}</span></p>
+            </div>
+
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-semibold text-center">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleVerifyOtp} className="space-y-8">
+              <div className="flex justify-between gap-2">
+                {otpCode.map((digit, index) => (
+                  <input
+                    key={index}
+                    id={`otp-${index}`}
+                    type="text"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="size-12 sm:size-14 text-center text-2xl font-bold bg-[#f6f7f8] border-2 border-slate-200 rounded-xl focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all text-[#0e141b]"
+                    autoFocus={index === 0}
+                  />
+                ))}
+              </div>
+
+              <div className="pt-2">
+                <button 
+                  type="submit"
+                  disabled={loading}
+                  className="w-full h-14 bg-primary hover:bg-[#145fb8] text-white font-bold text-lg rounded-full shadow-lg shadow-primary/30 transition-all transform active:scale-[0.98] disabled:opacity-50"
+                >
+                  {loading ? 'Memverifikasi...' : 'Verifikasi & Lanjut'}
+                </button>
+              </div>
+            </form>
+
+            <p className="mt-8 text-center text-sm font-medium text-slate-400">
+              Belum menerima kode? <button onClick={() => setOtpStep(false)} className="text-primary font-bold hover:underline">Kirim ulang</button>
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
+  // ─── Main Login / Register Screen ───
   return (
-    <div className="flex min-h-screen flex-col md:flex-row bg-white">
-      {/* Left Decoration - Desktop Only */}
-      <div className="hidden md:flex md:w-1/2 bg-slate-50 items-center justify-center p-12 border-r border-slate-100">
-        <div className="max-w-md text-center">
-          <div className="size-24 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-8 text-primary">
-            <svg className="size-12" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z" fill="currentColor"></path>
-            </svg>
+    <div className="bg-[#eef5ff] min-h-screen flex items-center justify-center p-6">
+      <div className="w-full max-w-[480px]">
+        {/* Brand */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
+            <span className="material-symbols-outlined text-white text-4xl">donut_large</span>
           </div>
-          <h2 className="text-4xl font-bold text-slate-800 mb-4 tracking-tight">HR-One <span className="text-primary">Donuts</span></h2>
-          <p className="text-slate-500 text-lg leading-relaxed">
-            Hadirkan kebahagiaan di setiap gigitan. {isRegistering ? 'Daftar sekarang untuk mulai menikmati donat artisan kami.' : 'Login sekarang untuk mulai memesan donat artisan favorit keluarga Anda.'}
-          </p>
+          <h1 className="text-primary font-bold text-2xl tracking-tight">HR-One Donuts</h1>
+          <p className="text-slate-500 font-medium text-sm mt-1">Fresh and Smooth</p>
         </div>
-      </div>
 
-      {/* Right Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-[400px]">
-          <div className="mb-10 text-center md:text-left">
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">
-              {isRegistering ? 'Daftar Akun Baru' : 'Masuk ke HR-One Donuts'}
-            </h1>
-            <p className="text-slate-500 font-medium tracking-tight">
-              {isRegistering ? 'Biar pesan donat makin gampang' : 'Login dulu biar bisa pesan donat'}
+        {/* Login Card */}
+        <div className="bg-white rounded-[1.5rem] shadow-2xl shadow-primary/5 p-8 md:p-10 border border-white/20">
+          {/* Header */}
+          <div className="mb-8">
+            <h2 className="text-[#0e141b] text-3xl font-bold leading-tight tracking-tight">
+              {isRegistering ? 'Daftar Akun Baru' : 'Selamat Datang'}
+            </h2>
+            <p className="text-slate-500 text-base mt-2">
+              {isRegistering ? 'Buat akun untuk mulai memesan donat' : 'Silakan masuk ke akun Anda'}
             </p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-bold animate-shake">
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-semibold">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-2xl text-sm font-bold">
+            <div className="mb-6 p-4 bg-green-50 border border-green-100 text-green-600 rounded-2xl text-sm font-semibold">
               {success}
             </div>
           )}
 
-          <div className="space-y-4">
+          {/* SSO Button */}
+          <div className="mb-6">
             <button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="w-full h-14 bg-white border-2 border-slate-100 hover:border-primary/30 hover:bg-primary/5 transition-all rounded-2xl flex items-center justify-center gap-3 font-bold text-slate-700 shadow-sm active:scale-95 disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-3 h-14 rounded-full border border-slate-200 bg-white hover:bg-slate-50 transition-colors text-[#0e141b] font-semibold text-base px-6 disabled:opacity-50 active:scale-[0.98]"
             >
-              <svg className="size-6" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -427,67 +453,95 @@ function LoginContent() {
               </svg>
               {isRegistering ? 'Daftar dengan Google' : 'Masuk dengan Google'}
             </button>
+          </div>
 
-            <div className="relative py-4">
-              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-              <div className="relative flex justify-center text-xs uppercase font-semibold text-slate-300 tracking-wide bg-white px-4">Atau</div>
-            </div>
+          {/* Divider */}
+          <div className="relative flex items-center mb-6">
+            <div className="flex-grow border-t border-slate-200"></div>
+            <span className="flex-shrink mx-4 text-slate-400 text-sm font-medium">atau masuk dengan email</span>
+            <div className="flex-grow border-t border-slate-200"></div>
+          </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-slate-500 pl-1">Email</label>
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-5">
+            {/* Email Field */}
+            <div className="flex flex-col gap-2">
+              <label className="text-[#0e141b] text-sm font-semibold ml-1">Email Address</label>
+              <div className="relative group">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">mail</span>
                 <input
                   type="email"
                   placeholder="nama@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-14 px-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium"
+                  className="w-full h-14 pl-12 pr-4 bg-[#f6f7f8] border border-slate-200 rounded-full focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-[#0e141b] placeholder:text-slate-400"
                   required
                   disabled={loading}
                 />
               </div>
+            </div>
 
-              {!isRegistering && (
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-slate-500 pl-1">Password</label>
+            {/* Password Field (Login only) */}
+            {!isRegistering && (
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center ml-1">
+                  <label className="text-[#0e141b] text-sm font-semibold">Password</label>
+                </div>
+                <div className="relative group">
+                  <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">lock</span>
                   <input
-                    type="password"
-                    placeholder="••••••••"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Masukkan password Anda"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full h-14 px-5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary focus:bg-white transition-all font-medium"
+                    className="w-full h-14 pl-12 pr-12 bg-[#f6f7f8] border border-slate-200 rounded-full focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-[#0e141b] placeholder:text-slate-400"
                     required
                     disabled={loading}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
+                  </button>
                 </div>
-              )}
+              </div>
+            )}
 
-              <button 
+            {/* Submit Button */}
+            <div className="pt-2">
+              <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-14 bg-primary text-white font-semibold rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center gap-2"
+                className="w-full h-14 bg-primary hover:bg-[#145fb8] text-white font-bold text-lg rounded-full shadow-lg shadow-primary/30 transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Sabar ya...' : (isRegistering ? 'Kirim Kode Verifikasi' : 'Masuk dengan Email')}
-                {!loading && <svg className="size-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>}
+                {loading ? 'Sabar ya...' : (isRegistering ? 'Kirim Kode Verifikasi' : 'Masuk')}
               </button>
-            </form>
-
-            <div className="pt-8 text-center">
-              <p className="text-sm font-medium text-slate-500">
-                {isRegistering ? 'Sudah punya akun?' : 'Belum punya akun?'}
-                <button 
-                  onClick={() => {
-                    setIsRegistering(!isRegistering);
-                    setError('');
-                    setSuccess('');
-                  }}
-                  className="ml-2 text-primary font-bold hover:underline"
-                >
-                  {isRegistering ? 'Masuk Sekarang' : 'Daftar Sekarang'}
-                </button>
-              </p>
             </div>
+          </form>
+
+          {/* Sign Up / Login Toggle */}
+          <div className="mt-8 text-center">
+            <p className="text-slate-500 text-sm">
+              {isRegistering ? 'Sudah punya akun?' : 'Belum punya akun?'}
+              <button 
+                onClick={() => {
+                  setIsRegistering(!isRegistering);
+                  setError('');
+                  setSuccess('');
+                }}
+                className="text-primary font-bold hover:underline ml-1"
+              >
+                {isRegistering ? 'Masuk Sekarang' : 'Daftar sekarang'}
+              </button>
+            </p>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-10 text-center">
+          <p className="text-slate-400 text-xs font-medium">© 2025 HR-One Donuts. All rights reserved.</p>
         </div>
       </div>
     </div>
@@ -497,7 +551,7 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="bg-[#eef5ff] min-h-screen flex items-center justify-center p-6">
         <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     }>
