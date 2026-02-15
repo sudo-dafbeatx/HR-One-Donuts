@@ -76,37 +76,37 @@ export default function ProductInfo({
     <div className="flex flex-col gap-6 w-full max-w-xl">
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="bg-primary/10 text-primary text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-[0.2em]">
+          <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
             Freshly Baked
           </span>
           {sale_type !== 'normal' && (
-            <span className="bg-primary text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-[0.2em]">
+            <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
               {sale_type.replace('_', ' ')}
             </span>
           )}
           {package_type === 'box' && (
-            <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-[0.2em]">
+            <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
               BOX
             </span>
           )}
           {stock <= 5 && stock > 0 && (
-            <span className="bg-red-50 text-red-500 text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-[0.2em]">
+            <span className="bg-red-50 text-red-500 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
               Stok Terbatas
             </span>
           )}
           {stock === 0 && (
-            <span className="bg-red-500 text-white text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-[0.2em]">
+            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
               Stok Habis
             </span>
           )}
         </div>
         
-        <h1 className="text-3xl md:text-5xl font-black text-slate-800 leading-tight">
+        <h1 className="text-3xl md:text-5xl font-bold text-slate-800 leading-tight">
           {name}
         </h1>
         
         <div className="flex items-baseline gap-3">
-          <p className="text-3xl font-black text-primary">
+          <p className="text-3xl font-bold text-primary">
             Rp {currentPrice.toLocaleString("id-ID")}
           </p>
           {(hasDiscount || (selectedVariant && selectedVariant.price_adjustment > 0)) && (
@@ -115,7 +115,7 @@ export default function ProductInfo({
             </p>
           )}
           {hasDiscount && (
-            <span className="bg-red-100 text-red-600 text-xs font-black px-2 py-1 rounded-lg">
+            <span className="bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded-lg">
               Hemat {discount_percent}%
             </span>
           )}
@@ -129,7 +129,7 @@ export default function ProductInfo({
       {/* Variants Selection */}
       {variants.length > 0 && (
         <div className="space-y-3">
-          <label className="text-sm font-black text-slate-800 uppercase tracking-widest">Pilih Varian</label>
+          <label className="text-sm font-medium text-slate-700">Pilih Varian</label>
           <div className="flex flex-wrap gap-2">
             {variants.map((variant) => (
               <button
@@ -153,7 +153,7 @@ export default function ProductInfo({
       <div className="flex flex-col gap-6 pt-4 border-t border-slate-100">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Jumlah</label>
+            <label className="text-xs font-medium text-slate-500">Jumlah</label>
             <div className="flex items-center gap-4 bg-slate-50 rounded-xl p-1 w-fit border border-slate-100">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -161,7 +161,7 @@ export default function ProductInfo({
               >
                 <MinusIcon className="size-6 font-black" />
               </button>
-              <span className="w-8 text-center font-black text-slate-800 text-lg">{quantity}</span>
+              <span className="w-8 text-center font-bold text-slate-800 text-lg">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
                 className="size-10 flex items-center justify-center rounded-lg hover:bg-white text-slate-400 hover:text-primary transition-all active:scale-90"
@@ -172,8 +172,8 @@ export default function ProductInfo({
           </div>
           
           <div className="text-right space-y-1">
-            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Total</label>
-            <p className="text-2xl font-black text-slate-800">
+            <label className="text-xs font-medium text-slate-500">Total</label>
+            <p className="text-2xl font-bold text-slate-800">
               Rp {(currentPrice * quantity).toLocaleString("id-ID")}
             </p>
           </div>
@@ -182,7 +182,7 @@ export default function ProductInfo({
         <button 
           onClick={handleAddToCart}
           disabled={stock === 0}
-          className={`w-full py-4 px-8 rounded-2xl font-black text-lg transition-all flex items-center justify-center gap-3 shadow-xl ${
+          className={`w-full py-4 px-8 rounded-2xl font-semibold text-lg transition-all flex items-center justify-center gap-3 shadow-xl ${
             stock === 0 
               ? "bg-slate-200 text-slate-400 cursor-not-allowed" 
               : "bg-primary text-white hover:bg-primary/90 hover:-translate-y-0.5 shadow-primary/20 active:translate-y-0"
@@ -198,7 +198,7 @@ export default function ProductInfo({
           <ShieldCheckIcon className="size-6" />
         </div>
         <div className="flex-1">
-          <p className="text-xs font-black text-slate-800">Garansi Kualitas</p>
+          <p className="text-xs font-semibold text-slate-800">Garansi Kualitas</p>
           <p className="text-[10px] text-slate-500 font-medium">Bahan premium, dipanggang segar setiap hari.</p>
         </div>
       </div>

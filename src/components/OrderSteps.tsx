@@ -15,7 +15,7 @@ export default function OrderSteps({ steps: cmsSteps }: { steps?: OrderStep[] })
     <section className="bg-section-bg py-24 px-6 md:px-20 lg:px-40 transition-colors duration-300" id="how-to-order">
       <div className="max-w-6xl mx-auto">
         <div className="max-w-4xl mx-auto text-center mb-20 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-black text-heading tracking-tight">Cara Pesan Sangat Mudah</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-heading tracking-tight">Cara Pesan Sangat Mudah</h2>
           <p className="text-subheading text-lg md:text-xl max-w-2xl mx-auto">Ikuti langkah sederhana berikut untuk menikmati donat kami di rumah.</p>
         </div>
         

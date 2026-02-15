@@ -41,7 +41,7 @@ export default async function CatalogPage() {
       <CatalogNavbar siteSettings={siteSettings} />
       <main className="flex-1 max-w-[1280px] mx-auto w-full px-6 md:px-10 lg:px-40 py-10 transition-colors duration-300">
         <div className="mb-10">
-          <h1 className="text-4xl font-black text-heading mb-2 uppercase tracking-tight">Menu Katalog</h1>
+          <h1 className="text-4xl font-bold text-heading mb-2">Menu Katalog</h1>
           <p className="text-subheading opacity-70">Pilih donat favoritmu dari koleksi terbaik kami.</p>
         </div>
         <MarketplaceClient initialProducts={productsToDisplay} categories={categories || []} />

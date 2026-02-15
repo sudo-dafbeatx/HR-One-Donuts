@@ -102,7 +102,7 @@ export default function ProfilePage() {
             </div>
             
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-black text-slate-900 mb-1">{profile?.full_name || 'Pelanggan Setia'}</h1>
+              <h1 className="text-3xl font-bold text-slate-900 mb-1">{profile?.full_name || 'Pelanggan Setia'}</h1>
               <p className="text-slate-500 font-medium mb-4">{profile?.email}</p>
               
               <div className="flex flex-wrap justify-center md:justify-start gap-4">
@@ -133,17 +133,17 @@ export default function ProfilePage() {
           {/* Sidebar / Info Detail */}
           <div className="md:col-span-1 space-y-6">
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-              <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Informasi Detail</h2>
+              <h2 className="text-sm font-medium text-slate-500 mb-6">Informasi Detail</h2>
               
               <div className="space-y-6">
                 <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Alamat Pengiriman</p>
+                  <p className="text-[10px] font-medium text-slate-500 mb-1">Alamat Pengiriman</p>
                   <p className="text-sm font-bold text-slate-700 leading-relaxed">
                     {profile?.address || 'Belum ada alamat pengiriman yang ditambahkan.'}
                   </p>
                 </div>
                 
-                <button className="w-full py-3 border-2 border-slate-100 hover:border-primary hover:text-primary transition-all rounded-xl text-xs font-black text-slate-400 uppercase tracking-widest">
+                <button className="w-full py-3 border-2 border-slate-100 hover:border-primary hover:text-primary transition-all rounded-xl text-xs font-medium text-slate-500">
                   Edit Profil
                 </button>
               </div>
@@ -154,16 +154,16 @@ export default function ProfilePage() {
                 <ShoppingBagIcon className="size-8 text-white/40" />
                 <ChevronRightIcon className="size-5 text-white/60 group-hover:translate-x-1 transition-transform" />
               </div>
-              <p className="text-white font-black text-lg">Pesan Donat Lagi?</p>
+              <p className="text-white font-bold text-lg">Pesan Donat Lagi?</p>
               <p className="text-white/70 text-sm font-medium">Banyak varian baru yang nungguin kamu!</p>
             </Link>
           </div>
 
           {/* Activity / Order History */}
           <div className="md:col-span-2">
-            <h2 className="text-xl font-black text-slate-800 mb-6 flex items-center gap-3">
+            <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
               Riwayat Pesanan
-              <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-black rounded-full">
+              <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
                 {orders.length}
               </span>
             </h2>
@@ -179,7 +179,7 @@ export default function ProfilePage() {
                 </p>
                 <Link 
                   href="/catalog" 
-                  className="inline-flex h-12 items-center px-8 bg-primary text-white font-black rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+                  className="inline-flex h-12 items-center px-8 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
                 >
                   Lihat Menu
                 </Link>
@@ -197,8 +197,8 @@ export default function ProfilePage() {
                       </div>
                       <div>
                         <div className="flex items-center gap-3 mb-1">
-                          <p className="font-black text-slate-800">Order #{order.id.slice(0, 8)}</p>
-                          <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-green-50 text-green-600 rounded-md">Lunas</span>
+                          <p className="font-bold text-slate-800">Order #{order.id.slice(0, 8)}</p>
+                          <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 bg-green-50 text-green-600 rounded-md">Lunas</span>
                         </div>
                         <div className="flex items-center gap-3 text-xs font-medium text-slate-400">
                           <span className="flex items-center gap-1">
@@ -212,8 +212,8 @@ export default function ProfilePage() {
                     </div>
                     
                     <div className="text-right">
-                      <p className="font-black text-slate-900 mb-1">Rp {order.total_amount.toLocaleString('id-ID')}</p>
-                      <button className="text-xs font-black text-primary hover:underline">Detail</button>
+                      <p className="font-bold text-slate-900 mb-1">Rp {order.total_amount.toLocaleString('id-ID')}</p>
+                      <button className="text-xs font-semibold text-primary hover:underline">Detail</button>
                     </div>
                   </div>
                 ))}

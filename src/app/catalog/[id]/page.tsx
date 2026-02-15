@@ -39,7 +39,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               Beranda
             </Link>
             <span className="text-slate-400">/</span>
-            <span className="text-slate-400 uppercase tracking-widest text-[10px]">{product.category}</span>
+            <span className="text-slate-400 text-[10px]">{product.category}</span>
             <span className="text-slate-400">/</span>
             <span className="text-primary font-bold truncate max-w-[200px]">{product.name}</span>
           </nav>

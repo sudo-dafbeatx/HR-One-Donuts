@@ -102,7 +102,7 @@ export default function BottomNav() {
                   </span>
                 )}
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-tight text-center px-1 truncate w-full">
+              <span className="text-[10px] font-medium text-center px-1 truncate w-full">
                 {item.label}
               </span>
               {isActive && (

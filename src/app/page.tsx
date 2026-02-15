@@ -65,7 +65,7 @@ export default async function Home() {
         <div className="container mx-auto px-4 py-12">
 
           <div className="mb-16">
-            <h2 className="text-xl font-black text-slate-800 mb-8 uppercase tracking-wider flex items-center gap-2">
+            <h2 className="text-xl font-bold text-slate-800 mb-8 flex items-center gap-2">
                <span className="w-8 h-1 bg-primary rounded-full"></span>
                Katalog Produk
             </h2>

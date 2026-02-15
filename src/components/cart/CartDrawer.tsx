@@ -167,9 +167,9 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 </svg>
                 Pesan via WhatsApp
               </div>
-              <span className="text-[10px] uppercase tracking-wider opacity-90 font-medium">Kirim rincian pesanan otomatis</span>
+              <span className="text-[10px] tracking-wide opacity-90 font-medium">Kirim rincian pesanan otomatis</span>
             </button>
-            <p className="mt-4 text-[10px] text-center text-slate-500 dark:text-slate-400 leading-relaxed uppercase tracking-tighter">
+            <p className="mt-4 text-[10px] text-center text-slate-500 dark:text-slate-400 leading-relaxed">
               Layanan Pengambilan & Pengiriman Area Jakarta Saja
             </p>
           </div>

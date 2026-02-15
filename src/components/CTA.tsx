@@ -9,7 +9,7 @@ export default function CTA() {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -z-0" />
         
         <div className="relative z-10 lg:w-2/3 text-center lg:text-left space-y-8">
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.05] tracking-tight">
             Bawa Kebahagiaan ke Rumah Anda<span className="text-primary">.</span>
           </h2>
           <p className="text-slate-300 text-lg md:text-xl max-w-xl leading-relaxed">
@@ -18,7 +18,7 @@ export default function CTA() {
           <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start">
             <Link 
               href="/catalog"
-              className="group flex h-16 px-10 bg-primary text-white font-black rounded-2xl text-lg items-center justify-center gap-3 shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all"
+              className="group flex h-16 px-10 bg-primary text-white font-semibold rounded-2xl text-lg items-center justify-center gap-3 shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all"
             >
               <ChatBubbleLeftIcon className="w-6 h-6" />
               Pesan Sekarang
@@ -33,7 +33,7 @@ export default function CTA() {
                 <CheckCircleIcon className="w-8 h-8" />
               </div>
               <div>
-                <p className="text-white font-black text-lg">Order via WhatsApp</p>
+                <p className="text-white font-bold text-lg">Order via WhatsApp</p>
                 <p className="text-sm text-green-500 font-bold flex items-center gap-1.5 ">
                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   Online Sekarang
@@ -45,7 +45,7 @@ export default function CTA() {
               <div className="h-4 bg-white/10 rounded-full w-5/6"></div>
               <div className="h-4 bg-white/10 rounded-full w-4/6 opacity-50"></div>
             </div>
-            <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center text-white/40 text-xs font-bold uppercase tracking-widest">
+            <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center text-white/40 text-xs font-medium tracking-wide">
               <span>EST. Response: 2 Mins</span>
             </div>
           </div>

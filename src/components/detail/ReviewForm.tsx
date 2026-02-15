@@ -60,7 +60,7 @@ export default function ReviewForm({ productId, existingReview, onSuccess }: Rev
 
   return (
     <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4">
-      <h4 className="text-base font-black text-slate-800 uppercase tracking-wider">
+      <h4 className="text-base font-semibold text-slate-800">
         {isEditing ? 'Edit Ulasan Anda' : 'Tulis Ulasan'}
       </h4>
 

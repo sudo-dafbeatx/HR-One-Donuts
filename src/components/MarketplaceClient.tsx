@@ -40,7 +40,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+              className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
                 activeCategory === cat 
                   ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105' 
                   : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
@@ -84,12 +84,12 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                   {/* Badges Overlay */}
                   <div className="absolute top-3 left-3 flex flex-col gap-2">
                     {product.tag && (
-                      <div className="bg-orange-500 text-white px-2 py-1 rounded-lg font-black text-[8px] uppercase tracking-widest shadow-lg">
+                      <div className="bg-orange-500 text-white px-2 py-1 rounded-lg font-bold text-[8px] uppercase tracking-wide shadow-lg">
                         {product.tag}
                       </div>
                     )}
                     {hasActivePromo && (
-                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-lg ${
+                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-lg ${
                         product.sale_type === 'flash_sale' ? 'bg-primary text-white' : 
                         product.sale_type === 'jumat_berkah' ? 'bg-green-600 text-white' :
                         'bg-blue-600 text-white'
@@ -99,14 +99,14 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                       </div>
                     )}
                     {hasDiscount && (
-                      <div className="bg-red-500 text-white px-2 py-1 rounded font-black text-[10px] shadow-lg">
+                      <div className="bg-red-500 text-white px-2 py-1 rounded font-bold text-[10px] shadow-lg">
                         -{product.discount_percent}%
                       </div>
                     )}
                   </div>
 
                   <div className="absolute bottom-3 right-3 flex gap-2">
-                    <span className={`px-2 py-1 text-[8px] font-black rounded uppercase tracking-wider shadow-md ${
+                    <span className={`px-2 py-1 text-[8px] font-bold rounded uppercase tracking-wide shadow-md ${
                       product.package_type === 'box' ? 'bg-orange-500 text-white' : 'bg-slate-700 text-white'
                     }`}>
                       {product.package_type}
@@ -119,11 +119,11 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                   <div className="flex flex-col gap-1 w-full">
                     <div className="flex justify-between items-start gap-2">
                       <Link href={`/catalog/${product.id}`} className="flex-1">
-                        <h3 className="font-black text-slate-800 text-lg line-clamp-2 leading-tight group-hover:text-primary transition-colors uppercase tracking-tight">
+                        <h3 className="font-semibold text-slate-800 text-lg line-clamp-2 leading-tight group-hover:text-primary transition-colors">
                           {product.name}
                         </h3>
                       </Link>
-                      <div className="text-[10px] font-black text-slate-600 dark:text-slate-300 whitespace-nowrap bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded shadow-sm">
+                      <div className="text-[10px] font-medium text-slate-600 dark:text-slate-300 whitespace-nowrap bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded shadow-sm">
                         Terjual {product.sold_count || 0}+
                       </div>
                     </div>
@@ -141,7 +141,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                             Rp {product.price.toLocaleString("id-ID")}
                           </span>
                         )}
-                        <p className="text-primary font-black text-xl tracking-tight">
+                        <p className="text-primary font-bold text-xl tracking-tight">
                           Rp {getEffectivePrice(product).toLocaleString("id-ID")}
                         </p>
                       </div>
@@ -151,13 +151,13 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                     <div className="grid grid-cols-2 gap-2">
                        <Link 
                         href={`/catalog/${product.id}`}
-                        className="bg-slate-50 text-slate-500 py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all flex items-center justify-center gap-2"
+                        className="bg-slate-50 text-slate-500 py-3 rounded-xl font-medium text-[10px] hover:bg-slate-100 transition-all flex items-center justify-center gap-2"
                       >
                         Detail
                       </Link>
                       <button 
                         onClick={() => addToCart({ id: product.id, name: product.name, price: getEffectivePrice(product), image: product.image_url || '' }, 1)}
-                        className="bg-primary text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-95"
+                        className="bg-primary text-white py-3 rounded-xl font-semibold text-[10px] hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-95"
                       >
                         Beli
                       </button>

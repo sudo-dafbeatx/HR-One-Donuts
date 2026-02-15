@@ -251,7 +251,7 @@ function LoginContent() {
       <div className="flex min-h-screen items-center justify-center bg-white p-6">
         <div className="w-full max-w-[440px]">
           <div className="mb-10 text-center">
-            <h1 className="text-3xl font-black text-slate-900 mb-2">Lengkapi Profil</h1>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Lengkapi Profil</h1>
             <p className="text-slate-500 font-medium">Bantu kami mengenal Anda lebih baik untuk pengiriman Donat yang pas!</p>
           </div>
 
@@ -263,7 +263,7 @@ function LoginContent() {
 
           <form onSubmit={handleProfileCompletion} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Nama Lengkap</label>
+              <label className="text-xs font-medium text-slate-500 pl-1">Nama Lengkap</label>
               <input
                 type="text"
                 placeholder="Masukkan nama Anda"
@@ -275,7 +275,7 @@ function LoginContent() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Nomor WhatsApp</label>
+              <label className="text-xs font-medium text-slate-500 pl-1">Nomor WhatsApp</label>
               <input
                 type="tel"
                 placeholder="0812xxxx"
@@ -287,7 +287,7 @@ function LoginContent() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Alamat Pengiriman</label>
+              <label className="text-xs font-medium text-slate-500 pl-1">Alamat Pengiriman</label>
               <textarea
                 placeholder="Alamat lengkap Anda"
                 value={address}
@@ -300,7 +300,7 @@ function LoginContent() {
             <button 
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group"
+              className="w-full h-14 bg-primary text-white font-semibold rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group"
             >
               {loading ? 'Menyimpan...' : 'Selesai & Ke Beranda'}
               {!loading && <svg className="size-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>}
@@ -328,7 +328,7 @@ function LoginContent() {
           </button>
 
           <div className="mb-10 text-center">
-            <h1 className="text-3xl font-black text-slate-900 mb-2">Verifikasi Email</h1>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Verifikasi Email</h1>
             <p className="text-slate-500 font-medium">Masukkan 6 digit kode yang dikirim ke <br/><span className="text-slate-900 font-bold">{email}</span></p>
           </div>
 
@@ -349,7 +349,7 @@ function LoginContent() {
                   value={digit}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="size-12 sm:size-14 text-center text-2xl font-black bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all"
+                  className="size-12 sm:size-14 text-center text-2xl font-bold bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all"
                   autoFocus={index === 0}
                 />
               ))}
@@ -358,7 +358,7 @@ function LoginContent() {
             <button 
               type="submit"
               disabled={loading}
-              className="w-full h-14 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
+              className="w-full h-14 bg-primary text-white font-semibold rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 disabled:opacity-50"
             >
               {loading ? 'Memverifikasi...' : 'Verifikasi & Lanjut'}
             </button>
@@ -382,7 +382,7 @@ function LoginContent() {
               <path d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z" fill="currentColor"></path>
             </svg>
           </div>
-          <h2 className="text-4xl font-black text-slate-800 mb-4 tracking-tight">HR-One <span className="text-primary">Donuts</span></h2>
+          <h2 className="text-4xl font-bold text-slate-800 mb-4 tracking-tight">HR-One <span className="text-primary">Donuts</span></h2>
           <p className="text-slate-500 text-lg leading-relaxed">
             Hadirkan kebahagiaan di setiap gigitan. {isRegistering ? 'Daftar sekarang untuk mulai menikmati donat artisan kami.' : 'Login sekarang untuk mulai memesan donat artisan favorit keluarga Anda.'}
           </p>
@@ -393,7 +393,7 @@ function LoginContent() {
       <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-[400px]">
           <div className="mb-10 text-center md:text-left">
-            <h1 className="text-3xl font-black text-slate-900 mb-2">
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">
               {isRegistering ? 'Daftar Akun Baru' : 'Masuk ke HR-One Donuts'}
             </h1>
             <p className="text-slate-500 font-medium tracking-tight">
@@ -430,12 +430,12 @@ function LoginContent() {
 
             <div className="relative py-4">
               <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-              <div className="relative flex justify-center text-xs uppercase font-black text-slate-300 tracking-widest bg-white px-4">Atau</div>
+              <div className="relative flex justify-center text-xs uppercase font-semibold text-slate-300 tracking-wide bg-white px-4">Atau</div>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Email</label>
+                <label className="text-xs font-medium text-slate-500 pl-1">Email</label>
                 <input
                   type="email"
                   placeholder="nama@email.com"
@@ -449,7 +449,7 @@ function LoginContent() {
 
               {!isRegistering && (
                 <div className="space-y-2">
-                  <label className="text-xs font-black text-slate-400 uppercase tracking-widest pl-1">Password</label>
+                  <label className="text-xs font-medium text-slate-500 pl-1">Password</label>
                   <input
                     type="password"
                     placeholder="••••••••"
@@ -465,7 +465,7 @@ function LoginContent() {
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full h-14 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center gap-2"
+                className="w-full h-14 bg-primary text-white font-semibold rounded-2xl hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center gap-2"
               >
                 {loading ? 'Sabar ya...' : (isRegistering ? 'Kirim Kode Verifikasi' : 'Masuk dengan Email')}
                 {!loading && <svg className="size-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>}
@@ -481,7 +481,7 @@ function LoginContent() {
                     setError('');
                     setSuccess('');
                   }}
-                  className="ml-2 text-primary font-black hover:underline"
+                  className="ml-2 text-primary font-bold hover:underline"
                 >
                   {isRegistering ? 'Masuk Sekarang' : 'Daftar Sekarang'}
                 </button>

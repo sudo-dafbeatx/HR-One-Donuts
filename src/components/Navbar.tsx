@@ -49,20 +49,20 @@ export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }
       <div className="flex items-center justify-between gap-4 md:gap-8">
         {/* Brand & Tagline */}
         <Link href="/" className="flex flex-col shrink-0">
-          <h1 className="text-primary text-xl md:text-2xl font-black leading-tight tracking-tighter">
+          <h1 className="text-primary text-xl md:text-2xl font-bold leading-tight tracking-tight">
             {siteSettings?.store_name || "HR-One Donuts"}
           </h1>
-          <p className="text-[10px] md:text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest -mt-1 group-hover:text-primary/70 transition-colors">
+          <p className="text-[10px] md:text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide -mt-1 group-hover:text-primary/70 transition-colors">
             {siteSettings?.tagline || "Fresh and Smooth"}
           </p>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-6">
-          <Link href="/" className="text-sm font-bold text-slate-600 hover:text-primary transition-all">Beranda</Link>
-          <Link href="/catalog" className="text-sm font-bold text-slate-600 hover:text-primary transition-all">Menu</Link>
-          <Link href="/#about" className="text-sm font-bold text-slate-600 hover:text-primary transition-all">Tentang Kami</Link>
-          <Link href="/#how-to-order" className="text-sm font-bold text-slate-600 hover:text-primary transition-all">Cara Pesan</Link>
+          <Link href="/" className="text-sm font-medium text-slate-600 hover:text-primary transition-all">Beranda</Link>
+          <Link href="/catalog" className="text-sm font-medium text-slate-600 hover:text-primary transition-all">Menu</Link>
+          <Link href="/#about" className="text-sm font-medium text-slate-600 hover:text-primary transition-all">Tentang Kami</Link>
+          <Link href="/#how-to-order" className="text-sm font-medium text-slate-600 hover:text-primary transition-all">Cara Pesan</Link>
         </nav>
 
         {/* Search Bar - Hidden on Mobile, shown in second row below */}
@@ -85,7 +85,7 @@ export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }
           >
             <ShoppingBagIcon className="size-6" />
             <span 
-              className={`absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-black text-white shadow-lg border-2 border-white transition-all duration-300 ${
+              className={`absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white shadow-lg border-2 border-white transition-all duration-300 ${
                 !mounted || totalItems === 0 ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
               }`}
             >

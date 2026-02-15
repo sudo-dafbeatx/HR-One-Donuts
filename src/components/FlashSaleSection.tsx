@@ -27,16 +27,16 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
               <BoltIcon className="size-6 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-xl md:text-2xl font-black text-slate-800 tracking-tight uppercase leading-none">
+              <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight leading-none">
                 Flash <span className="text-primary">Sale</span>
               </h2>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Penawaran Terbatas</p>
+              <p className="text-[10px] font-medium text-slate-400 tracking-wide mt-1">Penawaran Terbatas</p>
             </div>
           </div>
           
           <Link 
             href="/catalog?filter=promo" 
-            className="text-xs font-black text-primary uppercase tracking-widest hover:underline decoration-2 underline-offset-4 transition-all"
+            className="text-xs font-semibold text-primary hover:underline decoration-2 underline-offset-4 transition-all"
           >
             Lihat Semua
           </Link>
@@ -72,12 +72,12 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
                   {/* Glassmorphism Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-5">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <div className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-lg">
+                      <div className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-lg">
                         <FireIcon className="size-3" />
                         Flash Sale
                       </div>
                       {event.discount_percent && (
-                        <div className="bg-white text-red-600 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-lg">
+                        <div className="bg-white text-red-600 px-2 py-1 rounded-lg text-[10px] font-bold tracking-wide shadow-lg">
                           -{event.discount_percent}%
                         </div>
                       )}
@@ -85,13 +85,13 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
 
                     <div className="flex items-end justify-between gap-4">
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-white text-lg font-black uppercase tracking-tight leading-tight truncate mb-1">
+                        <h3 className="text-white text-lg font-semibold leading-tight truncate mb-1">
                           {event.title}
                         </h3>
                         {event.end_at && (
                           <div className="flex items-center gap-1.5 text-white/80">
                             <ClockIcon className="size-3" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
+                            <span className="text-[10px] font-medium tracking-wide leading-none">
                               Terbatas
                             </span>
                           </div>
@@ -100,7 +100,7 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
 
                       <Link 
                         href="/catalog?filter=promo"
-                        className="flex-shrink-0 bg-primary text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-primary transition-all shadow-lg active:scale-95"
+                        className="flex-shrink-0 bg-primary text-white px-4 py-2 rounded-xl text-[10px] font-semibold hover:bg-white hover:text-primary transition-all shadow-lg active:scale-95"
                       >
                         Lihat Promo
                       </Link>

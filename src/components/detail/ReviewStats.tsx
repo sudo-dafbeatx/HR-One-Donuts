@@ -26,14 +26,14 @@ export default function ReviewStats({ stats }: ReviewStatsProps) {
 
   return (
     <div className="bg-white border border-slate-100 rounded-2xl p-6 space-y-6">
-      <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider">
+      <h3 className="text-lg font-semibold text-slate-800">
         Rating Produk
       </h3>
 
       {/* Average Rating Display */}
       <div className="flex items-start gap-6">
         <div className="flex flex-col items-center">
-          <div className="text-5xl font-black text-slate-800">
+          <div className="text-5xl font-bold text-slate-800">
             {average_rating.toFixed(1)}
           </div>
           <StarRating rating={average_rating} readonly size="md" />
