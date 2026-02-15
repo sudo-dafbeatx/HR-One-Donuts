@@ -13,6 +13,7 @@ import {
   CalendarDaysIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { useLoading } from '@/context/LoadingContext';
 
 interface Profile {
   id: string;
@@ -42,6 +43,12 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editFullName, setEditFullName] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editAddress, setEditAddress] = useState('');
+  
+  const { setIsLoading } = useLoading();
   const router = useRouter();
   const supabase = createClient();
 
@@ -59,9 +66,14 @@ export default function ProfilePage() {
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle(); // Safer than single()
       
-      setProfile(profileData);
+      if (profileData) {
+        setProfile(profileData);
+        setEditFullName(profileData.full_name || '');
+        setEditPhone(profileData.phone || '');
+        setEditAddress(profileData.address || '');
+      }
 
       // Fetch Recent Orders
       const { data: ordersData } = await supabase
@@ -76,6 +88,40 @@ export default function ProfilePage() {
 
     fetchData();
   }, [supabase, router]);
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!profile) return;
+    
+    setIsLoading(true, 'Memperbarui profil...');
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: editFullName,
+          phone: editPhone,
+          address: editAddress
+        })
+        .eq('id', profile.id);
+
+      if (error) throw error;
+
+      setProfile({
+        ...profile,
+        full_name: editFullName,
+        phone: editPhone,
+        address: editAddress
+      });
+      setIsEditing(false);
+      // Brief success delay
+      await new Promise(r => setTimeout(r, 500));
+    } catch (err: any) {
+      alert(`Gagal memperbarui profil: ${err.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -92,134 +138,229 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
-      {/* Header Profile */}
-      <div className="bg-white border-b border-slate-100">
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="size-24 bg-primary/10 rounded-3xl flex items-center justify-center text-primary">
-              <UserCircleIcon className="size-14" />
+    <div className="min-h-screen bg-slate-50 pb-24">
+      {/* Premium Header with Gradient */}
+      <div className="relative bg-gradient-to-br from-primary via-blue-600 to-cyan-500 overflow-hidden">
+        {/* Abstract shapes for premium feel */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 anim-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+        
+        <div className="max-w-5xl mx-auto px-6 pt-12 pb-24 relative z-10">
+          <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-10">
+            {/* Profile Avatar with premium border */}
+            <div className="relative group">
+              <div className="size-28 md:size-32 bg-white/20 backdrop-blur-md rounded-3xl border-2 border-white/30 flex items-center justify-center text-white shadow-2xl transition-transform duration-500 group-hover:scale-105">
+                <UserCircleIcon className="size-16 md:size-20" />
+              </div>
+              <div className="absolute -bottom-2 -right-2 bg-green-400 size-6 rounded-full border-4 border-primary shadow-lg animate-pulse"></div>
             </div>
             
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-slate-900 mb-1">{profile?.full_name || 'Pelanggan Setia'}</h1>
-              <p className="text-slate-500 font-medium mb-4">{profile?.email}</p>
-              
-              <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl text-xs font-bold text-slate-600">
-                  <PhoneIcon className="size-4 text-primary" />
-                  {profile?.phone || '-'}
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl text-xs font-bold text-slate-600">
-                  <MapPinIcon className="size-4 text-primary" />
-                  {profile?.address ? 'Alamat Tersimpan' : 'Alamat Belum Diatur'}
-                </div>
+            <div className="flex-1 text-center md:text-left text-white">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider mb-3 border border-white/10">
+                <span className="size-1.5 bg-cyan-300 rounded-full animate-ping"></span>
+                Pelanggan Setia
               </div>
+              <h1 className="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-sm">
+                {profile?.full_name || 'Teman Donat'}
+              </h1>
+              <p className="text-blue-50/80 font-medium mb-0 opacity-90">{profile?.email}</p>
             </div>
 
-            <button 
-              onClick={handleSignOut}
-              className="px-6 py-3 bg-red-50 text-red-600 font-bold rounded-2xl hover:bg-red-100 transition-colors flex items-center gap-2"
-            >
-              <ArrowRightOnRectangleIcon className="size-5" />
-              Logout
-            </button>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={handleSignOut}
+                className="px-6 h-12 bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold rounded-2xl hover:bg-white/20 transition-all flex items-center gap-2 active:scale-95"
+              >
+                <ArrowRightOnRectangleIcon className="size-5" />
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Sidebar / Info Detail */}
-          <div className="md:col-span-1 space-y-6">
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-              <h2 className="text-sm font-medium text-slate-500 mb-6">Informasi Detail</h2>
-              
-              <div className="space-y-6">
+      <div className="max-w-5xl mx-auto px-6 -mt-12 relative z-20">
+        <div className="grid lg:grid-cols-12 gap-8">
+          
+          {/* Main Content Info */}
+          <div className="lg:col-span-8 space-y-6">
+            <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 p-8 border border-white">
+              <div className="flex items-center justify-between mb-8">
                 <div>
-                  <p className="text-[10px] font-medium text-slate-500 mb-1">Alamat Pengiriman</p>
-                  <p className="text-sm font-bold text-slate-700 leading-relaxed">
-                    {profile?.address || 'Belum ada alamat pengiriman yang ditambahkan.'}
-                  </p>
+                  <h2 className="text-2xl font-bold text-slate-800">Informasi Pribadi</h2>
+                  <p className="text-sm text-slate-500 font-medium">Lengkapi detail Anda untuk pesanan lebih cepat</p>
                 </div>
-                
-                <button className="w-full py-3 border-2 border-slate-100 hover:border-primary hover:text-primary transition-all rounded-xl text-xs font-medium text-slate-500">
-                  Edit Profil
-                </button>
+                {!isEditing && (
+                  <button 
+                    onClick={() => setIsEditing(true)}
+                    className="flex items-center gap-2 text-primary font-bold text-sm bg-primary/5 px-5 py-2.5 rounded-xl hover:bg-primary/10 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">edit</span>
+                    Edit Profil
+                  </button>
+                )}
               </div>
+              
+              {isEditing ? (
+                <form onSubmit={handleUpdateProfile} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700 ml-1">Nama Lengkap</label>
+                      <input 
+                        type="text" 
+                        value={editFullName}
+                        onChange={(e) => setEditFullName(e.target.value)}
+                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                        placeholder="Nama Lengkap"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-slate-700 ml-1">Nomor Telepon</label>
+                      <input 
+                        type="tel" 
+                        value={editPhone}
+                        onChange={(e) => setEditPhone(e.target.value)}
+                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                        placeholder="0812xxxx"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700 ml-1">Alamat Pengiriman</label>
+                    <textarea 
+                      value={editAddress}
+                      onChange={(e) => setEditAddress(e.target.value)}
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium min-h-[120px]"
+                      placeholder="Alamat lengkap pengiriman"
+                      required
+                    />
+                  </div>
+                  <div className="flex gap-3 justify-end pt-2">
+                    <button 
+                      type="button"
+                      onClick={() => setIsEditing(false)}
+                      className="px-6 py-3 font-bold text-slate-500 hover:text-slate-700 transition-colors"
+                    >
+                      Batal
+                    </button>
+                    <button 
+                      type="submit"
+                      className="px-8 py-3 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-[0.98]"
+                    >
+                      Simpan Perubahan
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="flex items-start gap-4 p-4 bg-slate-50/50 rounded-2xl border border-slate-50">
+                    <div className="size-10 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0">
+                      <PhoneIcon className="size-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">WhatsApp</p>
+                      <p className="font-bold text-slate-700">{profile?.phone || '-'}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 p-4 bg-slate-50/50 rounded-2xl border border-slate-50">
+                    <div className="size-10 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0">
+                      <MapPinIcon className="size-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Alamat Utama</p>
+                      <p className="font-bold text-slate-700 leading-snug">
+                        {profile?.address || 'Belum diatur'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <Link href="/catalog" className="block bg-primary p-6 rounded-3xl shadow-xl shadow-primary/20 hover:-translate-y-1 transition-all group">
-              <div className="flex items-center justify-between mb-2">
-                <ShoppingBagIcon className="size-8 text-white/40" />
-                <ChevronRightIcon className="size-5 text-white/60 group-hover:translate-x-1 transition-transform" />
+            {/* Order History */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-3">
+                  Riwayat Pesanan Terbaru
+                  <span className="px-2.5 py-0.5 bg-primary/10 text-primary text-[10px] font-extrabold rounded-full border border-primary/10">
+                    {orders.length}
+                  </span>
+                </h2>
               </div>
-              <p className="text-white font-bold text-lg">Pesan Donat Lagi?</p>
-              <p className="text-white/70 text-sm font-medium">Banyak varian baru yang nungguin kamu!</p>
+
+              {orders.length === 0 ? (
+                <div className="bg-white rounded-[2rem] border border-dashed border-slate-200 p-12 text-center shadow-sm">
+                  <div className="size-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+                    <ShoppingBagIcon className="size-8" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-800 mb-2">Belum ada pesanan</h3>
+                  <p className="text-slate-500 mb-8 max-w-xs mx-auto text-sm font-medium">
+                    Wah, dompetnya masih gatal? Yuk pilih donat favoritmu sekarang!
+                  </p>
+                  <Link 
+                    href="/catalog" 
+                    className="inline-flex h-12 items-center px-8 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95"
+                  >
+                    Buka Katalog Menu
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {orders.map((order) => (
+                    <div 
+                      key={order.id}
+                      className="bg-white p-6 rounded-[1.5rem] border border-white shadow-sm hover:shadow-md hover:border-primary/20 transition-all flex items-center justify-between group cursor-default"
+                    >
+                      <div className="flex items-center gap-5">
+                        <div className="size-14 bg-blue-50/50 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                          <ShoppingBagIcon className="size-7" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-3 mb-1">
+                            <p className="font-extrabold text-slate-800">#{order.id.slice(0, 8).toUpperCase()}</p>
+                            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-green-500/10 text-green-600 rounded-lg">Success</span>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
+                            <span className="flex items-center gap-1.5">
+                              <CalendarDaysIcon className="size-3.5" />
+                              {new Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}
+                            </span>
+                            <span className="size-1 bg-slate-200 rounded-full"></span>
+                            <span>{order.total_items} item donat</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="text-right">
+                        <p className="font-black text-slate-900 text-lg">Rp {order.total_amount.toLocaleString('id-ID')}</p>
+                        <button className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1">Detail 👉</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Sidebar Area */}
+          <div className="lg:col-span-4 space-y-6">
+            <Link href="/catalog" className="relative block h-full min-h-[220px] bg-primary rounded-[2rem] shadow-xl shadow-primary/30 overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-700"></div>
+              <div className="absolute inset-0 p-8 flex flex-col justify-end text-white">
+                <div className="size-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 border border-white/20">
+                  <ShoppingBagIcon className="size-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-black mb-2 leading-tight">Lapar melanda?<br/>Donat solusinya!</h3>
+                <p className="text-blue-50/70 font-bold text-sm flex items-center gap-2 group-hover:translate-x-2 transition-transform">
+                  Pesan Sekarang <ArrowRightOnRectangleIcon className="size-4 rotate-180" />
+                </p>
+              </div>
             </Link>
           </div>
 
-          {/* Activity / Order History */}
-          <div className="md:col-span-2">
-            <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
-              Riwayat Pesanan
-              <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
-                {orders.length}
-              </span>
-            </h2>
-
-            {orders.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-slate-100 p-12 text-center">
-                <div className="size-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
-                  <ShoppingBagIcon className="size-10" />
-                </div>
-                <h3 className="text-lg font-bold text-slate-800 mb-2">Belum ada pesanan</h3>
-                <p className="text-slate-500 mb-8 max-w-xs mx-auto text-sm">
-                  Sepertinya kamu belum pernah memesan donat. Yuk mulai pesanan pertama kamu!
-                </p>
-                <Link 
-                  href="/catalog" 
-                  className="inline-flex h-12 items-center px-8 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
-                >
-                  Lihat Menu
-                </Link>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {orders.map((order) => (
-                  <div 
-                    key={order.id}
-                    className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm hover:border-primary/20 transition-all flex items-center justify-between group"
-                  >
-                    <div className="flex items-center gap-5">
-                      <div className="size-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-primary/5 group-hover:text-primary transition-colors">
-                        <ShoppingBagIcon className="size-6" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-3 mb-1">
-                          <p className="font-bold text-slate-800">Order #{order.id.slice(0, 8)}</p>
-                          <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 bg-green-50 text-green-600 rounded-md">Lunas</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-xs font-medium text-slate-400">
-                          <span className="flex items-center gap-1">
-                            <CalendarDaysIcon className="size-3" />
-                            {new Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                          </span>
-                          <span>•</span>
-                          <span>{order.total_items} Item</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="text-right">
-                      <p className="font-bold text-slate-900 mb-1">Rp {order.total_amount.toLocaleString('id-ID')}</p>
-                      <button className="text-xs font-semibold text-primary hover:underline">Detail</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>
