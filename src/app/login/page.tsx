@@ -59,32 +59,55 @@ function LoginContent() {
   const redirectTo = searchParams.get('next') || '/';
 
   const handleRedirection = useCallback(async (userId: string) => {
-    try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, full_name')
-        .eq('id', userId)
-        .single();
+    const attemptFetchAndRedirect = async (count: number): Promise<void> => {
+      try {
+        // Use maybeSingle to prevent "single() expected 1 row" errors if trigger is slow
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('role, full_name')
+          .eq('id', userId)
+          .maybeSingle();
 
-      if (profile?.role === 'admin') {
-        router.push('/admin');
-        router.refresh();
-      } else if (!profile?.full_name && !profileCompletionStep) {
-        setProfileCompletionStep(true);
-      } else {
-        router.push(redirectTo);
-        router.refresh();
+        if (error) {
+          console.error('Profile fetch error:', error);
+        }
+
+        // If profile is not found yet, it might be due to a slow trigger.
+        // We retry up to 2 times (total 3 attempts) with a delay.
+        if (!profile && count < 2) {
+          console.log(`Profile not found for user ${userId}, retrying (${count + 1}/2)...`);
+          await new Promise(r => setTimeout(r, 1500));
+          return attemptFetchAndRedirect(count + 1);
+        }
+
+        if (profile?.role === 'admin') {
+          router.push('/admin');
+          setTimeout(() => router.refresh(), 100);
+        } else if (!profile?.full_name && !profileCompletionStep) {
+          setProfileCompletionStep(true);
+        } else {
+          // Ensure redirectTo is relative or same-origin
+          const target = redirectTo.startsWith('http') ? new URL(redirectTo).pathname : redirectTo;
+          router.push(target || '/');
+          setTimeout(() => router.refresh(), 100);
+        }
+      } catch (err) {
+        console.error('Critical Redirection error:', err);
+        router.push('/');
       }
-    } catch (err) {
-      console.error('Redirection error:', err);
-      router.push('/');
-    }
+    };
+
+    return attemptFetchAndRedirect(0);
   }, [supabase, router, redirectTo, profileCompletionStep]);
 
   useEffect(() => {
     const checkUser = async () => {
+      // If we have a hash or code, it's likely a redirect from Google/Auth
+      const isSyncing = window.location.hash || window.location.search.includes('code');
+      
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        if (isSyncing) setIsLoading(true, 'Menyinkronkan akun...');
         handleRedirection(user.id);
       } else {
         logTraffic({
@@ -95,7 +118,7 @@ function LoginContent() {
       setChecking(false);
     };
     checkUser();
-  }, [supabase.auth, handleRedirection]);
+  }, [supabase.auth, handleRedirection, setIsLoading]);
 
   // Timer Effect
   useEffect(() => {
@@ -346,11 +369,11 @@ function LoginContent() {
   };
 
 
-  // ─── Loading State ───
+  // ─── Initial Loading / Auth Check ───
   if (checking) {
     return (
       <div className="bg-[#f6f7f8] min-h-screen flex items-center justify-center p-6">
-        <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        {/* GlobalLoading is handled by LoadingProvider via the useEffect sync */}
       </div>
     );
   }
