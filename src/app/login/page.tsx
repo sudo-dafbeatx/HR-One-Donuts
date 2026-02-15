@@ -1,10 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 
 import { logTraffic } from '@/app/actions/traffic-actions';
+import { verifyCaptcha } from '@/app/actions/verify-captcha';
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -24,6 +28,8 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
   
   // New State for Registration & OTP
   const [isRegistering, setIsRegistering] = useState(false);
@@ -85,6 +91,23 @@ function LoginContent() {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    // Verify CAPTCHA first
+    if (TURNSTILE_SITE_KEY) {
+      if (!captchaToken) {
+        setError('Silakan selesaikan verifikasi CAPTCHA.');
+        setLoading(false);
+        return;
+      }
+      const captchaResult = await verifyCaptcha(captchaToken);
+      if (!captchaResult.success) {
+        setError(captchaResult.error || 'Verifikasi CAPTCHA gagal.');
+        setCaptchaToken(null);
+        turnstileRef.current?.reset();
+        setLoading(false);
+        return;
+      }
+    }
 
     if (isRegistering) {
       // Validate password match
@@ -546,10 +569,23 @@ function LoginContent() {
 
                 <p className="text-[12px] text-slate-500 px-2">Minimal 8 karakter dengan kombinasi huruf dan angka.</p>
 
+                {/* CAPTCHA */}
+                {TURNSTILE_SITE_KEY && (
+                  <div className="flex justify-center pt-2">
+                    <Turnstile
+                      ref={turnstileRef}
+                      siteKey={TURNSTILE_SITE_KEY}
+                      onSuccess={(token) => setCaptchaToken(token)}
+                      onExpire={() => setCaptchaToken(null)}
+                      options={{ theme: 'light', size: 'flexible' }}
+                    />
+                  </div>
+                )}
+
                 <div className="pt-4">
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || (!!TURNSTILE_SITE_KEY && !captchaToken)}
                     className="w-full flex h-14 items-center justify-center rounded-full bg-primary px-8 text-base font-bold text-white shadow-lg shadow-primary/30 hover:bg-blue-600 hover:shadow-primary/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? 'Mendaftar...' : 'Daftar Akun'}
@@ -689,11 +725,24 @@ function LoginContent() {
               </div>
             </div>
 
+            {/* CAPTCHA */}
+            {TURNSTILE_SITE_KEY && (
+              <div className="flex justify-center pt-1">
+                <Turnstile
+                  ref={turnstileRef}
+                  siteKey={TURNSTILE_SITE_KEY}
+                  onSuccess={(token) => setCaptchaToken(token)}
+                  onExpire={() => setCaptchaToken(null)}
+                  options={{ theme: 'light', size: 'flexible' }}
+                />
+              </div>
+            )}
+
             {/* Submit Button */}
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || (!!TURNSTILE_SITE_KEY && !captchaToken)}
                 className="w-full h-14 bg-primary hover:bg-[#145fb8] text-white font-bold text-lg rounded-full shadow-lg shadow-primary/30 transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Sabar ya...' : 'Masuk'}
