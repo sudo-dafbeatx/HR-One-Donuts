@@ -36,6 +36,7 @@ function LoginContent() {
   const [otpStep, setOtpStep] = useState(false);
   const [profileCompletionStep, setProfileCompletionStep] = useState(false);
   const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
+  const [countdown, setCountdown] = useState(60);
   
   // Profile Form State
   const [fullName, setFullName] = useState('');
@@ -86,6 +87,17 @@ function LoginContent() {
     };
     checkUser();
   }, [supabase.auth, handleRedirection]);
+
+  // Timer Effect
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (otpStep && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [otpStep, countdown]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -146,6 +158,7 @@ function LoginContent() {
           .eq('id', signUpData.user.id);
 
         setOtpStep(true);
+        setCountdown(60);
         setLoading(false);
         setSuccess(`Kode verifikasi telah dikirim ke ${email}`);
       }
@@ -186,7 +199,7 @@ function LoginContent() {
     const { data: authData, error: verifyError } = await supabase.auth.verifyOtp({
       email,
       token,
-      type: 'email'
+      type: isRegistering ? 'signup' : 'signup'
     });
 
     if (verifyError) {
@@ -248,6 +261,28 @@ function LoginContent() {
       user_id: userId,
     });
     handleRedirection(userId);
+  };
+
+  const handleResendOtp = async () => {
+    if (countdown > 0) return;
+    
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    
+    const { error: resendError } = await supabase.auth.resend({
+      type: isRegistering ? 'signup' : 'signup', // Default to signup for this flow
+      email,
+    });
+    
+    setLoading(false);
+    if (resendError) {
+      setError(`Gagal mengirim ulang: ${resendError.message}`);
+    } else {
+      setSuccess('Kode baru telah dikirim!');
+      setCountdown(60);
+      setOtpCode(['', '', '', '', '', '']);
+    }
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -429,8 +464,12 @@ function LoginContent() {
               </form>
 
               <p className="mt-8 text-center text-sm font-medium text-slate-400">
-                Belum menerima kode? <button onClick={() => setOtpStep(false)} className="text-primary font-bold hover:underline">Kirim ulang</button>
-              </p>
+              {countdown > 0 ? (
+                <span>Kirim ulang dalam <span className="text-primary font-bold">{countdown}s</span></span>
+              ) : (
+                <>Belum menerima kode? <button onClick={handleResendOtp} disabled={loading} className="text-primary font-bold hover:underline">Kirim ulang</button></>
+              )}
+            </p>
             </div>
 
             {/* Footer */}
