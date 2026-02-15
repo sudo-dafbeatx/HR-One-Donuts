@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
+import { useLoading } from "@/context/LoadingContext";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { ShoppingBagIcon, XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -10,6 +11,7 @@ import { SiteSettings } from "@/types/cms";
 
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart } = useCart();
+  const { setIsLoading } = useLoading();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -20,6 +22,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   if (!mounted) return null;
 
   const handleWhatsAppOrder = async () => {
+    setIsLoading(true, 'Menyiapkan pesanan...');
     // Track sales volume
     try {
       const productIds = cart.map(item => item.id);
@@ -40,6 +43,11 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     message += `Mohon info rincian pengiriman dan pembayarannya ya. Terima kasih! 🙏`;
     
     const encodedMessage = encodeURIComponent(message);
+    
+    // Brief delay to show animation
+    await new Promise(r => setTimeout(r, 1000));
+    setIsLoading(false);
+    
     window.open(`https://wa.me/${phone}?text=${encodedMessage}`, "_blank");
   };
 

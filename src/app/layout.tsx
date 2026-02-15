@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
+import { LoadingProvider } from "@/context/LoadingContext";
 import CartDrawer from "@/components/cart/CartDrawer";
 import TrafficTracker from "@/components/tracking/TrafficTracker";
 import BottomNav from "@/components/BottomNav";
@@ -45,49 +46,51 @@ export default async function RootLayout({
       <body
         className={`${plusJakartaSans.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
       >
-        <CartProvider>
-          <TrafficTracker />
-          {children}
-          <CartDrawer siteSettings={siteSettings} />
-          <BottomNav />
-          
-          {/* Global Accessibility Fix for Google Identity Services (One Tap) */}
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function() {
-                  const observer = new MutationObserver((mutations) => {
-                    for (const mutation of mutations) {
-                      if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
-                        const target = mutation.target;
-                        const isGoogleContainer = target.id === 'credential_picker_container' || 
-                                              target.classList.contains('google-one-tap') ||
-                                              target.getAttribute('data-gsi-container') === 'true';
-                        
-                        if (isGoogleContainer && target.getAttribute('aria-hidden') === 'true') {
-                          // Allow the attribute to be false/removed, but prevent 'true' from sticking
-                          // if focus might be inside. Using requestAnimationFrame to let Google's script
-                          // finish its internal work first.
-                          requestAnimationFrame(() => {
-                            if (target.getAttribute('aria-hidden') === 'true') {
-                              target.removeAttribute('aria-hidden');
-                            }
-                          });
+        <LoadingProvider>
+          <CartProvider>
+            <TrafficTracker />
+            {children}
+            <CartDrawer siteSettings={siteSettings} />
+            <BottomNav />
+            
+            {/* Global Accessibility Fix for Google Identity Services (One Tap) */}
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  (function() {
+                    const observer = new MutationObserver((mutations) => {
+                      for (const mutation of mutations) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+                          const target = mutation.target;
+                          const isGoogleContainer = target.id === 'credential_picker_container' || 
+                                                target.classList.contains('google-one-tap') ||
+                                                target.getAttribute('data-gsi-container') === 'true';
+                          
+                          if (isGoogleContainer && target.getAttribute('aria-hidden') === 'true') {
+                            // Allow the attribute to be false/removed, but prevent 'true' from sticking
+                            // if focus might be inside. Using requestAnimationFrame to let Google's script
+                            // finish its internal work first.
+                            requestAnimationFrame(() => {
+                              if (target.getAttribute('aria-hidden') === 'true') {
+                                target.removeAttribute('aria-hidden');
+                              }
+                            });
+                          }
                         }
                       }
-                    }
-                  });
+                    });
 
-                  observer.observe(document.body, {
-                    attributes: true,
-                    subtree: true,
-                    attributeFilter: ['aria-hidden']
-                  });
-                })();
-              `
-            }}
-          />
-        </CartProvider>
+                    observer.observe(document.body, {
+                      attributes: true,
+                      subtree: true,
+                      attributeFilter: ['aria-hidden']
+                    });
+                  })();
+                `
+              }}
+            />
+          </CartProvider>
+        </LoadingProvider>
       </body>
     </html>
   );

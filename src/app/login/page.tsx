@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
+import { useLoading } from '@/context/LoadingContext';
 
 import { logTraffic } from '@/app/actions/traffic-actions';
 import { verifyCaptcha } from '@/app/actions/verify-captcha';
@@ -31,12 +32,20 @@ function LoginContent() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
   
+  const { setIsLoading } = useLoading();
+
   // New State for Registration & OTP
   const [isRegistering, setIsRegistering] = useState(false);
   const [otpStep, setOtpStep] = useState(false);
   const [profileCompletionStep, setProfileCompletionStep] = useState(false);
   const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
   const [countdown, setCountdown] = useState(60);
+
+  // Sync local loading with global loading
+  useEffect(() => {
+    // If we're checking user status or a form is submitting
+    setIsLoading(loading || checking, isRegistering ? 'Mendaftarkan akun...' : 'Sedang memproses...');
+  }, [loading, checking, setIsLoading, isRegistering]);
   
   // Profile Form State
   const [fullName, setFullName] = useState('');

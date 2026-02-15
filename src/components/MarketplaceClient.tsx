@@ -3,6 +3,7 @@
 import React from 'react';
 import { Product } from '@/types/cms';
 import { useCart } from "@/context/CartContext";
+import { useLoading } from "@/context/LoadingContext";
 import Link from 'next/link';
 import Image from 'next/image';
 import { isPromoActive, getEffectivePrice } from '@/lib/product-utils';
@@ -15,6 +16,7 @@ interface MarketplaceClientProps {
 
 export default function MarketplaceClient({ initialProducts, categories = [] }: MarketplaceClientProps) {
   const { addToCart } = useCart();
+  const { setIsLoading } = useLoading();
   const [activeCategory, setActiveCategory] = React.useState<string>('Semua');
   
   // Sort products: focus on active promos first, then recent
@@ -156,7 +158,13 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                         Detail
                       </Link>
                       <button 
-                        onClick={() => addToCart({ id: product.id, name: product.name, price: getEffectivePrice(product), image: product.image_url || '' }, 1)}
+                        onClick={async () => {
+                          setIsLoading(true, 'Menambahkan ke keranjang...');
+                          addToCart({ id: product.id, name: product.name, price: getEffectivePrice(product), image: product.image_url || '' }, 1);
+                          // Brief delay to show off the cool animation as requested "klik apapun muncul"
+                          await new Promise(r => setTimeout(r, 800));
+                          setIsLoading(false);
+                        }}
                         className="bg-primary text-white py-3 rounded-xl font-semibold text-[10px] hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 active:scale-95"
                       >
                         Beli
