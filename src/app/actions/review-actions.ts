@@ -183,7 +183,7 @@ export async function getProductReviews(
     }
 
     // Fallback: query product_reviews table directly
-    const { data, error } = await supabase
+    const { data: reviews, error } = await supabase
       .from('product_reviews')
       .select('*')
       .eq('product_id', productId)
@@ -195,7 +195,32 @@ export async function getProductReviews(
       return { success: false, error: 'Gagal memuat ulasan' };
     }
 
-    return { success: true, data: data || [] };
+    if (!reviews || reviews.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    // Enrich reviews with profile data (name, avatar)
+    const userIds = [...new Set(reviews.map(r => r.user_id))];
+    
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, full_name')
+      .in('id', userIds);
+
+    const profileMap = new Map(
+      (profiles || []).map(p => [p.id, p])
+    );
+
+    const enrichedReviews = reviews.map(review => {
+      const profile = profileMap.get(review.user_id);
+      return {
+        ...review,
+        reviewer_name: profile?.full_name || null,
+        reviewer_avatar: null,
+      };
+    });
+
+    return { success: true, data: enrichedReviews };
   } catch (error) {
     console.error('Unexpected error in getProductReviews:', error);
     return { success: false, error: 'Terjadi kesalahan sistem' };
