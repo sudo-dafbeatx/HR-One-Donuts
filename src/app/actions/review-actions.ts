@@ -167,12 +167,28 @@ export async function getProductReviews(
   try {
     const supabase = await createServerSupabaseClient();
 
-    // Use the database function to get reviews with user info
-    const { data, error } = await supabase.rpc('get_product_reviews_with_user_info', {
-      p_product_id: productId,
-      p_limit: limit,
-      p_offset: offset,
-    });
+    // First try the RPC function for reviews with user info (name, avatar)
+    try {
+      const { data: rpcData, error: rpcError } = await supabase.rpc('get_product_reviews_with_user_info', {
+        p_product_id: productId,
+        p_limit: limit,
+        p_offset: offset,
+      });
+
+      if (!rpcError && rpcData && rpcData.length > 0) {
+        return { success: true, data: rpcData };
+      }
+    } catch (rpcErr) {
+      console.warn('RPC get_product_reviews_with_user_info unavailable:', rpcErr);
+    }
+
+    // Fallback: query product_reviews table directly
+    const { data, error } = await supabase
+      .from('product_reviews')
+      .select('*')
+      .eq('product_id', productId)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       console.error('Error fetching reviews:', error);
