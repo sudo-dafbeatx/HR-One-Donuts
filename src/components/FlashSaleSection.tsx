@@ -70,7 +70,7 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
                   )}
 
                   {/* Glassmorphism Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-5">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                       <div className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-lg">
                         <FireIcon className="size-3" />

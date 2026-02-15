@@ -39,7 +39,7 @@ export default function PromoBanner({ events }: { events: PromoEvent[] }) {
                 </div>
               )}
               
-              <div className="absolute inset-0 p-6 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+              <div className="absolute inset-0 p-4 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent">
                 <div className="flex items-center gap-2 mb-2">
                    <div className="bg-primary/90 text-white px-3 py-1 rounded-full flex items-center gap-1">
                       <Icon className="w-3 h-3" />

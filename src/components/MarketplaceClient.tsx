@@ -57,7 +57,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
           <p className="text-xl font-medium">Tidak ada produk di kategori ini.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
           {filteredProducts.map((product) => {
             const hasActivePromo = isPromoActive(product);
             const hasDiscount = hasActivePromo && product.discount_percent && product.discount_percent > 0;
@@ -115,7 +115,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                 </div>
 
                 {/* Content */}
-                <div className="p-5 flex flex-col h-full gap-3">
+                <div className="p-4 flex flex-col h-full gap-2">
                   <div className="flex flex-col gap-1 w-full">
                     <div className="flex justify-between items-start gap-2">
                       <Link href={`/catalog/${product.id}`} className="flex-1">
@@ -133,7 +133,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                     {product.description}
                   </p>
                   
-                  <div className="mt-auto pt-4 flex flex-col gap-4">
+                  <div className="mt-auto pt-3 flex flex-col gap-3">
                     <div className="flex justify-between items-end">
                       <div className="flex flex-col">
                         {hasDiscount && (
