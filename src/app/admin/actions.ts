@@ -94,26 +94,51 @@ export async function saveProduct(data: Partial<Product>) {
   }
 }
 
-export async function deleteProduct(id: string) {
-  const supabase = await checkAdmin();
-  
-  // Cleanup image first
-  const { data: product } = await supabase.from('products').select('image_url').eq('id', id).single();
-  if (product?.image_url) {
-    const path = extractStoragePath(product.image_url);
-    if (path) await deleteImage(path).catch(err => console.error('Cleanup error:', err));
+export async function deleteProduct(id: string): Promise<{ success: boolean; id?: string; error?: string }> {
+  try {
+    const supabase = await checkAdmin();
+    
+    // Cleanup image first
+    try {
+      const { data: product } = await supabase.from('products').select('image_url').eq('id', id).single();
+      if (product?.image_url) {
+        const path = extractStoragePath(product.image_url);
+        if (path) await deleteImage(path).catch(err => console.error('Cleanup error:', err));
+      }
+    } catch (err) {
+      console.warn('Image cleanup skipped:', err);
+    }
+
+    // Delete associated reviews first (in case CASCADE isn't set up)
+    try {
+      await supabase
+        .from('product_reviews')
+        .delete()
+        .eq('product_id', id);
+    } catch (err) {
+      console.warn('Review cleanup skipped (table may not exist):', err);
+    }
+
+    // Delete product from database
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Delete product error:', error);
+      return { success: false, error: `Gagal menghapus produk: ${error.message}` };
+    }
+    
+    // Revalidate paths
+    revalidatePath('/catalog');
+    revalidatePath('/admin/products');
+
+    return { success: true, id };
+  } catch (err) {
+    console.error('deleteProduct error:', err);
+    return { success: false, error: err instanceof Error ? err.message : 'Gagal menghapus produk' };
   }
-
-  const { error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', id);
-
-  if (error) throw new Error(error.message);
-  
-  revalidatePath('/catalog');
-  revalidatePath('/admin/products');
-  return { success: true, id };
 }
 
 

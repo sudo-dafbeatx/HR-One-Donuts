@@ -70,9 +70,11 @@ export default function ProductManager({ initialProducts, categories }: { initia
       const result = await deleteProduct(id);
       if (result.success) {
         setProducts(products.filter(p => p.id !== id));
+      } else {
+        alert('Gagal menghapus produk: ' + (result.error || 'Unknown error'));
       }
     } catch (err: unknown) {
-      alert('Error deleting product: ' + (err instanceof Error ? err.message : 'Unknown error'));
+      alert('Error menghapus produk: ' + (err instanceof Error ? err.message : 'Unknown error'));
     }
   };
 
