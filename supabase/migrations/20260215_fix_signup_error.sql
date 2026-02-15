@@ -10,14 +10,18 @@ ALTER TABLE public.profiles
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, full_name, role)
+  INSERT INTO public.profiles (id, full_name, phone, address, role)
   VALUES (
     new.id, 
     COALESCE(new.raw_user_meta_data->>'full_name', ''),
+    COALESCE(new.raw_user_meta_data->>'phone', ''),
+    COALESCE(new.raw_user_meta_data->>'address', ''),
     'user'
   )
   ON CONFLICT (id) DO UPDATE SET
     full_name = EXCLUDED.full_name,
+    phone = EXCLUDED.phone,
+    address = EXCLUDED.address,
     updated_at = NOW();
   RETURN new;
 EXCEPTION WHEN OTHERS THEN

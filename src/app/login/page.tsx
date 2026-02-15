@@ -99,6 +99,23 @@ function LoginContent() {
     return () => clearInterval(timer);
   }, [otpStep, countdown]);
 
+  // Compute Password Strength during render
+  const getPasswordStrength = () => {
+    if (!password) return { score: 0, label: '', color: '' };
+
+    let score = 0;
+    if (password.length >= 8) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[0-9]/.test(password)) score += 1;
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+
+    if (score <= 1) return { score, label: 'Lemah', color: 'bg-red-500' };
+    if (score <= 2) return { score, label: 'Sedang', color: 'bg-orange-500' };
+    return { score, label: 'Kuat', color: 'bg-green-500' };
+  };
+
+  const strength = getPasswordStrength();
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -141,6 +158,8 @@ function LoginContent() {
         options: {
           data: {
             full_name: fullName,
+            phone: phone,
+            address: address,
           },
           emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
         }
@@ -151,12 +170,7 @@ function LoginContent() {
         setError(`Gagal mendaftar: ${signUpError.message}`);
         setLoading(false);
       } else if (signUpData.user) {
-        // Update profile with the full name
-        await supabase
-          .from('profiles')
-          .update({ full_name: fullName })
-          .eq('id', signUpData.user.id);
-
+        // Profile will be automatically created by the trigger with metadata (name, phone, address)
         setOtpStep(true);
         setCountdown(60);
         setLoading(false);
@@ -199,7 +213,7 @@ function LoginContent() {
     const { data: authData, error: verifyError } = await supabase.auth.verifyOtp({
       email,
       token,
-      type: isRegistering ? 'signup' : 'signup'
+      type: isRegistering ? 'signup' : 'magiclink'
     });
 
     if (verifyError) {
@@ -214,7 +228,7 @@ function LoginContent() {
         .eq('id', authData.user.id)
         .single();
       
-      if (!profile?.full_name) {
+      if (!profile?.full_name && !isRegistering) {
         setOtpStep(false);
         setProfileCompletionStep(true);
       } else {
@@ -563,19 +577,34 @@ function LoginContent() {
               </div>
 
               {/* Registration Form */}
-              <form onSubmit={handleLogin} className="space-y-5">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1" htmlFor="full_name">Nama Lengkap</label>
-                  <input
-                    id="full_name"
-                    type="text"
-                    placeholder="Masukkan nama lengkap Anda"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    className="block w-full rounded-full border border-slate-200 bg-slate-50 px-6 py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                    required
-                    disabled={loading}
-                  />
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1" htmlFor="full_name">Nama Lengkap</label>
+                    <input
+                      id="full_name"
+                      type="text"
+                      placeholder="Nama lengkap sesuai KTP"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="block w-full rounded-full border border-slate-200 bg-slate-50 px-6 py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                      required
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1" htmlFor="phone">Nomor Telepon</label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      placeholder="Contoh: 08123456789"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="block w-full rounded-full border border-slate-200 bg-slate-50 px-6 py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                      required
+                      disabled={loading}
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -592,19 +621,45 @@ function LoginContent() {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1" htmlFor="address">Alamat Lengkap</label>
+                  <textarea
+                    id="address"
+                    placeholder="Masukkan alamat pengiriman lengkap"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    rows={2}
+                    className="block w-full rounded-2xl border border-slate-200 bg-slate-50 px-6 py-3 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none"
+                    required
+                    disabled={loading}
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1" htmlFor="reg_password">Kata Sandi</label>
-                    <input
-                      id="reg_password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="block w-full rounded-full border border-slate-200 bg-slate-50 px-6 py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                      required
-                      disabled={loading}
-                    />
+                    <div className="relative">
+                      <input
+                        id="reg_password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="block w-full rounded-full border border-slate-200 bg-slate-50 px-6 py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                        required
+                        disabled={loading}
+                      />
+                    </div>
+                    {password && (
+                      <div className="mt-2 px-1">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[10px] uppercase font-bold text-slate-400">Keamanan: {strength.label}</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden flex gap-0.5">
+                          <div className={`h-full transition-all duration-500 ${strength.color}`} style={{ width: `${(strength.score / 4) * 100}%` }}></div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1" htmlFor="confirm_password">Konfirmasi Sandi</label>
