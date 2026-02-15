@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { 
@@ -55,6 +55,7 @@ export default function ProfilePage() {
   const { setIsLoading } = useLoading();
   const router = useRouter();
   const supabase = createClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const predefinedAvatars = [
     { id: '1', name: 'Classic Pink', url: '/avatars/classic.png' },
@@ -165,11 +166,17 @@ export default function ProfilePage() {
         setShowAvatarSelector(false);
       }
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Terjadi kesalahan tidak dikenal';
+      const message = err instanceof Error ? err.message : 'Gagal upload avatar';
       alert(`Gagal upload: ${message}`);
     } finally {
       setIsLoading(false);
+      // Reset input value so same file can be selected again
+      if (e.target) e.target.value = '';
     }
+  };
+
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
   };
 
   const handleSignOut = async () => {
@@ -289,7 +296,8 @@ export default function ProfilePage() {
                     <button
                       key={avatar.id}
                       onClick={() => handleAvatarSelect(avatar.url)}
-                      className="relative size-16 rounded-2xl overflow-hidden border-2 border-slate-100 hover:border-primary transition-all active:scale-90 group"
+                      type="button"
+                      className="relative grow aspect-square rounded-2xl overflow-hidden border-2 border-slate-100 hover:border-primary transition-all active:scale-95 group"
                     >
                       <Image 
                         src={avatar.url} 
@@ -310,18 +318,24 @@ export default function ProfilePage() {
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Atau Gunakan Foto HP</span>
                 </div>
                 
-                <label className="flex items-center justify-center gap-3 w-full h-16 border-2 border-dashed border-slate-200 rounded-2xl hover:border-primary hover:bg-primary/5 cursor-pointer transition-all group">
-                  <input 
-                    type="file" 
-                    className="hidden" 
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                  />
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  className="absolute opacity-0 pointer-events-none" 
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                />
+
+                <button 
+                  onClick={triggerFileUpload}
+                  type="button"
+                  className="flex items-center justify-center gap-3 w-full h-20 border-2 border-dashed border-slate-200 rounded-3xl hover:border-primary hover:bg-primary/5 cursor-pointer transition-all group active:scale-[0.98]"
+                >
                   <div className="flex items-center gap-3">
-                    <CameraIcon className="size-6 text-slate-400 group-hover:text-primary" />
-                    <span className="font-bold text-slate-500 group-hover:text-primary">Ambil dari Galeri</span>
+                    <CameraIcon className="size-8 text-slate-400 group-hover:text-primary" />
+                    <span className="font-bold text-slate-600 group-hover:text-primary">Ambil dari Galeri</span>
                   </div>
-                </label>
+                </button>
                 <p className="text-[10px] text-center text-slate-400 font-medium uppercase tracking-tight">Otomatis Convert ke WebP & Hemat Kuota</p>
               </div>
             </div>
