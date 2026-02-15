@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, Suspense } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+
 import { logTraffic } from '@/app/actions/traffic-actions';
 
 function LoginContent() {
@@ -472,7 +472,7 @@ function LoginContent() {
               </button>
             </form>
 
-            <div className="pt-8 text-center space-y-4">
+            <div className="pt-8 text-center">
               <p className="text-sm font-medium text-slate-500">
                 {isRegistering ? 'Sudah punya akun?' : 'Belum punya akun?'}
                 <button 
@@ -486,14 +486,6 @@ function LoginContent() {
                   {isRegistering ? 'Masuk Sekarang' : 'Daftar Sekarang'}
                 </button>
               </p>
-
-              <Link 
-                href="/" 
-                className="text-sm font-bold text-slate-400 hover:text-primary transition-colors flex items-center justify-center gap-2 group"
-              >
-                Liat-liat dulu, tanpa login
-                <svg className="size-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-              </Link>
             </div>
           </div>
         </div>
