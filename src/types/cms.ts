@@ -62,4 +62,30 @@ export interface SiteSettings {
   tiktok_url?: string;
 }
 
+export interface ProductReview {
+  id: string;
+  product_id: string;
+  user_id: string;
+  rating: number;
+  comment?: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data from user profile
+  reviewer_name?: string;
+  reviewer_avatar?: string | null;
+  reviewer_email?: string;
+}
+
+export interface ReviewStats {
+  product_id: string;
+  product_name?: string;
+  average_rating: number;
+  total_reviews: number;
+  five_star_count: number;
+  four_star_count: number;
+  three_star_count: number;
+  two_star_count: number;
+  one_star_count: number;
+}
+
 export type CMSContentKey = 'site_info' | 'order_steps' | 'product_categories' | 'products' | 'events';

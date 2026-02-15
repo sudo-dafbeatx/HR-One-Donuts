@@ -2,6 +2,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import ProductGallery from "@/components/detail/Gallery";
 import ProductInfo from "@/components/detail/Info";
+import ProductReviews from "@/components/detail/ProductReviews";
 import Footer from "@/components/Footer";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
@@ -58,6 +59,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               sale_type={product.sale_type}
               package_type={product.package_type}
             />
+          </div>
+
+          {/* Product Reviews Section */}
+          <div className="mt-16">
+            <ProductReviews productId={product.id} />
           </div>
         </div>
       </main>
