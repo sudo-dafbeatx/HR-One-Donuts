@@ -410,13 +410,14 @@ function LoginContent() {
     );
   }
 
-  // ─── OTP Verification Screen ───
+  // ─── OTP / Email Verification Screen ───
   if (otpStep) {
     return (
       <div className="bg-[#f6f7f8] min-h-screen flex flex-col">
         <main className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-          <div className="w-full max-w-[520px] bg-white shadow-xl rounded-[1rem] overflow-hidden border border-slate-100">
-            <div className="px-8 pt-10 pb-6 text-center">
+          <div className="w-full max-w-[520px] bg-white shadow-xl rounded-[1rem] overflow-hidden border border-slate-100 text-center">
+            
+            <div className="px-8 pt-10 pb-6">
               {/* Logo */}
               <div className="flex items-center justify-center gap-2 mb-6 text-primary">
                 <div className="size-10 bg-primary/10 rounded-full flex items-center justify-center">
@@ -424,52 +425,81 @@ function LoginContent() {
                 </div>
                 <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">HR-One Donuts</h1>
               </div>
-              <h2 className="text-3xl font-bold text-slate-900 mb-2">Verifikasi Email</h2>
-              <p className="text-slate-500 font-medium">Masukkan 6 digit kode yang dikirim ke <br/><span className="text-slate-900 font-bold">{email}</span></p>
-            </div>
 
-            <div className="px-8 pb-10">
-              {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-semibold text-center">
-                  {error}
-                </div>
+              {isRegistering ? (
+                // Sign Up Verification (Link)
+                <>
+                  <h2 className="text-3xl font-bold text-slate-900 mb-2">Konfirmasi Email</h2>
+                  <p className="text-slate-500 font-medium mb-8">
+                    Kami telah mengirimkan tautan konfirmasi ke <br/>
+                    <span className="text-slate-900 font-bold">{email}</span>. <br/>
+                    Silakan klik tautan tersebut untuk mengaktifkan akun Anda.
+                  </p>
+                  
+                  <div className="flex flex-col gap-4">
+                    <div className="size-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto animate-pulse">
+                      <span className="material-symbols-outlined text-primary text-3xl">mail</span>
+                    </div>
+                    
+                    <button 
+                      onClick={() => window.open('https://mail.google.com', '_blank')}
+                      className="w-full h-14 bg-primary hover:bg-[#145fb8] text-white font-bold text-lg rounded-full shadow-lg shadow-primary/30 transition-all active:scale-[0.98]"
+                    >
+                      Buka Email Saya
+                    </button>
+                  </div>
+                </>
+              ) : (
+                // Login Verification (Code)
+                <>
+                  <h2 className="text-3xl font-bold text-slate-900 mb-2">Verifikasi Email</h2>
+                  <p className="text-slate-500 font-medium">Masukkan 6 digit kode yang dikirim ke <br/><span className="text-slate-900 font-bold">{email}</span></p>
+                  
+                  <div className="mt-8">
+                    {error && (
+                      <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-semibold">
+                        {error}
+                      </div>
+                    )}
+
+                    <form onSubmit={handleVerifyOtp} className="space-y-8">
+                      <div className="flex justify-between gap-2">
+                        {otpCode.map((digit, index) => (
+                          <input
+                            key={index}
+                            id={`otp-${index}`}
+                            type="text"
+                            maxLength={1}
+                            value={digit}
+                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(index, e)}
+                            className="size-12 sm:size-14 text-center text-2xl font-bold bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all text-slate-900"
+                            autoFocus={index === 0}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="pt-2">
+                        <button 
+                          type="submit"
+                          disabled={loading}
+                          className="w-full flex h-14 items-center justify-center rounded-full bg-primary px-8 text-base font-bold text-white shadow-lg shadow-primary/30 hover:bg-blue-600 transition-all active:scale-[0.98] disabled:opacity-50"
+                        >
+                          {loading ? 'Memverifikasi...' : 'Verifikasi & Lanjut'}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </>
               )}
-
-              <form onSubmit={handleVerifyOtp} className="space-y-8">
-                <div className="flex justify-between gap-2">
-                  {otpCode.map((digit, index) => (
-                    <input
-                      key={index}
-                      id={`otp-${index}`}
-                      type="text"
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => handleOtpChange(index, e.target.value)}
-                      onKeyDown={(e) => handleKeyDown(index, e)}
-                      className="size-12 sm:size-14 text-center text-2xl font-bold bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-primary focus:bg-white focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all text-slate-900"
-                      autoFocus={index === 0}
-                    />
-                  ))}
-                </div>
-
-                <div className="pt-2">
-                  <button 
-                    type="submit"
-                    disabled={loading}
-                    className="w-full flex h-14 items-center justify-center rounded-full bg-primary px-8 text-base font-bold text-white shadow-lg shadow-primary/30 hover:bg-blue-600 transition-all active:scale-[0.98] disabled:opacity-50"
-                  >
-                    {loading ? 'Memverifikasi...' : 'Verifikasi & Lanjut'}
-                  </button>
-                </div>
-              </form>
 
               <p className="mt-8 text-center text-sm font-medium text-slate-400">
-              {countdown > 0 ? (
-                <span>Kirim ulang dalam <span className="text-primary font-bold">{countdown}s</span></span>
-              ) : (
-                <>Belum menerima kode? <button onClick={handleResendOtp} disabled={loading} className="text-primary font-bold hover:underline">Kirim ulang</button></>
-              )}
-            </p>
+                {countdown > 0 ? (
+                  <span>Kirim ulang dalam <span className="text-primary font-bold">{countdown}s</span></span>
+                ) : (
+                  <>Belum menerima email? <button onClick={handleResendOtp} disabled={loading} className="text-primary font-bold hover:underline">Kirim ulang</button></>
+                )}
+              </p>
             </div>
 
             {/* Footer */}
@@ -479,10 +509,12 @@ function LoginContent() {
                   onClick={() => {
                     setOtpStep(false);
                     setSuccess('');
+                    setError('');
                   }}
-                  className="text-primary font-bold hover:underline"
+                  className="text-primary font-bold hover:underline flex items-center justify-center gap-2 mx-auto"
                 >
-                  ← Kembali ke halaman daftar
+                  <span className="material-symbols-outlined text-sm">arrow_back</span>
+                  Kembali ke {isRegistering ? 'halaman daftar' : 'halaman masuk'}
                 </button>
               </p>
             </div>
@@ -609,7 +641,7 @@ function LoginContent() {
                 <p className="text-[12px] text-slate-500 px-2">Minimal 8 karakter dengan kombinasi huruf dan angka.</p>
 
                 {/* CAPTCHA */}
-                {TURNSTILE_SITE_KEY && (
+                {TURNSTILE_SITE_KEY ? (
                   <div className="flex justify-center pt-2">
                     <Turnstile
                       ref={turnstileRef}
@@ -619,6 +651,12 @@ function LoginContent() {
                       options={{ theme: 'light', size: 'flexible' }}
                     />
                   </div>
+                ) : (
+                  process.env.NODE_ENV === 'development' && (
+                    <div className="text-[10px] text-orange-400 text-center py-2 bg-orange-50 rounded-xl border border-orange-100 italic">
+                      Turnstile Site Key belum dipasang di .env.local
+                    </div>
+                  )
                 )}
 
                 <div className="pt-4">
@@ -765,7 +803,7 @@ function LoginContent() {
             </div>
 
             {/* CAPTCHA */}
-            {TURNSTILE_SITE_KEY && (
+            {TURNSTILE_SITE_KEY ? (
               <div className="flex justify-center pt-1">
                 <Turnstile
                   ref={turnstileRef}
@@ -775,6 +813,12 @@ function LoginContent() {
                   options={{ theme: 'light', size: 'flexible' }}
                 />
               </div>
+            ) : (
+              process.env.NODE_ENV === 'development' && (
+                <div className="text-[10px] text-orange-400 text-center py-2 bg-orange-50 rounded-xl border border-orange-100 italic">
+                  Turnstile Site Key belum dipasang di .env.local
+                </div>
+              )
             )}
 
             {/* Submit Button */}
