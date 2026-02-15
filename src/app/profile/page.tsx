@@ -9,11 +9,13 @@ import {
   PhoneIcon, 
   ShoppingBagIcon,
   ArrowRightOnRectangleIcon,
-  ChevronRightIcon,
   CalendarDaysIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useLoading } from '@/context/LoadingContext';
+import { uploadAvatar, setPredefinedAvatar } from '@/app/actions/avatar-actions';
+import Image from 'next/image';
+import { CameraIcon, PhotoIcon, SparklesIcon } from '@heroicons/react/24/solid';
 
 interface Profile {
   id: string;
@@ -21,6 +23,7 @@ interface Profile {
   full_name: string | null;
   phone: string | null;
   address: string | null;
+  avatar_url: string | null;
   role: string;
 }
 
@@ -44,6 +47,7 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [editFullName, setEditFullName] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [editAddress, setEditAddress] = useState('');
@@ -51,6 +55,13 @@ export default function ProfilePage() {
   const { setIsLoading } = useLoading();
   const router = useRouter();
   const supabase = createClient();
+
+  const predefinedAvatars = [
+    { id: '1', name: 'Classic Pink', url: '/avatars/classic.png' },
+    { id: '2', name: 'Strawberry Wink', url: '/avatars/strawberry.png' },
+    { id: '3', name: 'Matcha Cool', url: '/avatars/matcha.png' },
+    { id: '4', name: 'Caramel Smile', url: '/avatars/caramel.png' },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -114,10 +125,48 @@ export default function ProfilePage() {
         address: editAddress
       });
       setIsEditing(false);
-      // Brief success delay
-      await new Promise(r => setTimeout(r, 500));
-    } catch (err: any) {
-      alert(`Gagal memperbarui profil: ${err.message}`);
+      // Success feedback would be nice, but keeping it simple as per request
+      await new Promise(r => setTimeout(r, 600));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Terjadi kesalahan tidak dikenal';
+      alert(`Gagal memperbarui profil: ${message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAvatarSelect = async (url: string) => {
+    if (!profile) return;
+    setIsLoading(true, 'Menyetel avatar...');
+    try {
+      await setPredefinedAvatar(url);
+      setProfile({ ...profile, avatar_url: url });
+      setShowAvatarSelector(false);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Terjadi kesalahan tidak dikenal';
+      alert(`Gagal: ${message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    setIsLoading(true, 'Mengunggah & mengubah ke WebP...');
+    try {
+      const result = await uploadAvatar(formData);
+      if (result.success) {
+        setProfile({ ...profile, avatar_url: result.url });
+        setShowAvatarSelector(false);
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Terjadi kesalahan tidak dikenal';
+      alert(`Gagal upload: ${message}`);
     } finally {
       setIsLoading(false);
     }
@@ -149,10 +198,37 @@ export default function ProfilePage() {
           <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-10">
             {/* Profile Avatar with premium border */}
             <div className="relative group">
-              <div className="size-28 md:size-32 bg-white/20 backdrop-blur-md rounded-3xl border-2 border-white/30 flex items-center justify-center text-white shadow-2xl transition-transform duration-500 group-hover:scale-105">
-                <UserCircleIcon className="size-16 md:size-20" />
+              <div className="size-28 md:size-32 bg-white/20 backdrop-blur-md rounded-3xl border-2 border-white/30 flex items-center justify-center text-white shadow-2xl transition-all duration-500 overflow-hidden relative">
+                {profile?.avatar_url ? (
+                  <Image 
+                    src={profile.avatar_url} 
+                    alt="Avatar" 
+                    fill 
+                    className="object-cover"
+                  />
+                ) : (
+                  <UserCircleIcon className="size-16 md:size-20" />
+                )}
+                
+                {/* Hover Overlay */}
+                <button 
+                  onClick={() => setShowAvatarSelector(true)}
+                  className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1"
+                >
+                  <CameraIcon className="size-6 text-white" />
+                  <span className="text-[10px] font-bold text-white uppercase tracking-wider">Ubah Foto</span>
+                </button>
               </div>
+              
               <div className="absolute -bottom-2 -right-2 bg-green-400 size-6 rounded-full border-4 border-primary shadow-lg animate-pulse"></div>
+              
+              {/* Mobile Change Button */}
+              <button 
+                onClick={() => setShowAvatarSelector(true)}
+                className="md:hidden absolute -top-1 -right-1 size-8 bg-white text-primary rounded-full shadow-lg flex items-center justify-center active:scale-95"
+              >
+                <CameraIcon className="size-4" />
+              </button>
             </div>
             
             <div className="flex-1 text-center md:text-left text-white">
@@ -178,6 +254,89 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Avatar Selection Modal/Overlay */}
+      {showAvatarSelector && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            onClick={() => setShowAvatarSelector(false)}
+          ></div>
+          
+          <div className="relative w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-800">Ubah Foto Profil</h3>
+                  <p className="text-sm text-slate-500 font-medium italic">Pilih karakter donat atau foto sendiri</p>
+                </div>
+                <button 
+                  onClick={() => setShowAvatarSelector(false)}
+                  className="size-10 bg-slate-100 rounded-full flex items-center justify-center hover:bg-slate-200"
+                >
+                  <span className="material-symbols-outlined text-slate-500">close</span>
+                </button>
+              </div>
+
+              {/* Predefined Avatars */}
+              <div className="mb-10">
+                <div className="flex items-center gap-2 mb-4">
+                  <SparklesIcon className="size-4 text-primary" />
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Pilih Karakter Donat</span>
+                </div>
+                <div className="grid grid-cols-4 gap-4">
+                  {predefinedAvatars.map((avatar) => (
+                    <button
+                      key={avatar.id}
+                      onClick={() => handleAvatarSelect(avatar.url)}
+                      className="relative size-16 rounded-2xl overflow-hidden border-2 border-slate-100 hover:border-primary transition-all active:scale-90 group"
+                    >
+                      <Image 
+                        src={avatar.url} 
+                        alt={avatar.name} 
+                        fill 
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom Upload */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <PhotoIcon className="size-4 text-primary" />
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Atau Gunakan Foto HP</span>
+                </div>
+                
+                <label className="flex items-center justify-center gap-3 w-full h-16 border-2 border-dashed border-slate-200 rounded-2xl hover:border-primary hover:bg-primary/5 cursor-pointer transition-all group">
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                  />
+                  <div className="flex items-center gap-3">
+                    <CameraIcon className="size-6 text-slate-400 group-hover:text-primary" />
+                    <span className="font-bold text-slate-500 group-hover:text-primary">Ambil dari Galeri</span>
+                  </div>
+                </label>
+                <p className="text-[10px] text-center text-slate-400 font-medium uppercase tracking-tight">Otomatis Convert ke WebP & Hemat Kuota</p>
+              </div>
+            </div>
+            
+            <div className="bg-slate-50 p-4 text-center border-t border-slate-100">
+              <button 
+                onClick={() => setShowAvatarSelector(false)}
+                className="text-sm font-bold text-slate-400 hover:text-slate-600"
+              >
+                Nanti saja
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-5xl mx-auto px-6 -mt-12 relative z-20">
         <div className="grid lg:grid-cols-12 gap-8">
