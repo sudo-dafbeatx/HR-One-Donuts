@@ -1,38 +1,70 @@
+import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   // =====================================================
   // PAYMENT PROTECTION SYSTEM - Environment Variable
   // =====================================================
-  
-  // UNTUK DEVELOPER:
-  // Control dari Vercel Environment Variables
-  // LICENSE_STATUS: "ACTIVE" atau "EXPIRED"
-  // Kalau EXPIRED, website langsung block
-  
   const LICENSE_STATUS = process.env.LICENSE_STATUS || 'ACTIVE';
   
-  // Check license status
   if (LICENSE_STATUS === 'EXPIRED') {
-    // Website disabled, redirect ke halaman peringatan
     if (!request.nextUrl.pathname.startsWith('/license-expired')) {
       return NextResponse.redirect(new URL('/license-expired', request.url));
     }
   }
+
+  // =====================================================
+  // AUTH PROTECTION - Redirect to login if not logged in
+  // =====================================================
+  const pathname = request.nextUrl.pathname;
   
+  // Skip auth check for public routes
+  const isPublicRoute = pathname.startsWith('/login') || 
+                         pathname.startsWith('/auth') || 
+                         pathname.startsWith('/api') ||
+                         pathname.startsWith('/license-expired');
+  
+  if (!isPublicRoute) {
+    let supabaseResponse = NextResponse.next({ request });
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) =>
+              request.cookies.set(name, value)
+            );
+            supabaseResponse = NextResponse.next({ request });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              supabaseResponse.cookies.set(name, value, options)
+            );
+          },
+        },
+      }
+    );
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.searchParams.set('next', pathname);
+      return NextResponse.redirect(url);
+    }
+
+    return supabaseResponse;
+  }
+
   return NextResponse.next();
 }
 
-// Protect all routes except static files
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)).*)',
   ],
 };
