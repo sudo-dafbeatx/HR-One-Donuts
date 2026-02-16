@@ -27,12 +27,16 @@ export async function createReview(
     }
 
     // Check if user already reviewed this product
-    const { data: existing } = await supabase
+    const { data: existing, error: existingError } = await supabase
       .from('product_reviews')
       .select('id')
       .eq('product_id', productId)
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
+
+    if (existingError) {
+      console.error(' [ReviewActions] Existing check error:', existingError);
+    }
 
     if (existing) {
       return { success: false, error: 'Anda sudah memberikan ulasan untuk produk ini' };
@@ -48,7 +52,7 @@ export async function createReview(
         comment: comment || null,
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error creating review:', error);
@@ -97,7 +101,7 @@ export async function updateReview(
       .eq('id', reviewId)
       .eq('user_id', user.id)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error updating review:', error);
@@ -240,7 +244,7 @@ export async function getProductReviewStats(
       .from('product_review_stats')
       .select('*')
       .eq('product_id', productId)
-      .single();
+      .maybeSingle();
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows
       console.error('Error fetching review stats:', error);
@@ -290,7 +294,7 @@ export async function getUserReviewForProduct(
       .select('*')
       .eq('product_id', productId)
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows
       console.error('Error fetching user review:', error);

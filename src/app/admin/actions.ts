@@ -12,11 +12,15 @@ async function checkAdmin() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Unauthorized');
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
+
+  if (profileError) {
+    console.error(' [checkAdmin] Profile error:', profileError);
+  }
 
   if (profile?.role !== 'admin') {
     throw new Error('Forbidden: Admin access only');
@@ -61,7 +65,7 @@ export async function saveProduct(data: Partial<Product>) {
   // Cleanup old image if the URL changed
   if (data.id && data.image_url) {
     try {
-      const { data: oldData } = await supabase.from('products').select('image_url').eq('id', data.id).single();
+      const { data: oldData } = await supabase.from('products').select('image_url').eq('id', data.id).maybeSingle();
       if (oldData?.image_url && oldData.image_url !== data.image_url) {
         const oldPath = extractStoragePath(oldData.image_url);
         if (oldPath) await deleteImage(oldPath).catch(err => console.error('Cleanup error:', err));
@@ -76,7 +80,7 @@ export async function saveProduct(data: Partial<Product>) {
       .from('products')
       .upsert(productData)
       .select()
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Supabase Upsert Error:', error);
@@ -99,7 +103,7 @@ export async function deleteProduct(id: string): Promise<{ success: boolean; id?
     
     // Cleanup image first
     try {
-      const { data: product } = await supabase.from('products').select('image_url').eq('id', id).single();
+      const { data: product } = await supabase.from('products').select('image_url').eq('id', id).maybeSingle();
       if (product?.image_url) {
         const path = extractStoragePath(product.image_url);
         if (path) await deleteImage(path).catch(err => console.error('Cleanup error:', err));
@@ -169,7 +173,7 @@ export async function saveEvent(data: Partial<PromoEvent>) {
   
   // Cleanup old image if URL changed
   if (data.id && data.banner_image_url) {
-    const { data: oldData } = await supabase.from('events').select('banner_image_url').eq('id', data.id).single();
+    const { data: oldData } = await supabase.from('events').select('banner_image_url').eq('id', data.id).maybeSingle();
     if (oldData?.banner_image_url && oldData.banner_image_url !== data.banner_image_url) {
       const oldPath = extractStoragePath(oldData.banner_image_url);
       if (oldPath) await deleteImage(oldPath).catch(err => console.error('Cleanup error:', err));
@@ -191,7 +195,7 @@ export async function deleteEvent(id: string) {
   const supabase = await checkAdmin();
   
   // Cleanup image first
-  const { data: event } = await supabase.from('events').select('banner_image_url').eq('id', id).single();
+  const { data: event } = await supabase.from('events').select('banner_image_url').eq('id', id).maybeSingle();
   if (event?.banner_image_url) {
     const path = extractStoragePath(event.banner_image_url);
     if (path) await deleteImage(path).catch(err => console.error('Cleanup error:', err));
@@ -219,7 +223,7 @@ export async function incrementSoldCount(productIds: string[]) {
     
     if (error) {
       // Fallback if RPC is not defined yet
-      const { data: p } = await supabase.from('products').select('sold_count').eq('id', id).single();
+      const { data: p } = await supabase.from('products').select('sold_count').eq('id', id).maybeSingle();
       await supabase.from('products').update({ sold_count: (p?.sold_count || 0) + 1 }).eq('id', id);
     }
   }

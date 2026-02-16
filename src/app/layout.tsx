@@ -53,11 +53,15 @@ export default async function RootLayout({
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        console.error(' [RootLayout] Failed to fetch profile:', profileError);
+      }
       isAdmin = profile?.role === 'admin';
     }
   } catch {

@@ -24,13 +24,14 @@ export default async function AdminLayout({
   }
 
   // Check user role
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
-  if (profile?.role !== 'admin') {
+  if (profileError || !profile || profile.role !== 'admin') {
+    if (profileError) console.error(' [AdminLayout] Profile check error:', profileError);
     redirect('/');
   }
 

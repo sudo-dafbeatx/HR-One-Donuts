@@ -18,13 +18,14 @@ export async function uploadImage(formData: FormData) {
     throw new Error('Unauthorized');
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
-  if (profile?.role !== 'admin') {
+  if (profileError || !profile || profile.role !== 'admin') {
+    if (profileError) console.error(' [uploadImage] Profile error:', profileError);
     throw new Error('Forbidden: Akses ditolak. Hanya admin yang boleh upload gambar.');
   }
   
@@ -119,13 +120,14 @@ export async function deleteImage(filePath: string) {
     throw new Error('Unauthorized');
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
-  if (profile?.role !== 'admin') {
+  if (profileError || !profile || profile.role !== 'admin') {
+    if (profileError) console.error(' [deleteImage] Profile error:', profileError);
     throw new Error('Forbidden');
   }
   
