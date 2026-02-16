@@ -283,6 +283,12 @@ export async function saveTheme(data: Partial<UITheme>) {
     body_font: data.body_font,
     button_radius: data.button_radius,
     card_radius: data.card_radius,
+    card_bg_color: data.card_bg_color,
+    card_border_color: data.card_border_color,
+    search_bg_color: data.search_bg_color,
+    search_text_color: data.search_text_color,
+    account_bg_color: data.account_bg_color,
+    account_text_color: data.account_text_color,
     updated_at: new Date().toISOString(),
   };
 
