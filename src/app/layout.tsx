@@ -63,7 +63,12 @@ export default async function RootLayout({
 
   return (
     <html lang="id" className="overflow-x-hidden" suppressHydrationWarning>
-      <head />
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+        />
+      </head>
       <body
         className={`${sora.variable} ${publicSans.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
       >
