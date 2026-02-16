@@ -47,29 +47,38 @@ export default async function Home() {
   const categories = categoryData?.map(c => c.name) || [];
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark uiverse-bg">
+    <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark uiverse-bg overflow-hidden">
       <Navbar siteSettings={siteSettings} copy={copy} />
       
-      <main className="relative z-10 flex-1 max-w-[1440px] mx-auto w-full px-0 py-4">
-        <Hero copy={copy} />
+      <main className="flex-1 w-full flex flex-col items-center">
+        {/* Hero Section - Full width but content constrained */}
+        <section className="w-full">
+          <Hero copy={copy} />
+        </section>
 
-        <Suspense fallback={<FlashSaleSkeleton />}>
-          <FlashSaleServer />
-        </Suspense>
+        {/* Constrained Content Container */}
+        <div className="w-full max-w-7xl px-4 md:px-6 flex flex-col gap-8 md:gap-12 py-8 md:py-12">
+          {/* Promo Section */}
+          <Suspense fallback={<FlashSaleSkeleton />}>
+            <FlashSaleServer />
+          </Suspense>
 
-        <div className="px-4 lg:px-6 py-4 md:py-6">
-          {!products || products.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-slate-500">
-              <p className="text-lg font-medium">{copy.empty_products}</p>
-            </div>
-          ) : (
-            <MarketplaceClient 
-              initialProducts={products as Product[]} 
-              categories={categories || []} 
-              copy={copy} 
-              reviewStats={reviewStats || []}
-            />
-          )}
+          {/* Product Marketplace Section */}
+          <section className="w-full">
+            {!products || products.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                <span className="material-symbols-outlined text-4xl mb-4">inventory_2</span>
+                <p className="text-lg font-medium">{copy.empty_products}</p>
+              </div>
+            ) : (
+              <MarketplaceClient 
+                initialProducts={products as Product[]} 
+                categories={categories || []} 
+                copy={copy} 
+                reviewStats={reviewStats || []}
+              />
+            )}
+          </section>
         </div>
       </main>
       

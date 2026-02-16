@@ -1,95 +1,92 @@
 import Link from "next/link";
 import { SiteSettings } from "@/types/cms";
-import { DEFAULT_COPY } from "@/lib/theme-defaults";
-import FooterClient from "@/components/FooterClient";
 
 interface FooterProps {
   siteSettings?: SiteSettings;
   copy?: Record<string, string>;
 }
 
-export default function Footer({ siteSettings, copy: _copy }: FooterProps) {
-  const copy = _copy || DEFAULT_COPY;
+export default function Footer({ siteSettings }: FooterProps) {
   return (
-    <footer className="bg-slate-50 dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 pt-10 pb-6">
-      <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-12">
-        {/* Brand */}
-        <div className="col-span-2 md:col-span-1">
-          <div className="flex items-center gap-2.5 mb-4 md:mb-6">
-            <div className="size-8 bg-primary rounded-full flex items-center justify-center text-white">
-              <span className="material-symbols-outlined text-xl">donut_large</span>
+    <footer className="bg-slate-50 border-t border-slate-100 pt-12 pb-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 mb-12">
+          {/* Brand */}
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+            <Link href="/" className="flex items-center gap-2 mb-4">
+              <div className="size-8 bg-primary rounded-full flex items-center justify-center text-white shadow-md shadow-primary/20">
+                <span className="material-symbols-outlined text-lg font-bold">donut_large</span>
+              </div>
+              <span className="font-display text-lg font-black text-primary tracking-tight">
+                {siteSettings?.store_name || "HR-One Donuts"}
+              </span>
+            </Link>
+            <p className="text-slate-500 text-sm leading-relaxed mb-6 max-w-xs">
+              {siteSettings?.tagline || "Freshly baked donuts delivered straight to your door with love."}
+            </p>
+            <div className="flex gap-3">
+              {[
+                { icon: 'photo_camera', label: 'Instagram', url: siteSettings?.instagram_url },
+                { icon: 'videocam', label: 'TikTok', url: siteSettings?.tiktok_url },
+                { icon: 'share', label: 'Share', url: '#' },
+              ].map((social, i) => social.url && (
+                <a key={i} href={social.url} target="_blank" rel="noopener noreferrer" className="size-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm">
+                  <span className="material-symbols-outlined text-lg">{social.icon}</span>
+                </a>
+              ))}
             </div>
-            <span className="font-display text-lg md:text-xl font-extrabold text-primary">
-              {siteSettings?.store_name || copy.hero_title}
-            </span>
           </div>
-          <p className="text-slate-500 text-xs md:text-sm leading-relaxed mb-4 md:mb-6 max-w-xs">
-            {siteSettings?.tagline || copy.hero_subtitle}
+
+          {/* Quick Links */}
+          <div className="text-center sm:text-left">
+            <h4 className="text-slate-900 font-bold text-sm uppercase tracking-widest mb-6">Navigasi</h4>
+            <ul className="space-y-3 text-sm text-slate-500">
+              <li><Link className="hover:text-primary transition-colors" href="/">Beranda</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="/catalog">Katalog Menu</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="/news">Berita & Promo</Link></li>
+            </ul>
+          </div>
+
+          {/* Customer Support */}
+          <div className="text-center sm:text-left">
+            <h4 className="text-slate-900 font-bold text-sm uppercase tracking-widest mb-6">Bantuan</h4>
+            <ul className="space-y-3 text-sm text-slate-500">
+              <li><Link className="hover:text-primary transition-colors" href="#">Pusat Bantuan</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Info Pengiriman</Link></li>
+              <li><Link className="hover:text-primary transition-colors" href="#">Kebijakan Pengembalian</Link></li>
+            </ul>
+          </div>
+
+          {/* Contact Us */}
+          <div className="text-center sm:text-left">
+            <h4 className="text-slate-900 font-bold text-sm uppercase tracking-widest mb-6">Kontak</h4>
+            <div className="space-y-4 text-sm text-slate-500">
+              <div className="flex items-start justify-center sm:justify-start gap-3">
+                <span className="material-symbols-outlined text-primary text-xl shrink-0">location_on</span>
+                <span className="leading-snug">{siteSettings?.address || "Jakarta, Indonesia"}</span>
+              </div>
+              <div className="flex items-center justify-center sm:justify-start gap-3">
+                <span className="material-symbols-outlined text-primary text-xl shrink-0">call</span>
+                <span className="font-medium">{siteSettings?.phone_number || "+62 812-3456-7890"}</span>
+              </div>
+              <div className="flex items-center justify-center sm:justify-start gap-3">
+                <span className="material-symbols-outlined text-primary text-xl shrink-0">mail</span>
+                <span className="font-medium">hello@hrone-donuts.com</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center">
+          <p className="text-slate-400 text-xs font-medium">
+            © 2025 {siteSettings?.store_name || "HR-One Donuts"}. Semua hak dilindungi.
           </p>
-          <div className="flex gap-3">
-            {siteSettings?.instagram_url && (
-              <a href={siteSettings.instagram_url} target="_blank" rel="noopener noreferrer" className="size-9 md:size-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-all">
-                <span className="material-symbols-outlined text-lg">photo_camera</span>
-              </a>
-            )}
-            {siteSettings?.tiktok_url && (
-              <a href={siteSettings.tiktok_url} target="_blank" rel="noopener noreferrer" className="size-9 md:size-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-all">
-                <span className="material-symbols-outlined text-lg">videocam</span>
-              </a>
-            )}
-            <a href="#" className="size-9 md:size-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-primary hover:text-white transition-all">
-              <span className="material-symbols-outlined text-lg">share</span>
-            </a>
+          <div className="flex gap-6 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <a className="hover:text-primary transition-colors" href="#">Privasi</a>
+            <a className="hover:text-primary transition-colors" href="#">Syarat</a>
+            <a className="hover:text-primary transition-colors" href="#">Cookie</a>
           </div>
-        </div>
-
-        {/* Quick Links */}
-        <div>
-          <FooterClient copyKey="footer_quicklinks" className="font-bold mb-4 md:mb-6 text-sm" />
-          <ul className="space-y-3 md:space-y-4 text-xs md:text-sm text-slate-500">
-            <li><Link className="hover:text-primary transition-colors" href="/">Beranda</Link></li>
-            <li><Link className="hover:text-primary transition-colors" href="/catalog">Katalog Menu</Link></li>
-            <li><Link className="hover:text-primary transition-colors" href="/news">Berita</Link></li>
-          </ul>
-        </div>
-
-        {/* Customer Support */}
-        <div>
-          <FooterClient copyKey="footer_support" className="font-bold mb-4 md:mb-6 text-sm" />
-          <ul className="space-y-3 md:space-y-4 text-xs md:text-sm text-slate-500">
-            <li><Link className="hover:text-primary transition-colors" href="#">Help Center</Link></li>
-            <li><Link className="hover:text-primary transition-colors" href="#">Shipping Info</Link></li>
-            <li><Link className="hover:text-primary transition-colors" href="#">Refund Policy</Link></li>
-          </ul>
-        </div>
-
-        {/* Contact Us */}
-        <div>
-          <FooterClient copyKey="footer_contact" className="font-bold mb-4 md:mb-6 text-sm" />
-          <div className="space-y-3 md:space-y-4 text-xs md:text-sm text-slate-500">
-            <div className="flex items-start gap-2.5">
-              <span className="material-symbols-outlined text-primary text-lg shrink-0">location_on</span>
-              <span>{siteSettings?.address || "Jakarta, Indonesia"}</span>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <span className="material-symbols-outlined text-primary text-lg shrink-0">call</span>
-              <span>{siteSettings?.phone_number || "+62 812-3456-7890"}</span>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <span className="material-symbols-outlined text-primary text-lg shrink-0">mail</span>
-              <span>hello@hrone-donuts.com</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Bar */}
-      <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 border-t border-slate-100 dark:border-slate-800 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4 text-[10px] md:text-xs text-slate-400">
-        <FooterClient copyKey="footer_copyright" className="" as="p" />
-        <div className="flex gap-4 md:gap-6">
-          <a className="hover:text-slate-600" href="#">Privacy Policy</a>
-          <a className="hover:text-slate-600" href="#">Terms of Service</a>
-          <a className="hover:text-slate-600" href="#">Cookies</a>
         </div>
       </div>
     </footer>
