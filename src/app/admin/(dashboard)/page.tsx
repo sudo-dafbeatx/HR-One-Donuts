@@ -12,6 +12,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types/cms';
+import ResetSalesButton from '@/components/admin/ResetSalesButton';
 
 interface OrderItem {
   product_id: string;
@@ -96,6 +97,7 @@ export default async function AdminDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <ResetSalesButton />
           <Link 
             href="/admin/products"
             className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-all text-sm shadow-sm"

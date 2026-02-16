@@ -347,8 +347,39 @@ export async function saveUICopyBatch(entries: { key: string; value: string }[])
   if (error) throw new Error(error.message);
   
   revalidatePath('/', 'layout');
-  revalidatePath('/');
-  revalidatePath('/catalog');
   revalidatePath('/admin/theme');
+  return { success: true };
+}
+
+// --- Development Actions ---
+export async function resetSalesData() {
+  const supabase = await checkAdmin();
+  
+  // 1. Delete all records from the orders table
+  const { error: deleteOrdersError } = await supabase
+    .from('orders')
+    .delete()
+    .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete everything
+  
+  if (deleteOrdersError) {
+    console.error(' [resetSalesData] Error deleting orders:', deleteOrdersError);
+    throw new Error('Gagal menghapus data pesanan: ' + deleteOrdersError.message);
+  }
+
+  // 2. Reset sold_count to 0 for all products
+  const { error: updateProductsError } = await supabase
+    .from('products')
+    .update({ sold_count: 0 })
+    .neq('id', '00000000-0000-0000-0000-000000000000'); // Update everything
+
+  if (updateProductsError) {
+    console.error(' [resetSalesData] Error resetting sold_count:', updateProductsError);
+    throw new Error('Gagal mereset jumlah terjual produk: ' + updateProductsError.message);
+  }
+
+  // 3. Revalidate dashboard to show new (empty) stats
+  revalidatePath('/admin');
+  revalidatePath('/');
+  
   return { success: true };
 }
