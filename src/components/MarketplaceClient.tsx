@@ -58,20 +58,45 @@ export default function MarketplaceClient({
     return p.price;
   }
 
-  const renderStars = (rating: number) => {
+  const renderRating = (stats?: ReviewStats) => {
+    const rating = stats?.average_rating || 0;
+    const total = stats?.total_reviews || 0;
+
     return (
-      <div className="flex gap-0.5">
-        {[1, 2, 3, 4, 5].map((s) => (
+      <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+        {/* Desktop: 5 Stars */}
+        <div className="hidden md:flex gap-0.5">
+          {[1, 2, 3, 4, 5].map((s) => (
+            <span 
+              key={s} 
+              className={`material-symbols-outlined text-[11px] ${
+                s <= Math.round(rating) ? 'text-amber-400' : 'text-slate-200'
+              }`}
+              style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}
+            >
+              star
+            </span>
+          ))}
+          <span className="text-[9px] text-slate-400 font-bold ml-0.5">
+            ({total})
+          </span>
+        </div>
+
+        {/* Mobile: Compact Badge (1 Star + Num) */}
+        <div className="flex md:hidden items-center bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100 gap-1">
           <span 
-            key={s} 
-            className={`material-symbols-outlined text-[10px] md:text-[11px] ${
-              s <= Math.round(rating) ? 'text-amber-400' : 'text-slate-200'
-            }`}
+            className="material-symbols-outlined text-[10px] text-amber-500"
             style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}
           >
             star
           </span>
-        ))}
+          <span className="text-[9px] text-amber-900 font-black">
+            {rating > 0 ? rating.toFixed(1) : 'new'}
+          </span>
+          <span className="text-[8px] text-amber-700/60 font-medium">
+            ({total})
+          </span>
+        </div>
       </div>
     );
   };
@@ -154,7 +179,7 @@ export default function MarketplaceClient({
                       {/* Tags */}
                       <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-10">
                         {product.tag && (
-                          <span className="px-1.5 py-0.5 bg-black/40 backdrop-blur-md text-white text-[8px] font-black uppercase tracking-wider rounded-md">
+                          <span className="px-1.5 py-0.5 bg-black/40 backdrop-blur-md text-white md:text-[8px] text-[7px] font-black uppercase tracking-wider rounded-md">
                             {product.tag}
                           </span>
                         )}
@@ -163,7 +188,7 @@ export default function MarketplaceClient({
 
                     {/* Info Area */}
                     <div className="flex flex-col flex-1 min-h-0">
-                      <div className="flex flex-col gap-0.5">
+                      <div className="flex flex-col gap-1">
                         <EditableProductField 
                           value={product.name} 
                           onSave={(val: string) => {
@@ -175,25 +200,20 @@ export default function MarketplaceClient({
                         />
                         
                         {/* Rating & Sold Row */}
-                        <div 
-                          className="flex items-center justify-between gap-1"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="flex items-center gap-1">
-                            {renderStars(stats?.average_rating || 0)}
-                            <span className="text-[9px] text-slate-400 font-bold">
-                              ({stats?.total_reviews || 0})
-                            </span>
-                          </div>
-                          <span className="text-[8px] md:text-[9px] text-slate-400 font-black uppercase tracking-tight">
+                        <div className="flex items-center justify-between gap-1">
+                          {renderRating(stats)}
+                          
+                          {/* Only show sold count on desktop */}
+                          <span className="hidden md:block text-[9px] text-slate-400 font-black uppercase tracking-tight">
                             {product.sold_count || 0}+ Terjual
                           </span>
                         </div>
                       </div>
 
                       <div className="mt-auto pt-2">
+                        {/* Hide old price on mobile for ultra clean look */}
                         {hasDiscount && (
-                          <div className="text-[9px] text-slate-400 line-through mb-0">
+                          <div className="hidden md:block text-[9px] text-slate-400 line-through mb-0">
                             Rp {product.price.toLocaleString("id-ID")}
                           </div>
                         )}
