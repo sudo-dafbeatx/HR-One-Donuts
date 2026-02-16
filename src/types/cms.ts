@@ -25,6 +25,7 @@ export interface Product {
 export interface PromoEvent {
   id: string;
   title: string;
+  description?: string;
   event_type: 'seasonal' | 'flash_sale' | 'jumat_berkah' | 'takjil';
   banner_image_url?: string;
   discount_percent: number;

@@ -3,7 +3,7 @@
 import { PromoEvent } from '@/types/cms';
 import Image from 'next/image';
 import Link from 'next/link';
-import { BoltIcon, FireIcon, ClockIcon } from '@heroicons/react/24/solid';
+import { BoltIcon, ClockIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState, useRef } from 'react';
 
 export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
@@ -46,67 +46,60 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
         <div className="relative group">
           <div 
             ref={scrollRef}
-            className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory scroll-smooth"
+            className="flex gap-3 overflow-x-auto pb-6 hide-scrollbar snap-x snap-mandatory scroll-smooth"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {events.map((event) => (
               <div 
                 key={event.id}
-                className="flex-shrink-0 w-[85%] sm:w-[50%] lg:w-[32%] snap-center"
+                className="flex-shrink-0 w-[46%] sm:w-[32%] lg:w-[280px] snap-start"
               >
-                <div className="relative aspect-[21/10] rounded-2xl overflow-hidden bg-slate-100 border border-slate-100 shadow-sm group/card hover:shadow-md transition-shadow">
-                  {/* Banner Image */}
-                  {event.banner_image_url ? (
-                    <Image 
-                      src={event.banner_image_url} 
-                      alt={event.title} 
-                      fill 
-                      className="object-cover transition-transform duration-500 group-hover/card:scale-105"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-slate-200 flex items-center justify-center">
-                      <BoltIcon className="size-12 text-slate-300" />
-                    </div>
-                  )}
-
-                  {/* Glassmorphism Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4">
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <div className="flex items-center gap-1 bg-red-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-lg">
-                        <FireIcon className="size-3" />
-                        Flash Sale
-                      </div>
-                      {event.discount_percent && (
-                        <div className="bg-white text-red-600 px-2 py-1 rounded-lg text-[10px] font-bold tracking-wide shadow-lg">
-                          -{event.discount_percent}%
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-end justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-white text-lg font-semibold leading-tight truncate mb-1">
-                          {event.title}
-                        </h3>
-                        {event.end_at && (
-                          <div className="flex items-center gap-1.5 text-white/80">
-                            <ClockIcon className="size-3" />
-                            <span className="text-[10px] font-medium tracking-wide leading-none">
-                              Terbatas
-                            </span>
+                <Link 
+                  href="/catalog?filter=promo"
+                  className="block h-full group/card"
+                >
+                  <div className="h-full bg-white border border-primary/10 rounded-2xl p-3 md:p-4 flex flex-col gap-3 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300">
+                    {/* Top Row: Icon/Image & Badge */}
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-shrink-0 size-8 md:size-10 rounded-xl bg-primary/5 flex items-center justify-center overflow-hidden border border-primary/5">
+                        {event.banner_image_url ? (
+                          <div className="relative size-full">
+                            <Image 
+                              src={event.banner_image_url} 
+                              alt={event.title} 
+                              fill 
+                              className="object-cover"
+                            />
                           </div>
+                        ) : (
+                          <BoltIcon className="size-5 md:size-6 text-primary" />
                         )}
                       </div>
+                      
+                      <div className="flex-shrink-0 bg-primary text-white px-2 py-0.5 md:py-1 rounded-full text-[7px] md:text-[8px] font-black uppercase tracking-wider shadow-sm shadow-primary/20">
+                        {event.discount_percent ? `${event.discount_percent}% OFF` : 'PROMO'}
+                      </div>
+                    </div>
 
-                      <Link 
-                        href="/catalog?filter=promo"
-                        className="flex-shrink-0 bg-primary text-white px-4 py-2 rounded-xl text-[10px] font-semibold hover:bg-white hover:text-primary transition-all shadow-lg active:scale-95"
-                      >
-                        Lihat Promo
-                      </Link>
+                    {/* Content Section */}
+                    <div className="flex-1 flex flex-col justify-center">
+                      <h3 className="text-slate-900 font-bold text-[11px] md:text-sm leading-tight line-clamp-1 mb-0.5 group-hover/card:text-primary transition-colors">
+                        {event.title}
+                      </h3>
+                      <p className="text-slate-400 text-[9px] md:text-[10px] leading-snug line-clamp-2 md:line-clamp-1 font-medium">
+                        {event.description || 'Penawaran terbatas, cek sekarang!'}
+                      </p>
+                    </div>
+
+                    {/* Bottom: Time Badge */}
+                    <div className="flex items-center gap-1.5 pt-1 border-t border-slate-50">
+                      <ClockIcon className="size-3 text-primary/60" />
+                      <span className="text-[8px] md:text-[9px] font-bold text-primary uppercase tracking-tighter">
+                        Terbatas
+                      </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>
