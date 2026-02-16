@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { DEFAULT_COPY } from "@/lib/theme-defaults";
 import EditableText from "@/components/cms/EditableText";
+import { useEditMode } from "@/context/EditModeContext";
 
 interface HeroProps {
   copy?: Record<string, string>;
@@ -13,7 +14,8 @@ export default function Hero({
   copy: _copy,
   imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuAXIR0NVLdHD_MI5GKsJ_lHQ6WvlKEcvsmFg4qrbYJYAwgXD5sPT2msVMxBIdCIiSZ02NSsPtSwhyDmDiCiyn-8HSERoHwWitavGEyzCSrvjkPwk6UnA7gyaY6Wc-z_oZFMyMTaaMSR81uooBmN61Q4p8TH3bSSuJEsapzRyrQLcQete1XFZFv7sLUtJ1A4CNQCr_Pa6JGtC9d3uIAScGkAxRxLF9R1PVvgYUg9cYK5X4N8cxqnuFxHFQubWdihBeoksviXVH1Fjg"
 }: HeroProps) {
-  const copy = _copy || DEFAULT_COPY;
+  const { copy: liveCopy } = useEditMode();
+  const copy = liveCopy || _copy || DEFAULT_COPY;
   
   return (
     <section className="mb-4 md:mb-6 overflow-hidden bg-transparent">

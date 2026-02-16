@@ -1,9 +1,10 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useTransition, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useTransition, ReactNode, useEffect } from 'react';
 import { UITheme } from '@/types/cms';
 import { DEFAULT_THEME, DEFAULT_COPY } from '@/lib/theme-defaults';
 import { saveTheme, saveUICopy } from '@/app/admin/actions';
+import { createClient } from '@/lib/supabase/client';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -40,13 +41,34 @@ interface EditModeProviderProps {
   isAdmin: boolean;
 }
 
-export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin }: EditModeProviderProps) {
+export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin: initialIsAdmin }: EditModeProviderProps) {
+  const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
   const [isEditMode, setIsEditMode] = useState(false);
   const [copy, setCopy] = useState<Record<string, string>>(() => ({ ...DEFAULT_COPY, ...initialCopy }));
   const [theme, setTheme] = useState<UITheme>(() => ({ ...DEFAULT_THEME, ...initialTheme }));
   const [isSaving, setIsSaving] = useState(false);
   const [lastMessage, setLastMessage] = useState('');
   const [, startTransition] = useTransition();
+  const supabase = createClient();
+
+  // Client-side admin verification
+  // This is crucial because server-side check might be skipped on cached pages
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        if (profile?.role === 'admin') {
+          setIsAdmin(true);
+        }
+      }
+    };
+    checkAdmin();
+  }, [supabase]);
 
   const toggleEditMode = useCallback(() => {
     if (!isAdmin) return;

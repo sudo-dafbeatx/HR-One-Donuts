@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { SiteSettings } from "@/types/cms";
 import { DEFAULT_COPY } from "@/lib/theme-defaults";
 import EditableText from "@/components/cms/EditableText";
+import { useEditMode } from "@/context/EditModeContext";
 
 interface NavbarProps {
   siteSettings?: SiteSettings;
@@ -14,7 +15,8 @@ interface NavbarProps {
 }
 
 export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
-  const copy = _copy || DEFAULT_COPY;
+  const { copy: liveCopy } = useEditMode();
+  const copy = liveCopy || _copy || DEFAULT_COPY;
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");

@@ -23,6 +23,7 @@ const navItems: NavItem[] = [
   { name: 'Menu Produk', href: '/admin/products', icon: ArchiveBoxIcon },
   { name: 'Kustom Konten', href: '/admin/content', icon: PaintBrushIcon },
   { name: 'Theme & Teks', href: '/admin/theme', icon: SparklesIcon },
+  { name: 'Visual Editor (Live Site)', href: '/', icon: SparklesIcon },
 ];
 
 export default function AdminSidebar({ userEmail }: { userEmail?: string }) {

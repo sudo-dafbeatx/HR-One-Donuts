@@ -1,6 +1,7 @@
 'use client';
 
 import EditableText from '@/components/cms/EditableText';
+import EditableText from '@/components/cms/EditableText';
 
 interface FooterClientProps {
   copyKey: string;

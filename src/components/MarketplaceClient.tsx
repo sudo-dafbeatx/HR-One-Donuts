@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { isPromoActive, getEffectivePrice } from '@/lib/product-utils';
 import { DEFAULT_COPY } from '@/lib/theme-defaults';
 import EditableText from '@/components/cms/EditableText';
+import { useEditMode } from '@/context/EditModeContext';
 
 interface MarketplaceClientProps {
   initialProducts: Product[];
@@ -17,7 +18,8 @@ interface MarketplaceClientProps {
 }
 
 export default function MarketplaceClient({ initialProducts, categories = [], copy: _copy }: MarketplaceClientProps) {
-  const copy = _copy || DEFAULT_COPY;
+  const { copy: liveCopy } = useEditMode();
+  const copy = liveCopy || _copy || DEFAULT_COPY;
   const { addToCart } = useCart();
   const { setIsLoading } = useLoading();
   const [activeCategory, setActiveCategory] = React.useState<string>('Semua');
