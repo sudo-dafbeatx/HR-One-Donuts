@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import NextImage from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import LogoBrand from '@/components/ui/LogoBrand';
 import { createClient } from '@/lib/supabase/client';
 import { 
   HomeIcon, 
@@ -43,14 +43,12 @@ export default function AdminSidebar({ userEmail, logo_url, storeName }: { userE
       <div className="p-6">
         <Link href="/" className="flex flex-col mb-10 group cursor-pointer">
           <div className="flex items-center gap-3">
-            <div className="relative size-10 group-hover:scale-105 transition-transform">
-               <NextImage 
-                 src={logo_url || "/images/logo-hr-one.png"} 
-                 alt={storeName || "HR-One Donuts"} 
-                 fill 
-                 className="object-contain"
-               />
-            </div>
+            <LogoBrand 
+              logoUrl={logo_url} 
+              storeName={storeName} 
+              size="sm"
+              className="group-hover:scale-105"
+            />
             <div className="flex flex-col">
               <span className="text-xl font-black text-slate-800 tracking-tighter leading-tight">Admin <span className="text-primary">Panel</span></span>
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mt-1">Administrator</span>

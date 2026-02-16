@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import NextImage from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import LogoBrand from '@/components/ui/LogoBrand';
 import { 
   Bars3Icon, 
   XMarkIcon,
@@ -71,14 +71,11 @@ export default function AdminMobileNav({ userEmail, logo_url, storeName }: { use
           >
             <div className="flex justify-between items-center mb-8">
               <div className="flex items-center gap-3">
-                <div className="relative size-10">
-                   <NextImage 
-                     src={logo_url || "/images/logo-hr-one.png"} 
-                     alt={storeName || "HR-One Donuts"} 
-                     fill 
-                     className="object-contain"
-                   />
-                </div>
+                <LogoBrand 
+                  logoUrl={logo_url} 
+                  storeName={storeName} 
+                  size="sm"
+                />
                 <div className="flex flex-col">
                   <span className="text-lg font-black text-slate-800 tracking-tighter">Admin <span className="text-primary">Menu</span></span>
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{userEmail?.split('@')[0]}</span>

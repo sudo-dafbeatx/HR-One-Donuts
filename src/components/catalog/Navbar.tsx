@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import NextImage from "next/image";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { ShoppingBagIcon, ChatBubbleLeftIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { CakeIcon } from "@heroicons/react/24/solid";
 import { createClient } from "@/lib/supabase/client";
 
 import { SiteSettings } from "@/types/cms";
+import LogoBrand from "@/components/ui/LogoBrand";
 
 export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { totalItems, setIsCartOpen } = useCart();
@@ -47,23 +46,12 @@ export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSet
       <div className="flex items-center justify-between gap-8 max-w-[1280px] mx-auto">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-3 text-primary group">
-            {siteSettings?.logo_url ? (
-              <div className="relative h-8 w-auto aspect-square group-hover:scale-105 transition-transform">
-                <NextImage 
-                  src={siteSettings.logo_url}
-                  alt={siteSettings?.store_name || "HR-One Donuts"}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            ) : (
-              <>
-                <CakeIcon className="w-8 h-8 transition-transform group-hover:rotate-12" />
-                <h2 className="text-heading text-lg font-extrabold leading-tight tracking-tight">
-                  {siteSettings?.store_name || "HR-One Donuts"}
-                </h2>
-              </>
-            )}
+            <LogoBrand 
+              logoUrl={siteSettings?.logo_url} 
+              storeName={siteSettings?.store_name} 
+              size="sm"
+              className="group-hover:scale-105 transition-transform"
+            />
           </Link>
           <nav className="hidden sm:flex items-center gap-8">
             <Link href="/" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">

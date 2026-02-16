@@ -1,6 +1,5 @@
 "use client";
 
-import NextImage from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
@@ -9,6 +8,7 @@ import { SiteSettings } from "@/types/cms";
 import { DEFAULT_COPY } from "@/lib/theme-defaults";
 import EditableText from "@/components/cms/EditableText";
 import { useEditMode } from "@/context/EditModeContext";
+import LogoBrand from "@/components/ui/LogoBrand";
 
 interface NavbarProps {
   siteSettings?: SiteSettings;
@@ -57,20 +57,12 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between gap-4 md:gap-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          {siteSettings?.logo_url ? (
-            <div className="relative h-10 w-auto aspect-square group-hover:scale-105 transition-transform">
-              <NextImage 
-                src={siteSettings.logo_url}
-                alt={siteSettings?.store_name || "HR-One Donuts"}
-                fill
-                className="object-contain"
-              />
-            </div>
-          ) : (
-            <div className="size-8 md:size-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
-              <span className="material-symbols-outlined text-lg md:text-2xl">donut_large</span>
-            </div>
-          )}
+          <LogoBrand 
+            logoUrl={siteSettings?.logo_url} 
+            storeName={siteSettings?.store_name} 
+            size="sm"
+            className="group-hover:scale-105"
+          />
           <div className="flex flex-col">
             {!siteSettings?.logo_url && (
               <h1 className="font-display text-base md:text-lg font-black tracking-tight text-primary leading-none">

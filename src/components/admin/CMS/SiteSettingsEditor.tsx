@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { SiteSettings } from '@/types/cms';
+import LogoBrand from '@/components/ui/LogoBrand';
 import { AdminInput, AdminButton, AdminCard } from './Shared';
 import { updateSettings } from '@/app/admin/actions';
 import ImageUploader from '../ImageUploader';
@@ -104,16 +105,13 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
             
             <div className="w-full md:w-1/4">
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Preview Logo</label>
-              <div className="relative aspect-square bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center p-4 group">
-                <div className="relative size-full">
-                  <Image 
-                    src={settings.logo_url || "/images/logo-hr-one.png"} 
-                    alt="Logo Preview" 
-                    fill 
-                    className="object-contain"
-                    unoptimized={settings.logo_url?.startsWith('http')}
-                  />
-                </div>
+              <div className="relative aspect-square bg-slate-50 rounded-2xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center p-6 group">
+                <LogoBrand 
+                  logoUrl={settings.logo_url} 
+                  storeName={settings.store_name} 
+                  size="lg"
+                  className="bg-transparent border-none p-0"
+                />
                 {settings.logo_url && (
                   <button 
                     type="button"

@@ -3,13 +3,13 @@
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
-import NextImage from 'next/image';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { useLoading } from '@/context/LoadingContext';
 
 import { logTraffic } from '@/app/actions/traffic-actions';
 import { verifyCaptcha } from '@/app/actions/verify-captcha';
 import { SiteSettings } from '@/types/cms';
+import LogoBrand from '@/components/ui/LogoBrand';
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
@@ -425,19 +425,17 @@ function LoginContent() {
           <div className="w-full max-w-[520px] bg-white shadow-xl rounded-[1rem] overflow-hidden border border-slate-100">
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
-                  <NextImage 
-                    src={siteSettings?.logo_url || "/images/logo-hr-one.png"} 
-                    alt={siteSettings?.store_name || "HR-One Donuts"} 
-                    fill 
-                    className="object-cover"
-                  />
-                </div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
-                  {siteSettings?.store_name || "HR-One Donuts"}
-                </h1>
+              <div className="flex items-center justify-center mb-6">
+                <LogoBrand 
+                  logoUrl={siteSettings?.logo_url} 
+                  storeName={siteSettings?.store_name} 
+                  size="md"
+                  priority
+                />
               </div>
+              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 mb-2">
+                {siteSettings?.store_name || "HR-One Donuts"}
+              </h1>
               <h2 className="text-3xl font-bold text-slate-900 mb-2">Lengkapi Profil</h2>
               <p className="text-slate-500 font-medium">Bantu kami mengenal Anda untuk pengiriman yang pas!</p>
             </div>
@@ -511,20 +509,17 @@ function LoginContent() {
             
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
-                  <NextImage 
-                    src={siteSettings?.logo_url || "/images/logo-hr-one.png"} 
-                    alt={siteSettings?.store_name || "HR-One Donuts"} 
-                    fill 
-                    className="object-cover"
-                  />
-                </div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
-                  {siteSettings?.store_name || "HR-One Donuts"}
-                </h1>
+              <div className="flex items-center justify-center mb-6">
+                <LogoBrand 
+                  logoUrl={siteSettings?.logo_url} 
+                  storeName={siteSettings?.store_name} 
+                  size="md"
+                  priority
+                />
               </div>
-
+              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 mb-2">
+                {siteSettings?.store_name || "HR-One Donuts"}
+              </h1>
               <h2 className="text-3xl font-bold text-slate-900 mb-2">Verifikasi Email</h2>
               <p className="text-slate-500 font-medium">
                 {isRegistering 
@@ -616,19 +611,16 @@ function LoginContent() {
           <div className="w-full max-w-[520px] bg-white shadow-xl rounded-[1rem] overflow-hidden border border-slate-100">
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
-              <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
-                  <NextImage 
-                    src={siteSettings?.logo_url || "/images/logo-hr-one.png"} 
-                    alt={siteSettings?.store_name || "HR-One Donuts"} 
-                    fill 
-                    className="object-cover"
-                  />
-                </div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
-                  {siteSettings?.store_name || "HR-One Donuts"}
-                </h1>
+              <div className="flex items-center justify-center mb-6">
+                <LogoBrand 
+                  logoUrl={siteSettings?.logo_url} 
+                  storeName={siteSettings?.store_name} 
+                  size="md"
+                />
               </div>
+              <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 mb-2">
+                {siteSettings?.store_name || "HR-One Donuts"}
+              </h1>
               <h2 className="text-3xl font-bold text-slate-900 mb-2">Buat Akun Baru</h2>
               <p className="text-slate-500 font-medium">
                 {siteSettings?.tagline || "Fresh and Smooth HR Management"}
@@ -850,17 +842,14 @@ function LoginContent() {
         </div>
       )}
       <div className="relative z-10 w-full max-w-[480px]">
-        {/* Brand */}
         <div className="flex flex-col items-center mb-8">
-          <div className="relative w-20 h-20 mb-4 rounded-full overflow-hidden border-4 border-white shadow-xl group-hover:scale-105 transition-transform">
-            <NextImage 
-              src={siteSettings?.logo_url || "/images/logo-hr-one.png"} 
-              alt={siteSettings?.store_name || "HR-One Donuts"} 
-              fill 
-              priority
-              className="object-cover"
-            />
-          </div>
+          <LogoBrand 
+            logoUrl={siteSettings?.logo_url} 
+            storeName={siteSettings?.store_name} 
+            size="lg"
+            priority
+            className="mb-4 bg-transparent border-none p-0 group-hover:scale-105"
+          />
           <h1 className="text-primary font-bold text-2xl tracking-tight">
             {siteSettings?.store_name || "HR-One Donuts"}
           </h1>
