@@ -12,6 +12,7 @@ import { EditModeProvider } from "@/context/EditModeContext";
 import EditModeToggle from "@/components/cms/EditModeToggle";
 import ThemePanel from "@/components/cms/ThemePanel";
 import ScrollToTop from "@/components/utils/ScrollToTop";
+import PromotionPopup from "@/components/PromotionPopup";
 import { Sora, Public_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -82,6 +83,7 @@ export default async function RootLayout({
         className={`${sora.variable} ${publicSans.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
       >
         <ScrollToTop />
+        <PromotionPopup />
         <ThemeProvider theme={theme}>
           <EditModeProvider initialCopy={copy} initialTheme={theme} isAdmin={isAdmin}>
             <LoadingProvider>
