@@ -194,17 +194,17 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24">
+    <div className="min-h-screen bg-slate-50 pb-24 overflow-x-hidden">
       {/* Premium Header with Gradient */}
-      <div className="relative bg-gradient-to-br from-primary via-blue-600 to-cyan-500 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-primary via-blue-600 to-cyan-500">
         {/* Abstract shapes for premium feel */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 anim-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 anim-pulse pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
         
-        <div className="max-w-5xl mx-auto px-6 pt-12 pb-24 relative z-10">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 pt-12 pb-24 relative z-10">
           <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-10">
             {/* Profile Avatar with premium border */}
-            <div className="relative group">
+            <div className="relative group shrink-0">
               <div className="size-28 md:size-32 bg-white/20 backdrop-blur-md rounded-3xl border-2 border-white/30 flex items-center justify-center text-white shadow-2xl transition-all duration-500 overflow-hidden relative">
                 {profile?.avatar_url ? (
                   <Image 
@@ -238,15 +238,15 @@ export default function ProfilePage() {
               </button>
             </div>
             
-            <div className="flex-1 text-center md:text-left text-white">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider mb-3 border border-white/10">
+            <div className="flex-1 text-center md:text-left text-white min-w-0">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 border border-white/10">
                 <span className="size-1.5 bg-cyan-300 rounded-full animate-ping"></span>
-                Pelanggan Setia
+                Pelanggan
               </div>
-              <h1 className="text-4xl font-extrabold tracking-tight mb-2 drop-shadow-sm">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-1 drop-shadow-sm truncate">
                 {profile?.full_name || 'Teman Donat'}
               </h1>
-              <p className="text-blue-50/80 font-medium mb-0 opacity-90">{profile?.email}</p>
+              <p className="text-blue-50/80 font-medium mb-0 opacity-90 text-sm md:text-base truncate">{profile?.email}</p>
             </div>
 
             <div className="flex items-center gap-3">
@@ -352,7 +352,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <div className="max-w-5xl mx-auto px-6 -mt-12 relative z-20">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 -mt-10 md:-mt-12 relative z-20">
         <div className="grid lg:grid-cols-12 gap-8">
           
           {/* Main Content Info */}
