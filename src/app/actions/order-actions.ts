@@ -10,15 +10,42 @@ export async function getCurrentUserProfile() {
     
     if (!user) return null;
 
-    const { data: profile } = await supabase
+    // 1. Try to fetch existing profile
+    const { data: profile, error: fetchError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .maybeSingle();
 
-    return profile;
+    if (fetchError) {
+      console.error(' [getCurrentUserProfile] Fetch error:', fetchError);
+    }
+
+    // 2. If profile exists, return it
+    if (profile) return profile;
+
+    // 3. Fallback: Auto-create profile if missing (safety net for failed triggers)
+    console.warn(` [getCurrentUserProfile] Profile missing for user ${user.id}, performing auto-create...`);
+    
+    const { data: newProfile, error: insertError } = await supabase
+      .from('profiles')
+      .insert({
+        id: user.id,
+        email: user.email,
+        full_name: user.user_metadata?.full_name || user.user_metadata?.name || '',
+        role: 'user'
+      })
+      .select()
+      .maybeSingle();
+
+    if (insertError) {
+      console.error(' [getCurrentUserProfile] Auto-create failed:', insertError);
+      return null;
+    }
+
+    return newProfile;
   } catch (err) {
-    console.error('Error getting profile:', err);
+    console.error(' [getCurrentUserProfile] Unexpected crash:', err);
     return null;
   }
 }

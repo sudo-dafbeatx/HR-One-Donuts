@@ -37,7 +37,7 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
           .from('profiles')
           .select('role')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         
         if (profile?.role === 'admin') {
           setProfileLink('/admin');

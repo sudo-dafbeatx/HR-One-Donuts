@@ -34,7 +34,7 @@ export default function BottomNav() {
           .from('profiles')
           .select('role')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         
         if (profile?.role === 'admin') {
           setProfileLink('/admin');

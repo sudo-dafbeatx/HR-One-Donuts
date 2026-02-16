@@ -27,7 +27,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     setIsLoading(true, 'Memproses pesanan...');
     
     try {
-      // 1. Check Auth & Get Profile
+      // 1. Check Auth & Get Profile (auto-creates if missing)
       const profile = await getCurrentUserProfile();
       
       if (!profile) {
@@ -38,10 +38,13 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       }
 
       // 2. Validate Profile Completeness
-      if (!profile.full_name || !profile.phone || !profile.address) {
+      const isProfileComplete = profile.full_name && profile.phone && profile.address;
+      
+      if (!isProfileComplete) {
         setIsLoading(false);
-        setIsCartOpen(false);
-        router.push("/login"); // Redirect to profile completion
+        // Redirect to profile page with a nicer flow
+        router.push("/profile");
+        alert("Silakan lengkapi nama, nomor WhatsApp, dan alamat pengiriman Anda terlebih dahulu.");
         return;
       }
 

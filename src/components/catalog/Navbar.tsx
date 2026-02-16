@@ -25,7 +25,7 @@ export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSet
           .from('profiles')
           .select('role')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         
         if (profile?.role === 'admin') {
           setProfileLink('/admin');
