@@ -31,36 +31,38 @@ export default function ReviewStats({ stats }: ReviewStatsProps) {
       </h3>
 
       {/* Average Rating Display */}
-      <div className="flex items-start gap-6">
-        <div className="flex flex-col items-center">
-          <div className="text-5xl font-bold text-slate-800">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-10">
+        <div className="flex flex-col items-center shrink-0">
+          <div className="text-5xl font-black text-slate-800">
             {average_rating.toFixed(1)}
           </div>
           <StarRating rating={average_rating} readonly size="md" />
-          <div className="text-sm text-slate-500 mt-1">
-            {total_reviews} {total_reviews === 1 ? 'ulasan' : 'ulasan'}
+          <div className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-tight">
+            {total_reviews} {total_reviews === 1 ? 'Ulasan' : 'Ulasan'}
           </div>
         </div>
 
         {/* Star Breakdown */}
-        <div className="flex-1 space-y-2">
+        <div className="w-full space-y-2.5">
           {starBreakdown.map(({ stars, count }) => {
             const percentage = getPercentage(count);
             return (
               <div key={stars} className="flex items-center gap-3">
-                <div className="flex items-center gap-1 w-12">
-                  <span className="text-xs font-bold text-slate-600">{stars}</span>
-                  <StarRating rating={1} readonly size="sm" />
+                <div className="flex items-center gap-1 w-8 shrink-0">
+                  <span className="text-xs font-black text-slate-700">{stars}</span>
+                  <svg className="size-3 text-amber-400 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                  </svg>
                 </div>
                 <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-amber-400 transition-all duration-500"
+                    className="h-full bg-amber-400 transition-all duration-500 rounded-full"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
-                <span className="text-xs font-medium text-slate-500 w-12 text-right">
+                <div className="text-[10px] font-bold text-slate-400 w-8 text-right shrink-0">
                   {count}
-                </span>
+                </div>
               </div>
             );
           })}

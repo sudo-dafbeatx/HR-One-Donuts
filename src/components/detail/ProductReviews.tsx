@@ -92,7 +92,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-32 overflow-hidden">
       {/* Section Header */}
       <div>
         <h2 className="text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-wider">
