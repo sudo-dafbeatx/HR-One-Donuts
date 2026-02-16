@@ -6,7 +6,7 @@
   do not yet recognize the new Tailwind v4 syntax. It does not affect the build.
 */
 @theme {
-  --color-primary: #2b8cee;
+  --color-primary: #1978e5;
   --color-background: var(--background);
   --color-header-bg: var(--header-bg);
   --color-footer-bg: var(--footer-bg);
@@ -16,12 +16,13 @@
   --color-subheading: var(--subheading);
   --color-border: var(--border-color);
 
-  --font-sans: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fredoka), "Fredoka", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-public-sans), "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-sora), "Sora", ui-sans-serif, system-ui, sans-serif;
 
-  --radius-default: 0.5rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
+  --radius-default: 1rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+  --radius-full: 9999px;
 }
 
 :root {

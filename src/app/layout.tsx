@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Fredoka } from "next/font/google";
+import { Sora, Public_Sans } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import { LoadingProvider } from "@/context/LoadingContext";
 import CartDrawer from "@/components/cart/CartDrawer";
@@ -7,15 +7,15 @@ import TrafficTracker from "@/components/tracking/TrafficTracker";
 import BottomNav from "@/components/BottomNav";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const sora = Sora({
   subsets: ["latin"],
-  variable: "--font-plus-jakarta-sans",
+  variable: "--font-sora",
   display: "swap",
 });
 
-const fredoka = Fredoka({
+const publicSans = Public_Sans({
   subsets: ["latin"],
-  variable: "--font-fredoka",
+  variable: "--font-public-sans",
   display: "swap",
 });
 
@@ -50,7 +50,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${plusJakartaSans.variable} ${fredoka.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
+        className={`${sora.variable} ${publicSans.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
       >
         <LoadingProvider>
           <CartProvider>
