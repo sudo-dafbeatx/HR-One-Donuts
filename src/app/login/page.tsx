@@ -427,7 +427,7 @@ function LoginContent() {
               {/* Logo */}
               <div className="flex items-center justify-center mb-6">
                 <LogoBrand 
-                  logoUrl={siteSettings?.logo_url} 
+                  logoUrl={siteSettings?.logo_url || "/images/Logos.png"} 
                   storeName={siteSettings?.store_name} 
                   size="md"
                   priority
@@ -511,7 +511,7 @@ function LoginContent() {
               {/* Logo */}
               <div className="flex items-center justify-center mb-6">
                 <LogoBrand 
-                  logoUrl={siteSettings?.logo_url} 
+                  logoUrl={siteSettings?.logo_url || "/images/Logos.png"} 
                   storeName={siteSettings?.store_name} 
                   size="md"
                   priority
@@ -613,7 +613,7 @@ function LoginContent() {
               {/* Logo */}
               <div className="flex items-center justify-center mb-6">
                 <LogoBrand 
-                  logoUrl={siteSettings?.logo_url} 
+                  logoUrl={siteSettings?.logo_url || "/images/Logos.png"} 
                   storeName={siteSettings?.store_name} 
                   size="md"
                 />
@@ -844,7 +844,7 @@ function LoginContent() {
       <div className="relative z-10 w-full max-w-[480px]">
         <div className="flex flex-col items-center mb-8">
           <LogoBrand 
-            logoUrl={siteSettings?.logo_url} 
+            logoUrl={siteSettings?.logo_url || "/images/Logos.png"} 
             storeName={siteSettings?.store_name} 
             size="lg"
             priority
