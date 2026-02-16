@@ -178,27 +178,28 @@ textarea {
   animation: slide-in-left 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Edit Mode refinements */
-body.edit-mode-active a, 
+/* Edit Mode — visual dimming for non-interactive elements */
+body.edit-mode-active a:not(.editor-control),
 body.edit-mode-active button:not(.editor-control),
-body.edit-mode-active [role="button"]:not(.editor-control) {
-  pointer-events: none !important;
+body.edit-mode-active [role="button"]:not(.editor-control),
+body.edit-mode-active select:not(.editor-control),
+body.edit-mode-active input:not(.editor-control) {
   cursor: default !important;
-  opacity: 0.6;
+  opacity: 0.5;
+  filter: grayscale(0.3);
+  transition: opacity 0.2s, filter 0.2s;
 }
 
+/* Push layout for theme panel */
 body.edit-mode-panel-open #main-content {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  transform: translateX(320px);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateX(300px);
 }
 
 @media (max-width: 768px) {
   body.edit-mode-panel-open #main-content {
-    transform: translateX(280px);
+    transform: translateX(260px);
   }
-}
-
-@media (max-width: 768px) {
   .backdrop-blur-xl {
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);

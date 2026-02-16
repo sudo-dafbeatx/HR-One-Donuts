@@ -192,7 +192,6 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
 }
 
 function EditableProductField({ 
-  productId, 
   value, 
   onSave, 
   className, 
@@ -242,7 +241,7 @@ function EditableProductField({
         onChange={(e) => setEditValue(e.target.value)}
         onBlur={handleSave}
         onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-        className={`${className} bg-white text-slate-900 border-2 border-blue-500 rounded px-1 outline-none w-full editor-control`}
+        className={`${className} bg-white/95 backdrop-blur-sm text-slate-900 shadow-lg shadow-blue-500/10 ring-1 ring-blue-500/40 rounded-lg px-2 outline-none w-full editor-control`}
       />
     );
   }
@@ -255,7 +254,12 @@ function EditableProductField({
         setEditValue(value);
         setIsEditing(true);
       }}
-      className={`${className} cursor-pointer hover:ring-2 hover:ring-blue-400 p-1 rounded transition-all editor-control`}
+      className={`${className} cursor-pointer transition-all duration-200 editor-control`}
+      style={{
+        outline: '1.5px dashed rgba(59, 130, 246, 0.35)',
+        outlineOffset: '2px',
+        borderRadius: '4px',
+      }}
     >
       {prefix}{type === 'number' ? Number(value).toLocaleString('id-ID') : value}
     </div>

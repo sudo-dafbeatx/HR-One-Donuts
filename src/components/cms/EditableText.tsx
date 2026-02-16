@@ -55,15 +55,13 @@ export default function EditableText({
     }
   };
 
-  // Non-edit mode: render plain text
   if (!isEditMode) {
     return <Tag className={className} style={style}>{value}</Tag>;
   }
 
-  // Edit mode, currently editing
   if (isEditing) {
     return (
-      <span className="relative inline-block" style={style}>
+      <span className="relative inline-block editor-control" style={style}>
         {multiline ? (
           <textarea
             ref={inputRef as React.RefObject<HTMLTextAreaElement>}
@@ -71,7 +69,7 @@ export default function EditableText({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
-            className={`${className} bg-white ring-2 ring-blue-500 rounded px-1 py-0.5 outline-none min-w-[100px] resize-none editor-control`}
+            className={`${className} bg-white/95 backdrop-blur-sm shadow-lg shadow-blue-500/10 ring-1 ring-blue-500/40 rounded-lg px-2 py-1 outline-none min-w-[100px] resize-none text-slate-900 editor-control`}
             rows={2}
           />
         ) : (
@@ -82,21 +80,25 @@ export default function EditableText({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
-            className={`${className} bg-white text-slate-900 ring-2 ring-blue-500 rounded px-1 py-0.5 outline-none min-w-[60px] editor-control`}
-            style={{ width: `${Math.max(editValue.length * 8, 60)}px` }}
+            className={`${className} bg-white/95 backdrop-blur-sm shadow-lg shadow-blue-500/10 ring-1 ring-blue-500/40 rounded-lg px-2 py-1 outline-none min-w-[60px] text-slate-900 editor-control`}
+            style={{ width: `${Math.max(editValue.length * 9, 80)}px` }}
           />
         )}
       </span>
     );
   }
 
-  // Edit mode, not editing: hoverable
   return (
     <Tag
-      className={`${className} cursor-pointer transition-all duration-150 hover:ring-2 hover:ring-blue-400 hover:ring-offset-1 hover:rounded editor-control`}
-      style={style}
+      className={`${className} relative cursor-pointer transition-all duration-200 editor-control`}
+      style={{
+        ...style,
+        outline: '1.5px dashed rgba(59, 130, 246, 0.35)',
+        outlineOffset: '3px',
+        borderRadius: '4px',
+      }}
       onClick={handleStartEdit}
-      title={`Klik untuk edit "${copyKey}"`}
+      title={`Edit: ${copyKey}`}
     >
       {value}
     </Tag>

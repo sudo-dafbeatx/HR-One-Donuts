@@ -8,38 +8,56 @@ export default function EditModeToggle() {
   if (!isAdmin) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-[200] flex flex-col items-end gap-2">
-      {/* Status Message */}
-      {lastMessage && (
-        <div className={`px-4 py-2 rounded-2xl text-xs font-black shadow-2xl animate-fade-in ${
-          lastMessage.startsWith('✅') 
-            ? 'bg-green-600 text-white' 
-            : 'bg-red-600 text-white'
-        }`}>
-          {lastMessage}
+    <div className="fixed bottom-5 right-5 z-[9999] flex flex-col items-end gap-2.5 editor-control">
+      {/* Status toast */}
+      {(lastMessage || isSaving) && (
+        <div className={`
+          px-4 py-2 rounded-xl text-[13px] font-semibold tracking-tight
+          backdrop-blur-xl border shadow-lg
+          transition-all duration-300 animate-fade-in
+          ${isSaving 
+            ? 'bg-slate-900/90 text-white border-slate-700' 
+            : lastMessage.includes('Gagal')
+              ? 'bg-red-950/90 text-red-200 border-red-800/50'
+              : 'bg-emerald-950/90 text-emerald-200 border-emerald-800/50'
+          }
+        `}>
+          {isSaving ? (
+            <span className="flex items-center gap-2">
+              <span className="size-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              Menyimpan...
+            </span>
+          ) : lastMessage}
         </div>
       )}
 
-      {/* Saving Indicator */}
-      {isSaving && (
-        <div className="px-4 py-2 rounded-2xl text-xs font-black bg-blue-600 text-white shadow-2xl animate-pulse">
-          Menyimpan...
-        </div>
-      )}
-
-      {/* Toggle Button */}
+      {/* Main Toggle */}
       <button
         onClick={toggleEditMode}
-        className={`flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold shadow-2xl transition-all active:scale-95 editor-control ${
-          isEditMode 
-            ? 'bg-red-500 text-white hover:bg-red-600 ring-4 ring-red-100' 
-            : 'bg-primary text-white hover:opacity-90 ring-4 ring-primary/20'
-        }`}
+        className={`
+          group flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-[14px]
+          text-[13px] font-semibold tracking-tight
+          shadow-xl transition-all duration-300 active:scale-[0.97]
+          backdrop-blur-xl border
+          ${isEditMode 
+            ? 'bg-slate-900/95 text-white border-slate-700 hover:bg-slate-800/95 shadow-slate-900/40' 
+            : 'bg-white/95 text-slate-800 border-slate-200 hover:border-slate-300 hover:shadow-2xl shadow-slate-200/60'
+          }
+        `}
       >
-        <span className="material-symbols-outlined text-xl">
-          {isEditMode ? 'check_circle' : 'edit'}
+        <span className={`
+          size-8 rounded-[10px] flex items-center justify-center text-lg
+          transition-all duration-300
+          ${isEditMode 
+            ? 'bg-white/15' 
+            : 'bg-primary/10 text-primary'
+          }
+        `}>
+          <span className="material-symbols-outlined text-[18px]">
+            {isEditMode ? 'close' : 'edit_square'}
+          </span>
         </span>
-        {isEditMode ? 'Selesai Edit' : 'Mode Edit'}
+        {isEditMode ? 'Selesai' : 'Edit'}
       </button>
     </div>
   );

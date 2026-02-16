@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useTransition, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useTransition, ReactNode, useEffect, useRef } from 'react';
 import { UITheme } from '@/types/cms';
 import { DEFAULT_THEME, DEFAULT_COPY } from '@/lib/theme-defaults';
 import { saveTheme, saveUICopy } from '@/app/admin/actions';
@@ -54,9 +54,9 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
   const [lastMessage, setLastMessage] = useState('');
   const [, startTransition] = useTransition();
   const supabase = createClient();
+  const editModeRef = useRef(false);
 
   // Client-side admin verification
-  // This is crucial because server-side check might be skipped on cached pages
   useEffect(() => {
     const checkAdmin = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -74,10 +74,40 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
     checkAdmin();
   }, [supabase]);
 
+  // JavaScript-based click interceptor — blocks ALL clicks on non-editor elements
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (!editModeRef.current) return;
+
+      const target = e.target as HTMLElement;
+      // Allow clicks on elements with .editor-control or inside .editor-control
+      if (target.closest('.editor-control')) return;
+      // Allow clicks inside the theme panel
+      if (target.closest('[data-editor-panel]')) return;
+
+      // Block everything else
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+    };
+
+    // Use capture phase to intercept before any React handler fires
+    document.addEventListener('click', handler, true);
+    document.addEventListener('mousedown', handler, true);
+    document.addEventListener('pointerdown', handler, true);
+
+    return () => {
+      document.removeEventListener('click', handler, true);
+      document.removeEventListener('mousedown', handler, true);
+      document.removeEventListener('pointerdown', handler, true);
+    };
+  }, []);
+
   const toggleEditMode = useCallback(() => {
     if (!isAdmin) return;
     setIsEditMode(prev => {
       const next = !prev;
+      editModeRef.current = next;
       if (next) {
         document.body.classList.add('edit-mode-active');
       } else {
@@ -98,7 +128,6 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
 
   const updateCopy = useCallback(async (key: string, value: string) => {
     const previousValue = copy[key];
-    // Optimistic update
     setCopy(prev => ({ ...prev, [key]: value }));
     setIsSaving(true);
     setLastMessage('');
@@ -107,14 +136,13 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
       startTransition(async () => {
         await saveUICopy(key, value);
         setIsSaving(false);
-        setLastMessage('✅ Tersimpan!');
+        setLastMessage('Tersimpan');
         setTimeout(() => setLastMessage(''), 2000);
       });
     } catch {
-      // Undo on failure
       setCopy(prev => ({ ...prev, [key]: previousValue }));
       setIsSaving(false);
-      setLastMessage('❌ Gagal menyimpan');
+      setLastMessage('Gagal menyimpan');
       setTimeout(() => setLastMessage(''), 3000);
     }
   }, [copy]);
@@ -122,11 +150,9 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
   const updateTheme = useCallback(async (updates: Partial<UITheme>) => {
     const previousTheme = { ...theme };
     const newTheme = { ...theme, ...updates };
-    
-    // Optimistic update
+
     setTheme(newTheme);
-    
-    // Also update CSS variables immediately
+
     const root = document.documentElement;
     if (updates.primary_color) root.style.setProperty('--theme-primary', updates.primary_color);
     if (updates.secondary_color) root.style.setProperty('--theme-secondary', updates.secondary_color);
@@ -150,13 +176,13 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
       startTransition(async () => {
         await saveTheme(newTheme);
         setIsSaving(false);
-        setLastMessage('✅ Theme tersimpan!');
+        setLastMessage('Theme tersimpan');
         setTimeout(() => setLastMessage(''), 2000);
       });
     } catch {
       setTheme(previousTheme);
       setIsSaving(false);
-      setLastMessage('❌ Gagal menyimpan theme');
+      setLastMessage('Gagal menyimpan theme');
       setTimeout(() => setLastMessage(''), 3000);
     }
   }, [theme]);
@@ -166,16 +192,15 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
     setLastMessage('');
     try {
       startTransition(async () => {
-        // We use saveProduct but only with the partial updates
         const { saveProduct } = await import('@/app/admin/actions');
-        await saveProduct({ id, ...updates } as any);
+        await saveProduct({ id, ...updates } as Parameters<typeof saveProduct>[0]);
         setIsSaving(false);
-        setLastMessage('✅ Produk diperbarui!');
+        setLastMessage('Produk diperbarui');
         setTimeout(() => setLastMessage(''), 2000);
       });
     } catch {
       setIsSaving(false);
-      setLastMessage('❌ Gagal update produk');
+      setLastMessage('Gagal update produk');
       setTimeout(() => setLastMessage(''), 3000);
     }
   }, []);

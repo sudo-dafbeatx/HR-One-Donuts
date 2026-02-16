@@ -53,7 +53,6 @@ export default function ThemePanel() {
   const handleColorChange = (key: keyof UITheme, value: string) => {
     setLocalTheme(prev => ({ ...prev, [key]: value }));
     setHasChanges(true);
-    // Live preview: update CSS variable immediately
     const root = document.documentElement;
     const varMap: Partial<Record<keyof UITheme, string>> = {
       primary_color: '--theme-primary',
@@ -92,121 +91,134 @@ export default function ThemePanel() {
     setHasChanges(false);
   };
 
+  const toggle = () => {
+    const next = !isOpen;
+    setIsOpen(next);
+    setPanelOpen(next);
+  };
+
   return (
     <>
-      {/* Toggle Button */}
+      {/* Floating trigger */}
       <button
-        onClick={() => {
-          const next = !isOpen;
-          setIsOpen(next);
-          setPanelOpen(next);
-        }}
-        className="fixed bottom-20 md:bottom-6 left-4 z-[200] flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-600 text-white text-sm font-bold shadow-2xl hover:shadow-xl transition-all editor-control"
+        onClick={toggle}
+        className="fixed bottom-5 left-5 z-[9999] size-11 rounded-[13px] bg-slate-900/90 backdrop-blur-xl text-white border border-slate-700 shadow-xl flex items-center justify-center hover:bg-slate-800/90 active:scale-[0.95] transition-all duration-200 editor-control"
+        title="Theme"
       >
-        <span className="material-symbols-outlined text-xl">palette</span>
-        Theme
+        <span className="material-symbols-outlined text-[18px]">palette</span>
       </button>
 
       {/* Panel */}
       {isOpen && (
-        <div className="fixed inset-y-0 left-0 z-[250] w-80 bg-white shadow-2xl border-r border-slate-200 flex flex-col animate-slide-in-left">
+        <div 
+          data-editor-panel
+          className="fixed inset-y-0 left-0 z-[9999] w-[300px] bg-white/98 backdrop-blur-2xl border-r border-slate-200/80 flex flex-col shadow-2xl shadow-slate-200/50 editor-control"
+          style={{ animation: 'slide-in-left 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards' }}
+        >
           {/* Header */}
-          <div className="p-4 border-b border-slate-100 flex items-center justify-between shrink-0">
-            <h3 className="font-bold text-slate-800">🎨 Theme Editor</h3>
-            <div className="flex items-center gap-2">
+          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2.5">
+              <span className="size-7 rounded-lg bg-slate-100 flex items-center justify-center">
+                <span className="material-symbols-outlined text-slate-500 text-[16px]">palette</span>
+              </span>
+              <span className="text-[13px] font-semibold text-slate-800 tracking-tight">Theme</span>
+            </div>
+            <div className="flex items-center gap-1.5">
               {hasChanges && (
                 <button 
                   onClick={handleSave}
-                  className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors editor-control"
+                  className="h-7 px-3 bg-slate-900 text-white text-[11px] font-semibold rounded-lg hover:bg-slate-800 transition-colors editor-control"
                 >
                   Simpan
                 </button>
               )}
               <button 
-                onClick={() => {
-                  setIsOpen(false);
-                  setPanelOpen(false);
-                }}
-                className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors editor-control"
+                onClick={toggle}
+                className="size-7 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors editor-control"
               >
-                <span className="material-symbols-outlined text-slate-400">close</span>
+                <span className="material-symbols-outlined text-slate-400 text-[16px]">close</span>
               </button>
             </div>
           </div>
 
-          {/* Body — scrollable */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-5">
-            {/* Color Groups */}
-            {COLOR_GROUPS.map(group => (
-              <div key={group.title}>
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{group.title}</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {group.fields.map(({ key, label }) => (
-                    <div key={key} className="space-y-1">
-                      <label className="text-[10px] font-semibold text-slate-500">{label}</label>
-                      <div className="flex items-center gap-1.5 bg-slate-50 rounded-lg p-1.5 border border-slate-200">
-                        <input
-                          type="color"
-                          value={(localTheme[key] as string) || '#000000'}
-                          onChange={(e) => handleColorChange(key, e.target.value)}
-                          className="size-6 rounded cursor-pointer border-none shrink-0"
-                        />
-                        <input
-                          type="text"
-                          value={(localTheme[key] as string) || ''}
-                          onChange={(e) => handleColorChange(key, e.target.value)}
-                          className="flex-1 text-[10px] font-mono bg-transparent border-none outline-none uppercase w-full"
-                          maxLength={9}
-                        />
+          {/* Scrollable body */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="p-5 space-y-6">
+              {/* Color Groups */}
+              {COLOR_GROUPS.map(group => (
+                <div key={group.title}>
+                  <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-400 mb-3">{group.title}</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {group.fields.map(({ key, label }) => (
+                      <div key={key} className="space-y-1">
+                        <label className="text-[11px] font-medium text-slate-500">{label}</label>
+                        <div className="flex items-center gap-1.5 h-8 bg-slate-50/80 rounded-lg px-1.5 border border-slate-200/60">
+                          <input
+                            type="color"
+                            value={(localTheme[key] as string) || '#000000'}
+                            onChange={(e) => handleColorChange(key, e.target.value)}
+                            className="size-5 rounded-md cursor-pointer border-none shrink-0 editor-control"
+                          />
+                          <input
+                            type="text"
+                            value={(localTheme[key] as string) || ''}
+                            onChange={(e) => handleColorChange(key, e.target.value)}
+                            className="flex-1 text-[10px] font-mono bg-transparent border-none outline-none uppercase w-full text-slate-600 editor-control"
+                            maxLength={9}
+                          />
+                        </div>
                       </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {/* Fonts */}
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-400 mb-3">Font</div>
+                <div className="space-y-2.5">
+                  {[
+                    { key: 'heading_font' as const, label: 'Heading' },
+                    { key: 'body_font' as const, label: 'Body' },
+                  ].map(({ key, label }) => (
+                    <div key={key} className="space-y-1">
+                      <label className="text-[11px] font-medium text-slate-500">{label}</label>
+                      <select
+                        value={localTheme[key] as string}
+                        onChange={(e) => handleFontChange(key, e.target.value)}
+                        className="w-full h-8 px-2.5 bg-slate-50/80 border border-slate-200/60 rounded-lg text-[12px] text-slate-700 outline-none focus:ring-1 focus:ring-slate-300 editor-control"
+                      >
+                        {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
+                      </select>
                     </div>
                   ))}
                 </div>
               </div>
-            ))}
 
-            {/* Fonts */}
-            <div>
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Font</h4>
-              <div className="space-y-2">
-                {[
-                  { key: 'heading_font' as const, label: 'Heading' },
-                  { key: 'body_font' as const, label: 'Body' },
-                ].map(({ key, label }) => (
-                  <div key={key} className="space-y-1">
-                    <label className="text-[10px] font-semibold text-slate-500">{label}</label>
-                    <select
-                      value={localTheme[key] as string}
-                      onChange={(e) => handleFontChange(key, e.target.value)}
-                      className="w-full px-2 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs"
-                    >
-                      {FONT_OPTIONS.map(f => <option key={f} value={f}>{f}</option>)}
-                    </select>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Radius */}
-            <div>
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Border Radius</h4>
-              <div className="space-y-2">
-                {[
-                  { key: 'button_radius' as const, label: 'Button' },
-                  { key: 'card_radius' as const, label: 'Card' },
-                ].map(({ key, label }) => (
-                  <div key={key} className="space-y-1">
-                    <label className="text-[10px] font-semibold text-slate-500">{label}: {localTheme[key]}px</label>
-                    <input
-                      type="range"
-                      min={0}
-                      max={24}
-                      value={localTheme[key] as number}
-                      onChange={(e) => handleRadiusChange(key, parseInt(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                ))}
+              {/* Radius */}
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-400 mb-3">Radius</div>
+                <div className="space-y-3">
+                  {[
+                    { key: 'button_radius' as const, label: 'Button' },
+                    { key: 'card_radius' as const, label: 'Card' },
+                  ].map(({ key, label }) => (
+                    <div key={key} className="space-y-1.5">
+                      <div className="flex justify-between">
+                        <label className="text-[11px] font-medium text-slate-500">{label}</label>
+                        <span className="text-[11px] font-mono text-slate-400">{localTheme[key]}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={0}
+                        max={24}
+                        value={localTheme[key] as number}
+                        onChange={(e) => handleRadiusChange(key, parseInt(e.target.value))}
+                        className="w-full accent-slate-900 editor-control"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
