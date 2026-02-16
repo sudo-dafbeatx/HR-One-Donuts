@@ -115,39 +115,87 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
         <div className="space-y-4">
           <p className="text-sm text-slate-500 italic">Upload gambar banner yang akan tampil di bagian atas halaman beranda.</p>
           
-          <div className="flex flex-col md:flex-row gap-6 items-start">
-            <div className="w-full md:w-2/3">
-              <ImageUploader 
-                onImageUploaded={(url) => setSettings({...settings, hero_banner_image: url})}
-                label="Upload Banner (Rekomendasi 1200x400px)"
-              />
+          <div className="flex flex-col gap-8">
+            {/* Desktop Banner */}
+            <div className="flex flex-col md:flex-row gap-6 items-start border-b border-slate-100 pb-8">
+              <div className="w-full md:w-1/2">
+                <ImageUploader 
+                  currentImage={settings.hero_banner_image}
+                  onImageUploaded={(url) => setSettings({...settings, hero_banner_image: url})}
+                  label="Desktop Banner (Rekomendasi 21:9 atau 1200x400px)"
+                  aspectRatio="video"
+                />
+              </div>
+              
+              <div className="w-full md:w-1/2">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Preview Desktop</label>
+                <div className="relative aspect-[21/9] bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center group">
+                  {settings.hero_banner_image ? (
+                    <>
+                      <Image 
+                        src={settings.hero_banner_image} 
+                        alt="Hero Banner Preview" 
+                        fill 
+                        className="object-cover"
+                      />
+                      <button 
+                        type="button"
+                        onClick={() => setSettings({...settings, hero_banner_image: undefined})}
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full shadow-lg hover:scale-110 transition-transform z-10 opacity-0 group-hover:opacity-100"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-slate-400">
+                      <PhotoIcon className="w-8 h-8" />
+                      <span className="text-[10px] font-medium">Belum ada gambar desktop</span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-            
-            <div className="w-full md:w-1/3">
-              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Preview Banner</label>
-              <div className="relative aspect-[3/1] bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center">
-                {settings.hero_banner_image ? (
-                  <>
-                    <Image 
-                      src={settings.hero_banner_image} 
-                      alt="Hero Banner Preview" 
-                      fill 
-                      className="object-cover"
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => setSettings({...settings, hero_banner_image: undefined})}
-                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full shadow-lg hover:scale-110 transition-transform z-10"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center gap-2 text-slate-400">
-                    <PhotoIcon className="w-8 h-8" />
-                    <span className="text-[10px] font-medium">Belum ada gambar</span>
-                  </div>
-                )}
+
+            {/* Mobile Banner */}
+            <div className="flex flex-col md:flex-row gap-6 items-start">
+              <div className="w-full md:w-1/2">
+                <ImageUploader 
+                  currentImage={settings.hero_banner_mobile_image}
+                  onImageUploaded={(url) => setSettings({...settings, hero_banner_mobile_image: url})}
+                  label="Mobile Banner (Rekomendasi 16:9 atau 600x338px)"
+                  aspectRatio="video"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">
+                  *Opsional. Jika kosong, akan menggunakan gambar desktop.
+                </p>
+              </div>
+              
+              <div className="w-full md:w-1/3">
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Preview Mobile</label>
+                <div className="relative aspect-video bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center group">
+                  {settings.hero_banner_mobile_image ? (
+                    <>
+                      <Image 
+                        src={settings.hero_banner_mobile_image} 
+                        alt="Mobile Banner Preview" 
+                        fill 
+                        className="object-cover"
+                      />
+                      <button 
+                        type="button"
+                        onClick={() => setSettings({...settings, hero_banner_mobile_image: undefined})}
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full shadow-lg hover:scale-110 transition-transform z-10 opacity-0 group-hover:opacity-100"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-slate-400">
+                      <PhotoIcon className="w-8 h-8" />
+                      <span className="text-[10px] font-medium">Belum ada gambar mobile</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

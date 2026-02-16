@@ -59,9 +59,14 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
           <div className="size-8 md:size-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
             <span className="material-symbols-outlined text-lg md:text-2xl">donut_large</span>
           </div>
-          <h1 className="font-display text-base md:text-lg font-black tracking-tight text-primary hidden sm:block">
-            {siteSettings?.store_name || "HR-One Donuts"}
-          </h1>
+          <div className="flex flex-col">
+            <h1 className="font-display text-base md:text-lg font-black tracking-tight text-primary leading-none">
+              {siteSettings?.store_name || "HR-One Donuts"}
+            </h1>
+            <p className="text-[10px] md:text-xs text-slate-500 font-medium hidden md:block leading-none mt-0.5">
+              {siteSettings?.tagline || "Resep Tradisional, Rasa Internasional"}
+            </p>
+          </div>
         </Link>
 
         {/* Search Bar - Centered */}

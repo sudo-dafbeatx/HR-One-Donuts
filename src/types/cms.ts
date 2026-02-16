@@ -61,6 +61,7 @@ export interface SiteSettings {
   facebook_url?: string;
   tiktok_url?: string;
   hero_banner_image?: string;
+  hero_banner_mobile_image?: string;
 }
 
 export interface ProductReview {
