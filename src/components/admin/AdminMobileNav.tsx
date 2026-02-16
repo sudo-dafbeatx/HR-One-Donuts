@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
 import { 
   Bars3Icon, 
   XMarkIcon,
@@ -33,13 +32,15 @@ const navItems: NavItem[] = [
 export default function AdminMobileNav({ userEmail }: { userEmail?: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const [prevPathname, setPrevPathname] = useState(pathname);
   const supabase = createClient();
   const router = useRouter();
 
-  // Close when pathname changes
-  useEffect(() => {
+  // Close when pathname changes (Derived State Adjustment pattern)
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setIsOpen(false);
-  }, [pathname]);
+  }
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
