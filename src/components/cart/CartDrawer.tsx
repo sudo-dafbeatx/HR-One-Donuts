@@ -8,10 +8,13 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outl
 import { incrementSoldCount } from "@/app/admin/actions";
 
 import { SiteSettings } from "@/types/cms";
+import { getCurrentUserProfile, createOrder } from "@/app/actions/order-actions";
+import { useRouter } from "next/navigation";
 
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
-  const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart } = useCart();
+  const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart } = useCart();
   const { setIsLoading } = useLoading();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -22,33 +25,86 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   if (!mounted) return null;
 
   const handleWhatsAppOrder = async () => {
-    setIsLoading(true, 'Menyiapkan pesanan...');
-    // Track sales volume
+    setIsLoading(true, 'Memproses pesanan...');
+    
     try {
-      const productIds = cart.map(item => item.id);
-      await incrementSoldCount(productIds);
-    } catch (e) {
-      console.error('Failed to track sales:', e);
-    }
+      // 1. Check Auth & Get Profile
+      const profile = await getCurrentUserProfile();
+      
+      if (!profile) {
+        setIsLoading(false);
+        setIsCartOpen(false);
+        router.push("/login?redirect=/");
+        return;
+      }
 
-    const phone = siteSettings?.whatsapp_number || "6285810658117";
-    let message = `Halo ${siteSettings?.store_name || "HR-One Donuts"}! 🍩 Saya ingin memesan:\n\n`;
-    
-    cart.forEach((item) => {
-      message += `✅ *${item.name}*\n   ${item.quantity}x @ Rp ${item.price.toLocaleString("id-ID")} = Rp ${(item.price * item.quantity).toLocaleString("id-ID")}\n\n`;
-    });
-    
-    message += `-------------------\n`;
-    message += `💰 *Total Estimasi: Rp ${totalPrice.toLocaleString("id-ID")}*\n\n`;
-    message += `Mohon info rincian pengiriman dan pembayarannya ya. Terima kasih! 🙏`;
-    
-    const encodedMessage = encodeURIComponent(message);
-    
-    // Brief delay to show animation
-    await new Promise(r => setTimeout(r, 1000));
-    setIsLoading(false);
-    
-    window.open(`https://wa.me/${phone}?text=${encodedMessage}`, "_blank");
+      // 2. Validate Profile Completeness
+      if (!profile.full_name || !profile.phone || !profile.address) {
+        setIsLoading(false);
+        setIsCartOpen(false);
+        router.push("/login"); // Redirect to profile completion
+        return;
+      }
+
+      // 3. Save Order to Database
+      await createOrder({
+        total_amount: totalPrice,
+        total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
+        items: cart.map(item => ({
+          product_id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image
+        }))
+      });
+
+      // 4. Also track sales volume via old method if still used
+      try {
+        const productIds = cart.map(item => item.id);
+        await incrementSoldCount(productIds);
+      } catch {
+        console.warn('Individual sold count track failed, but main order saved');
+      }
+
+      // 5. Generate WhatsApp Message
+      const phone = siteSettings?.whatsapp_number || "6285810658117";
+      let message = `Halo ${siteSettings?.store_name || "HR-One Donuts"}! 🍩\n\n`;
+      message += `*PESANAN BARU DARI WEBSITE*\n`;
+      message += `-------------------\n`;
+      message += `👤 *Data Pemesan:*\n`;
+      message += `Nama: ${profile.full_name}\n`;
+      message += `WhatsApp: ${profile.phone}\n`;
+      message += `Alamat: ${profile.address}\n\n`;
+      message += `🛒 *Detail Pesanan:*\n`;
+      
+      cart.forEach((item) => {
+        message += `✅ *${item.name}*\n   ${item.quantity}x @ Rp ${item.price.toLocaleString("id-ID")} = Rp ${(item.price * item.quantity).toLocaleString("id-ID")}\n\n`;
+      });
+      
+      message += `-------------------\n`;
+      message += `💰 *Total Pembayaran: Rp ${totalPrice.toLocaleString("id-ID")}*\n\n`;
+      message += `Mohon segera diproses ya. Terima kasih! 🙏`;
+      
+      const encodedMessage = encodeURIComponent(message);
+      
+      // Brief delay for nice UX
+      await new Promise(r => setTimeout(r, 800));
+      setIsLoading(false);
+      
+      // Open WhatsApp
+      window.open(`https://wa.me/${phone}?text=${encodedMessage}`, "_blank");
+      
+      // Cleanup
+      clearCart();
+      setIsCartOpen(false);
+
+    } catch (error: unknown) {
+      console.error('Order error:', error);
+      setIsLoading(false);
+      const errorMessage = error instanceof Error ? error.message : "Gagal memproses pesanan. Silakan coba lagi.";
+      alert(errorMessage);
+    }
   };
 
   return (
