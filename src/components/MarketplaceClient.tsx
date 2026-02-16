@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { isPromoActive, getEffectivePrice } from '@/lib/product-utils';
 import { DEFAULT_COPY } from '@/lib/theme-defaults';
+import EditableText from '@/components/cms/EditableText';
 
 interface MarketplaceClientProps {
   initialProducts: Product[];
@@ -81,9 +82,9 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
       {/* Product Grid Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h3 className="font-display text-xl md:text-2xl font-bold">{copy.section_catalog}</h3>
+          <h3 className="font-display text-xl md:text-2xl font-bold"><EditableText copyKey="section_catalog" /></h3>
           <div className="h-5 w-px bg-slate-300 dark:bg-slate-700 hidden sm:block"></div>
-          <p className="text-slate-500 text-xs hidden sm:block">{copy.section_catalog_desc}</p>
+          <p className="text-slate-500 text-xs hidden sm:block"><EditableText copyKey="section_catalog_desc" /></p>
         </div>
         <div className="flex gap-2">
           <button className="size-9 md:size-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-white transition-all text-slate-400 hover:text-primary">
@@ -172,7 +173,7 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
                       }}
                       className="w-full mt-2 py-1.5 rounded-md bg-primary text-white text-[10px] font-bold hover:bg-primary/90 active:scale-95 transition-all"
                     >
-                      {copy.cta_add_cart}
+                      <EditableText copyKey="cta_add_cart" />
                     </button>
                   </div>
                 </div>

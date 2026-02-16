@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SiteSettings } from "@/types/cms";
 import { DEFAULT_COPY } from "@/lib/theme-defaults";
+import FooterClient from "@/components/FooterClient";
 
 interface FooterProps {
   siteSettings?: SiteSettings;
@@ -44,7 +45,7 @@ export default function Footer({ siteSettings, copy: _copy }: FooterProps) {
 
         {/* Quick Links */}
         <div>
-          <h5 className="font-bold mb-4 md:mb-6 text-sm">{copy.footer_quicklinks}</h5>
+          <FooterClient copyKey="footer_quicklinks" className="font-bold mb-4 md:mb-6 text-sm" />
           <ul className="space-y-3 md:space-y-4 text-xs md:text-sm text-slate-500">
             <li><Link className="hover:text-primary transition-colors" href="/">Beranda</Link></li>
             <li><Link className="hover:text-primary transition-colors" href="/catalog">Katalog Menu</Link></li>
@@ -54,7 +55,7 @@ export default function Footer({ siteSettings, copy: _copy }: FooterProps) {
 
         {/* Customer Support */}
         <div>
-          <h5 className="font-bold mb-4 md:mb-6 text-sm">{copy.footer_support}</h5>
+          <FooterClient copyKey="footer_support" className="font-bold mb-4 md:mb-6 text-sm" />
           <ul className="space-y-3 md:space-y-4 text-xs md:text-sm text-slate-500">
             <li><Link className="hover:text-primary transition-colors" href="#">Help Center</Link></li>
             <li><Link className="hover:text-primary transition-colors" href="#">Shipping Info</Link></li>
@@ -64,7 +65,7 @@ export default function Footer({ siteSettings, copy: _copy }: FooterProps) {
 
         {/* Contact Us */}
         <div>
-          <h5 className="font-bold mb-4 md:mb-6 text-sm">{copy.footer_contact}</h5>
+          <FooterClient copyKey="footer_contact" className="font-bold mb-4 md:mb-6 text-sm" />
           <div className="space-y-3 md:space-y-4 text-xs md:text-sm text-slate-500">
             <div className="flex items-start gap-2.5">
               <span className="material-symbols-outlined text-primary text-lg shrink-0">location_on</span>
@@ -84,7 +85,7 @@ export default function Footer({ siteSettings, copy: _copy }: FooterProps) {
 
       {/* Bottom Bar */}
       <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 border-t border-slate-100 dark:border-slate-800 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4 text-[10px] md:text-xs text-slate-400">
-        <p>{copy.footer_copyright}</p>
+        <FooterClient copyKey="footer_copyright" className="" as="p" />
         <div className="flex gap-4 md:gap-6">
           <a className="hover:text-slate-600" href="#">Privacy Policy</a>
           <a className="hover:text-slate-600" href="#">Terms of Service</a>

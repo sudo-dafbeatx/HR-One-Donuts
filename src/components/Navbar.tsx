@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SiteSettings } from "@/types/cms";
 import { DEFAULT_COPY } from "@/lib/theme-defaults";
+import EditableText from "@/components/cms/EditableText";
 
 interface NavbarProps {
   siteSettings?: SiteSettings;
@@ -88,8 +89,12 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
         <div className="flex items-center gap-1 md:gap-2 shrink-0">
           {/* Desktop Nav Links */}
           <nav className="hidden xl:flex items-center gap-6 mr-4 text-sm font-semibold">
-            <Link className="text-primary border-b-2 border-primary pb-1" href="/">{copy.nav_home}</Link>
-            <Link className="text-slate-600 hover:text-primary transition-colors" href="/catalog">{copy.nav_menu}</Link>
+            <Link className="text-primary border-b-2 border-primary pb-1" href="/">
+              <EditableText copyKey="nav_home" />
+            </Link>
+            <Link className="text-slate-600 hover:text-primary transition-colors" href="/catalog">
+              <EditableText copyKey="nav_menu" />
+            </Link>
           </nav>
 
           {/* Cart */}
@@ -125,7 +130,9 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
             }}
             title={profileLink === '/admin' ? 'Admin Dashboard' : (profileLink === '/profile' ? 'My Profile' : 'Login')}
           >
-            <span className="text-sm font-bold px-1.5 hidden lg:inline">{copy.nav_account}</span>
+            <span className="text-sm font-bold px-1.5 hidden lg:inline">
+              <EditableText copyKey="nav_account" />
+            </span>
             <div className="size-7 md:size-8 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center">
               <span className="material-symbols-outlined text-slate-500 text-lg">person</span>
             </div>
