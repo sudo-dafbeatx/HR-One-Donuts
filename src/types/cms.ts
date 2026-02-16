@@ -100,6 +100,12 @@ export interface UITheme {
   body_font: string;
   button_radius: number;
   card_radius: number;
+  card_bg_color: string;
+  card_border_color: string;
+  search_bg_color: string;
+  search_text_color: string;
+  account_bg_color: string;
+  account_text_color: string;
   updated_at?: string;
 }
 

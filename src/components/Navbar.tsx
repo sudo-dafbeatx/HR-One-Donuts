@@ -64,11 +64,18 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
         {/* Search Bar */}
         <div className="flex-1 max-w-2xl">
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+            <div 
+              className="absolute inset-y-0 left-0 pl-3 md:pl-4 flex items-center pointer-events-none transition-colors"
+              style={{ color: 'var(--theme-search-text)' }}
+            >
               <span className="material-symbols-outlined text-xl">search</span>
             </div>
             <input
-              className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-full py-2.5 md:py-3 pl-10 md:pl-12 pr-4 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-500 transition-all text-sm"
+              className="w-full border-none rounded-full py-2.5 md:py-3 pl-10 md:pl-12 pr-4 focus:ring-2 focus:ring-primary/20 placeholder:opacity-60 transition-all text-sm"
+              style={{ 
+                backgroundColor: 'var(--theme-search-bg)',
+                color: 'var(--theme-search-text)'
+              }}
               placeholder={copy.search_placeholder}
               type="text"
               value={searchQuery}
@@ -111,7 +118,11 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
           {/* Account */}
           <Link
             href={profileLink}
-            className="flex items-center gap-2 pl-1 md:pl-2 pr-1 py-1 rounded-full border border-slate-200 dark:border-slate-700 hover:shadow-sm transition-all bg-white dark:bg-slate-900"
+            className="flex items-center gap-2 pl-1 md:pl-2 pr-1 py-1 rounded-full border border-slate-200 dark:border-slate-700 hover:shadow-sm transition-all shadow-sm"
+            style={{ 
+              backgroundColor: 'var(--theme-account-bg)',
+              color: 'var(--theme-account-text)'
+            }}
             title={profileLink === '/admin' ? 'Admin Dashboard' : (profileLink === '/profile' ? 'My Profile' : 'Login')}
           >
             <span className="text-sm font-bold px-1.5 hidden lg:inline">{copy.nav_account}</span>

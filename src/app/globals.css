@@ -57,6 +57,12 @@
   --theme-body-font: "Public Sans";
   --theme-btn-radius: 8px;
   --theme-card-radius: 8px;
+  --theme-card-bg: #ffffff;
+  --theme-card-border: #e7edf3;
+  --theme-search-bg: #f1f5f9;
+  --theme-search-text: #64748b;
+  --theme-account-bg: #ffffff;
+  --theme-account-text: #0f172a;
 
   /* ===== Page-level design tokens ===== */
   --background: #f6f7f8;

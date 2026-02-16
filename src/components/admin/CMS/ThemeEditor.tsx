@@ -59,6 +59,12 @@ export default function ThemeEditor({ initialTheme }: { initialTheme: UITheme })
             { key: "secondary_color" as const, label: "Secondary" },
             { key: "background_color" as const, label: "Background" },
             { key: "text_color" as const, label: "Text" },
+            { key: "card_bg_color" as const, label: "Card BG" },
+            { key: "card_border_color" as const, label: "Card Border" },
+            { key: "search_bg_color" as const, label: "Search BG" },
+            { key: "search_text_color" as const, label: "Search Text" },
+            { key: "account_bg_color" as const, label: "Account BG" },
+            { key: "account_text_color" as const, label: "Account Text" },
           ].map(({ key, label }) => (
             <div key={key} className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-500">{label}</label>

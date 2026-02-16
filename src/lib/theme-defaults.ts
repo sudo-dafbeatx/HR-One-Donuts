@@ -13,6 +13,12 @@ export const DEFAULT_THEME: UITheme = {
   body_font: 'Public Sans',
   button_radius: 8,
   card_radius: 8,
+  card_bg_color: '#ffffff',
+  card_border_color: '#e7edf3',
+  search_bg_color: '#f1f5f9',
+  search_text_color: '#64748b',
+  account_bg_color: '#ffffff',
+  account_text_color: '#0f172a',
 };
 
 export const DEFAULT_COPY: Record<string, string> = {

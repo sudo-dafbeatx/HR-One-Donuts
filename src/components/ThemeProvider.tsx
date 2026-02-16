@@ -22,7 +22,28 @@ export default function ThemeProvider({ theme, children }: ThemeProviderProps) {
     root.style.setProperty("--theme-body-font", `"${t.body_font}", ui-sans-serif, system-ui, sans-serif`);
     root.style.setProperty("--theme-btn-radius", `${t.button_radius}px`);
     root.style.setProperty("--theme-card-radius", `${t.card_radius}px`);
-  }, [t.primary_color, t.secondary_color, t.background_color, t.text_color, t.heading_font, t.body_font, t.button_radius, t.card_radius]);
+    root.style.setProperty("--theme-card-bg", t.card_bg_color);
+    root.style.setProperty("--theme-card-border", t.card_border_color);
+    root.style.setProperty("--theme-search-bg", t.search_bg_color);
+    root.style.setProperty("--theme-search-text", t.search_text_color);
+    root.style.setProperty("--theme-account-bg", t.account_bg_color);
+    root.style.setProperty("--theme-account-text", t.account_text_color);
+  }, [
+    t.primary_color, 
+    t.secondary_color, 
+    t.background_color, 
+    t.text_color, 
+    t.heading_font, 
+    t.body_font, 
+    t.button_radius, 
+    t.card_radius,
+    t.card_bg_color,
+    t.card_border_color,
+    t.search_bg_color,
+    t.search_text_color,
+    t.account_bg_color,
+    t.account_text_color
+  ]);
 
   // Dynamically load Google Fonts
   useEffect(() => {

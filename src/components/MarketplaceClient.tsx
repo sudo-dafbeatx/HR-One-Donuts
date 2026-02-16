@@ -109,7 +109,11 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
             return (
               <div 
                 key={product.id} 
-                className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200/80 dark:border-slate-700 flex flex-col shadow-sm hover:shadow-md transition-shadow"
+                className="rounded-lg overflow-hidden border flex flex-col shadow-sm hover:shadow-md transition-shadow"
+                style={{ 
+                  backgroundColor: 'var(--theme-card-bg)',
+                  borderColor: 'var(--theme-card-border)'
+                }}
               >
                 {/* Image */}
                 <div className="aspect-square relative overflow-hidden bg-white">
