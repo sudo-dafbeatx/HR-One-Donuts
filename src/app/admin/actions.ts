@@ -292,6 +292,7 @@ export async function saveTheme(data: Partial<UITheme>) {
 
   if (error) throw new Error(error.message);
   
+  revalidatePath('/', 'layout');
   revalidatePath('/');
   revalidatePath('/catalog');
   revalidatePath('/admin/theme');
@@ -312,6 +313,7 @@ export async function saveUICopy(key: string, value: string) {
 
   if (error) throw new Error(error.message);
   
+  revalidatePath('/', 'layout');
   revalidatePath('/');
   revalidatePath('/catalog');
   revalidatePath('/admin/theme');
@@ -333,6 +335,7 @@ export async function saveUICopyBatch(entries: { key: string; value: string }[])
 
   if (error) throw new Error(error.message);
   
+  revalidatePath('/', 'layout');
   revalidatePath('/');
   revalidatePath('/catalog');
   revalidatePath('/admin/theme');

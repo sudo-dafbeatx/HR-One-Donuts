@@ -16,7 +16,7 @@ export default function Hero({
   return (
     <section className="mb-4 md:mb-6 overflow-hidden bg-transparent">
       <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x px-4 lg:px-6">
-        {/* Banner 1 */}
+        {/* Banner 1 — uses CMS primary color */}
         <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-primary relative overflow-hidden snap-start shrink-0">
           <div className="absolute inset-0 p-4 flex flex-col justify-center text-white z-10">
             <span className="text-[10px] font-bold uppercase mb-1 opacity-80">{copy.banner_1_label}</span>
@@ -27,8 +27,8 @@ export default function Hero({
           </div>
         </div>
 
-        {/* Banner 2 */}
-        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-blue-700 relative overflow-hidden snap-start shrink-0">
+        {/* Banner 2 — uses CMS secondary color */}
+        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-secondary relative overflow-hidden snap-start shrink-0">
           <div className="absolute inset-0 p-4 flex flex-col justify-center text-white z-10">
             <span className="text-[10px] font-bold uppercase mb-1 opacity-80">{copy.banner_2_label}</span>
             <h4 className="font-bold text-lg leading-tight">{copy.banner_2_title}<br/>{copy.banner_2_subtitle}</h4>
@@ -38,13 +38,13 @@ export default function Hero({
           </div>
         </div>
 
-        {/* Banner 3 */}
-        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-blue-500 relative overflow-hidden snap-start shrink-0">
-          <div className="absolute inset-0 p-4 flex flex-col justify-center text-white z-10">
+        {/* Banner 3 — uses CMS primary color with brightness variation */}
+        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-primary relative overflow-hidden snap-start shrink-0" style={{ filter: 'brightness(1.15)' }}>
+          <div className="absolute inset-0 p-4 flex flex-col justify-center text-white z-10" style={{ filter: 'brightness(0.87)' }}>
             <span className="text-[10px] font-bold uppercase mb-1 opacity-80">{copy.banner_3_label}</span>
             <h4 className="font-bold text-lg leading-tight">{copy.banner_3_title}<br/>{copy.banner_3_subtitle}</h4>
           </div>
-          <div className="absolute right-[-20px] top-1/2 -translate-y-1/2 size-24 opacity-40 relative">
+          <div className="absolute right-[-20px] top-1/2 -translate-y-1/2 size-24 opacity-40 relative" style={{ filter: 'brightness(0.87)' }}>
             <Image src={imageUrl} alt={copy.banner_3_label} fill className="object-contain" sizes="96px" />
           </div>
         </div>

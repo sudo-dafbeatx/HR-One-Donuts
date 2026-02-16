@@ -2,12 +2,17 @@
 
 /* 
   Tailwind CSS v4 Theme Configuration 
-  NOTE: The "Unknown at rule @theme" warning is expected as some IDE linters 
-  do not yet recognize the new Tailwind v4 syntax. It does not affect the build.
+  
+  IMPORTANT: @theme values are compiled at BUILD TIME by Tailwind.
+  Dynamic values (from CMS) must be set as :root overrides BELOW.
+  
+  We define static tokens in @theme so Tailwind knows the class names,
+  then override the CSS variables in :root to make them dynamic at runtime.
 */
 @theme {
-  --color-primary: var(--theme-primary, #1152d4);
-  --color-secondary: var(--theme-secondary, #3b82f6);
+  /* Static defaults — these get overridden in :root below for dynamic theming */
+  --color-primary: #1152d4;
+  --color-secondary: #3b82f6;
   --color-background: var(--background);
   --color-header-bg: var(--header-bg);
   --color-footer-bg: var(--footer-bg);
@@ -17,10 +22,10 @@
   --color-subheading: var(--subheading);
   --color-border: var(--border-color);
 
-  --font-sans: var(--theme-body-font, "Public Sans"), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--theme-heading-font, "Sora"), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
 
-  --radius-default: var(--theme-card-radius, 8px);
+  --radius-default: 8px;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-full: 9999px;
@@ -35,10 +40,29 @@
 }
 
 :root {
+  /* ===== DYNAMIC OVERRIDES — set by ThemeProvider at runtime ===== */
+  /* These override the @theme compiled values so bg-primary, text-primary, etc. are CMS-dynamic */
+  --color-primary: var(--theme-primary, #1152d4);
+  --color-secondary: var(--theme-secondary, #3b82f6);
+  --font-sans: var(--theme-body-font, "Public Sans"), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--theme-heading-font, "Sora"), ui-sans-serif, system-ui, sans-serif;
+  --radius-default: var(--theme-card-radius, 8px);
+
+  /* ===== DEFAULTS for ThemeProvider variables ===== */
+  --theme-primary: #1152d4;
+  --theme-secondary: #3b82f6;
+  --theme-bg: #f6f7f8;
+  --theme-text: #0f172a;
+  --theme-heading-font: "Sora";
+  --theme-body-font: "Public Sans";
+  --theme-btn-radius: 8px;
+  --theme-card-radius: 8px;
+
+  /* ===== Page-level design tokens ===== */
   --background: #f6f7f8;
-  --foreground: #0f172a; /* slate-900 */
+  --foreground: #0f172a;
   --heading: #0d141b;
-  --subheading: #334155; /* slate-700 */
+  --subheading: #334155;
   --header-bg: rgba(255, 255, 255, 0.8);
   --footer-bg: #ffffff;
   --section-bg: #f6f7f8;
@@ -48,19 +72,19 @@
 
 .dark {
   --background: #101922;
-  --foreground: #f1f5f9; /* slate-100 */
+  --foreground: #f1f5f9;
   --heading: #ffffff;
-  --subheading: #94a3b8; /* slate-400 */
+  --subheading: #94a3b8;
   --header-bg: rgba(16, 25, 34, 0.8);
   --footer-bg: #0d141b;
   --section-bg: #101922;
-  --card-bg: #1e293b; /* slate-800 */
+  --card-bg: #1e293b;
   --border-color: #1e293b;
 }
 
 body {
-  background: var(--theme-bg, var(--background));
-  color: var(--theme-text, var(--foreground));
+  background: var(--theme-bg);
+  color: var(--theme-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
