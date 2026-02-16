@@ -62,7 +62,9 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       });
 
       // 4. Generate WhatsApp Message
-      const phone = siteSettings?.whatsapp_number || "6285810658117";
+      const rawPhone = siteSettings?.whatsapp_number || "6285810658117";
+      const phone = rawPhone.replace(/\D/g, ""); // Ensure digits only
+      
       let message = `Halo ${siteSettings?.store_name || "HR-One Donuts"}! 🍩\n\n`;
       message += `*PESANAN BARU DARI WEBSITE*\n`;
       message += `-------------------\n`;
@@ -86,8 +88,16 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       await new Promise(r => setTimeout(r, 800));
       setIsLoading(false);
       
-      // Open WhatsApp
-      window.open(`https://wa.me/${phone}?text=${encodedMessage}`, "_blank");
+      // Open WhatsApp - Mobile-first approach
+      const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+      
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        // Direct redirection for mobile apps
+        window.location.href = whatsappUrl;
+      } else {
+        // Fallback for desktop
+        window.open(whatsappUrl, "_blank");
+      }
       
       // Cleanup
       clearCart();
