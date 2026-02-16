@@ -5,8 +5,15 @@ import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { SiteSettings } from "@/types/cms";
+import { DEFAULT_COPY } from "@/lib/theme-defaults";
 
-export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }) {
+interface NavbarProps {
+  siteSettings?: SiteSettings;
+  copy?: Record<string, string>;
+}
+
+export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
+  const copy = _copy || DEFAULT_COPY;
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,7 +57,7 @@ export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }
             <span className="material-symbols-outlined text-xl md:text-2xl">donut_large</span>
           </div>
           <h1 className="font-display text-lg md:text-xl font-extrabold tracking-tight text-primary hidden sm:block">
-            {siteSettings?.store_name || "HR-One Donuts"}
+            {siteSettings?.store_name || copy.hero_title}
           </h1>
         </Link>
 
@@ -62,7 +69,7 @@ export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }
             </div>
             <input
               className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-full py-2.5 md:py-3 pl-10 md:pl-12 pr-4 focus:ring-2 focus:ring-primary/20 placeholder:text-slate-500 transition-all text-sm"
-              placeholder="Cari donat..."
+              placeholder={copy.search_placeholder}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -74,8 +81,8 @@ export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }
         <div className="flex items-center gap-1 md:gap-2 shrink-0">
           {/* Desktop Nav Links */}
           <nav className="hidden xl:flex items-center gap-6 mr-4 text-sm font-semibold">
-            <Link className="text-primary border-b-2 border-primary pb-1" href="/">Home</Link>
-            <Link className="text-slate-600 hover:text-primary transition-colors" href="/catalog">Menu</Link>
+            <Link className="text-primary border-b-2 border-primary pb-1" href="/">{copy.nav_home}</Link>
+            <Link className="text-slate-600 hover:text-primary transition-colors" href="/catalog">{copy.nav_menu}</Link>
           </nav>
 
           {/* Cart */}
@@ -107,7 +114,7 @@ export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }
             className="flex items-center gap-2 pl-1 md:pl-2 pr-1 py-1 rounded-full border border-slate-200 dark:border-slate-700 hover:shadow-sm transition-all bg-white dark:bg-slate-900"
             title={profileLink === '/admin' ? 'Admin Dashboard' : (profileLink === '/profile' ? 'My Profile' : 'Login')}
           >
-            <span className="text-sm font-bold px-1.5 hidden lg:inline">Account</span>
+            <span className="text-sm font-bold px-1.5 hidden lg:inline">{copy.nav_account}</span>
             <div className="size-7 md:size-8 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center">
               <span className="material-symbols-outlined text-slate-500 text-lg">person</span>
             </div>

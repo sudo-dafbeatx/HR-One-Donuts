@@ -89,3 +89,23 @@ export interface ReviewStats {
 }
 
 export type CMSContentKey = 'site_info' | 'order_steps' | 'product_categories' | 'products' | 'events';
+
+export interface UITheme {
+  id?: string;
+  primary_color: string;
+  secondary_color: string;
+  background_color: string;
+  text_color: string;
+  heading_font: string;
+  body_font: string;
+  button_radius: number;
+  card_radius: number;
+  updated_at?: string;
+}
+
+export interface UICopy {
+  id?: string;
+  key: string;
+  value: string;
+  updated_at?: string;
+}

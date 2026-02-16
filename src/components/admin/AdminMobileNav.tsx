@@ -11,6 +11,7 @@ import {
   HomeIcon, 
   ArchiveBoxIcon, 
   PaintBrushIcon, 
+  SparklesIcon,
   ArrowTopRightOnSquareIcon,
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
@@ -25,6 +26,7 @@ const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/admin', icon: HomeIcon },
   { name: 'Menu Produk', href: '/admin/products', icon: ArchiveBoxIcon },
   { name: 'Kustom Konten', href: '/admin/content', icon: PaintBrushIcon },
+  { name: 'Theme & Teks', href: '/admin/theme', icon: SparklesIcon },
 ];
 
 export default function AdminMobileNav({ userEmail }: { userEmail?: string }) {

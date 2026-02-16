@@ -5,6 +5,7 @@ import {
   HomeIcon, 
   ArchiveBoxIcon, 
   PaintBrushIcon, 
+  SparklesIcon,
   ArrowTopRightOnSquareIcon,
   ArrowRightOnRectangleIcon,
   UserCircleIcon
@@ -60,6 +61,7 @@ export default async function AdminLayout({
                   { name: 'Dashboard', href: '/admin', icon: HomeIcon },
                   { name: 'Menu Produk', href: '/admin/products', icon: ArchiveBoxIcon },
                   { name: 'Kustom Konten', href: '/admin/content', icon: PaintBrushIcon },
+                  { name: 'Theme & Teks', href: '/admin/theme', icon: SparklesIcon },
                 ].map((item) => (
                   <Link 
                     key={item.href}

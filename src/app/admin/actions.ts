@@ -2,7 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { Product, PromoEvent } from '@/types/cms';
+import { Product, PromoEvent, UITheme } from '@/types/cms';
 import { extractStoragePath } from '@/lib/image-utils';
 import { deleteImage } from './upload-actions';
 
@@ -259,5 +259,82 @@ export async function deleteCategory(id: string) {
   
   revalidatePath('/admin/products');
   revalidatePath('/admin/content');
+  return { success: true };
+}
+
+// --- Theme Actions ---
+export async function saveTheme(data: Partial<UITheme>) {
+  const supabase = await checkAdmin();
+  
+  // Get existing theme row or create
+  const { data: existing } = await supabase
+    .from('ui_theme')
+    .select('id')
+    .limit(1)
+    .maybeSingle();
+
+  const themeData = {
+    ...(existing?.id ? { id: existing.id } : {}),
+    primary_color: data.primary_color,
+    secondary_color: data.secondary_color,
+    background_color: data.background_color,
+    text_color: data.text_color,
+    heading_font: data.heading_font,
+    body_font: data.body_font,
+    button_radius: data.button_radius,
+    card_radius: data.card_radius,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from('ui_theme')
+    .upsert(themeData);
+
+  if (error) throw new Error(error.message);
+  
+  revalidatePath('/');
+  revalidatePath('/catalog');
+  revalidatePath('/admin/theme');
+  return { success: true };
+}
+
+// --- UI Copy Actions ---
+export async function saveUICopy(key: string, value: string) {
+  const supabase = await checkAdmin();
+  
+  const { error } = await supabase
+    .from('ui_copy')
+    .upsert({ 
+      key, 
+      value, 
+      updated_at: new Date().toISOString() 
+    }, { onConflict: 'key' });
+
+  if (error) throw new Error(error.message);
+  
+  revalidatePath('/');
+  revalidatePath('/catalog');
+  revalidatePath('/admin/theme');
+  return { success: true };
+}
+
+export async function saveUICopyBatch(entries: { key: string; value: string }[]) {
+  const supabase = await checkAdmin();
+  
+  const data = entries.map(e => ({
+    key: e.key,
+    value: e.value,
+    updated_at: new Date().toISOString(),
+  }));
+
+  const { error } = await supabase
+    .from('ui_copy')
+    .upsert(data, { onConflict: 'key' });
+
+  if (error) throw new Error(error.message);
+  
+  revalidatePath('/');
+  revalidatePath('/catalog');
+  revalidatePath('/admin/theme');
   return { success: true };
 }

@@ -7,9 +7,11 @@ import Hero from "@/components/Hero";
 import FlashSaleServer from "@/components/FlashSaleServer";
 import FlashSaleSkeleton from "@/components/FlashSaleSkeleton";
 import { Suspense } from "react";
+import { getCopy } from "@/lib/theme";
 
 export default async function Home() {
   const supabase = await createServerSupabaseClient();
+  const copy = await getCopy();
   
   // Fetch site info
   const { data: siteInfoData } = await supabase
@@ -41,33 +43,27 @@ export default async function Home() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark">
-      <Navbar siteSettings={siteSettings} />
+      <Navbar siteSettings={siteSettings} copy={copy} />
       
       <main className="flex-1 max-w-[1440px] mx-auto w-full px-0 py-4">
-        {/* Marketplace Banners */}
-        <Hero 
-          title={siteSettings?.store_name} 
-          subtitle={siteSettings?.tagline}
-        />
+        <Hero copy={copy} />
 
-        {/* Flash Sale */}
         <Suspense fallback={<FlashSaleSkeleton />}>
           <FlashSaleServer />
         </Suspense>
 
-        {/* Product Catalog */}
         <div className="px-4 lg:px-6 py-4 md:py-6">
           {!products || products.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-slate-500">
-              <p className="text-lg font-medium">Belum ada produk aktif.</p>
+              <p className="text-lg font-medium">{copy.empty_products}</p>
             </div>
           ) : (
-            <MarketplaceClient initialProducts={products as Product[]} categories={categories || []} />
+            <MarketplaceClient initialProducts={products as Product[]} categories={categories || []} copy={copy} />
           )}
         </div>
       </main>
       
-      <Footer siteSettings={siteSettings} />
+      <Footer siteSettings={siteSettings} copy={copy} />
     </div>
   );
 }

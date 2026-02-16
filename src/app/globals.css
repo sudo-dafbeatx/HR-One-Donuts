@@ -6,7 +6,8 @@
   do not yet recognize the new Tailwind v4 syntax. It does not affect the build.
 */
 @theme {
-  --color-primary: #1152d4;
+  --color-primary: var(--theme-primary, #1152d4);
+  --color-secondary: var(--theme-secondary, #3b82f6);
   --color-background: var(--background);
   --color-header-bg: var(--header-bg);
   --color-footer-bg: var(--footer-bg);
@@ -16,10 +17,10 @@
   --color-subheading: var(--subheading);
   --color-border: var(--border-color);
 
-  --font-sans: var(--font-public-sans), "Public Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-sora), "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--theme-body-font, "Public Sans"), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--theme-heading-font, "Sora"), ui-sans-serif, system-ui, sans-serif;
 
-  --radius-default: 0.5rem;
+  --radius-default: var(--theme-card-radius, 8px);
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-full: 9999px;
@@ -58,8 +59,8 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--theme-bg, var(--background));
+  color: var(--theme-text, var(--foreground));
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

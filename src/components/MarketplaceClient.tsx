@@ -7,13 +7,16 @@ import { useLoading } from "@/context/LoadingContext";
 import Link from 'next/link';
 import Image from 'next/image';
 import { isPromoActive, getEffectivePrice } from '@/lib/product-utils';
+import { DEFAULT_COPY } from '@/lib/theme-defaults';
 
 interface MarketplaceClientProps {
   initialProducts: Product[];
   categories?: string[];
+  copy?: Record<string, string>;
 }
 
-export default function MarketplaceClient({ initialProducts, categories = [] }: MarketplaceClientProps) {
+export default function MarketplaceClient({ initialProducts, categories = [], copy: _copy }: MarketplaceClientProps) {
+  const copy = _copy || DEFAULT_COPY;
   const { addToCart } = useCart();
   const { setIsLoading } = useLoading();
   const [activeCategory, setActiveCategory] = React.useState<string>('Semua');
@@ -31,7 +34,6 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
 
   const allCategories = ['Semua', ...categories];
 
-  // Map category names to material icons
   const categoryIcons: Record<string, string> = {
     'Semua': 'apps',
     'Glazed': 'donut_large',
@@ -79,9 +81,9 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
       {/* Product Grid Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h3 className="font-display text-xl md:text-2xl font-bold">Pilihan Terbaik</h3>
+          <h3 className="font-display text-xl md:text-2xl font-bold">{copy.section_catalog}</h3>
           <div className="h-5 w-px bg-slate-300 dark:bg-slate-700 hidden sm:block"></div>
-          <p className="text-slate-500 text-xs hidden sm:block">Recommended daily delights for you</p>
+          <p className="text-slate-500 text-xs hidden sm:block">{copy.section_catalog_desc}</p>
         </div>
         <div className="flex gap-2">
           <button className="size-9 md:size-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-white transition-all text-slate-400 hover:text-primary">
@@ -96,7 +98,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
       {/* Product Grid */}
       {filteredProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-          <p className="text-xl font-medium">Tidak ada produk di kategori ini.</p>
+          <p className="text-xl font-medium">{copy.empty_category}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3">
@@ -126,7 +128,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                   {/* Badge */}
                   {hasDiscount && (
                     <span className="absolute top-2 left-2 bg-primary text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
-                      PROMO
+                      {copy.badge_promo}
                     </span>
                   )}
                   {product.tag && !hasDiscount && (
@@ -154,7 +156,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                     </div>
                     <div className="flex items-center gap-1 mt-1">
                       <span className="text-[9px] text-slate-500 dark:text-slate-400">
-                        Terjual {product.sold_count || 0}+
+                        {copy.sold_label} {product.sold_count || 0}+
                       </span>
                     </div>
                     <button
@@ -166,7 +168,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                       }}
                       className="w-full mt-2 py-1.5 rounded-md bg-primary text-white text-[10px] font-bold hover:bg-primary/90 active:scale-95 transition-all"
                     >
-                      + Keranjang
+                      {copy.cta_add_cart}
                     </button>
                   </div>
                 </div>
