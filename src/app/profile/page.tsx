@@ -194,18 +194,18 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 pb-32 overflow-x-hidden">
       {/* Premium Header with Gradient */}
       <div className="relative bg-gradient-to-br from-primary via-blue-600 to-cyan-500">
         {/* Abstract shapes for premium feel */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 anim-pulse pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
         
-        <div className="max-w-5xl mx-auto px-4 md:px-6 pt-12 pb-24 relative z-10">
+        <div className="max-w-5xl mx-auto px-4 md:px-6 pt-10 md:pt-12 pb-20 md:pb-24 relative z-10">
           <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-10">
             {/* Profile Avatar with premium border */}
             <div className="relative group shrink-0">
-              <div className="size-28 md:size-32 bg-white/20 backdrop-blur-md rounded-3xl border-2 border-white/30 flex items-center justify-center text-white shadow-2xl transition-all duration-500 overflow-hidden relative">
+              <div className="size-24 md:size-32 bg-white/20 backdrop-blur-md rounded-2xl md:rounded-3xl border-2 border-white/30 flex items-center justify-center text-white shadow-2xl transition-all duration-500 overflow-hidden relative">
                 {profile?.avatar_url ? (
                   <Image 
                     src={profile.avatar_url} 
@@ -352,24 +352,24 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <div className="max-w-5xl mx-auto px-4 md:px-6 -mt-10 md:-mt-12 relative z-20">
-        <div className="grid lg:grid-cols-12 gap-8">
+      <div className="max-w-5xl mx-auto px-4 md:px-6 -mt-8 md:-mt-12 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
           
           {/* Main Content Info */}
           <div className="lg:col-span-8 space-y-6">
             <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 p-8 border border-white">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-slate-800">Informasi Pribadi</h2>
-                  <p className="text-sm text-slate-500 font-medium">Lengkapi detail Anda untuk pesanan lebih cepat</p>
+                  <h2 className="text-xl md:text-2xl font-bold text-slate-800">Informasi Pribadi</h2>
+                  <p className="text-xs md:text-sm text-slate-500 font-medium italic">Data Anda tetap aman & rahasia</p>
                 </div>
                 {!isEditing && (
                   <button 
                     onClick={() => setIsEditing(true)}
-                    className="flex items-center gap-2 text-primary font-bold text-sm bg-primary/5 px-5 py-2.5 rounded-xl hover:bg-primary/10 transition-all"
+                    className="flex items-center gap-2 text-primary font-bold text-xs md:text-sm bg-primary/5 px-4 md:px-5 py-2 md:py-2.5 rounded-xl hover:bg-primary/10 transition-all shrink-0"
                   >
-                    <span className="material-symbols-outlined text-[18px]">edit</span>
-                    Edit Profil
+                    <span className="material-symbols-outlined text-[16px] md:text-[18px]">edit</span>
+                    Edit
                   </button>
                 )}
               </div>
@@ -475,7 +475,7 @@ export default function ProfilePage() {
                   </p>
                   <Link 
                     href="/catalog" 
-                    className="inline-flex h-12 items-center px-8 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95"
+                    className="inline-flex h-11 md:h-12 items-center px-6 md:px-8 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-95 text-sm md:text-base"
                   >
                     Buka Katalog Menu
                   </Link>
@@ -485,31 +485,31 @@ export default function ProfilePage() {
                   {orders.map((order) => (
                     <div 
                       key={order.id}
-                      className="bg-white p-6 rounded-[1.5rem] border border-white shadow-sm hover:shadow-md hover:border-primary/20 transition-all flex items-center justify-between group cursor-default"
+                      className="bg-white p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] border border-slate-100 md:border-white shadow-sm hover:shadow-md hover:border-primary/20 transition-all flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 md:gap-5 group cursor-default"
                     >
-                      <div className="flex items-center gap-5">
-                        <div className="size-14 bg-blue-50/50 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                          <ShoppingBagIcon className="size-7" />
+                      <div className="flex items-center gap-4 md:gap-5 min-w-0">
+                        <div className="size-10 md:size-14 bg-blue-50/50 rounded-xl md:rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform shrink-0">
+                          <ShoppingBagIcon className="size-5 md:size-7" />
                         </div>
-                        <div>
-                          <div className="flex items-center gap-3 mb-1">
-                            <p className="font-extrabold text-slate-800">#{order.id.slice(0, 8).toUpperCase()}</p>
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-green-500/10 text-green-600 rounded-lg">Success</span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center flex-wrap gap-2 mb-0.5">
+                            <p className="font-extrabold text-slate-800 truncate text-sm md:text-base">#{order.id.slice(0, 8).toUpperCase()}</p>
+                            <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-green-500/10 text-green-600 rounded-md">Success</span>
                           </div>
-                          <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
-                            <span className="flex items-center gap-1.5">
-                              <CalendarDaysIcon className="size-3.5" />
+                          <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-[10px] md:text-xs font-semibold text-slate-400">
+                            <span className="flex items-center gap-1">
+                              <CalendarDaysIcon className="size-3 md:size-3.5" />
                               {new Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}
                             </span>
-                            <span className="size-1 bg-slate-200 rounded-full"></span>
-                            <span>{order.total_items} item donat</span>
+                            <span className="hidden sm:inline size-1 bg-slate-200 rounded-full"></span>
+                            <span>{order.total_items} item</span>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="text-right">
-                        <p className="font-black text-slate-900 text-lg">Rp {order.total_amount.toLocaleString('id-ID')}</p>
-                        <button className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1">Detail 👉</button>
+                      <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-center gap-1 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-50">
+                        <p className="font-black text-slate-900 text-base md:text-lg">Rp {order.total_amount.toLocaleString('id-ID')}</p>
+                        <button className="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1">Detail 👉</button>
                       </div>
                     </div>
                   ))}
