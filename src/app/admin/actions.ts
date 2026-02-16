@@ -49,7 +49,6 @@ export async function saveProduct(data: Partial<Product>) {
     stock: data.stock ?? 0,
     is_active: data.is_active ?? true,
     sale_type: data.sale_type || 'normal',
-    package_type: data.package_type || 'satuan',
     discount_percent: data.discount_percent ?? 0,
     promo_start: data.promo_start || null,
     promo_end: data.promo_end || null,

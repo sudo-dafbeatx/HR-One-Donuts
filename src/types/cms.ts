@@ -13,8 +13,7 @@ export interface Product {
   }[];
   created_at?: string;
   updated_at?: string;
-  sale_type: 'normal' | 'flash_sale' | 'jumat_berkah' | 'takjil';
-  package_type: 'satuan' | 'box';
+  sale_type: 'normal' | 'jumat_berkah' | 'selasa_mega_sale';
   discount_percent?: number | null;
   promo_start?: string;
   promo_end?: string;
@@ -26,7 +25,7 @@ export interface PromoEvent {
   id: string;
   title: string;
   description?: string;
-  event_type: 'seasonal' | 'flash_sale' | 'jumat_berkah' | 'takjil';
+  event_type: 'seasonal' | 'jumat_berkah' | 'selasa_mega_sale';
   banner_image_url?: string;
   discount_percent: number;
   start_at: string | null;

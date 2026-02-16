@@ -5,11 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FireIcon, SparklesIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 
-const eventIcons = {
-  flash_sale: FireIcon,
+const eventIcons: Record<string, React.ElementType> = {
   jumat_berkah: SparklesIcon,
-  takjil: CalendarDaysIcon,
-  seasonal: SparklesIcon,
+  selasa_mega_sale: FireIcon,
+  seasonal: CalendarDaysIcon,
 };
 
 export default function PromoBanner({ events }: { events: PromoEvent[] }) {

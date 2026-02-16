@@ -103,7 +103,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
         <AdminButton onClick={() => {
           setErrorStatus(null);
           setSuccessStatus(null);
-          setEditingProduct({ name: '', price: 0, category: '', tag: '', stock: 0, is_active: true, sale_type: 'normal', package_type: 'satuan', variants: [] });
+          setEditingProduct({ name: '', price: 0, category: '', tag: '', stock: 0, is_active: true, sale_type: 'normal', variants: [] });
         }}>
           <PlusIcon className="w-5 h-5" />
           Tambah Produk Baru
@@ -167,9 +167,6 @@ export default function ProductManager({ initialProducts, categories }: { initia
               <div className="flex flex-wrap gap-2">
                 <span className="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded uppercase tracking-wider">
                   {product.category || 'No Category'}
-                </span>
-                <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider ${product.package_type === 'box' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>
-                  {product.package_type}
                 </span>
                 {product.sale_type !== 'normal' && (
                   <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider ${isPromoActive(product) ? 'bg-primary text-white' : 'bg-slate-200 text-slate-500'}`}>
@@ -248,28 +245,16 @@ export default function ProductManager({ initialProducts, categories }: { initia
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <AdminSelect 
-                      label="Tipe Penjualan"
-                      value={editingProduct.package_type || 'satuan'}
-                      onChange={e => setEditingProduct({...editingProduct, package_type: e.target.value as 'satuan' | 'box'})}
-                      options={[
-                        { label: 'Satuan', value: 'satuan' },
-                        { label: 'Box', value: 'box' },
-                      ]}
-                    />
                     <AdminSelect 
                       label="Tipe Promo"
                       value={editingProduct.sale_type || 'normal'}
-                      onChange={e => setEditingProduct({...editingProduct, sale_type: e.target.value as 'normal' | 'flash_sale' | 'jumat_berkah' | 'takjil' })}
+                      onChange={e => setEditingProduct({...editingProduct, sale_type: e.target.value as 'normal' | 'jumat_berkah' | 'selasa_mega_sale' })}
                       options={[
                         { label: 'Normal', value: 'normal' },
-                        { label: 'Flash Sale', value: 'flash_sale' },
                         { label: 'Jumat Berkah', value: 'jumat_berkah' },
-                        { label: 'Takjil', value: 'takjil' },
+                        { label: 'Selasa Mega Sale (SMS)', value: 'selasa_mega_sale' },
                       ]}
                     />
-                  </div>
                 </div>
 
                 <div className="space-y-4">

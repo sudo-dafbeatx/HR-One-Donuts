@@ -25,12 +25,11 @@ interface ProductInfoProps {
   }[];
   discount_percent?: number;
   sale_type: string;
-  package_type: string;
 }
 
 export default function ProductInfo({ 
   id, name, price, description, image, stock, variants, 
-  discount_percent, sale_type, package_type 
+  discount_percent, sale_type 
 }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<{ name: string, price_adjustment: number } | null>(
@@ -82,11 +81,6 @@ export default function ProductInfo({
           {sale_type !== 'normal' && (
             <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
               {sale_type.replace('_', ' ')}
-            </span>
-          )}
-          {package_type === 'box' && (
-            <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
-              BOX
             </span>
           )}
           {stock <= 5 && stock > 0 && (
