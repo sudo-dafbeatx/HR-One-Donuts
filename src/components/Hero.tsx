@@ -45,7 +45,7 @@ export default function Hero({
               ))}
             </h1>
             
-            <p className="text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-lg">
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-200 leading-relaxed max-w-lg font-medium">
               {description}
             </p>
             
