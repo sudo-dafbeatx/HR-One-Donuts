@@ -27,6 +27,9 @@ const publicSans = Public_Sans({
 export const metadata: Metadata = {
   title: "HR-One Donuts - Resep Tradisional, Rasa Internasional",
   description: "Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut dan kaya rasa.",
+  icons: {
+    icon: "/images/favicons.ico",
+  },
 };
 
 export default async function RootLayout({
