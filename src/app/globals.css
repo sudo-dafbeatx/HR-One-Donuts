@@ -39,6 +39,39 @@
   scrollbar-width: none;
 }
 
+@utility uiverse-bg {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    --size: 80px;
+    background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        transparent 40%,
+        #add8e6 41%,
+        #add8e6 60%,
+        transparent 61%,
+        transparent 100%
+      ),
+      linear-gradient(
+        45deg,
+        #add8e6 25%,
+        transparent 25%,
+        transparent 50%,
+        #add8e6 50%,
+        #add8e6 75%,
+        transparent 75%,
+        transparent
+      );
+    background-size: var(--size) var(--size);
+  }
+}
+
 :root {
   /* ===== DYNAMIC OVERRIDES — set by ThemeProvider at runtime ===== */
   /* These override the @theme compiled values so bg-primary, text-primary, etc. are CMS-dynamic */

@@ -47,10 +47,10 @@ export default async function Home() {
   const categories = categoryData?.map(c => c.name) || [];
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark">
+    <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark uiverse-bg">
       <Navbar siteSettings={siteSettings} copy={copy} />
       
-      <main className="flex-1 max-w-[1440px] mx-auto w-full px-0 py-4">
+      <main className="relative z-10 flex-1 max-w-[1440px] mx-auto w-full px-0 py-4">
         <Hero copy={copy} />
 
         <Suspense fallback={<FlashSaleSkeleton />}>

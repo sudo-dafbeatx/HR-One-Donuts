@@ -381,8 +381,8 @@ function LoginContent() {
   // ─── Profile Completion Screen ───
   if (profileCompletionStep) {
     return (
-      <div className="bg-[#f6f7f8] min-h-screen flex flex-col">
-        <main className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="bg-[#f6f7f8] min-h-screen flex flex-col uiverse-bg">
+        <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
           <div className="w-full max-w-[520px] bg-white shadow-xl rounded-[1rem] overflow-hidden border border-slate-100">
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
@@ -459,8 +459,8 @@ function LoginContent() {
   // ─── OTP / Email Verification Screen ───
   if (otpStep) {
     return (
-      <div className="bg-[#f6f7f8] min-h-screen flex flex-col">
-        <main className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="bg-[#f6f7f8] min-h-screen flex flex-col uiverse-bg">
+        <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
           <div className="w-full max-w-[520px] bg-white shadow-xl rounded-[1rem] overflow-hidden border border-slate-100">
             
             <div className="px-8 pt-10 pb-6 text-center">
@@ -558,8 +558,8 @@ function LoginContent() {
   // ═══════════════════════════════════════════════════════
   if (isRegistering) {
     return (
-      <div className="bg-[#f6f7f8] min-h-screen flex flex-col">
-        <main className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="bg-[#f6f7f8] min-h-screen flex flex-col uiverse-bg">
+        <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
           <div className="w-full max-w-[520px] bg-white shadow-xl rounded-[1rem] overflow-hidden border border-slate-100">
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
@@ -777,8 +777,8 @@ function LoginContent() {
   // ─── LOGIN SCREEN ───
   // ═══════════════════════════════════════════════════════
   return (
-    <div className="bg-[#eef5ff] min-h-screen flex items-center justify-center p-6">
-      <div className="w-full max-w-[480px]">
+    <div className="bg-[#eef5ff] min-h-screen flex items-center justify-center p-6 uiverse-bg">
+      <div className="relative z-10 w-full max-w-[480px]">
         {/* Brand */}
         <div className="flex flex-col items-center mb-8">
           <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
