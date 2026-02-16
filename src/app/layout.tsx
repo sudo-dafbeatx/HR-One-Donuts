@@ -11,7 +11,18 @@ import { getTheme, getCopy } from "@/lib/theme";
 import { EditModeProvider } from "@/context/EditModeContext";
 import EditModeToggle from "@/components/cms/EditModeToggle";
 import ThemePanel from "@/components/cms/ThemePanel";
+import { Sora, Public_Sans } from "next/font/google";
 import "./globals.css";
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
+
+const publicSans = Public_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "HR-One Donuts - Resep Tradisional, Rasa Internasional",
@@ -52,14 +63,9 @@ export default async function RootLayout({
 
   return (
     <html lang="id" className="overflow-x-hidden" suppressHydrationWarning>
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
-        />
-      </head>
+      <head />
       <body
-        className="antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0"
+        className={`${sora.variable} ${publicSans.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
       >
         <ThemeProvider theme={theme}>
           <EditModeProvider initialCopy={copy} initialTheme={theme} isAdmin={isAdmin}>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import NextImage from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { 
@@ -69,9 +70,19 @@ export default function AdminMobileNav({ userEmail }: { userEmail?: string }) {
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-8">
-              <div className="flex flex-col">
-                <span className="text-lg font-black text-slate-800 tracking-tighter">Admin <span className="text-primary">Menu</span></span>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{userEmail?.split('@')[0]}</span>
+              <div className="flex items-center gap-3">
+                <div className="relative size-10">
+                   <NextImage 
+                     src="/images/logo-hr-one.png" 
+                     alt="HR-One Donuts" 
+                     fill 
+                     className="object-contain"
+                   />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-lg font-black text-slate-800 tracking-tighter">Admin <span className="text-primary">Menu</span></span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{userEmail?.split('@')[0]}</span>
+                </div>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}

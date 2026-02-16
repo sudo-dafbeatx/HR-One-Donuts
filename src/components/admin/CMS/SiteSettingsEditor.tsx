@@ -88,6 +88,53 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
         </div>
       </AdminCard>
 
+      <AdminCard title="Logo Toko">
+        <div className="space-y-4">
+          <p className="text-sm text-slate-500 italic">Upload logo resmi toko yang akan digunakan di seluruh aplikasi.</p>
+          
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            <div className="w-full md:w-1/2">
+              <ImageUploader 
+                currentImage={settings.site_logo}
+                onImageUploaded={(url) => setSettings({...settings, site_logo: url})}
+                label="Logo (Rekomendasi PNG Transparan atau 512x512px)"
+                aspectRatio="square"
+              />
+            </div>
+            
+            <div className="w-full md:w-1/4">
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Preview Logo</label>
+              <div className="relative aspect-square bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center p-4 group">
+                {settings.site_logo ? (
+                  <>
+                    <div className="relative size-full">
+                      <Image 
+                        src={settings.site_logo} 
+                        alt="Logo Preview" 
+                        fill 
+                        className="object-contain"
+                      />
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => setSettings({...settings, site_logo: undefined})}
+                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full shadow-lg hover:scale-110 transition-transform z-10 opacity-0 group-hover:opacity-100"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center gap-2 text-slate-400">
+                    <PhotoIcon className="w-8 h-8" />
+                    <span className="text-[10px] font-medium text-center">Belum ada logo</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </AdminCard>
+
       <AdminCard title="Social Media Links">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <AdminInput 

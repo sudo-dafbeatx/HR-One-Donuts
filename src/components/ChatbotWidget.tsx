@@ -55,7 +55,7 @@ export default function ChatbotWidget() {
       // Send welcome message when chat opens
       setTimeout(() => {
         addBotMessage(
-          "Halo! 👋 Saya Dona, AI Assistant HR-One Donuts 🍩\n\nSaya siap membantu Anda! Mau lihat menu atau ada pertanyaan?",
+          "Halo! 👋 Saya Dona, AI Assistant HR-One Donuts \n\nSaya siap membantu Anda! Mau lihat menu atau ada pertanyaan?",
           ["Lihat Menu", "Cara Pesan", "Hubungi WhatsApp", "Bestseller"]
         );
       }, 500);
@@ -191,7 +191,7 @@ export default function ChatbotWidget() {
               </div>
               <div>
                 <h3 className="font-bold text-lg">Dona</h3>
-                <p className="text-xs text-white/80">AI Assistant HR-One Donuts</p>
+                <p className="text-xs text-white/80">AI Assistant Donat Kami</p>
               </div>
             </div>
             <button

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import NextImage from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { 
@@ -40,10 +41,22 @@ export default function AdminSidebar({ userEmail }: { userEmail?: string }) {
   return (
     <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200 fixed inset-y-0 left-0 z-50">
       <div className="p-6">
-        <div className="flex flex-col mb-10">
-          <span className="text-xl font-black text-slate-800 tracking-tighter leading-tight">HR-One <span className="text-primary">Donuts</span></span>
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mt-1">Administrator</span>
-        </div>
+        <Link href="/" className="flex flex-col mb-10 group cursor-pointer">
+          <div className="flex items-center gap-3">
+            <div className="relative size-10 group-hover:scale-105 transition-transform">
+               <NextImage 
+                 src="/images/logo-hr-one.png" 
+                 alt="HR-One Donuts" 
+                 fill 
+                 className="object-contain"
+               />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xl font-black text-slate-800 tracking-tighter leading-tight">Admin <span className="text-primary">Panel</span></span>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mt-1">Administrator</span>
+            </div>
+          </div>
+        </Link>
 
         <nav className="space-y-1.5">
           {navItems.map((item) => {

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import NextImage from "next/image";
 import { SiteSettings } from "@/types/cms";
 
 interface FooterProps {
@@ -13,13 +14,26 @@ export default function Footer({ siteSettings }: FooterProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-8 mb-12">
           {/* Brand */}
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="size-8 bg-primary rounded-full flex items-center justify-center text-white shadow-md shadow-primary/20">
-                <span className="material-symbols-outlined text-lg font-bold">donut_large</span>
-              </div>
-              <span className="font-display text-lg font-black text-primary tracking-tight">
-                {siteSettings?.store_name || "HR-One Donuts"}
-              </span>
+            <Link href="/" className="flex items-center gap-3 mb-4">
+              {siteSettings?.site_logo ? (
+                <div className="relative h-12 w-auto aspect-square">
+                  <NextImage 
+                    src={siteSettings.site_logo}
+                    alt={siteSettings?.store_name || "HR-One Donuts"}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="size-8 bg-primary rounded-full flex items-center justify-center text-white shadow-md shadow-primary/20">
+                    <span className="material-symbols-outlined text-lg font-bold">donut_large</span>
+                  </div>
+                  <span className="font-display text-lg font-black text-primary tracking-tight">
+                    {siteSettings?.store_name || "HR-One Donuts"}
+                  </span>
+                </>
+              )}
             </Link>
             <p className="text-slate-500 text-sm leading-relaxed mb-6 max-w-xs">
               {siteSettings?.tagline || "Freshly baked donuts delivered straight to your door with love."}

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import NextImage from "next/image";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { ShoppingBagIcon, ChatBubbleLeftIcon, UserCircleIcon } from "@heroicons/react/24/outline";
@@ -45,11 +46,24 @@ export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSet
     <header className="sticky top-0 z-50 w-full border-b border-border bg-header-bg backdrop-blur-md px-6 md:px-10 lg:px-40 py-3 transition-colors duration-300">
       <div className="flex items-center justify-between gap-8 max-w-[1280px] mx-auto">
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2 text-primary group">
-            <CakeIcon className="w-8 h-8 transition-transform group-hover:rotate-12" />
-            <h2 className="text-heading text-lg font-extrabold leading-tight tracking-tight">
-              {siteSettings?.store_name || "HR-One Donuts"}
-            </h2>
+          <Link href="/" className="flex items-center gap-3 text-primary group">
+            {siteSettings?.site_logo ? (
+              <div className="relative h-8 w-auto aspect-square group-hover:scale-105 transition-transform">
+                <NextImage 
+                  src={siteSettings.site_logo}
+                  alt={siteSettings?.store_name || "HR-One Donuts"}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            ) : (
+              <>
+                <CakeIcon className="w-8 h-8 transition-transform group-hover:rotate-12" />
+                <h2 className="text-heading text-lg font-extrabold leading-tight tracking-tight">
+                  {siteSettings?.store_name || "HR-One Donuts"}
+                </h2>
+              </>
+            )}
           </Link>
           <nav className="hidden sm:flex items-center gap-8">
             <Link href="/" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">

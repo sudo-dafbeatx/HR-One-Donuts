@@ -1,5 +1,6 @@
 "use client";
 
+import NextImage from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
@@ -55,14 +56,27 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-xl border-b border-slate-100">
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between gap-4 md:gap-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 shrink-0 group">
-          <div className="size-8 md:size-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
-            <span className="material-symbols-outlined text-lg md:text-2xl">donut_large</span>
-          </div>
+        <Link href="/" className="flex items-center gap-3 shrink-0 group">
+          {siteSettings?.site_logo ? (
+            <div className="relative h-10 w-auto aspect-square group-hover:scale-105 transition-transform">
+              <NextImage 
+                src={siteSettings.site_logo}
+                alt={siteSettings?.store_name || "HR-One Donuts"}
+                fill
+                className="object-contain"
+              />
+            </div>
+          ) : (
+            <div className="size-8 md:size-10 bg-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
+              <span className="material-symbols-outlined text-lg md:text-2xl">donut_large</span>
+            </div>
+          )}
           <div className="flex flex-col">
-            <h1 className="font-display text-base md:text-lg font-black tracking-tight text-primary leading-none">
-              {siteSettings?.store_name || "HR-One Donuts"}
-            </h1>
+            {!siteSettings?.site_logo && (
+              <h1 className="font-display text-base md:text-lg font-black tracking-tight text-primary leading-none">
+                {siteSettings?.store_name || "HR-One Donuts"}
+              </h1>
+            )}
             <p className="text-[10px] md:text-xs text-slate-500 font-medium hidden md:block leading-none mt-0.5">
               {siteSettings?.tagline || "Resep Tradisional, Rasa Internasional"}
             </p>

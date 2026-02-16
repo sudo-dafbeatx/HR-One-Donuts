@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
+import NextImage from 'next/image';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { useLoading } from '@/context/LoadingContext';
 
@@ -406,9 +407,14 @@ function LoginContent() {
           <div className="w-full max-w-[520px] bg-white shadow-xl rounded-[1rem] overflow-hidden border border-slate-100">
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
-              <div className="flex items-center justify-center gap-2 mb-6 text-primary">
-                <div className="size-10 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-3xl">donut_large</span>
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="relative size-12">
+                  <NextImage 
+                    src="/images/logo-hr-one.png" 
+                    alt="HR-One Donuts" 
+                    fill 
+                    className="object-contain"
+                  />
                 </div>
                 <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">HR-One Donuts</h1>
               </div>
@@ -583,9 +589,14 @@ function LoginContent() {
           <div className="w-full max-w-[520px] bg-white shadow-xl rounded-[1rem] overflow-hidden border border-slate-100">
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
-              <div className="flex items-center justify-center gap-2 mb-6 text-primary">
-                <div className="size-10 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-3xl">donut_large</span>
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="relative size-12">
+                  <NextImage 
+                    src="/images/logo-hr-one.png" 
+                    alt="HR-One Donuts" 
+                    fill 
+                    className="object-contain"
+                  />
                 </div>
                 <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">HR-One Donuts</h1>
               </div>
@@ -810,8 +821,13 @@ function LoginContent() {
       <div className="relative z-10 w-full max-w-[480px]">
         {/* Brand */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
-            <span className="material-symbols-outlined text-white text-4xl">donut_large</span>
+          <div className="relative w-20 h-20 mb-4 group-hover:scale-105 transition-transform">
+            <NextImage 
+              src="/images/logo-hr-one.png" 
+              alt="HR-One Donuts" 
+              fill 
+              className="object-contain"
+            />
           </div>
           <h1 className="text-primary font-bold text-2xl tracking-tight">HR-One Donuts</h1>
           <p className="text-slate-500 font-medium text-sm mt-1">Fresh and Smooth</p>

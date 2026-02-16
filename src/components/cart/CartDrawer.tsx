@@ -4,7 +4,7 @@ import { useCart } from "@/context/CartContext";
 import { useLoading } from "@/context/LoadingContext";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { ShoppingBagIcon, XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { incrementSoldCount } from "@/app/admin/actions";
 
 import { SiteSettings } from "@/types/cms";
@@ -70,8 +70,15 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div className="flex flex-col">
-            <h2 className="text-xl font-bold flex items-center gap-2 text-heading dark:text-white">
-              <ShoppingBagIcon className="w-6 h-6 text-primary" />
+            <h2 className="text-xl font-bold flex items-center gap-3 text-heading dark:text-white">
+              <div className="relative size-8">
+                <Image 
+                  src="/images/logo-hr-one.png"
+                  alt="HR-One Donuts"
+                  fill
+                  className="object-contain"
+                />
+              </div>
               Pesanan Saya
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Bisnis Keluarga - Dibuat dengan Kasih Sayang</p>
