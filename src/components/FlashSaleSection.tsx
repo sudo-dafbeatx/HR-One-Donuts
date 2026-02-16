@@ -5,10 +5,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { BoltIcon, ClockIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState, useRef } from 'react';
+import CountdownTimer from './CountdownTimer';
 
 export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
   const [mounted, setMounted] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Find the event ending soonest to use for the countdown
+  const targetDate = events
+    .map(e => e.end_at)
+    .filter(Boolean)
+    .sort((a, b) => new Date(a!).getTime() - new Date(b!).getTime())[0];
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
@@ -21,22 +28,25 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
     <section className="w-full bg-white py-8 border-b border-slate-100">
       <div className="container mx-auto px-4">
         {/* Header Section */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center size-10 rounded-xl bg-primary/10 text-primary group">
               <BoltIcon className="size-6 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight leading-none">
-                Flash <span className="text-primary">Sale</span>
-              </h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight leading-none">
+                  Flash <span className="text-primary">Sale</span>
+                </h2>
+                {targetDate && <CountdownTimer targetDate={targetDate} />}
+              </div>
               <p className="text-[10px] font-medium text-slate-400 tracking-wide mt-1">Penawaran Terbatas</p>
             </div>
           </div>
           
           <Link 
             href="/catalog?filter=promo" 
-            className="text-xs font-semibold text-primary hover:underline decoration-2 underline-offset-4 transition-all"
+            className="text-xs font-semibold text-primary hover:underline decoration-2 underline-offset-4 transition-all self-end sm:self-auto"
           >
             Lihat Semua
           </Link>
