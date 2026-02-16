@@ -428,7 +428,7 @@ function LoginContent() {
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
                   <NextImage 
-                    src={siteSettings?.site_logo || "/images/logo-hr-one.png"} 
+                    src={siteSettings?.logo_url || "/images/logo-hr-one.png"} 
                     alt={siteSettings?.store_name || "HR-One Donuts"} 
                     fill 
                     className="object-cover"
@@ -514,7 +514,7 @@ function LoginContent() {
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
                   <NextImage 
-                    src={siteSettings?.site_logo || "/images/logo-hr-one.png"} 
+                    src={siteSettings?.logo_url || "/images/logo-hr-one.png"} 
                     alt={siteSettings?.store_name || "HR-One Donuts"} 
                     fill 
                     className="object-cover"
@@ -619,7 +619,7 @@ function LoginContent() {
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
                   <NextImage 
-                    src={siteSettings?.site_logo || "/images/logo-hr-one.png"} 
+                    src={siteSettings?.logo_url || "/images/logo-hr-one.png"} 
                     alt={siteSettings?.store_name || "HR-One Donuts"} 
                     fill 
                     className="object-cover"
@@ -854,7 +854,7 @@ function LoginContent() {
         <div className="flex flex-col items-center mb-8">
           <div className="relative w-20 h-20 mb-4 rounded-full overflow-hidden border-4 border-white shadow-xl group-hover:scale-105 transition-transform">
             <NextImage 
-              src={siteSettings?.site_logo || "/images/logo-hr-one.png"} 
+              src={siteSettings?.logo_url || "/images/logo-hr-one.png"} 
               alt={siteSettings?.store_name || "HR-One Donuts"} 
               fill 
               priority

@@ -62,7 +62,7 @@ export interface SiteSettings {
   tiktok_url?: string;
   hero_banner_image?: string;
   hero_banner_mobile_image?: string;
-  site_logo?: string;
+  logo_url?: string;
 }
 
 export interface ProductReview {

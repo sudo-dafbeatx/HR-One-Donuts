@@ -27,7 +27,7 @@ const navItems: NavItem[] = [
   { name: 'Visual Editor (Live Site)', href: '/', icon: SparklesIcon },
 ];
 
-export default function AdminSidebar({ userEmail, siteLogo, storeName }: { userEmail?: string; siteLogo?: string; storeName?: string }) {
+export default function AdminSidebar({ userEmail, logo_url, storeName }: { userEmail?: string; logo_url?: string; storeName?: string }) {
   const pathname = usePathname();
   const supabase = createClient();
   const router = useRouter();
@@ -45,7 +45,7 @@ export default function AdminSidebar({ userEmail, siteLogo, storeName }: { userE
           <div className="flex items-center gap-3">
             <div className="relative size-10 group-hover:scale-105 transition-transform">
                <NextImage 
-                 src={siteLogo || "/images/logo-hr-one.png"} 
+                 src={logo_url || "/images/logo-hr-one.png"} 
                  alt={storeName || "HR-One Donuts"} 
                  fill 
                  className="object-contain"

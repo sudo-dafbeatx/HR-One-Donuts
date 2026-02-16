@@ -42,7 +42,7 @@ export default async function AdminLayout({
     .maybeSingle();
   
   const siteSettings = siteInfo?.value as unknown as SiteSettings | undefined;
-  const siteLogo = siteSettings?.site_logo;
+  const logo_url = siteSettings?.logo_url;
   const storeName = siteSettings?.store_name || "HR-One Donuts";
 
   const handleSignOut = async () => {
@@ -57,7 +57,7 @@ export default async function AdminLayout({
       {/* Desktop Sidebar */}
       <AdminSidebar 
         userEmail={user.email || undefined} 
-        siteLogo={siteLogo}
+        logo_url={logo_url}
         storeName={storeName}
       />
       
@@ -70,7 +70,7 @@ export default async function AdminLayout({
             <div className="flex items-center gap-4">
               <AdminMobileNav 
                 userEmail={user.email || undefined} 
-                siteLogo={siteLogo}
+                logo_url={logo_url}
                 storeName={storeName}
               />
               

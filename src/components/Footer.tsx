@@ -15,10 +15,10 @@ export default function Footer({ siteSettings }: FooterProps) {
           {/* Brand */}
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
             <Link href="/" className="flex items-center gap-3 mb-4">
-              {siteSettings?.site_logo ? (
+              {siteSettings?.logo_url ? (
                 <div className="relative h-12 w-auto aspect-square">
                   <NextImage 
-                    src={siteSettings.site_logo}
+                    src={siteSettings.logo_url}
                     alt={siteSettings?.store_name || "HR-One Donuts"}
                     fill
                     className="object-contain"

@@ -57,10 +57,10 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between gap-4 md:gap-8">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
-          {siteSettings?.site_logo ? (
+          {siteSettings?.logo_url ? (
             <div className="relative h-10 w-auto aspect-square group-hover:scale-105 transition-transform">
               <NextImage 
-                src={siteSettings.site_logo}
+                src={siteSettings.logo_url}
                 alt={siteSettings?.store_name || "HR-One Donuts"}
                 fill
                 className="object-contain"
@@ -72,7 +72,7 @@ export default function Navbar({ siteSettings, copy: _copy }: NavbarProps) {
             </div>
           )}
           <div className="flex flex-col">
-            {!siteSettings?.site_logo && (
+            {!siteSettings?.logo_url && (
               <h1 className="font-display text-base md:text-lg font-black tracking-tight text-primary leading-none">
                 {siteSettings?.store_name || "HR-One Donuts"}
               </h1>

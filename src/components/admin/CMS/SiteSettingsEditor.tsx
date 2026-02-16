@@ -95,8 +95,8 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
           <div className="flex flex-col md:flex-row gap-6 items-start">
             <div className="w-full md:w-1/2">
               <ImageUploader 
-                currentImage={settings.site_logo}
-                onImageUploaded={(url) => setSettings({...settings, site_logo: url})}
+                currentImage={settings.logo_url}
+                onImageUploaded={(url) => setSettings({...settings, logo_url: url})}
                 label="Logo (Rekomendasi PNG Transparan atau 512x512px)"
                 aspectRatio="square"
               />
@@ -107,16 +107,17 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
               <div className="relative aspect-square bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center p-4 group">
                 <div className="relative size-full">
                   <Image 
-                    src={settings.site_logo || "/images/logo-hr-one.png"} 
+                    src={settings.logo_url || "/images/logo-hr-one.png"} 
                     alt="Logo Preview" 
                     fill 
                     className="object-contain"
+                    unoptimized={settings.logo_url?.startsWith('http')}
                   />
                 </div>
-                {settings.site_logo && (
+                {settings.logo_url && (
                   <button 
                     type="button"
-                    onClick={() => setSettings({...settings, site_logo: undefined})}
+                    onClick={() => setSettings({...settings, logo_url: undefined})}
                     className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full shadow-lg hover:scale-110 transition-transform z-10 opacity-0 group-hover:opacity-100"
                     title="Hapus Logo"
                   >
@@ -126,7 +127,7 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
               </div>
               <button
                 type="button"
-                onClick={() => setSettings({...settings, site_logo: undefined})}
+                onClick={() => setSettings({...settings, logo_url: undefined})}
                 className="mt-2 text-[10px] font-bold text-primary hover:underline uppercase tracking-widest"
               >
                 Reset ke Default

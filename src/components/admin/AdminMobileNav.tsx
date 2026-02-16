@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
   { name: 'Visual Editor (Live Site)', href: '/', icon: SparklesIcon },
 ];
 
-export default function AdminMobileNav({ userEmail, siteLogo, storeName }: { userEmail?: string; siteLogo?: string; storeName?: string }) {
+export default function AdminMobileNav({ userEmail, logo_url, storeName }: { userEmail?: string; logo_url?: string; storeName?: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const [prevPathname, setPrevPathname] = useState(pathname);
@@ -73,7 +73,7 @@ export default function AdminMobileNav({ userEmail, siteLogo, storeName }: { use
               <div className="flex items-center gap-3">
                 <div className="relative size-10">
                    <NextImage 
-                     src={siteLogo || "/images/logo-hr-one.png"} 
+                     src={logo_url || "/images/logo-hr-one.png"} 
                      alt={storeName || "HR-One Donuts"} 
                      fill 
                      className="object-contain"

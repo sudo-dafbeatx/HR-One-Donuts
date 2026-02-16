@@ -47,10 +47,10 @@ export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSet
       <div className="flex items-center justify-between gap-8 max-w-[1280px] mx-auto">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-3 text-primary group">
-            {siteSettings?.site_logo ? (
+            {siteSettings?.logo_url ? (
               <div className="relative h-8 w-auto aspect-square group-hover:scale-105 transition-transform">
                 <NextImage 
-                  src={siteSettings.site_logo}
+                  src={siteSettings.logo_url}
                   alt={siteSettings?.store_name || "HR-One Donuts"}
                   fill
                   className="object-contain"
