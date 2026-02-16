@@ -203,8 +203,7 @@ export default function MarketplaceClient({
                         <div className="flex items-center justify-between gap-1">
                           {renderRating(stats)}
                           
-                          {/* Only show sold count on desktop */}
-                          <span className="hidden md:block text-[9px] text-slate-400 font-black uppercase tracking-tight">
+                          <span className="text-[8px] md:text-[9px] text-slate-400 font-black uppercase tracking-tight">
                             {product.sold_count || 0}+ Terjual
                           </span>
                         </div>
