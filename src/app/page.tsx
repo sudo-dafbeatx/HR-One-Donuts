@@ -27,6 +27,11 @@ export default async function Home() {
     .eq('is_active', true)
     .order('created_at', { ascending: false });
 
+  // Fetch review stats
+  const { data: reviewStats } = await supabase
+    .from('product_review_stats')
+    .select('*');
+
   // Fetch categories
   const { data: categoryData, error: categoryError } = await supabase
     .from('categories')
@@ -58,7 +63,12 @@ export default async function Home() {
               <p className="text-lg font-medium">{copy.empty_products}</p>
             </div>
           ) : (
-            <MarketplaceClient initialProducts={products as Product[]} categories={categories || []} copy={copy} />
+            <MarketplaceClient 
+              initialProducts={products as Product[]} 
+              categories={categories || []} 
+              copy={copy} 
+              reviewStats={reviewStats || []}
+            />
           )}
         </div>
       </main>

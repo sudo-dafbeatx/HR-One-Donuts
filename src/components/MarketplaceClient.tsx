@@ -1,22 +1,29 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import { Product } from '@/types/cms';
+import { Product, ReviewStats } from '@/types/cms';
 import { useCart } from '@/context/CartContext';
 import { useLoading } from '@/context/LoadingContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { DEFAULT_COPY } from '@/lib/theme-defaults';
 import EditableProductField from '@/components/cms/EditableProductField';
+import { useRouter } from 'next/navigation';
 
 interface MarketplaceClientProps {
   initialProducts: Product[];
-  categories: { id: string; name: string }[];
+  categories: string[];
   copy?: Record<string, string>;
+  reviewStats?: ReviewStats[];
 }
 
-export default function MarketplaceClient({ initialProducts, categories = [], copy: _copy }: MarketplaceClientProps) {
+export default function MarketplaceClient({ 
+  initialProducts, 
+  categories = [], 
+  copy: _copy,
+  reviewStats = [] 
+}: MarketplaceClientProps) {
+  const router = useRouter();
   const { copy: liveCopy, updateProduct } = useEditMode();
   const copy = liveCopy || _copy || DEFAULT_COPY;
   const { addToCart } = useCart();
@@ -51,13 +58,31 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
     return p.price;
   }
 
+  const renderStars = (rating: number) => {
+    return (
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map((s) => (
+          <span 
+            key={s} 
+            className={`material-symbols-outlined text-[10px] md:text-[11px] ${
+              s <= Math.round(rating) ? 'text-amber-400' : 'text-slate-200'
+            }`}
+            style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}
+          >
+            star
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <section className="py-12 px-4 max-w-7xl mx-auto">
+    <section className="py-8 px-4 max-w-7xl mx-auto">
       {/* Categories */}
-      <div className="flex items-center gap-3 overflow-x-auto pb-6 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+      <div className="flex items-center gap-2 overflow-x-auto pb-6 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
         <button
           onClick={() => setActiveCategory('Semua')}
-          className={`flex-shrink-0 px-6 py-2.5 rounded-full text-xs font-black transition-all ${
+          className={`flex-shrink-0 px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-wider transition-all ${
             activeCategory === 'Semua'
               ? 'bg-primary text-white shadow-lg shadow-primary/25'
               : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100'
@@ -67,15 +92,15 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
         </button>
         {categories.map(cat => (
           <button
-            key={cat.id}
-            onClick={() => setActiveCategory(cat.name)}
-            className={`flex-shrink-0 px-6 py-2.5 rounded-full text-xs font-black transition-all ${
-              activeCategory === cat.name
+            key={cat}
+            onClick={() => setActiveCategory(cat)}
+            className={`flex-shrink-0 px-5 py-2 rounded-full text-[11px] font-black uppercase tracking-wider transition-all ${
+              activeCategory === cat
                 ? 'bg-primary text-white shadow-lg shadow-primary/25'
                 : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100'
             }`}
           >
-            {cat.name}
+            {cat}
           </button>
         ))}
       </div>
@@ -86,11 +111,17 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
            <p className="text-slate-400 font-bold text-sm">Tidak ada produk di kategori ini.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
           {filteredProducts.map((product) => {
             const hasDiscount = isPromoActive(product) && (product.discount_percent ?? 0) > 0;
+            const stats = reviewStats.find(s => s.product_id === product.id);
+            
             return (
-              <div key={product.id} className="card-effect">
+              <div 
+                key={product.id} 
+                className="card-effect cursor-pointer"
+                onClick={() => router.push(`/catalog/${product.id}`)}
+              >
                 <div className="card-inner">
                   <div className="card__liquid"></div>
                   <div className="card__shine"></div>
@@ -123,7 +154,7 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
                       {/* Tags */}
                       <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-10">
                         {product.tag && (
-                          <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-wider rounded-md">
+                          <span className="px-1.5 py-0.5 bg-black/40 backdrop-blur-md text-white text-[8px] font-black uppercase tracking-wider rounded-md">
                             {product.tag}
                           </span>
                         )}
@@ -131,33 +162,43 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
                     </div>
 
                     {/* Info Area */}
-                    <div className="flex flex-col flex-1">
-                      <Link href={`/catalog/${product.id}`} className="hover:no-underline">
+                    <div className="flex flex-col flex-1 min-h-0">
+                      <div className="flex flex-col gap-0.5">
                         <EditableProductField 
                           value={product.name} 
                           onSave={(val: string) => {
                             updateProduct(product.id, { name: val });
                             setLocalProducts(prev => prev.map(p => p.id === product.id ? { ...p, name: val } : p));
                           }}
-                          className="card__title"
+                          className="card__title truncate"
                           productId={product.id}
                         />
-                      </Link>
-
-                      <div className="flex items-center gap-1 mt-1">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">
-                          {copy.sold_label} {product.sold_count || 0}+
-                        </span>
+                        
+                        {/* Rating & Sold Row */}
+                        <div 
+                          className="flex items-center justify-between gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="flex items-center gap-1">
+                            {renderStars(stats?.average_rating || 0)}
+                            <span className="text-[9px] text-slate-400 font-bold">
+                              ({stats?.total_reviews || 0})
+                            </span>
+                          </div>
+                          <span className="text-[8px] md:text-[9px] text-slate-400 font-black uppercase tracking-tight">
+                            {product.sold_count || 0}+ Terjual
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="mt-auto">
+                      <div className="mt-auto pt-2">
                         {hasDiscount && (
-                          <div className="text-[10px] text-slate-400 line-through mb-0.5">
+                          <div className="text-[9px] text-slate-400 line-through mb-0">
                             Rp {product.price.toLocaleString("id-ID")}
                           </div>
                         )}
                         
-                        <div className="card__footer">
+                        <div className="card__footer pt-0">
                           <div className="card__price whitespace-nowrap">
                             <EditableProductField 
                               value={String(getEffectivePrice(product))}
@@ -174,7 +215,8 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
                           </div>
 
                           <button
-                            onClick={async () => {
+                            onClick={async (e) => {
+                              e.stopPropagation();
                               setIsLoading(true, 'Sabar ya...');
                               addToCart({
                                 id: product.id,
@@ -188,7 +230,7 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
                             className="card__button editor-control border-none"
                             aria-label="Add to cart"
                           >
-                            <svg viewBox="0 0 24 24" width="18" height="18" className="text-white">
+                            <svg viewBox="0 0 24 24" width="16" height="16" className="text-white">
                               <path
                                 fill="currentColor"
                                 d="M5 12H19M12 5V19"
