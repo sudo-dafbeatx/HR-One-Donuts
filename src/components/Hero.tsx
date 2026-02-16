@@ -37,7 +37,7 @@ export default function Hero({
               <span className="text-[10px] md:text-xs font-semibold uppercase tracking-wider text-primary">{subtitle}</span>
             </div>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-heading leading-[1.1] tracking-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-heading leading-[1.1] tracking-tight font-display">
               {title.split(' ').map((word, i) => (
                 <span key={i} className={i === 1 ? "text-primary italic" : "text-heading"}>
                   {word}{' '}

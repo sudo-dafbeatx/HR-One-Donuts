@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Fredoka } from "next/font/google";
 import { CartProvider } from "@/context/CartContext";
 import { LoadingProvider } from "@/context/LoadingContext";
 import CartDrawer from "@/components/cart/CartDrawer";
@@ -10,6 +10,12 @@ import "./globals.css";
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-plus-jakarta-sans",
+  display: "swap",
+});
+
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  variable: "--font-fredoka",
   display: "swap",
 });
 
@@ -44,7 +50,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${plusJakartaSans.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
+        className={`${plusJakartaSans.variable} ${fredoka.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
       >
         <LoadingProvider>
           <CartProvider>
