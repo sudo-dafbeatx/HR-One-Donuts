@@ -1,3 +1,6 @@
+import Image from "next/image";
+import { SiteSettings } from "@/types/cms";
+
 interface HeroProps {
   siteSettings?: SiteSettings;
   imageUrl?: string;

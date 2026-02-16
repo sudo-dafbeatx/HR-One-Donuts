@@ -53,7 +53,7 @@ export default async function Home() {
       <main className="flex-1 w-full flex flex-col items-center">
         {/* Hero Section - Full width but content constrained */}
         <section className="w-full">
-          <Hero copy={copy} siteSettings={siteSettings} />
+          <Hero siteSettings={siteSettings} />
         </section>
 
         {/* Constrained Content Container */}
