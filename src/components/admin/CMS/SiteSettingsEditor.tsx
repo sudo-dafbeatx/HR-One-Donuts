@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { SiteSettings } from '@/types/cms';
 import { AdminInput, AdminButton, AdminCard } from './Shared';
 import { updateSettings } from '@/app/admin/actions';
+import ImageUploader from '../ImageUploader';
+import { PhotoIcon, TrashIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 export default function SiteSettingsEditor({ initialData }: { initialData?: SiteSettings }) {
   const [settings, setSettings] = useState<SiteSettings>(initialData || {
@@ -105,6 +108,49 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
             value={settings.tiktok_url || ''} 
             onChange={e => setSettings({...settings, tiktok_url: e.target.value})}
           />
+        </div>
+      </AdminCard>
+
+      <AdminCard title="Banner Utama (Hero)">
+        <div className="space-y-4">
+          <p className="text-sm text-slate-500 italic">Upload gambar banner yang akan tampil di bagian atas halaman beranda.</p>
+          
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            <div className="w-full md:w-2/3">
+              <ImageUploader 
+                onImageUploaded={(url) => setSettings({...settings, hero_banner_image: url})}
+                label="Upload Banner (Rekomendasi 1200x400px)"
+              />
+            </div>
+            
+            <div className="w-full md:w-1/3">
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Preview Banner</label>
+              <div className="relative aspect-[3/1] bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center">
+                {settings.hero_banner_image ? (
+                  <>
+                    <Image 
+                      src={settings.hero_banner_image} 
+                      alt="Hero Banner Preview" 
+                      fill 
+                      className="object-cover"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setSettings({...settings, hero_banner_image: undefined})}
+                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full shadow-lg hover:scale-110 transition-transform z-10"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center gap-2 text-slate-400">
+                    <PhotoIcon className="w-8 h-8" />
+                    <span className="text-[10px] font-medium">Belum ada gambar</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </AdminCard>
 
