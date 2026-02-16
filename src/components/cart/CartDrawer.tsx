@@ -9,12 +9,14 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outl
 import { SiteSettings } from "@/types/cms";
 import { getCurrentUserProfile, createOrder } from "@/app/actions/order-actions";
 import { useRouter } from "next/navigation";
+import CheckoutAnimation from "./CheckoutAnimation";
 
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart } = useCart();
   const { setIsLoading } = useLoading();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const [showCheckoutAnim, setShowCheckoutAnim] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
@@ -84,9 +86,11 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       
       const encodedMessage = encodeURIComponent(message);
       
-      // Brief delay for nice UX
-      await new Promise(r => setTimeout(r, 800));
-      setIsLoading(false);
+      // Brief delay for nice UX and Show Animation
+      setIsLoading(false); // Stop global loader
+      setShowCheckoutAnim(true); // Start local animation
+      
+      await new Promise(r => setTimeout(r, 2000)); // Show animation for enough time
       
       // Open WhatsApp - Mobile-first approach
       const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
@@ -100,6 +104,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       }
       
       // Cleanup
+      setShowCheckoutAnim(false);
       clearCart();
       setIsCartOpen(false);
 
@@ -250,6 +255,13 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           </div>
         )}
       </aside>
+
+      {/* Checkout Animation Overlay */}
+      {showCheckoutAnim && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/95 backdrop-blur-sm animate-fade-in">
+          <CheckoutAnimation />
+        </div>
+      )}
     </>
   );
 }
