@@ -43,7 +43,7 @@ const COLOR_GROUPS: { title: string; fields: ColorFieldConfig[] }[] = [
 ];
 
 export default function ThemePanel() {
-  const { isEditMode, theme, updateTheme } = useEditMode();
+  const { isEditMode, theme, updateTheme, setPanelOpen } = useEditMode();
   const [isOpen, setIsOpen] = useState(false);
   const [localTheme, setLocalTheme] = useState<UITheme>(theme);
   const [hasChanges, setHasChanges] = useState(false);
@@ -96,8 +96,12 @@ export default function ThemePanel() {
     <>
       {/* Toggle Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-20 md:bottom-6 left-4 z-[200] flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-600 text-white text-sm font-bold shadow-2xl hover:shadow-xl transition-all"
+        onClick={() => {
+          const next = !isOpen;
+          setIsOpen(next);
+          setPanelOpen(next);
+        }}
+        className="fixed bottom-20 md:bottom-6 left-4 z-[200] flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-600 text-white text-sm font-bold shadow-2xl hover:shadow-xl transition-all editor-control"
       >
         <span className="material-symbols-outlined text-xl">palette</span>
         Theme
@@ -113,14 +117,17 @@ export default function ThemePanel() {
               {hasChanges && (
                 <button 
                   onClick={handleSave}
-                  className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors editor-control"
                 >
                   Simpan
                 </button>
               )}
               <button 
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors"
+                onClick={() => {
+                  setIsOpen(false);
+                  setPanelOpen(false);
+                }}
+                className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors editor-control"
               >
                 <span className="material-symbols-outlined text-slate-400">close</span>
               </button>

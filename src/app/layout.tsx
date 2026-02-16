@@ -66,7 +66,9 @@ export default async function RootLayout({
             <LoadingProvider>
               <CartProvider>
                 <TrafficTracker />
-                {children}
+                <div id="main-content" className="min-h-screen">
+                  {children}
+                </div>
                 <CartDrawer siteSettings={siteSettings} />
                 <BottomNav />
                 <EditModeToggle />

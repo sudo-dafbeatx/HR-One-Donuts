@@ -8,13 +8,13 @@ export default function EditModeToggle() {
   if (!isAdmin) return null;
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 right-4 z-[200] flex flex-col items-end gap-2">
+    <div className="fixed bottom-6 right-6 z-[200] flex flex-col items-end gap-2">
       {/* Status Message */}
       {lastMessage && (
-        <div className={`px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg animate-fade-in ${
+        <div className={`px-4 py-2 rounded-2xl text-xs font-black shadow-2xl animate-fade-in ${
           lastMessage.startsWith('✅') 
-            ? 'bg-green-500 text-white' 
-            : 'bg-red-500 text-white'
+            ? 'bg-green-600 text-white' 
+            : 'bg-red-600 text-white'
         }`}>
           {lastMessage}
         </div>
@@ -22,7 +22,7 @@ export default function EditModeToggle() {
 
       {/* Saving Indicator */}
       {isSaving && (
-        <div className="px-3 py-1.5 rounded-lg text-xs font-bold bg-blue-500 text-white shadow-lg animate-pulse">
+        <div className="px-4 py-2 rounded-2xl text-xs font-black bg-blue-600 text-white shadow-2xl animate-pulse">
           Menyimpan...
         </div>
       )}
@@ -30,10 +30,10 @@ export default function EditModeToggle() {
       {/* Toggle Button */}
       <button
         onClick={toggleEditMode}
-        className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-bold shadow-2xl transition-all duration-300 ${
-          isEditMode
-            ? 'bg-blue-600 text-white ring-4 ring-blue-300/50 hover:bg-blue-700 scale-105'
-            : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:shadow-xl'
+        className={`flex items-center gap-2 px-6 py-3.5 rounded-2xl font-bold shadow-2xl transition-all active:scale-95 editor-control ${
+          isEditMode 
+            ? 'bg-red-500 text-white hover:bg-red-600 ring-4 ring-red-100' 
+            : 'bg-primary text-white hover:opacity-90 ring-4 ring-primary/20'
         }`}
       >
         <span className="material-symbols-outlined text-xl">

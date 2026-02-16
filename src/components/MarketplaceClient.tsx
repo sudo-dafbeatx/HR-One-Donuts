@@ -1,179 +1,182 @@
-"use client";
+'use client';
 
 import React from 'react';
-import { Product } from '@/types/cms';
-import { useCart } from "@/context/CartContext";
-import { useLoading } from "@/context/LoadingContext";
 import Link from 'next/link';
-import Image from 'next/image';
-import { isPromoActive, getEffectivePrice } from '@/lib/product-utils';
+import { Product } from '@/types/cms';
+import { useCart } from '@/context/CartContext';
+import { useLoading } from '@/context/LoadingContext';
+import { useEditMode } from '@/context/EditModeContext';
 import { DEFAULT_COPY } from '@/lib/theme-defaults';
 import EditableText from '@/components/cms/EditableText';
-import { useEditMode } from '@/context/EditModeContext';
 
 interface MarketplaceClientProps {
   initialProducts: Product[];
-  categories?: string[];
+  categories: { id: string; name: string }[];
   copy?: Record<string, string>;
 }
 
 export default function MarketplaceClient({ initialProducts, categories = [], copy: _copy }: MarketplaceClientProps) {
-  const { copy: liveCopy } = useEditMode();
+  const { isEditMode, copy: liveCopy, updateProduct } = useEditMode();
   const copy = liveCopy || _copy || DEFAULT_COPY;
   const { addToCart } = useCart();
   const { setIsLoading } = useLoading();
   const [activeCategory, setActiveCategory] = React.useState<string>('Semua');
-  
-  const sortedProducts = [...initialProducts].sort((a, b) => {
-    const isAPromo = isPromoActive(a) ? 1 : 0;
-    const isBPromo = isPromoActive(b) ? 1 : 0;
-    if (isAPromo !== isBPromo) return isBPromo - isAPromo;
-    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
-  });
+
+  const [localProducts, setLocalProducts] = React.useState<Product[]>(initialProducts);
+
+  const sortedProducts = React.useMemo(() => {
+    return [...localProducts].sort((a, b) => {
+      const isAPromo = isPromoActive(a) ? 1 : 0;
+      const isBPromo = isPromoActive(b) ? 1 : 0;
+      if (isAPromo !== isBPromo) return isBPromo - isAPromo;
+      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    });
+  }, [localProducts]);
 
   const filteredProducts = activeCategory === 'Semua' 
     ? sortedProducts 
     : sortedProducts.filter(p => p.category === activeCategory);
 
-  const allCategories = ['Semua', ...categories];
+  function isPromoActive(p: Product) {
+    if (p.sale_type === 'normal') return false;
+    const now = new Date();
+    if (p.promo_start && new Date(p.promo_start) > now) return false;
+    if (p.promo_end && new Date(p.promo_end) < now) return false;
+    return true;
+  }
 
-  const categoryIcons: Record<string, string> = {
-    'Semua': 'apps',
-    'Glazed': 'donut_large',
-    'Savory': 'restaurant',
-    'Box Sets': 'inventory_2',
-    'Limited': 'new_releases',
-    'Drinks': 'local_cafe',
-    'Donat': 'donut_large',
-    'Minuman': 'local_cafe',
-    'Paket': 'inventory_2',
-  };
+  function getEffectivePrice(p: Product) {
+    if (isPromoActive(p) && (p.discount_percent ?? 0) > 0) {
+      return p.price * (1 - (p.discount_percent ?? 0) / 100);
+    }
+    return p.price;
+  }
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Icon-based Category Navigation */}
-      {categories.length > 0 && (
-        <div className="flex justify-start gap-4 overflow-x-auto pb-2 no-scrollbar">
-          {allCategories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className="flex flex-col items-center gap-1.5 min-w-[60px] md:min-w-[70px] cursor-pointer group"
-            >
-              <div className={`size-12 rounded-2xl flex items-center justify-center transition-all ${
-                activeCategory === cat 
-                  ? 'bg-primary/15 ring-2 ring-primary/30' 
-                  : 'bg-primary/5 group-hover:bg-primary/10'
-              }`}>
-                <span className={`material-symbols-outlined text-2xl transition-colors ${
-                  activeCategory === cat ? 'text-primary' : 'text-slate-500'
-                }`}>
-                  {categoryIcons[cat] || 'category'}
-                </span>
-              </div>
-              <span className={`text-[11px] font-semibold transition-colors ${
-                activeCategory === cat ? 'text-primary' : 'text-slate-600'
-              }`}>
-                {cat}
-              </span>
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Product Grid Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h3 className="font-display text-xl md:text-2xl font-bold"><EditableText copyKey="section_catalog" /></h3>
-          <div className="h-5 w-px bg-slate-300 dark:bg-slate-700 hidden sm:block"></div>
-          <p className="text-slate-500 text-xs hidden sm:block"><EditableText copyKey="section_catalog_desc" /></p>
-        </div>
-        <div className="flex gap-2">
-          <button className="size-9 md:size-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-white transition-all text-slate-400 hover:text-primary">
-            <span className="material-symbols-outlined text-xl">filter_list</span>
+    <section className="py-12 px-4 max-w-7xl mx-auto">
+      {/* Categories */}
+      <div className="flex items-center gap-3 overflow-x-auto pb-6 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+        <button
+          onClick={() => setActiveCategory('Semua')}
+          className={`flex-shrink-0 px-6 py-2.5 rounded-full text-xs font-black transition-all ${
+            activeCategory === 'Semua'
+              ? 'bg-primary text-white shadow-lg shadow-primary/25'
+              : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100'
+          }`}
+        >
+          Semua
+        </button>
+        {categories.map(cat => (
+          <button
+            key={cat.id}
+            onClick={() => setActiveCategory(cat.name)}
+            className={`flex-shrink-0 px-6 py-2.5 rounded-full text-xs font-black transition-all ${
+              activeCategory === cat.name
+                ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                : 'bg-white text-slate-500 hover:bg-slate-50 border border-slate-100'
+            }`}
+          >
+            {cat.name}
           </button>
-          <button className="size-9 md:size-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-white transition-all text-slate-400 hover:text-primary">
-            <span className="material-symbols-outlined text-xl">sort</span>
-          </button>
-        </div>
+        ))}
       </div>
 
-      {/* Product Grid */}
+      {/* Grid */}
       {filteredProducts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-          <p className="text-xl font-medium">{copy.empty_category}</p>
+        <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+           <p className="text-slate-400 font-bold text-sm">Tidak ada produk di kategori ini.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
           {filteredProducts.map((product) => {
-            const hasActivePromo = isPromoActive(product);
-            const hasDiscount = hasActivePromo && product.discount_percent && product.discount_percent > 0;
-
+            const hasDiscount = isPromoActive(product) && (product.discount_percent ?? 0) > 0;
             return (
               <div 
                 key={product.id} 
-                className="rounded-lg overflow-hidden border flex flex-col shadow-sm hover:shadow-md transition-shadow"
-                style={{ 
-                  backgroundColor: 'var(--theme-card-bg)',
-                  borderColor: 'var(--theme-card-border)'
-                }}
+                className="group bg-white dark:bg-slate-900 rounded-[var(--theme-card-radius)] overflow-hidden border border-[var(--theme-card-border)] hover:border-primary/30 transition-all duration-300 flex flex-col h-full hover:shadow-xl group"
               >
                 {/* Image */}
-                <div className="aspect-square relative overflow-hidden bg-white">
+                <div className="aspect-square relative overflow-hidden bg-slate-50 shrink-0">
                   {product.image_url ? (
-                    <Image 
+                    <img 
                       src={product.image_url} 
-                      alt={product.name} 
-                      fill 
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
-                      className="object-cover" 
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="size-full flex items-center justify-center text-4xl bg-slate-50">🍩</div>
+                    <div className="w-full h-full flex items-center justify-center text-slate-200">
+                      <span className="material-symbols-outlined text-4xl">image</span>
+                    </div>
                   )}
-                  
-                  {/* Badge */}
                   {hasDiscount && (
-                    <span className="absolute top-2 left-2 bg-primary text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
+                    <span className="absolute top-2 left-2 bg-red-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm z-10">
                       {copy.badge_promo}
                     </span>
                   )}
-                  {product.tag && !hasDiscount && (
-                    <span className="absolute top-2 left-2 bg-blue-800 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
-                      {product.tag.toUpperCase()}
-                    </span>
-                  )}
+                  {/* Tags */}
+                  <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-10">
+                    {product.tag && (
+                      <span className="px-2 py-0.5 bg-black/60 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-wider rounded-md">
+                        {product.tag}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-2.5 flex flex-col flex-1 bg-white dark:bg-slate-900">
+                {/* Product Info */}
+                <div className="p-3 md:p-4 flex flex-col flex-1">
                   <Link href={`/catalog/${product.id}`}>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate mb-1 hover:text-primary transition-colors">
-                      {product.name}
-                    </h4>
+                    <EditableProductField 
+                      productId={product.id} 
+                      value={product.name} 
+                      onSave={(val) => {
+                        updateProduct(product.id, { name: val });
+                        setLocalProducts(prev => prev.map(p => p.id === product.id ? { ...p, name: val } : p));
+                      }}
+                      className="font-display font-black text-sm md:text-base text-slate-800 leading-tight mb-1 line-clamp-2"
+                    />
                   </Link>
+
                   <div className="mt-auto">
                     {hasDiscount && (
                       <div className="text-[9px] text-slate-400 line-through">
                         Rp {product.price.toLocaleString("id-ID")}
                       </div>
                     )}
-                    <div className="text-sm font-extrabold text-primary">
-                      Rp {getEffectivePrice(product).toLocaleString("id-ID")}
+                    <div className="flex items-baseline gap-2 mb-3">
+                      <EditableProductField 
+                        productId={product.id} 
+                        value={String(getEffectivePrice(product))}
+                        type="number"
+                        onSave={(val) => {
+                          const price = parseInt(val);
+                          updateProduct(product.id, { price });
+                          setLocalProducts(prev => prev.map(p => p.id === product.id ? { ...p, price } : p));
+                        }}
+                        className="text-primary font-black text-sm md:text-lg"
+                        prefix="Rp "
+                      />
                     </div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <span className="text-[9px] text-slate-500 dark:text-slate-400">
+                    
+                    <div className="flex items-center gap-1 mb-3">
+                      <span className="text-[9px] text-slate-500 font-bold uppercase tracking-tight">
                         {copy.sold_label} {product.sold_count || 0}+
                       </span>
                     </div>
+
                     <button
                       onClick={async () => {
                         setIsLoading(true, 'Sabar ya...');
-                        addToCart({ id: product.id, name: product.name, price: getEffectivePrice(product), image: product.image_url || '' }, 1);
+                        addToCart({
+                          id: product.id,
+                          name: product.name,
+                          price: getEffectivePrice(product),
+                          image: product.image_url || ''
+                        }, 1);
                         await new Promise(r => setTimeout(r, 600));
                         setIsLoading(false);
                       }}
-                      className="w-full mt-2 py-1.5 rounded-md bg-primary text-white text-[10px] font-bold hover:bg-primary/90 active:scale-95 transition-all"
+                      className="w-full py-1.5 rounded-md bg-primary text-white text-[10px] font-bold hover:bg-primary/90 active:scale-95 transition-all editor-control"
                     >
                       <EditableText copyKey="cta_add_cart" />
                     </button>
@@ -184,6 +187,77 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
           })}
         </div>
       )}
+    </section>
+  );
+}
+
+function EditableProductField({ 
+  productId, 
+  value, 
+  onSave, 
+  className, 
+  type = 'text',
+  prefix = ''
+}: { 
+  productId: string; 
+  value: string; 
+  onSave: (val: string) => void; 
+  className: string;
+  type?: 'text' | 'number';
+  prefix?: string;
+}) {
+  const { isEditMode } = useEditMode();
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editValue, setEditValue] = React.useState(value);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleSave = () => {
+    if (editValue !== value && editValue.trim()) {
+      onSave(editValue.trim());
+    }
+    setIsEditing(false);
+  };
+
+  if (!isEditMode) {
+    return (
+      <div className={className}>
+        {prefix}{type === 'number' ? Number(value).toLocaleString('id-ID') : value}
+      </div>
+    );
+  }
+
+  if (isEditing) {
+    return (
+      <input
+        ref={inputRef}
+        type={type}
+        value={editValue}
+        onChange={(e) => setEditValue(e.target.value)}
+        onBlur={handleSave}
+        onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+        className={`${className} bg-white text-slate-900 border-2 border-blue-500 rounded px-1 outline-none w-full editor-control`}
+      />
+    );
+  }
+
+  return (
+    <div 
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setEditValue(value);
+        setIsEditing(true);
+      }}
+      className={`${className} cursor-pointer hover:ring-2 hover:ring-blue-400 p-1 rounded transition-all editor-control`}
+    >
+      {prefix}{type === 'number' ? Number(value).toLocaleString('id-ID') : value}
     </div>
   );
 }

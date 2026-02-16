@@ -178,6 +178,26 @@ textarea {
   animation: slide-in-left 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Edit Mode refinements */
+body.edit-mode-active a, 
+body.edit-mode-active button:not(.editor-control),
+body.edit-mode-active [role="button"]:not(.editor-control) {
+  pointer-events: none !important;
+  cursor: default !important;
+  opacity: 0.6;
+}
+
+body.edit-mode-panel-open #main-content {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(320px);
+}
+
+@media (max-width: 768px) {
+  body.edit-mode-panel-open #main-content {
+    transform: translateX(280px);
+  }
+}
+
 @media (max-width: 768px) {
   .backdrop-blur-xl {
     backdrop-filter: blur(8px);

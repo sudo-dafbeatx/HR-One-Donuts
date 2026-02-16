@@ -14,8 +14,10 @@ interface EditModeContextType {
   theme: UITheme;
   updateCopy: (key: string, value: string) => Promise<void>;
   updateTheme: (updates: Partial<UITheme>) => Promise<void>;
+  updateProduct: (id: string, updates: { name?: string; price?: number }) => Promise<void>;
   isSaving: boolean;
   lastMessage: string;
+  setPanelOpen: (isOpen: boolean) => void;
 }
 
 const EditModeContext = createContext<EditModeContextType>({
@@ -26,8 +28,10 @@ const EditModeContext = createContext<EditModeContextType>({
   theme: DEFAULT_THEME,
   updateCopy: async () => {},
   updateTheme: async () => {},
+  updateProduct: async () => {},
   isSaving: false,
   lastMessage: '',
+  setPanelOpen: () => {},
 });
 
 export function useEditMode() {
@@ -72,9 +76,25 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
 
   const toggleEditMode = useCallback(() => {
     if (!isAdmin) return;
-    setIsEditMode(prev => !prev);
+    setIsEditMode(prev => {
+      const next = !prev;
+      if (next) {
+        document.body.classList.add('edit-mode-active');
+      } else {
+        document.body.classList.remove('edit-mode-active', 'edit-mode-panel-open');
+      }
+      return next;
+    });
     setLastMessage('');
   }, [isAdmin]);
+
+  const setPanelOpen = useCallback((isOpen: boolean) => {
+    if (isOpen) {
+      document.body.classList.add('edit-mode-panel-open');
+    } else {
+      document.body.classList.remove('edit-mode-panel-open');
+    }
+  }, []);
 
   const updateCopy = useCallback(async (key: string, value: string) => {
     const previousValue = copy[key];
@@ -141,8 +161,27 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
     }
   }, [theme]);
 
+  const updateProduct = useCallback(async (id: string, updates: { name?: string; price?: number }) => {
+    setIsSaving(true);
+    setLastMessage('');
+    try {
+      startTransition(async () => {
+        // We use saveProduct but only with the partial updates
+        const { saveProduct } = await import('@/app/admin/actions');
+        await saveProduct({ id, ...updates } as any);
+        setIsSaving(false);
+        setLastMessage('✅ Produk diperbarui!');
+        setTimeout(() => setLastMessage(''), 2000);
+      });
+    } catch {
+      setIsSaving(false);
+      setLastMessage('❌ Gagal update produk');
+      setTimeout(() => setLastMessage(''), 3000);
+    }
+  }, []);
+
   return (
-    <EditModeContext.Provider value={{ isEditMode, isAdmin, toggleEditMode, copy, theme, updateCopy, updateTheme, isSaving, lastMessage }}>
+    <EditModeContext.Provider value={{ isEditMode, isAdmin, toggleEditMode, copy, theme, updateCopy, updateTheme, updateProduct, isSaving, lastMessage, setPanelOpen }}>
       {children}
     </EditModeContext.Provider>
   );

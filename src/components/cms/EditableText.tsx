@@ -71,7 +71,7 @@ export default function EditableText({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
-            className={`${className} bg-white ring-2 ring-blue-500 rounded px-1 py-0.5 outline-none min-w-[100px] resize-none`}
+            className={`${className} bg-white ring-2 ring-blue-500 rounded px-1 py-0.5 outline-none min-w-[100px] resize-none editor-control`}
             rows={2}
           />
         ) : (
@@ -82,7 +82,7 @@ export default function EditableText({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
-            className={`${className} bg-white text-slate-900 ring-2 ring-blue-500 rounded px-1 py-0.5 outline-none min-w-[60px]`}
+            className={`${className} bg-white text-slate-900 ring-2 ring-blue-500 rounded px-1 py-0.5 outline-none min-w-[60px] editor-control`}
             style={{ width: `${Math.max(editValue.length * 8, 60)}px` }}
           />
         )}
@@ -93,7 +93,7 @@ export default function EditableText({
   // Edit mode, not editing: hoverable
   return (
     <Tag
-      className={`${className} cursor-pointer transition-all duration-150 hover:ring-2 hover:ring-blue-400 hover:ring-offset-1 hover:rounded`}
+      className={`${className} cursor-pointer transition-all duration-150 hover:ring-2 hover:ring-blue-400 hover:ring-offset-1 hover:rounded editor-control`}
       style={style}
       onClick={handleStartEdit}
       title={`Klik untuk edit "${copyKey}"`}
