@@ -40,6 +40,22 @@ function LoginContent() {
   const [profileCompletionStep, setProfileCompletionStep] = useState(false);
   const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
   const [countdown, setCountdown] = useState(60);
+  const [throttleWarning, setThrottleWarning] = useState(false);
+  const lastSubmitRef = useRef<number>(0);
+  const THROTTLE_MS = 2500; // 2.5 second cooldown
+
+  // Throttle guard — returns true if the action is allowed
+  const canSubmit = () => {
+    const now = Date.now();
+    if (now - lastSubmitRef.current < THROTTLE_MS) {
+      // Show throttle warning briefly
+      setThrottleWarning(true);
+      setTimeout(() => setThrottleWarning(false), 2000);
+      return false;
+    }
+    lastSubmitRef.current = now;
+    return true;
+  };
 
   // Sync local loading with global loading
   useEffect(() => {
@@ -150,6 +166,7 @@ function LoginContent() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canSubmit()) return;
     setError('');
     setLoading(true);
 
@@ -232,6 +249,7 @@ function LoginContent() {
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canSubmit()) return;
     setError('');
     setLoading(true);
 
@@ -271,6 +289,7 @@ function LoginContent() {
 
   const handleProfileCompletion = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canSubmit()) return;
     setError('');
     setLoading(true);
 
@@ -352,6 +371,7 @@ function LoginContent() {
   };
 
   const handleGoogleLogin = async () => {
+    if (!canSubmit()) return;
     setError('');
     setLoading(true);
 
@@ -778,6 +798,15 @@ function LoginContent() {
   // ═══════════════════════════════════════════════════════
   return (
     <div className="bg-[#eef5ff] min-h-screen flex items-center justify-center p-6 uiverse-bg">
+      {/* Throttle Warning Toast */}
+      {throttleWarning && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 px-5 py-3 rounded-2xl shadow-xl text-sm font-semibold flex items-center gap-2">
+            <span className="material-symbols-outlined text-amber-500 text-base">hourglass_top</span>
+            Tunggu sebentar, sedang diproses...
+          </div>
+        </div>
+      )}
       <div className="relative z-10 w-full max-w-[480px]">
         {/* Brand */}
         <div className="flex flex-col items-center mb-8">
