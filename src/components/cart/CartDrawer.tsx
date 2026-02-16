@@ -5,7 +5,6 @@ import { useLoading } from "@/context/LoadingContext";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { incrementSoldCount } from "@/app/admin/actions";
 
 import { SiteSettings } from "@/types/cms";
 import { getCurrentUserProfile, createOrder } from "@/app/actions/order-actions";
@@ -46,7 +45,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         return;
       }
 
-      // 3. Save Order to Database
+      // 3. Save Order to Database (this also tracks sales volume internally)
       await createOrder({
         total_amount: totalPrice,
         total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
@@ -59,15 +58,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         }))
       });
 
-      // 4. Also track sales volume via old method if still used
-      try {
-        const productIds = cart.map(item => item.id);
-        await incrementSoldCount(productIds);
-      } catch {
-        console.warn('Individual sold count track failed, but main order saved');
-      }
-
-      // 5. Generate WhatsApp Message
+      // 4. Generate WhatsApp Message
       const phone = siteSettings?.whatsapp_number || "6285810658117";
       let message = `Halo ${siteSettings?.store_name || "HR-One Donuts"}! 🍩\n\n`;
       message += `*PESANAN BARU DARI WEBSITE*\n`;
