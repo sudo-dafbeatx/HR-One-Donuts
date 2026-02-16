@@ -40,36 +40,30 @@ export default async function Home() {
   const categories = categoryData?.map(c => c.name) || [];
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-white">
+    <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark">
       <Navbar siteSettings={siteSettings} />
       
-      <main className="flex-1">
+      <main className="flex-1 max-w-[1440px] mx-auto w-full px-0 py-4">
+        {/* Marketplace Banners */}
         <Hero 
           title={siteSettings?.store_name} 
           subtitle={siteSettings?.tagline}
         />
 
+        {/* Flash Sale */}
         <Suspense fallback={<FlashSaleSkeleton />}>
           <FlashSaleServer />
         </Suspense>
 
-        <div className="max-w-[1440px] mx-auto px-4 py-6 md:py-10">
-          <div className="mb-10">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg md:text-xl font-bold text-slate-800 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-primary rounded-full"></span>
-                Katalog Produk
-              </h2>
-              <div className="text-xs text-primary font-bold border-b border-primary/20 pb-0.5">Lihat Semua</div>
+        {/* Product Catalog */}
+        <div className="px-4 lg:px-6 py-4 md:py-6">
+          {!products || products.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-slate-500">
+              <p className="text-lg font-medium">Belum ada produk aktif.</p>
             </div>
-            {!products || products.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-slate-500">
-                <p className="text-lg font-medium">Belum ada produk aktif.</p>
-              </div>
-            ) : (
-              <MarketplaceClient initialProducts={products as Product[]} categories={categories || []} />
-            )}
-          </div>
+          ) : (
+            <MarketplaceClient initialProducts={products as Product[]} categories={categories || []} />
+          )}
         </div>
       </main>
       

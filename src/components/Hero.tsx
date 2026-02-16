@@ -15,45 +15,59 @@ export default function Hero({
   imageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuAXIR0NVLdHD_MI5GKsJ_lHQ6WvlKEcvsmFg4qrbYJYAwgXD5sPT2msVMxBIdCIiSZ02NSsPtSwhyDmDiCiyn-8HSERoHwWitavGEyzCSrvjkPwk6UnA7gyaY6Wc-z_oZFMyMTaaMSR81uooBmN61Q4p8TH3bSSuJEsapzRyrQLcQete1XFZFv7sLUtJ1A4CNQCr_Pa6JGtC9d3uIAScGkAxRxLF9R1PVvgYUg9cYK5X4N8cxqnuFxHFQubWdihBeoksviXVH1Fjg"
 }: HeroProps) {
   return (
-    <section className="w-full max-w-[1440px] mx-auto px-4 md:px-8 py-4 overflow-hidden">
-      <div className="relative w-full aspect-[21/9] lg:aspect-[4/1] rounded-2xl overflow-hidden bg-slate-100 group shadow-sm border border-slate-100">
-        {/* Banner Images (Slider Mockup) */}
-        <div className="absolute inset-0">
-          <Image 
-            src={imageUrl}
-            alt="Promo Banner"
-            fill
-            className="w-full h-full object-cover"
-            priority
-            sizes="100vw"
-          />
+    <section className="mb-4 md:mb-6 overflow-hidden bg-transparent">
+      <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 snap-x px-4 lg:px-6">
+        {/* Flash Sale Banner */}
+        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-primary relative overflow-hidden snap-start shrink-0">
+          <div className="absolute inset-0 p-4 flex flex-col justify-center text-white z-10">
+            <span className="text-[10px] font-bold uppercase mb-1 opacity-80">Flash Sale</span>
+            <h4 className="font-bold text-lg leading-tight">Diskon s.d 50%<br/>Jam 14:00 - 16:00</h4>
+          </div>
+          <div className="absolute right-[-20px] top-1/2 -translate-y-1/2 size-24 opacity-40 relative">
+            <Image
+              src={imageUrl}
+              alt="Flash Sale"
+              fill
+              className="object-contain"
+              sizes="96px"
+            />
+          </div>
         </div>
 
-        {/* Minimalist Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10"></div>
+        {/* Jumat Berkah Banner */}
+        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-emerald-600 relative overflow-hidden snap-start shrink-0">
+          <div className="absolute inset-0 p-4 flex flex-col justify-center text-white z-10">
+            <span className="text-[10px] font-bold uppercase mb-1 opacity-80">Jumat Berkah</span>
+            <h4 className="font-bold text-lg leading-tight">Beli 1 Lusin<br/>Gratis 2 Donat</h4>
+          </div>
+          <div className="absolute right-[-20px] top-1/2 -translate-y-1/2 size-24 opacity-40 relative">
+            <Image
+              src={imageUrl}
+              alt="Jumat Berkah"
+              fill
+              className="object-contain"
+              sizes="96px"
+            />
+          </div>
+        </div>
 
-        {/* Navigation Dots (Shopee Style) */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 bg-black/10 backdrop-blur-sm px-2 py-1.5 rounded-full">
-          <div className="size-1.5 rounded-full bg-primary ring-2 ring-primary/20"></div>
-          <div className="size-1.5 rounded-full bg-white/60"></div>
-          <div className="size-1.5 rounded-full bg-white/60"></div>
+        {/* Takjil Series Banner */}
+        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-orange-500 relative overflow-hidden snap-start shrink-0">
+          <div className="absolute inset-0 p-4 flex flex-col justify-center text-white z-10">
+            <span className="text-[10px] font-bold uppercase mb-1 opacity-80">Takjil Series</span>
+            <h4 className="font-bold text-lg leading-tight">Menu Buka Puasa<br/>Mulai Rp 10rb</h4>
+          </div>
+          <div className="absolute right-[-20px] top-1/2 -translate-y-1/2 size-24 opacity-40 relative">
+            <Image
+              src={imageUrl}
+              alt="Takjil Series"
+              fill
+              className="object-contain"
+              sizes="96px"
+            />
+          </div>
         </div>
       </div>
-      
-      <style jsx>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slide-up {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in { animation: fade-in 0.8s ease-out forwards; }
-        .animate-fade-in-delayed { animation: fade-in 0.8s ease-out 0.6s both; }
-        .animate-slide-up { animation: slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        .animate-slide-up-delayed { animation: slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s both; }
-      `}</style>
     </section>
   );
 }
