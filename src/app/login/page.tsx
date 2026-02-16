@@ -9,6 +9,7 @@ import { useLoading } from '@/context/LoadingContext';
 
 import { logTraffic } from '@/app/actions/traffic-actions';
 import { verifyCaptcha } from '@/app/actions/verify-captcha';
+import { SiteSettings } from '@/types/cms';
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
@@ -41,6 +42,7 @@ function LoginContent() {
   const [profileCompletionStep, setProfileCompletionStep] = useState(false);
   const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
   const [countdown, setCountdown] = useState(60);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [throttleWarning, setThrottleWarning] = useState(false);
   const lastSubmitRef = useRef<number>(0);
   const THROTTLE_MS = 2500; // 2.5 second cooldown
@@ -74,6 +76,22 @@ function LoginContent() {
   const supabase = createClient();
   
   const redirectTo = searchParams.get('next') || '/';
+
+  // Fetch Site Settings
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const { data } = await supabase
+        .from('settings')
+        .select('value')
+        .eq('key', 'site_info')
+        .maybeSingle();
+      
+      if (data?.value) {
+        setSiteSettings(data.value as unknown as SiteSettings);
+      }
+    };
+    fetchSettings();
+  }, [supabase]);
 
   const handleRedirection = useCallback(async (userId: string) => {
     const attemptFetchAndRedirect = async (count: number): Promise<void> => {
@@ -410,13 +428,15 @@ function LoginContent() {
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
                   <NextImage 
-                    src="/images/logo-hr-one.png" 
-                    alt="HR-One Donuts" 
+                    src={siteSettings?.site_logo || "/images/logo-hr-one.png"} 
+                    alt={siteSettings?.store_name || "HR-One Donuts"} 
                     fill 
                     className="object-cover"
                   />
                 </div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">HR-One Donuts</h1>
+                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+                  {siteSettings?.store_name || "HR-One Donuts"}
+                </h1>
               </div>
               <h2 className="text-3xl font-bold text-slate-900 mb-2">Lengkapi Profil</h2>
               <p className="text-slate-500 font-medium">Bantu kami mengenal Anda untuk pengiriman yang pas!</p>
@@ -494,13 +514,15 @@ function LoginContent() {
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
                   <NextImage 
-                    src="/images/logo-hr-one.png" 
-                    alt="HR-One Donuts" 
+                    src={siteSettings?.site_logo || "/images/logo-hr-one.png"} 
+                    alt={siteSettings?.store_name || "HR-One Donuts"} 
                     fill 
                     className="object-cover"
                   />
                 </div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">HR-One Donuts</h1>
+                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+                  {siteSettings?.store_name || "HR-One Donuts"}
+                </h1>
               </div>
 
               <h2 className="text-3xl font-bold text-slate-900 mb-2">Verifikasi Email</h2>
@@ -597,16 +619,20 @@ function LoginContent() {
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
                   <NextImage 
-                    src="/images/logo-hr-one.png" 
-                    alt="HR-One Donuts" 
+                    src={siteSettings?.site_logo || "/images/logo-hr-one.png"} 
+                    alt={siteSettings?.store_name || "HR-One Donuts"} 
                     fill 
                     className="object-cover"
                   />
                 </div>
-                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">HR-One Donuts</h1>
+                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+                  {siteSettings?.store_name || "HR-One Donuts"}
+                </h1>
               </div>
               <h2 className="text-3xl font-bold text-slate-900 mb-2">Buat Akun Baru</h2>
-              <p className="text-slate-500 font-medium">Fresh and Smooth HR Management</p>
+              <p className="text-slate-500 font-medium">
+                {siteSettings?.tagline || "Fresh and Smooth HR Management"}
+              </p>
             </div>
 
             <div className="px-8 pb-10">
@@ -828,15 +854,19 @@ function LoginContent() {
         <div className="flex flex-col items-center mb-8">
           <div className="relative w-20 h-20 mb-4 rounded-full overflow-hidden border-4 border-white shadow-xl group-hover:scale-105 transition-transform">
             <NextImage 
-              src="/images/logo-hr-one.png" 
-              alt="HR-One Donuts" 
+              src={siteSettings?.site_logo || "/images/logo-hr-one.png"} 
+              alt={siteSettings?.store_name || "HR-One Donuts"} 
               fill 
               priority
               className="object-cover"
             />
           </div>
-          <h1 className="text-primary font-bold text-2xl tracking-tight">HR-One Donuts</h1>
-          <p className="text-slate-500 font-medium text-sm mt-1">Fresh and Smooth</p>
+          <h1 className="text-primary font-bold text-2xl tracking-tight">
+            {siteSettings?.store_name || "HR-One Donuts"}
+          </h1>
+          <p className="text-slate-500 font-medium text-sm mt-1">
+            {siteSettings?.tagline || "Fresh and Smooth"}
+          </p>
         </div>
 
         {/* Login Card */}
@@ -974,7 +1004,9 @@ function LoginContent() {
 
         {/* Footer */}
         <div className="mt-10 text-center">
-          <p className="text-slate-400 text-xs font-medium">© 2025 HR-One Donuts. All rights reserved.</p>
+          <p className="text-slate-400 text-xs font-medium">
+            © {new Date().getFullYear()} {siteSettings?.store_name || "HR-One Donuts"}. All rights reserved.
+          </p>
         </div>
       </div>
     </div>

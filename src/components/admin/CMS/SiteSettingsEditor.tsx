@@ -105,31 +105,32 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
             <div className="w-full md:w-1/4">
               <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Preview Logo</label>
               <div className="relative aspect-square bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center p-4 group">
-                {settings.site_logo ? (
-                  <>
-                    <div className="relative size-full">
-                      <Image 
-                        src={settings.site_logo} 
-                        alt="Logo Preview" 
-                        fill 
-                        className="object-contain"
-                      />
-                    </div>
-                    <button 
-                      type="button"
-                      onClick={() => setSettings({...settings, site_logo: undefined})}
-                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full shadow-lg hover:scale-110 transition-transform z-10 opacity-0 group-hover:opacity-100"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center gap-2 text-slate-400">
-                    <PhotoIcon className="w-8 h-8" />
-                    <span className="text-[10px] font-medium text-center">Belum ada logo</span>
-                  </div>
+                <div className="relative size-full">
+                  <Image 
+                    src={settings.site_logo || "/images/logo-hr-one.png"} 
+                    alt="Logo Preview" 
+                    fill 
+                    className="object-contain"
+                  />
+                </div>
+                {settings.site_logo && (
+                  <button 
+                    type="button"
+                    onClick={() => setSettings({...settings, site_logo: undefined})}
+                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full shadow-lg hover:scale-110 transition-transform z-10 opacity-0 group-hover:opacity-100"
+                    title="Hapus Logo"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                  </button>
                 )}
               </div>
+              <button
+                type="button"
+                onClick={() => setSettings({...settings, site_logo: undefined})}
+                className="mt-2 text-[10px] font-bold text-primary hover:underline uppercase tracking-widest"
+              >
+                Reset ke Default
+              </button>
             </div>
           </div>
         </div>

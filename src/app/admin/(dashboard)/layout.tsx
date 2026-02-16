@@ -8,6 +8,7 @@ import {
 } from '@heroicons/react/24/outline';
 import AdminMobileNav from '@/components/admin/AdminMobileNav';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import { SiteSettings } from '@/types/cms';
 
 export default async function AdminLayout({
   children,
@@ -33,6 +34,17 @@ export default async function AdminLayout({
     redirect('/');
   }
 
+  // Fetch site settings for branding
+  const { data: siteInfo } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'site_info')
+    .maybeSingle();
+  
+  const siteSettings = siteInfo?.value as unknown as SiteSettings | undefined;
+  const siteLogo = siteSettings?.site_logo;
+  const storeName = siteSettings?.store_name || "HR-One Donuts";
+
   const handleSignOut = async () => {
     'use server';
     const supabase = await createServerSupabaseClient();
@@ -43,7 +55,11 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-slate-50/50 flex">
       {/* Desktop Sidebar */}
-      <AdminSidebar userEmail={user.email || undefined} />
+      <AdminSidebar 
+        userEmail={user.email || undefined} 
+        siteLogo={siteLogo}
+        storeName={storeName}
+      />
       
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col md:pl-64">
@@ -52,10 +68,16 @@ export default async function AdminLayout({
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             {/* Mobile Nav Button & Title */}
             <div className="flex items-center gap-4">
-              <AdminMobileNav userEmail={user.email || undefined} />
+              <AdminMobileNav 
+                userEmail={user.email || undefined} 
+                siteLogo={siteLogo}
+                storeName={storeName}
+              />
               
               <div className="flex flex-col md:hidden">
-                <span className="text-base font-black text-slate-800 tracking-tighter leading-tight">HR-One <span className="text-primary">Donuts</span></span>
+                <span className="text-base font-black text-slate-800 tracking-tighter leading-tight">
+                  {storeName.split(' ')[0]} <span className="text-primary">{storeName.split(' ').slice(1).join(' ')}</span>
+                </span>
                 <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Admin</span>
               </div>
             </div>

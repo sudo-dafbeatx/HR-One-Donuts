@@ -152,6 +152,8 @@ export async function updateSettings(key: string, value: Record<string, unknown>
   if (error) throw new Error(error.message);
   
   revalidatePath('/');
+  revalidatePath('/login');
+  revalidatePath('/admin', 'layout');
   return { success: true };
 }
 
