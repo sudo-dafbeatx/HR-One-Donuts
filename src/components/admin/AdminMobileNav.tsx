@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -35,6 +35,11 @@ export default function AdminMobileNav({ userEmail }: { userEmail?: string }) {
   const supabase = createClient();
   const router = useRouter();
 
+  // Close when pathname changes
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/admin/login');
@@ -45,22 +50,26 @@ export default function AdminMobileNav({ userEmail }: { userEmail?: string }) {
     <div className="md:hidden">
       <button 
         onClick={() => setIsOpen(true)}
-        className="p-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors"
+        className="p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors"
       >
         <Bars3Icon className="size-6" />
       </button>
 
       {/* Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setIsOpen(false)}>
+        <div 
+          className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
+          onClick={() => setIsOpen(false)}
+        >
+          {/* Drawer from LEFT */}
           <div 
-            className="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-6 animate-slide-in-right"
+            className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-2xl p-6 flex flex-col transition-transform duration-300 transform translate-x-0"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-8">
               <div className="flex flex-col">
                 <span className="text-lg font-black text-slate-800 tracking-tighter">Admin <span className="text-primary">Menu</span></span>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{userEmail?.split('@')[0]}</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{userEmail?.split('@')[0]}</span>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
@@ -70,14 +79,13 @@ export default function AdminMobileNav({ userEmail }: { userEmail?: string }) {
               </button>
             </div>
 
-            <nav className="space-y-2">
+            <nav className="flex-1 space-y-1.5 overflow-y-auto">
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link 
                     key={item.href}
                     href={item.href} 
-                    onClick={() => setIsOpen(false)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
                       isActive 
                         ? "bg-primary text-white shadow-lg shadow-primary/20" 
@@ -89,26 +97,26 @@ export default function AdminMobileNav({ userEmail }: { userEmail?: string }) {
                   </Link>
                 );
               })}
-              
-              <div className="pt-4 mt-4 border-t border-slate-100 space-y-2">
-                <Link 
-                  href="/" 
-                  target="_blank"
-                  className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-500 hover:text-primary hover:bg-blue-50 transition-all"
-                >
-                  <ArrowTopRightOnSquareIcon className="size-5" />
-                  Lihat Website Live
-                </Link>
-                
-                <button 
-                  onClick={handleLogout}
-                  className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all w-full text-left"
-                >
-                  <ArrowRightOnRectangleIcon className="size-5" />
-                  Keluar Sistem
-                </button>
-              </div>
             </nav>
+            
+            <div className="pt-4 mt-4 border-t border-slate-100 space-y-2">
+              <Link 
+                href="/" 
+                target="_blank"
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-500 hover:text-primary hover:bg-blue-50 transition-all"
+              >
+                <ArrowTopRightOnSquareIcon className="size-5" />
+                Lihat Live Site
+              </Link>
+              
+              <button 
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all w-full text-left"
+              >
+                <ArrowRightOnRectangleIcon className="size-5" />
+                Keluar Sistem
+              </button>
+            </div>
           </div>
         </div>
       )}
