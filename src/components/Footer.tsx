@@ -85,7 +85,7 @@ export default function Footer({ siteSettings }: FooterProps) {
           <div className="flex gap-6 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
             <Link className="hover:text-primary transition-colors" href="/terms#privacy">Privasi</Link>
             <Link className="hover:text-primary transition-colors" href="/terms">Syarat</Link>
-            <a className="hover:text-primary transition-colors" href="#">Cookie</a>
+            <Link className="hover:text-primary transition-colors" href="/cookies">Cookie</Link>
           </div>
         </div>
       </div>
