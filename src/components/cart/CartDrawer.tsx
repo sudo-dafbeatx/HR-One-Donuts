@@ -31,7 +31,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       console.error('Failed to track sales:', e);
     }
 
-    const phone = siteSettings?.whatsapp_number || "6281234567890";
+    const phone = siteSettings?.whatsapp_number || "6285810658117";
     let message = `Halo ${siteSettings?.store_name || "HR-One Donuts"}! 🍩 Saya ingin memesan:\n\n`;
     
     cart.forEach((item) => {

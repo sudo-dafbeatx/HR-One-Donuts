@@ -69,7 +69,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
       {/* Floating WhatsApp Action */}
       <a
-        href={`https://wa.me/628123456789?text=Halo ${product.store_name || "HR-One Donuts"}, saya tertarik dengan ${product.name}`}
+        href={`https://wa.me/6285810658117?text=Halo ${product.store_name || "HR-One Donuts"}, saya tertarik dengan ${product.name}`}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white px-6 py-4 rounded-full shadow-2xl hover:scale-105 transition-transform"
