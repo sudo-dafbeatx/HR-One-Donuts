@@ -83,8 +83,8 @@ export default function Footer({ siteSettings }: FooterProps) {
             © 2025 {siteSettings?.store_name || "HR-One Donuts"}. Semua hak dilindungi.
           </p>
           <div className="flex gap-6 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-            <a className="hover:text-primary transition-colors" href="#">Privasi</a>
-            <a className="hover:text-primary transition-colors" href="#">Syarat</a>
+            <Link className="hover:text-primary transition-colors" href="/terms#privacy">Privasi</Link>
+            <Link className="hover:text-primary transition-colors" href="/terms">Syarat</Link>
             <a className="hover:text-primary transition-colors" href="#">Cookie</a>
           </div>
         </div>
