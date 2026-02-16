@@ -86,7 +86,7 @@ export default function Footer({ siteSettings }: FooterProps) {
             © 2025 {siteSettings?.store_name || "HR-One Donuts"}.
           </p>
           <div className="flex gap-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-            <Link className="hover:text-primary transition-colors" href="/terms#privacy">Privasi</Link>
+            <Link className="hover:text-primary transition-colors" href="/privacy">Privasi</Link>
             <Link className="hover:text-primary transition-colors" href="/terms">Syarat</Link>
             <Link className="hover:text-primary transition-colors" href="/cookies">Cookie</Link>
           </div>

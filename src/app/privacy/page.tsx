@@ -5,7 +5,7 @@ import { SiteSettings } from "@/types/cms";
 import { getCopy } from "@/lib/theme";
 import Link from "next/link";
 
-export default async function TermsPage() {
+export default async function PrivacyPage() {
   const supabase = await createServerSupabaseClient();
   const copy = await getCopy();
   
@@ -24,17 +24,17 @@ export default async function TermsPage() {
       
       <main className="max-w-4xl mx-auto px-4 md:px-6 py-12 md:py-20">
         <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-100">
-          <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 tracking-tight">Syarat & Ketentuan</h1>
+          <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 tracking-tight">Kebijakan Privasi</h1>
           
           <div className="space-y-10 text-slate-600 leading-relaxed">
             {/* Section 1 */}
             <section>
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">1</span>
-                Ketentuan Umum
+                Informasi yang Kami Kumpulkan
               </h2>
               <p className="pl-11">
-                Selamat datang di {siteSettings?.store_name || "HR-One Donuts"}. Dengan mengakses dan melakukan pemesanan di website kami, Anda dianggap telah menyetujui syarat dan ketentuan yang berlaku. Kami berhak mengubah syarat ini sewaktu-waktu tanpa pemberitahuan sebelumnya.
+                Kami mengumpulkan informasi yang Anda berikan langsung kepada kami saat melakukan pemesanan, seperti nama, nomor WhatsApp, dan alamat pengiriman. Kami juga dapat mengumpulkan informasi teknis secara otomatis saat Anda mengunjungi website kami.
               </p>
             </section>
 
@@ -42,13 +42,16 @@ export default async function TermsPage() {
             <section>
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">2</span>
-                Pemesanan & Pembayaran
+                Penggunaan Informasi
               </h2>
+              <p className="pl-11 mb-4">
+                Informasi Anda digunakan secara eksklusif untuk:
+              </p>
               <ul className="list-disc pl-16 space-y-2">
-                <li>Pemesanan dapat dilakukan melalui website dan diteruskan ke WhatsApp resmi kami.</li>
-                <li>Semua harga yang tertera adalah harga nett kecuali disebutkan lain.</li>
-                <li>Pembayaran dilakukan sesuai dengan metode yang disepakati melalui percakapan WhatsApp (Transfer Bank atau E-Wallet).</li>
-                <li>Pesanan baru akan diproses setelah bukti pembayaran divalidasi oleh admin kami.</li>
+                <li>Memproses dan mengirimkan pesanan donat Anda.</li>
+                <li>Menghubungi Anda melalui WhatsApp untuk konfirmasi pesanan atau status pengiriman.</li>
+                <li>Meningkatkan layanan dan pengalaman belanja Anda di website kami.</li>
+                <li>Kepentingan keamanan dan pencegahan penipuan.</li>
               </ul>
             </section>
 
@@ -56,23 +59,32 @@ export default async function TermsPage() {
             <section>
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">3</span>
-                Pengiriman
+                Perlindungan Data
               </h2>
-              <ul className="list-disc pl-16 space-y-2">
-                <li>Kami melayani pengiriman untuk wilayah {siteSettings?.address?.split(',')[0] || "Jakarta"} dan sekitarnya.</li>
-                <li>Biaya pengiriman ditentukan berdasarkan jarak dari outlet kami ke lokasi pengantaran.</li>
-                <li>Waktu pengiriman adalah estimasi. Kami tidak bertanggung jawab atas keterlambatan yang disebabkan oleh pihak ketiga atau kondisi luar biasa (cuaca, kemacetan parah).</li>
-              </ul>
+              <p className="pl-11">
+                Kami berkomitmen untuk menjaga keamanan data Anda. Kami menggunakan langkah-langkah teknis dan organisasi yang sesuai untuk melindungi informasi pribadi Anda dari akses yang tidak sah, perubahan, atau penghancuran.
+              </p>
             </section>
 
             {/* Section 4 */}
             <section>
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">4</span>
-                Kualitas Produk
+                Berbagi dengan Pihak Ketiga
               </h2>
               <p className="pl-11">
-                Donat kami dibuat segar setiap hari tanpa bahan pengawet. Kami merekomendasikan konsumsi di hari yang sama untuk rasa terbaik. Penyimpanan di tempat suhu ruangan yang sejuk atau lemari es dapat membantu menjaga tekstur donat.
+                Kami tidak akan menjual, menyewakan, atau memberikan informasi pribadi Anda kepada pihak ketiga untuk tujuan pemasaran tanpa izin Anda. Kami hanya berbagi informasi dengan mitra logistik kami untuk memfasilitasi pengiriman pesanan Anda.
+              </p>
+            </section>
+
+            {/* Section 5 */}
+            <section>
+              <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
+                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">5</span>
+                Hak Anda
+              </h2>
+              <p className="pl-11">
+                Anda memiliki hak untuk meminta akses ke informasi pribadi yang kami simpan tentang Anda, serta meminta koreksi atau penghapusan data tersebut jika diperlukan melalui kontak resmi kami.
               </p>
             </section>
           </div>
@@ -82,10 +94,10 @@ export default async function TermsPage() {
               Terakhir diperbarui: 17 Februari 2026
             </p>
             <Link 
-              href="/catalog" 
+              href="/" 
               className="px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-105 transition-all text-sm"
             >
-              Kembali ke Menu
+              Kembali ke Beranda
             </Link>
           </div>
         </div>
