@@ -35,7 +35,7 @@ export default function Hero({
         </div>
 
         {/* Jumat Berkah Banner */}
-        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-emerald-600 relative overflow-hidden snap-start shrink-0">
+        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-blue-700 relative overflow-hidden snap-start shrink-0">
           <div className="absolute inset-0 p-4 flex flex-col justify-center text-white z-10">
             <span className="text-[10px] font-bold uppercase mb-1 opacity-80">Jumat Berkah</span>
             <h4 className="font-bold text-lg leading-tight">Beli 1 Lusin<br/>Gratis 2 Donat</h4>
@@ -52,7 +52,7 @@ export default function Hero({
         </div>
 
         {/* Takjil Series Banner */}
-        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-orange-500 relative overflow-hidden snap-start shrink-0">
+        <div className="min-w-[280px] md:min-w-[320px] h-32 rounded-lg bg-blue-500 relative overflow-hidden snap-start shrink-0">
           <div className="absolute inset-0 p-4 flex flex-col justify-center text-white z-10">
             <span className="text-[10px] font-bold uppercase mb-1 opacity-80">Takjil Series</span>
             <h4 className="font-bold text-lg leading-tight">Menu Buka Puasa<br/>Mulai Rp 10rb</h4>

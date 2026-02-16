@@ -125,12 +125,12 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                   
                   {/* Badge */}
                   {hasDiscount && (
-                    <span className="absolute top-2 left-2 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
+                    <span className="absolute top-2 left-2 bg-primary text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
                       PROMO
                     </span>
                   )}
                   {product.tag && !hasDiscount && (
-                    <span className="absolute top-2 left-2 bg-black text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
+                    <span className="absolute top-2 left-2 bg-blue-800 text-white text-[8px] font-bold px-1.5 py-0.5 rounded">
                       {product.tag.toUpperCase()}
                     </span>
                   )}
