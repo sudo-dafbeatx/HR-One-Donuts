@@ -204,7 +204,7 @@ export async function getProductReviews(
     
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, full_name')
+      .select('id, full_name, avatar_url')
       .in('id', userIds);
 
     const profileMap = new Map(
@@ -216,7 +216,7 @@ export async function getProductReviews(
       return {
         ...review,
         reviewer_name: profile?.full_name || null,
-        reviewer_avatar: null,
+        reviewer_avatar: profile?.avatar_url || null,
       };
     });
 
