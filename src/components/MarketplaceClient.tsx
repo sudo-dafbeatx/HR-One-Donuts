@@ -107,10 +107,10 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
             return (
               <div 
                 key={product.id} 
-                className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-100 dark:border-slate-800 flex flex-col"
+                className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200/80 dark:border-slate-700 flex flex-col shadow-sm hover:shadow-md transition-shadow"
               >
                 {/* Image */}
-                <div className="aspect-square relative overflow-hidden bg-slate-50">
+                <div className="aspect-square relative overflow-hidden bg-white">
                   {product.image_url ? (
                     <Image 
                       src={product.image_url} 
@@ -120,7 +120,7 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                       className="object-cover" 
                     />
                   ) : (
-                    <div className="size-full flex items-center justify-center text-4xl">🍩</div>
+                    <div className="size-full flex items-center justify-center text-4xl bg-slate-50">🍩</div>
                   )}
                   
                   {/* Badge */}
@@ -137,9 +137,9 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                 </div>
 
                 {/* Content */}
-                <div className="p-2 flex flex-col flex-1">
+                <div className="p-2.5 flex flex-col flex-1 bg-white dark:bg-slate-900">
                   <Link href={`/catalog/${product.id}`}>
-                    <h4 className="text-xs font-semibold text-slate-800 truncate mb-1 hover:text-primary transition-colors">
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate mb-1 hover:text-primary transition-colors">
                       {product.name}
                     </h4>
                   </Link>
@@ -149,11 +149,11 @@ export default function MarketplaceClient({ initialProducts, categories = [] }: 
                         Rp {product.price.toLocaleString("id-ID")}
                       </div>
                     )}
-                    <div className="text-sm font-bold text-primary">
+                    <div className="text-sm font-extrabold text-primary">
                       Rp {getEffectivePrice(product).toLocaleString("id-ID")}
                     </div>
                     <div className="flex items-center gap-1 mt-1">
-                      <span className="text-[9px] text-slate-400">
+                      <span className="text-[9px] text-slate-500 dark:text-slate-400">
                         Terjual {product.sold_count || 0}+
                       </span>
                     </div>
