@@ -26,7 +26,7 @@ export default function LogoBrand({
     xl: 'h-28 w-28 md:h-32 md:w-32'
   };
 
-  const containerClasses = `relative flex items-center justify-center bg-white overflow-hidden p-1 transition-all ${sizeClasses[size]} ${className || ''}`;
+  const containerClasses = `relative flex items-center justify-center bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden p-1 transition-all ${sizeClasses[size]} ${className || ''}`;
 
   if (logoUrl) {
     return (

@@ -848,7 +848,7 @@ function LoginContent() {
             storeName={siteSettings?.store_name} 
             size="lg"
             priority
-            className="mb-4 bg-transparent border-none p-0 group-hover:scale-105"
+            className="mb-4 group-hover:scale-105"
           />
           <h1 className="text-primary font-bold text-2xl tracking-tight">
             {siteSettings?.store_name || "HR-One Donuts"}
