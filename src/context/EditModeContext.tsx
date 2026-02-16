@@ -154,7 +154,12 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
     setTheme(newTheme);
 
     const root = document.documentElement;
-    if (updates.primary_color) root.style.setProperty('--theme-primary', updates.primary_color);
+    if (updates.primary_color) {
+      root.style.setProperty('--theme-primary', updates.primary_color);
+      // Convert hex to rgb for rgba() usage
+      const rgb = hexToRgb(updates.primary_color);
+      if (rgb) root.style.setProperty('--theme-primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+    }
     if (updates.secondary_color) root.style.setProperty('--theme-secondary', updates.secondary_color);
     if (updates.background_color) root.style.setProperty('--theme-bg', updates.background_color);
     if (updates.text_color) root.style.setProperty('--theme-text', updates.text_color);
@@ -210,4 +215,13 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
       {children}
     </EditModeContext.Provider>
   );
+}
+
+function hexToRgb(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
 }

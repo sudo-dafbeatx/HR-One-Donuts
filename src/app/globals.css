@@ -50,6 +50,7 @@
 
   /* ===== DEFAULTS for ThemeProvider variables ===== */
   --theme-primary: #1152d4;
+  --theme-primary-rgb: 17, 82, 212;
   --theme-secondary: #3b82f6;
   --theme-bg: #f6f7f8;
   --theme-text: #0f172a;
@@ -240,4 +241,222 @@ body.edit-mode-panel-open #main-content {
   100% {
     transform: rotate(calc(var(--s, 1) * 1turn));
   }
+}
+
+/* ===== 3D Card Effects from Uiverse.io ===== */
+.card-effect {
+  perspective: 1000px;
+  height: 100%;
+}
+
+.card-inner {
+  --card-bg: var(--theme-card-bg, #ffffff);
+  --card-accent: var(--theme-primary, #1152d4);
+  --card-text: var(--theme-text, #0f172a);
+  --card-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  background: var(--card-bg);
+  border-radius: var(--theme-card-radius, 20px);
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--theme-card-border, rgba(0, 0, 0, 0.05));
+  transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-inner:hover {
+  transform: rotateY(8deg) rotateX(6deg) translateZ(10px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+}
+
+.card__liquid {
+  position: absolute;
+  top: -80px;
+  left: 0;
+  width: 300px;
+  height: 200px;
+  background: var(--card-accent);
+  border-radius: 50%;
+  transform: translateZ(-80px);
+  filter: blur(80px);
+  transition:
+    transform 0.7s cubic-bezier(0.36, 0, 0.66, -0.56),
+    opacity 0.3s ease-in-out;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-inner:hover .card__liquid {
+  transform: translateZ(-50px) translateY(30px) translateX(-20px) rotate(-20deg) scale(1.2);
+  opacity: 0.3;
+}
+
+.card__shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 30%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.1) 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.card-inner:hover .card__shine {
+  opacity: 1;
+  animation: shine-effect 2s infinite linear;
+}
+
+.card__glow {
+  position: absolute;
+  inset: -15px;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(var(--theme-primary-rgb), 0.2) 0%,
+    rgba(var(--theme-primary-rgb), 0) 60%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+  pointer-events: none;
+}
+
+.card-inner:hover .card__glow {
+  opacity: 1;
+}
+
+.card__content {
+  padding: 1.25rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+.card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #f9a825;
+  color: white;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transform: scale(0.85);
+  opacity: 1;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(249, 168, 37, 0.3);
+}
+
+.card-inner:hover .card__badge {
+  transform: scale(1) translateY(-2px);
+}
+
+.card__image-container {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--bg-color, #f8fafc);
+  border-radius: 12px;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+}
+
+.card-inner:hover .card__image-container {
+  transform: translateY(-5px) scale(1.02);
+}
+
+.card__image-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      circle at 20% 80%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 40%
+    );
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.card__title {
+  color: var(--card-text);
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 800;
+  transition: color 0.4s ease-in-out, transform 0.4s ease-in-out;
+  line-height: 1.3;
+}
+
+.card-inner:hover .card__title {
+  color: var(--card-accent);
+}
+
+.card__description {
+  color: var(--card-text);
+  font-size: 0.75rem;
+  margin: 0.25rem 0 0 0;
+  opacity: 0.6;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+.card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.card__price {
+  color: var(--card-text);
+  font-weight: 900;
+  font-size: 1.125rem;
+  transition: color 0.4s ease-in-out, transform 0.4s ease-in-out;
+}
+
+.card-inner:hover .card__price {
+  color: var(--card-accent);
+}
+
+.card__button {
+  size: 36px;
+  background: var(--card-accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: scale(0.9);
+  box-shadow: 0 4px 12px rgba(var(--theme-primary-rgb), 0.3);
+}
+
+.card-inner:hover .card__button {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 6px rgba(var(--theme-primary-rgb), 0.2);
+}
+
+@keyframes shine-effect {
+  0% { transform: translateX(-100%) rotate(45deg); }
+  100% { transform: translateX(200%) rotate(45deg); }
 }

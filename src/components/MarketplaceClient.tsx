@@ -8,7 +8,7 @@ import { useCart } from '@/context/CartContext';
 import { useLoading } from '@/context/LoadingContext';
 import { useEditMode } from '@/context/EditModeContext';
 import { DEFAULT_COPY } from '@/lib/theme-defaults';
-import EditableText from '@/components/cms/EditableText';
+import EditableProductField from '@/components/cms/EditableProductField';
 
 interface MarketplaceClientProps {
   initialProducts: Product[];
@@ -86,101 +86,121 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
            <p className="text-slate-400 font-bold text-sm">Tidak ada produk di kategori ini.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
           {filteredProducts.map((product) => {
             const hasDiscount = isPromoActive(product) && (product.discount_percent ?? 0) > 0;
             return (
-              <div 
-                key={product.id} 
-                className="group bg-white dark:bg-slate-900 rounded-[var(--theme-card-radius)] overflow-hidden border border-[var(--theme-card-border)] hover:border-primary/30 transition-all duration-300 flex flex-col h-full hover:shadow-xl group"
-              >
-                {/* Image */}
-                <div className="aspect-square relative overflow-hidden bg-slate-50 shrink-0">
-                  {product.image_url ? (
-                    <Image 
-                      src={product.image_url} 
-                      alt={product.name}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-200">
-                      <span className="material-symbols-outlined text-4xl">image</span>
-                    </div>
-                  )}
-                  {hasDiscount && (
-                    <span className="absolute top-2 left-2 bg-red-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm z-10">
-                      {copy.badge_promo}
-                    </span>
-                  )}
-                  {/* Tags */}
-                  <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-10">
-                    {product.tag && (
-                      <span className="px-2 py-0.5 bg-black/60 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-wider rounded-md">
-                        {product.tag}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Product Info */}
-                <div className="p-3 md:p-4 flex flex-col flex-1">
-                  <Link href={`/catalog/${product.id}`}>
-                    <EditableProductField 
-                      productId={product.id} 
-                      value={product.name} 
-                      onSave={(val) => {
-                        updateProduct(product.id, { name: val });
-                        setLocalProducts(prev => prev.map(p => p.id === product.id ? { ...p, name: val } : p));
-                      }}
-                      className="font-display font-black text-sm md:text-base text-slate-800 leading-tight mb-1 line-clamp-2"
-                    />
-                  </Link>
-
-                  <div className="mt-auto">
+              <div key={product.id} className="card-effect">
+                <div className="card-inner">
+                  <div className="card__liquid"></div>
+                  <div className="card__shine"></div>
+                  <div className="card__glow"></div>
+                  
+                  <div className="card__content">
+                    {/* Badge */}
                     {hasDiscount && (
-                      <div className="text-[9px] text-slate-400 line-through">
-                        Rp {product.price.toLocaleString("id-ID")}
+                      <div className="card__badge">
+                        {copy.badge_promo}
                       </div>
                     )}
-                    <div className="flex items-baseline gap-2 mb-3">
-                      <EditableProductField 
-                        productId={product.id} 
-                        value={String(getEffectivePrice(product))}
-                        type="number"
-                        onSave={(val) => {
-                          const price = parseInt(val);
-                          updateProduct(product.id, { price });
-                          setLocalProducts(prev => prev.map(p => p.id === product.id ? { ...p, price } : p));
-                        }}
-                        className="text-primary font-black text-sm md:text-lg"
-                        prefix="Rp "
-                      />
-                    </div>
                     
-                    <div className="flex items-center gap-1 mb-3">
-                      <span className="text-[9px] text-slate-500 font-bold uppercase tracking-tight">
-                        {copy.sold_label} {product.sold_count || 0}+
-                      </span>
+                    {/* Image Area */}
+                    <div className="card__image-container">
+                      {product.image_url ? (
+                        <Image 
+                          src={product.image_url} 
+                          alt={product.name}
+                          fill
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                          className="object-cover transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-200">
+                          <span className="material-symbols-outlined text-4xl">image</span>
+                        </div>
+                      )}
+                      
+                      {/* Tags */}
+                      <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-10">
+                        {product.tag && (
+                          <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-white text-[9px] font-black uppercase tracking-wider rounded-md">
+                            {product.tag}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <button
-                      onClick={async () => {
-                        setIsLoading(true, 'Sabar ya...');
-                        addToCart({
-                          id: product.id,
-                          name: product.name,
-                          price: getEffectivePrice(product),
-                          image: product.image_url || ''
-                        }, 1);
-                        await new Promise(r => setTimeout(r, 600));
-                        setIsLoading(false);
-                      }}
-                      className="w-full py-1.5 rounded-md bg-primary text-white text-[10px] font-bold hover:bg-primary/90 active:scale-95 transition-all editor-control"
-                    >
-                      <EditableText copyKey="cta_add_cart" />
-                    </button>
+                    {/* Info Area */}
+                    <div className="flex flex-col flex-1">
+                      <Link href={`/catalog/${product.id}`} className="hover:no-underline">
+                        <EditableProductField 
+                          value={product.name} 
+                          onSave={(val: string) => {
+                            updateProduct(product.id, { name: val });
+                            setLocalProducts(prev => prev.map(p => p.id === product.id ? { ...p, name: val } : p));
+                          }}
+                          className="card__title"
+                          productId={product.id}
+                        />
+                      </Link>
+
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">
+                          {copy.sold_label} {product.sold_count || 0}+
+                        </span>
+                      </div>
+
+                      <div className="mt-auto">
+                        {hasDiscount && (
+                          <div className="text-[10px] text-slate-400 line-through mb-0.5">
+                            Rp {product.price.toLocaleString("id-ID")}
+                          </div>
+                        )}
+                        
+                        <div className="card__footer">
+                          <div className="card__price whitespace-nowrap">
+                            <EditableProductField 
+                              value={String(getEffectivePrice(product))}
+                              type="number"
+                              onSave={(val: string) => {
+                                const price = parseInt(val);
+                                updateProduct(product.id, { price });
+                                setLocalProducts(prev => prev.map(p => p.id === product.id ? { ...p, price } : p));
+                              }}
+                              className="card__price"
+                              prefix="Rp "
+                              productId={product.id}
+                            />
+                          </div>
+
+                          <button
+                            onClick={async () => {
+                              setIsLoading(true, 'Sabar ya...');
+                              addToCart({
+                                id: product.id,
+                                name: product.name,
+                                price: getEffectivePrice(product),
+                                image: product.image_url || ''
+                              }, 1);
+                              await new Promise(r => setTimeout(r, 600));
+                              setIsLoading(false);
+                            }}
+                            className="card__button editor-control border-none"
+                            aria-label="Add to cart"
+                          >
+                            <svg viewBox="0 0 24 24" width="18" height="18" className="text-white">
+                              <path
+                                fill="currentColor"
+                                d="M5 12H19M12 5V19"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                              ></path>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -189,80 +209,5 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
         </div>
       )}
     </section>
-  );
-}
-
-function EditableProductField({ 
-  value, 
-  onSave, 
-  className, 
-  type = 'text',
-  prefix = ''
-}: { 
-  productId: string; 
-  value: string; 
-  onSave: (val: string) => void; 
-  className: string;
-  type?: 'text' | 'number';
-  prefix?: string;
-}) {
-  const { isEditMode } = useEditMode();
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [editValue, setEditValue] = React.useState(value);
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
-  React.useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
-
-  const handleSave = () => {
-    if (editValue !== value && editValue.trim()) {
-      onSave(editValue.trim());
-    }
-    setIsEditing(false);
-  };
-
-  if (!isEditMode) {
-    return (
-      <div className={className}>
-        {prefix}{type === 'number' ? Number(value).toLocaleString('id-ID') : value}
-      </div>
-    );
-  }
-
-  if (isEditing) {
-    return (
-      <input
-        ref={inputRef}
-        type={type}
-        value={editValue}
-        onChange={(e) => setEditValue(e.target.value)}
-        onBlur={handleSave}
-        onKeyDown={(e) => e.key === 'Enter' && handleSave()}
-        className={`${className} bg-white/95 backdrop-blur-sm text-slate-900 shadow-lg shadow-blue-500/10 ring-1 ring-blue-500/40 rounded-lg px-2 outline-none w-full editor-control`}
-      />
-    );
-  }
-
-  return (
-    <div 
-      onClick={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setEditValue(value);
-        setIsEditing(true);
-      }}
-      className={`${className} cursor-pointer transition-all duration-200 editor-control`}
-      style={{
-        outline: '1.5px dashed rgba(59, 130, 246, 0.35)',
-        outlineOffset: '2px',
-        borderRadius: '4px',
-      }}
-    >
-      {prefix}{type === 'number' ? Number(value).toLocaleString('id-ID') : value}
-    </div>
   );
 }
