@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Product } from '@/types/cms';
 import { useCart } from '@/context/CartContext';
 import { useLoading } from '@/context/LoadingContext';
@@ -16,7 +17,7 @@ interface MarketplaceClientProps {
 }
 
 export default function MarketplaceClient({ initialProducts, categories = [], copy: _copy }: MarketplaceClientProps) {
-  const { isEditMode, copy: liveCopy, updateProduct } = useEditMode();
+  const { copy: liveCopy, updateProduct } = useEditMode();
   const copy = liveCopy || _copy || DEFAULT_COPY;
   const { addToCart } = useCart();
   const { setIsLoading } = useLoading();
@@ -24,14 +25,12 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
 
   const [localProducts, setLocalProducts] = React.useState<Product[]>(initialProducts);
 
-  const sortedProducts = React.useMemo(() => {
-    return [...localProducts].sort((a, b) => {
-      const isAPromo = isPromoActive(a) ? 1 : 0;
-      const isBPromo = isPromoActive(b) ? 1 : 0;
-      if (isAPromo !== isBPromo) return isBPromo - isAPromo;
-      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
-    });
-  }, [localProducts]);
+  const sortedProducts = [...localProducts].sort((a, b) => {
+    const isAPromo = isPromoActive(a) ? 1 : 0;
+    const isBPromo = isPromoActive(b) ? 1 : 0;
+    if (isAPromo !== isBPromo) return isBPromo - isAPromo;
+    return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+  });
 
   const filteredProducts = activeCategory === 'Semua' 
     ? sortedProducts 
@@ -98,10 +97,12 @@ export default function MarketplaceClient({ initialProducts, categories = [], co
                 {/* Image */}
                 <div className="aspect-square relative overflow-hidden bg-slate-50 shrink-0">
                   {product.image_url ? (
-                    <img 
+                    <Image 
                       src={product.image_url} 
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-200">

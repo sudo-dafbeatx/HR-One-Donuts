@@ -11,24 +11,21 @@ export default function GlobalLoading({ isVisible, message = 'Please wait ...' }
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm transition-all duration-300">
-      <div className="relative">
-        {/* Spinning Donut Animation */}
-        <div className="size-24 border-[8px] border-primary/10 border-t-primary rounded-full animate-spin"></div>
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/90 backdrop-blur-md transition-all duration-300">
+      <div className="flex flex-col items-center justify-center gap-8 animate-fade-in">
+        {/* New Uiverse Loader */}
+        <div className="loader-uiverse"></div>
         
-        {/* Donut Icon in the middle */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="material-symbols-outlined text-primary text-4xl animate-pulse">donut_large</span>
-        </div>
-      </div>
-      
-      {/* Loading Message */}
-      <div className="mt-6 flex flex-col items-center gap-2">
-        <p className="text-primary font-bold text-xl tracking-tight animate-bounce">{message}</p>
-        <div className="flex gap-1">
-          <div className="size-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-          <div className="size-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-          <div className="size-2 bg-primary rounded-full animate-bounce"></div>
+        {/* Loading Message */}
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-slate-900 font-display font-black text-2xl tracking-tight text-center">
+            {message}
+          </p>
+          <div className="flex gap-1.5">
+            <div className="size-1.5 bg-primary/40 rounded-full animate-pulse"></div>
+            <div className="size-1.5 bg-primary/40 rounded-full animate-pulse [animation-delay:0.2s]"></div>
+            <div className="size-1.5 bg-primary/40 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+          </div>
         </div>
       </div>
     </div>
