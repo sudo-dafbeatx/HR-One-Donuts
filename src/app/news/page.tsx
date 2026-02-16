@@ -1,11 +1,24 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { SiteSettings } from "@/types/cms";
 
-export default function NewsPage() {
+export default async function NewsPage() {
+  const supabase = await createServerSupabaseClient();
+  
+  // Fetch site info
+  const { data: settingsData } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'site_info')
+    .maybeSingle();
+  
+  const siteSettings = settingsData?.value as unknown as SiteSettings | undefined;
+
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
+      <Navbar siteSettings={siteSettings} />
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24">
         <div className="text-center">
           <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-6">Berita & Promo</h1>
@@ -20,7 +33,7 @@ export default function NewsPage() {
           </Link>
         </div>
       </main>
-      <Footer />
+      <Footer siteSettings={siteSettings} />
     </div>
   );
 }

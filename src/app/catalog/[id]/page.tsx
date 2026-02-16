@@ -6,6 +6,7 @@ import ProductReviews from "@/components/detail/ProductReviews";
 import Footer from "@/components/Footer";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import { SiteSettings } from "@/types/cms";
 
 // Use dynamic rendering to ensure we always get the latest data
 export const dynamic = 'force-dynamic';
@@ -57,6 +58,15 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     .eq('id', productId)
     .maybeSingle();
 
+  // Fetch site info for Navbar and Footer
+  const { data: settingsData } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', 'site_info')
+    .maybeSingle();
+  
+  const siteSettings = settingsData?.value as unknown as SiteSettings | undefined;
+
   if (error || !product) {
     if (error) console.error(' [ProductDetail] Fetch error:', error);
     return notFound();
@@ -67,7 +77,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-white">
-      <Navbar />
+      <Navbar siteSettings={siteSettings} />
       
       <main className="flex-1 flex flex-col items-center py-8 px-4 md:px-8">
         <div className="max-w-[1200px] w-full">
@@ -106,7 +116,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       </main>
 
 
-      <Footer />
+      <Footer siteSettings={siteSettings} />
     </div>
   );
 }

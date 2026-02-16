@@ -52,6 +52,11 @@ export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSet
               size="sm"
               className="group-hover:scale-105 transition-transform"
             />
+            {!siteSettings?.logo_url && (
+              <h1 className="font-display text-sm md:text-base font-black tracking-tight text-primary leading-none hidden xs:block">
+                {siteSettings?.store_name || "HR-One Donuts"}
+              </h1>
+            )}
           </Link>
           <nav className="hidden sm:flex items-center gap-8">
             <Link href="/" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">
