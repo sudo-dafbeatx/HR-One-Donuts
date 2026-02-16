@@ -408,12 +408,12 @@ function LoginContent() {
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
               <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="relative size-12">
+                <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
                   <NextImage 
                     src="/images/logo-hr-one.png" 
                     alt="HR-One Donuts" 
                     fill 
-                    className="object-contain"
+                    className="object-cover"
                   />
                 </div>
                 <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">HR-One Donuts</h1>
@@ -491,9 +491,14 @@ function LoginContent() {
             
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
-              <div className="flex items-center justify-center gap-2 mb-6 text-primary">
-                <div className="size-10 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary text-3xl">donut_large</span>
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
+                  <NextImage 
+                    src="/images/logo-hr-one.png" 
+                    alt="HR-One Donuts" 
+                    fill 
+                    className="object-cover"
+                  />
                 </div>
                 <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">HR-One Donuts</h1>
               </div>
@@ -590,12 +595,12 @@ function LoginContent() {
             <div className="px-8 pt-10 pb-6 text-center">
               {/* Logo */}
               <div className="flex items-center justify-center gap-3 mb-6">
-                <div className="relative size-12">
+                <div className="relative size-12 rounded-full overflow-hidden border border-slate-100 shadow-sm">
                   <NextImage 
                     src="/images/logo-hr-one.png" 
                     alt="HR-One Donuts" 
                     fill 
-                    className="object-contain"
+                    className="object-cover"
                   />
                 </div>
                 <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">HR-One Donuts</h1>
@@ -821,12 +826,13 @@ function LoginContent() {
       <div className="relative z-10 w-full max-w-[480px]">
         {/* Brand */}
         <div className="flex flex-col items-center mb-8">
-          <div className="relative w-20 h-20 mb-4 group-hover:scale-105 transition-transform">
+          <div className="relative w-20 h-20 mb-4 rounded-full overflow-hidden border-4 border-white shadow-xl group-hover:scale-105 transition-transform">
             <NextImage 
               src="/images/logo-hr-one.png" 
               alt="HR-One Donuts" 
               fill 
-              className="object-contain"
+              priority
+              className="object-cover"
             />
           </div>
           <h1 className="text-primary font-bold text-2xl tracking-tight">HR-One Donuts</h1>
