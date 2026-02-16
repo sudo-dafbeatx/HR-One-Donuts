@@ -1,9 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { Product, SiteSettings, OrderStep } from "@/types/cms";
+import { Product, SiteSettings } from "@/types/cms";
 import MarketplaceClient from "@/components/MarketplaceClient";
-import OrderSteps from "@/components/OrderSteps";
 import Hero from "@/components/Hero";
 import FlashSaleServer from "@/components/FlashSaleServer";
 import FlashSaleSkeleton from "@/components/FlashSaleSkeleton";
@@ -17,13 +16,6 @@ export default async function Home() {
     .from('settings')
     .select('value')
     .eq('key', 'site_info')
-    .maybeSingle();
-
-  // Fetch order steps
-  const { data: orderStepsData } = await supabase
-    .from('settings')
-    .select('value')
-    .eq('key', 'order_steps')
     .maybeSingle();
 
   // Only fetch active products
@@ -45,7 +37,6 @@ export default async function Home() {
   }
 
   const siteSettings = siteInfoData?.value as unknown as SiteSettings | undefined;
-  const orderSteps = (orderStepsData?.value as { steps: OrderStep[] } | null)?.steps;
   const categories = categoryData?.map(c => c.name) || [];
 
   return (
@@ -62,28 +53,23 @@ export default async function Home() {
           <FlashSaleServer />
         </Suspense>
 
-        <div className="container mx-auto px-4 py-12">
-
-          <div className="mb-16">
-            <h2 className="text-xl font-bold text-slate-800 mb-8 flex items-center gap-2">
-               <span className="w-8 h-1 bg-primary rounded-full"></span>
-               Katalog Produk
-            </h2>
+        <div className="max-w-[1440px] mx-auto px-4 py-6 md:py-10">
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg md:text-xl font-bold text-slate-800 flex items-center gap-2">
+                <span className="w-1.5 h-6 bg-primary rounded-full"></span>
+                Katalog Produk
+              </h2>
+              <div className="text-xs text-primary font-bold border-b border-primary/20 pb-0.5">Lihat Semua</div>
+            </div>
             {!products || products.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-                <div className="size-20 mb-4 opacity-20">
-                  <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z" fill="currentColor"></path>
-                  </svg>
-                </div>
-                <p className="text-xl font-medium">Belum ada produk aktif.</p>
+              <div className="flex flex-col items-center justify-center py-10 text-slate-500">
+                <p className="text-lg font-medium">Belum ada produk aktif.</p>
               </div>
             ) : (
               <MarketplaceClient initialProducts={products as Product[]} categories={categories || []} />
             )}
           </div>
-
-          <OrderSteps steps={orderSteps} />
         </div>
       </main>
       

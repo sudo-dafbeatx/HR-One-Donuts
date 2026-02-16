@@ -19,10 +19,18 @@
   --font-sans: var(--font-public-sans), "Public Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-sora), "Sora", ui-sans-serif, system-ui, sans-serif;
 
-  --radius-default: 1rem;
-  --radius-lg: 2rem;
-  --radius-xl: 3rem;
+  --radius-default: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
   --radius-full: 9999px;
+}
+
+@utility no-scrollbar {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 :root {

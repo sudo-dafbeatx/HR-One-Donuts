@@ -107,7 +107,7 @@ export default function Navbar({ siteSettings }: { siteSettings?: SiteSettings }
       <div className="md:hidden relative">
         <input
           type="text"
-          placeholder="Cari donat favoritmu..."
+          placeholder="Cari donat..."
           className="w-full h-10 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-xs"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
