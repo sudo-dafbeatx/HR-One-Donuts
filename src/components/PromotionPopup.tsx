@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function PromotionPopup() {
@@ -34,7 +34,11 @@ export default function PromotionPopup() {
     router.push('/promo/birthday');
   };
 
-  if (!isVisible) return null;
+  const pathname = usePathname();
+  const hidePaths = ['/onboarding', '/auth', '/login', '/admin'];
+  const shouldHide = hidePaths.some(path => pathname?.startsWith(path));
+
+  if (!isVisible || shouldHide) return null;
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-500">

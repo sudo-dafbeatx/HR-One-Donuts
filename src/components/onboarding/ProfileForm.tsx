@@ -103,41 +103,41 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+    <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Nama Lengkap</label>
+          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Nama Lengkap</label>
           <input
             type="text"
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             placeholder="Masukkan nama lengkap"
-            className={`block w-full rounded-full border px-4 py-3 md:px-6 md:py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.fullName ? 'border-red-300' : 'border-slate-200'}`}
+            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.fullName ? 'border-red-300' : 'border-slate-200'}`}
           />
-          {errors.fullName && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{errors.fullName}</p>}
+          {errors.fullName && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.fullName}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Email (Akun)</label>
+          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Email (Akun)</label>
           <input
             type="email"
             value={formData.email}
             readOnly
-            className="block w-full rounded-full border border-slate-200 px-4 py-3 md:px-6 md:py-4 text-slate-400 outline-none bg-slate-100 cursor-not-allowed"
+            className="block w-full rounded-2xl border border-slate-200 px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-400 outline-none bg-slate-100 cursor-not-allowed"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Jenis Kelamin</label>
-          <div className="flex gap-4">
+          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Jenis Kelamin</label>
+          <div className="flex gap-3">
             {['male', 'female'].map((g) => (
               <label 
                 key={g}
-                className={`flex-1 flex items-center justify-center gap-3 h-12 md:h-14 rounded-full border-2 cursor-pointer transition-all ${
+                className={`flex-1 flex items-center justify-center gap-2 h-12 md:h-13 rounded-2xl border-2 cursor-pointer transition-all ${
                   formData.gender === g 
-                    ? 'border-primary bg-primary/5 text-primary font-bold shadow-md shadow-primary/10' 
+                    ? 'border-primary bg-primary/5 text-primary font-bold' 
                     : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'
                 }`}
               >
@@ -149,18 +149,18 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
                   onChange={() => setFormData({ ...formData, gender: g as "male" | "female" })}
                   className="hidden"
                 />
-                <span className="material-symbols-outlined text-[20px]">
+                <span className="material-symbols-outlined text-[18px]">
                   {g === 'male' ? 'male' : 'female'}
                 </span>
-                {g === 'male' ? 'Laki-laki' : 'Perempuan'}
+                <span className="text-[13px] md:text-sm">{g === 'male' ? 'Laki-laki' : 'Perempuan'}</span>
               </label>
             ))}
           </div>
-          {errors.gender && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{errors.gender}</p>}
+          {errors.gender && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.gender}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Usia (Tahun)</label>
+          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Usia (Tahun)</label>
           <input
             type="number"
             min="13"
@@ -168,40 +168,40 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
             value={formData.age}
             onChange={(e) => setFormData({ ...formData, age: e.target.value })}
             placeholder="Contoh: 25"
-            className={`block w-full rounded-full border px-4 py-3 md:px-6 md:py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.age ? 'border-red-300' : 'border-slate-200'}`}
+            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.age ? 'border-red-300' : 'border-slate-200'}`}
           />
-          {errors.age && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{errors.age}</p>}
+          {errors.age && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.age}</p>}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Tempat Lahir</label>
+          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Tempat Lahir</label>
           <input
             type="text"
             value={formData.birthPlace}
             onChange={(e) => setFormData({ ...formData, birthPlace: e.target.value })}
             placeholder="Kota kelahiran"
-            className={`block w-full rounded-full border px-4 py-3 md:px-6 md:py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthPlace ? 'border-red-300' : 'border-slate-200'}`}
+            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthPlace ? 'border-red-300' : 'border-slate-200'}`}
           />
-          {errors.birthPlace && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{errors.birthPlace}</p>}
+          {errors.birthPlace && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.birthPlace}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Tanggal Lahir</label>
+          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Tanggal Lahir</label>
           <input
             type="date"
             value={formData.birthDate}
             onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-            className={`block w-full rounded-full border px-4 py-3 md:px-6 md:py-4 text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthDate ? 'border-red-300' : 'border-slate-200'}`}
+            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthDate ? 'border-red-300' : 'border-slate-200'}`}
           />
-          {errors.birthDate && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{errors.birthDate}</p>}
+          {errors.birthDate && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.birthDate}</p>}
         </div>
       </div>
 
-      <div className="bg-slate-50/50 p-6 md:p-8 rounded-[2rem] border border-slate-100 space-y-6">
-        <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary">location_on</span>
+      <div className="bg-slate-50/50 p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 space-y-5">
+        <h3 className="text-[15px] md:text-lg font-bold text-slate-800 flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-[20px]">location_on</span>
           Wilayah Pengiriman
         </h3>
         
@@ -217,22 +217,22 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         />
 
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Alamat Lengkap (Opsional)</label>
+          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Alamat Lengkap (Opsional)</label>
           <textarea
             value={formData.addressDetail}
             onChange={(e) => setFormData({ ...formData, addressDetail: e.target.value })}
             placeholder="Nama jalan, nomor rumah, RT/RW, or ciri-ciri bangunan"
-            rows={3}
-            className="block w-full rounded-2xl border border-slate-200 px-4 py-3 md:px-6 md:py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-white resize-none"
+            rows={2}
+            className="block w-full rounded-2xl border border-slate-200 px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-white resize-none"
           />
         </div>
       </div>
 
-      <div className="pt-2">
+      <div className="pt-2 sticky bottom-0 bg-white/80 backdrop-blur-md -mx-5 px-5 py-3 border-t border-slate-100 md:relative md:bg-transparent md:border-none md:p-0 md:m-0">
         <button
           type="submit"
           disabled={submitting}
-          className="w-full h-14 md:h-16 rounded-full bg-primary text-white font-black text-lg shadow-xl shadow-primary/30 hover:bg-blue-600 hover:shadow-primary/40 focus:ring-4 focus:ring-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          className="w-full h-14 rounded-2xl bg-primary text-white font-black text-base md:text-lg shadow-lg shadow-primary/25 hover:bg-blue-600 hover:shadow-primary/35 focus:ring-4 focus:ring-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {submitting ? (
             <>
@@ -242,7 +242,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
           ) : (
             <>
               <span>Selesai & Mulai Belanja</span>
-              <span className="material-symbols-outlined">arrow_forward</span>
+              <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
             </>
           )}
         </button>

@@ -170,21 +170,21 @@ export default function GeoDropdown({ onProvinceChange, onCityChange, onDistrict
 
     return (
       <div className="relative">
-        <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">{label}</label>
+        <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">{label}</label>
         <button
           type="button"
           onClick={() => !disabled && setOpenDropdown(openDropdown === type ? null : type)}
           disabled={disabled}
-          className={`group flex w-full items-center justify-between rounded-full border px-6 py-4 text-left transition-all outline-none ${
+          className={`group flex w-full items-center justify-between rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-left transition-all outline-none ${
             error 
-              ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-500/20' 
-              : 'border-slate-200 bg-slate-50 text-slate-900 focus:border-primary focus:ring-primary/20'
+              ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500' 
+              : 'border-slate-200 bg-slate-50 text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/10'
           } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-white'}`}
         >
-          <span className={`truncate ${selected ? 'font-semibold' : 'text-slate-400'}`}>
+          <span className={`truncate text-[14px] md:text-base ${selected ? 'font-semibold' : 'text-slate-400'}`}>
             {isLoading ? 'Memuat...' : selected ? selected.name : `Pilih ${label}`}
           </span>
-          <ChevronDownIcon className={`size-5 text-slate-400 transition-transform ${openDropdown === type ? 'rotate-180' : ''}`} />
+          <ChevronDownIcon className={`size-4 md:size-5 text-slate-400 transition-transform ${openDropdown === type ? 'rotate-180' : ''}`} />
         </button>
 
         {openDropdown === type && (
@@ -204,7 +204,7 @@ export default function GeoDropdown({ onProvinceChange, onCityChange, onDistrict
             </div>
             <div className="overflow-y-auto max-h-48 scrollbar-thin scrollbar-thumb-slate-200">
               {fetchError ? (
-                <div className="px-5 py-8 text-center text-red-500 text-xs font-bold uppercase tracking-tight">
+                <div className="px-5 py-8 text-center text-red-500 text-[10px] font-bold uppercase tracking-tight">
                   {fetchError}
                 </div>
               ) : filteredItems.length > 0 ? (
@@ -217,19 +217,19 @@ export default function GeoDropdown({ onProvinceChange, onCityChange, onDistrict
                       selected?.id === item.id ? 'bg-primary/5 text-primary font-bold' : 'text-slate-600'
                     }`}
                   >
-                    <span>{item.name}</span>
+                    <span className="text-[13px] md:text-sm">{item.name}</span>
                     {selected?.id === item.id && <CheckIcon className="size-4" />}
                   </button>
                 ))
               ) : (
-                <div className="px-5 py-8 text-center text-slate-400 text-sm">
+                <div className="px-5 py-8 text-center text-slate-400 text-[13px]">
                   Tidak ditemukan
                 </div>
               )}
             </div>
           </div>
         )}
-        {error && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{error}</p>}
+        {error && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{error}</p>}
       </div>
     );
   };
