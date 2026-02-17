@@ -135,16 +135,6 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
             </div>
           </Link>
 
-          {/* Chat Admin */}
-          <a 
-            href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-2 h-10 px-4 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-bold transition-all shadow-lg shadow-green-500/20 active:scale-95"
-          >
-            <span className="material-symbols-outlined text-sm">chat</span>
-            Chat Admin
-          </a>
         </div>
       </div>
     </header>

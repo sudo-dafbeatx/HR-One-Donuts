@@ -14,6 +14,7 @@ import ThemePanel from "@/components/cms/ThemePanel";
 import ScrollToTop from "@/components/utils/ScrollToTop";
 import PromotionPopup from "@/components/PromotionPopup";
 import { Sora, Public_Sans } from "next/font/google";
+import OnboardingHelpCTA from "@/components/OnboardingHelpCTA";
 import "./globals.css";
 
 const sora = Sora({
@@ -96,6 +97,7 @@ export default async function RootLayout({
                 <BottomNav />
                 <EditModeToggle />
                 <ThemePanel />
+                <OnboardingHelpCTA />
                 
                 {/* Global Accessibility Fix for Google Identity Services (One Tap) */}
                 <script
