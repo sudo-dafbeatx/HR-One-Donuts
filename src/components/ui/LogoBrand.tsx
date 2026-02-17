@@ -28,9 +28,9 @@ export default function LogoBrand({
   };
 
   const [hasError, setHasError] = useState(false);
-  const finalLogoUrl = logoUrl || "/images/logo-hr-one.png";
+  const finalLogoUrl = logoUrl || "/images/logo-hr-one.webp";
   
-  const containerClasses = `relative flex items-center justify-center bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden p-1 transition-all ${sizeClasses[size]} ${className || ''}`;
+  const containerClasses = `relative flex items-center justify-center bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-1 transition-all ${sizeClasses[size]} ${className || ''}`;
 
   if (!hasError && finalLogoUrl) {
     return (
@@ -40,8 +40,8 @@ export default function LogoBrand({
           alt={storeName}
           fill
           priority={priority}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className={`object-contain p-1 ${imageClassName || ''}`}
+          sizes="(max-width: 768px) 80px, 128px"
+          className={`object-contain p-1.5 ${imageClassName || ''}`}
           unoptimized={finalLogoUrl.startsWith('http') || finalLogoUrl.includes('supabase.co')}
           onError={() => setHasError(true)}
         />

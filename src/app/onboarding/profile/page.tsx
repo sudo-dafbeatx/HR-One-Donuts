@@ -22,19 +22,13 @@ export default async function OnboardingProfilePage() {
     redirect('/');
   }
 
-  // Fetch site settings for branding
-  const { data: settings } = await supabase
+  // Fetch site settings (for logic, not branding logo as per request)
+  await supabase
     .from('settings')
     .select('value')
     .eq('key', 'site_info')
     .maybeSingle();
   
-  const siteInfo = settings?.value as {
-    logo_url?: string;
-    store_name?: string;
-    tagline?: string;
-  };
-
   const adminNumber = process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117';
   const waMessage = "Halo Admin HR-One Donuts, mohon bantuannya. Saya mengalami kendala saat mengisi form pendaftaran di website HR-One Donuts. Terima kasih.";
   const waUrl = `https://wa.me/${adminNumber}?text=${encodeURIComponent(waMessage)}`;
@@ -54,8 +48,8 @@ export default async function OnboardingProfilePage() {
           <div className="px-5 pt-8 pb-4 md:px-8 md:pt-12 md:pb-10 text-center bg-gradient-to-b from-blue-50/50 to-white">
             <div className="flex items-center justify-center mb-4 md:mb-8">
               <LogoBrand 
-                logoUrl={siteInfo?.logo_url || "/images/logo-hr-one.png"} 
-                storeName={siteInfo?.store_name} 
+                logoUrl="/images/logo-hr-one.webp" 
+                storeName="HR-One Donuts" 
                 size="lg"
                 priority
               />
