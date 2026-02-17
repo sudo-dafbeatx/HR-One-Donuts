@@ -6,9 +6,9 @@ export default async function FlashSaleServer() {
   const supabase = await createServerSupabaseClient();
   
   const { data: events } = await supabase
-    .from('events')
+    .from('promo_events')
     .select('*')
-    .eq('is_active', true)
+    .eq('is_enabled', true)
     .order('created_at', { ascending: false });
 
   if (!events || events.length === 0) return null;

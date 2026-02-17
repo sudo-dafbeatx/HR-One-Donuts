@@ -12,11 +12,16 @@ export function getJakartaDate(): Date {
   return new Date(utc + 3600000 * 7);
 }
 
+const WEEKDAY_MAP: Record<string, number> = {
+  'SUNDAY': 0, 'MONDAY': 1, 'TUESDAY': 2, 'WEDNESDAY': 3, 'THURSDAY': 4, 'FRIDAY': 5, 'SATURDAY': 6
+};
+
 /**
  * Interface for the return value of getEventTiming
  */
 export interface EventTiming {
   isActive: boolean;
+  isExpired: boolean;
   message: string;
   nextOccurrence: Date;
   secondsUntilNext: number;
@@ -32,23 +37,35 @@ const ID_DAYS = [
 ];
 
 /**
+ * Checks if an event is active based on weekday and time range in Asia/Jakarta.
+ */
+export function isEventActive(
+  eventDay: string, // TUESDAY | FRIDAY etc.
+  startTime: string = '00:00',
+  endTime: string = '23:59'
+): boolean {
+  const timing = getEventTiming(eventDay, startTime, endTime);
+  return timing.isActive;
+}
+
+/**
  * Calculates event status and countdown timings based on Asia/Jakarta time.
  */
 export function getEventTiming(
-  activeWeekday: number, // 1-7 (Monday-Sunday)
+  eventDay: string, 
   startTime: string = '00:00',
   endTime: string = '23:59',
   eventTitle: string = 'Event'
 ): EventTiming {
   const now = getJakartaDate();
-  const currentWeekday = now.getDay() === 0 ? 7 : now.getDay(); // Normalize Sunday to 7
+  const activeWeekday = WEEKDAY_MAP[eventDay.toUpperCase()] ?? 0;
+  const currentWeekday = now.getDay();
   
   const [startHour, startMin] = startTime.split(':').map(Number);
   const [endHour, endMin] = endTime.split(':').map(Number);
   
-  const activeDayName = ID_DAYS[activeWeekday % 7];
+  const activeDayName = ID_DAYS[activeWeekday];
   
-  // Calculate today's start and end times
   const todayStart = new Date(now);
   todayStart.setHours(startHour, startMin, 0, 0);
   
@@ -57,14 +74,17 @@ export function getEventTiming(
   
   const isActiveDay = currentWeekday === activeWeekday;
   const isWithinTime = now >= todayStart && now <= todayEnd;
+  const isPastTime = now > todayEnd;
+  
   const isActive = isActiveDay && isWithinTime;
+  const isExpired = isActiveDay && isPastTime;
   
   // Calculate next occurrence
   const nextOccurrence = new Date(now);
   let daysUntil = (activeWeekday - currentWeekday + 7) % 7;
   
   if (daysUntil === 0 && now > todayEnd) {
-    daysUntil = 7; // Already past today's event, next is next week
+    daysUntil = 7; 
   }
   
   nextOccurrence.setDate(now.getDate() + daysUntil);
@@ -74,12 +94,15 @@ export function getEventTiming(
   const secondsUntilEnd = isActive ? Math.max(0, Math.floor((todayEnd.getTime() - now.getTime()) / 1000)) : 0;
   
   let message = '';
-  if (!isActive) {
-    message = `Event ini hanya berlangsung setiap hari ${activeDayName}. Silakan kembali lagi hari ${activeDayName} untuk klaim ${eventTitle}.`;
+  if (isExpired) {
+    message = 'Promo hari ini sudah berakhir. Coba lagi minggu depan.';
+  } else if (!isActive) {
+    message = `Event ${eventTitle} hanya berlangsung setiap hari ${activeDayName}. Silakan cek kembali di hari ${activeDayName} untuk klaim promo.`;
   }
   
   return {
     isActive,
+    isExpired,
     message,
     nextOccurrence,
     secondsUntilNext,

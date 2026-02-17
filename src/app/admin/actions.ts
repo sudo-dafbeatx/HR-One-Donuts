@@ -173,7 +173,7 @@ export async function saveEvent(data: Partial<PromoEvent>) {
   
   // Cleanup old image if URL changed
   if (data.id && data.banner_image_url) {
-    const { data: oldData } = await supabase.from('events').select('banner_image_url').eq('id', data.id).maybeSingle();
+    const { data: oldData } = await supabase.from('promo_events').select('banner_image_url').eq('id', data.id).maybeSingle();
     if (oldData?.banner_image_url && oldData.banner_image_url !== data.banner_image_url) {
       const oldPath = extractStoragePath(oldData.banner_image_url);
       if (oldPath) await deleteImage(oldPath).catch(err => console.error('Cleanup error:', err));
@@ -181,7 +181,7 @@ export async function saveEvent(data: Partial<PromoEvent>) {
   }
 
   const { error } = await supabase
-    .from('events')
+    .from('promo_events')
     .upsert(eventData);
 
   if (error) throw new Error(error.message);
@@ -195,14 +195,14 @@ export async function deleteEvent(id: string) {
   const supabase = await checkAdmin();
   
   // Cleanup image first
-  const { data: event } = await supabase.from('events').select('banner_image_url').eq('id', id).maybeSingle();
+  const { data: event } = await supabase.from('promo_events').select('banner_image_url').eq('id', id).maybeSingle();
   if (event?.banner_image_url) {
     const path = extractStoragePath(event.banner_image_url);
     if (path) await deleteImage(path).catch(err => console.error('Cleanup error:', err));
   }
 
   const { error } = await supabase
-    .from('events')
+    .from('promo_events')
     .delete()
     .eq('id', id);
 

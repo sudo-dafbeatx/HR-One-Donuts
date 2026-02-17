@@ -23,18 +23,17 @@ export interface Product {
 
 export interface PromoEvent {
   id: string;
-  title: string;
+  event_slug: string;
+  event_day: 'TUESDAY' | 'FRIDAY' | 'MONDAY' | 'WEDNESDAY' | 'THURSDAY' | 'SATURDAY' | 'SUNDAY';
+  start_time: string;
+  end_time: string;
+  is_enabled: boolean;
+  headline: string;
   description?: string;
-  event_type: 'seasonal' | 'jumat_berkah' | 'selasa_mega_sale';
   banner_image_url?: string;
   discount_percent: number;
-  start_at: string | null;
-  end_at: string | null;
-  active_weekday?: number | null;
-  start_time?: string | null;
-  end_time?: string | null;
-  is_active: boolean;
   created_at?: string;
+  updated_at?: string;
 }
 
 export interface Category {
