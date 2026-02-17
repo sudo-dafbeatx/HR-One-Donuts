@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { 
   UserCircleIcon, 
   MapPinIcon, 
-  PhoneIcon, 
   ShoppingBagIcon,
   ArrowRightOnRectangleIcon,
   CalendarDaysIcon
@@ -25,6 +24,13 @@ interface Profile {
   address: string | null;
   avatar_url: string | null;
   role: string;
+  // Extended fields from user_profiles
+  gender?: string;
+  age?: number;
+  province_name?: string;
+  city_name?: string;
+  district_name?: string;
+  address_detail?: string;
 }
 
 interface OrderItem {
@@ -73,18 +79,32 @@ export default function ProfilePage() {
         return;
       }
 
-      // Fetch Profile
+      // Fetch Profile from user_profiles (new standard)
       const { data: profileData } = await supabase
-        .from('profiles')
+        .from('user_profiles')
         .select('*')
         .eq('id', user.id)
-        .maybeSingle(); // Safer than single()
+        .maybeSingle();
       
       if (profileData) {
-        setProfile(profileData);
+        setProfile(profileData as unknown as Profile);
         setEditFullName(profileData.full_name || '');
-        setEditPhone(profileData.phone || '');
-        setEditAddress(profileData.address || '');
+        setEditPhone(''); 
+        setEditAddress(profileData.address_detail || '');
+      } else {
+        // Fallback to legacy profiles
+        const { data: legacyProfile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (legacyProfile) {
+          setProfile(legacyProfile);
+          setEditFullName(legacyProfile.full_name || '');
+          setEditPhone(legacyProfile.phone || '');
+          setEditAddress(legacyProfile.address || '');
+        }
       }
 
       // Fetch Recent Orders
@@ -427,28 +447,43 @@ export default function ProfilePage() {
                   </div>
                 </form>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex items-start gap-4 p-4 bg-slate-50/50 rounded-2xl border border-slate-50">
                     <div className="size-10 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0">
-                      <PhoneIcon className="size-5 text-primary" />
+                      <UserCircleIcon className="size-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">WhatsApp</p>
-                      <p className="font-bold text-slate-700">{profile?.phone || '-'}</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Identitas</p>
+                      <p className="font-bold text-slate-700">
+                        {profile?.gender ? (profile.gender === 'male' ? 'Laki-laki' : 'Perempuan') : '-'} 
+                        {profile?.age ? `, ${profile.age} Tahun` : ''}
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-4 p-4 bg-slate-50/50 rounded-2xl border border-slate-50">
-                    <div className="size-10 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0">
-                      <MapPinIcon className="size-5 text-primary" />
+                    <div className="size-10 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0 text-primary">
+                      <span className="material-symbols-outlined text-[20px]">location_on</span>
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Alamat Utama</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Wilayah</p>
                       <p className="font-bold text-slate-700 leading-snug">
-                        {profile?.address || 'Belum diatur'}
+                        {profile?.district_name ? `${profile.district_name}, ${profile.city_name}` : (profile?.address || 'Belum diatur')}
                       </p>
                     </div>
                   </div>
+
+                  {profile?.address_detail && (
+                    <div className="col-span-1 md:col-span-2 flex items-start gap-4 p-4 bg-slate-50/50 rounded-2xl border border-slate-50">
+                      <div className="size-10 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0">
+                         <MapPinIcon className="size-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Alamat Lengkap</p>
+                        <p className="font-bold text-slate-700 leading-snug">{profile.address_detail}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

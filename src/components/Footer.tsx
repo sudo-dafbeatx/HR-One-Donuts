@@ -106,14 +106,14 @@ export default function Footer({ siteSettings }: FooterProps) {
                 </div>
               </div>
 
-              <a href={`tel:${siteSettings?.phone_number}`} className="flex items-start gap-4 group">
+              <a href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} className="flex items-start gap-4 group" target="_blank" rel="noopener noreferrer">
                 <div className="size-11 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 group-hover:bg-green-500 group-hover:text-white transition-all">
-                  <span className="material-symbols-outlined text-xl">call</span>
+                  <span className="material-symbols-outlined text-xl">chat</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">WhatsApp</span>
                   <span className="text-slate-300 text-sm font-black group-hover:text-green-500 transition-colors">
-                    {siteSettings?.phone_number || "+62 812-3456-7890"}
+                    {process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || "6285810658117"}
                   </span>
                 </div>
               </a>

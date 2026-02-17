@@ -96,7 +96,7 @@ export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSet
               <UserCircleIcon className="w-6 h-6" />
             </Link>
             <a 
-              href={`https://wa.me/${(siteSettings?.whatsapp_number || '6285810658117').replace(/\D/g, "")}`}
+              href={`https://wa.me/${(process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || siteSettings?.whatsapp_number || '6285810658117').replace(/\D/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:flex items-center justify-center gap-2 rounded-xl h-10 px-5 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all shadow-sm"

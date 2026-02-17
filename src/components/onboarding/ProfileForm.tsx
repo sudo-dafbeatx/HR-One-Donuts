@@ -29,6 +29,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
   const { setIsLoading } = useLoading();
   const router = useRouter();
   const supabase = createClient();
@@ -57,7 +58,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate() || submitting) return;
 
     setSubmitting(true);
     setIsLoading(true, 'Menyimpan profil kamu...');
@@ -91,16 +92,33 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
       // Set cookie to avoid middleware redirect (expires in 365 days)
       document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
 
-      router.push('/');
-      router.refresh();
+      setSuccess(true);
+      setIsLoading(true, 'Profil tersimpan! Selamat berbelanja...');
+      
+      // Delay redirect by 800ms so user sees confirmation
+      setTimeout(() => {
+        router.push('/');
+        router.refresh();
+      }, 800);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Terjadi kesalahan';
       alert('Gagal menyimpan profil: ' + message);
-    } finally {
       setSubmitting(false);
       setIsLoading(false);
     }
   };
+
+  if (success) {
+    return (
+      <div className="py-12 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500">
+        <div className="size-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
+          <span className="material-symbols-outlined text-green-600 text-4xl">check_circle</span>
+        </div>
+        <h2 className="text-2xl font-black text-slate-900 mb-2">Pendaftaran Berhasil! 👋</h2>
+        <p className="text-slate-500 font-medium">Selamat datang di HR-One Donuts. Kamu sedang diarahkan ke beranda...</p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

@@ -49,7 +49,7 @@ export default function LicenseExpired() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {/* WhatsApp Button */}
             <a
-              href="https://wa.me/62895351251395?text=Halo,%20saya%20ingin%20perpanjang%20layanan%20website%20HR-One%20Donuts"
+              href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '62895351251395'}?text=Halo,%20saya%20ingin%20perpanjang%20layanan%20website%20HR-One%20Donuts`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
