@@ -38,14 +38,14 @@ export default function PromotionPopup() {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-500">
-      <div className="relative max-w-md w-full bg-white rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+      <div className="relative max-w-[300px] sm:max-w-sm md:max-w-md w-full bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
         {/* Close Button */}
         <button 
           onClick={handleClose}
-          className="absolute top-4 right-4 z-20 p-2 bg-white/80 backdrop-blur rounded-full text-slate-900 hover:bg-white hover:scale-110 transition-all shadow-lg border border-slate-100"
+          className="absolute top-3 right-3 md:top-4 md:right-4 z-20 p-1.5 md:p-2 bg-white/80 backdrop-blur rounded-full text-slate-900 hover:bg-white hover:scale-110 transition-all shadow-lg border border-slate-100"
           aria-label="Close popup"
         >
-          <XMarkIcon className="size-6" />
+          <XMarkIcon className="size-5 md:size-6" />
         </button>
 
         {/* Content - Clickable Image */}
@@ -71,22 +71,22 @@ export default function PromotionPopup() {
         </div>
 
         {/* Info Area */}
-        <div className="p-8 text-center space-y-4">
-          <div className="inline-block px-3 py-1 bg-rose-50 text-rose-500 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
+        <div className="p-5 md:p-8 text-center space-y-3 md:space-y-4">
+          <div className="inline-block px-3 py-1 bg-rose-50 text-rose-500 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em]">
             Limited Time Offer
           </div>
-          <h3 className="text-xl font-black text-slate-900 leading-tight">
+          <h3 className="text-lg md:text-xl font-black text-slate-900 leading-tight">
             Hari Ini Spesial Buat Pelanggan Setia!
           </h3>
-          <p className="text-slate-500 text-sm font-medium">
+          <p className="text-slate-500 text-xs md:text-sm font-medium">
             Ada kejutan manis menantimu di outlet HR-One. Klik gambar untuk detail kado kamu.
           </p>
           <button 
             onClick={handleNavigate}
-            className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 md:py-4 bg-primary text-white text-sm md:text-base font-black rounded-xl md:rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
           >
             Buka Kado Kamu
-            <span className="material-symbols-outlined">redeem</span>
+            <span className="material-symbols-outlined text-lg md:text-xl">redeem</span>
           </button>
         </div>
       </div>
