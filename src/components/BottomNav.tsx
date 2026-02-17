@@ -87,7 +87,8 @@ export default function BottomNav() {
     pathname?.startsWith('/admin') || 
     pathname?.startsWith('/login') || 
     pathname?.startsWith('/onboarding') || 
-    pathname?.startsWith('/auth')
+    pathname?.startsWith('/auth') ||
+    pathname?.startsWith('/promo')
   ) return null;
 
   return (

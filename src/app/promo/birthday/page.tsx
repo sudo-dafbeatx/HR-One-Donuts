@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Footer from "@/components/Footer";
 import Link from 'next/link';
+import Confetti from "@/components/animations/Confetti";
 
 export default function BirthdayPromoPage() {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -34,7 +34,7 @@ export default function BirthdayPromoPage() {
 
   return (
     <div className="min-h-screen bg-rose-50/30">
-      
+      <Confetti />
       
       <main className="max-w-4xl mx-auto px-4 py-16 text-center">
         {/* Celebration Header */}
@@ -141,8 +141,6 @@ export default function BirthdayPromoPage() {
           </Link>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
