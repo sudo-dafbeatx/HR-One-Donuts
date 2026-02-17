@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from 'next/link';
 
@@ -35,7 +34,7 @@ export default function BirthdayPromoPage() {
 
   return (
     <div className="min-h-screen bg-rose-50/30">
-      <Navbar hideLogo />
+      
       
       <main className="max-w-4xl mx-auto px-4 py-16 text-center">
         {/* Celebration Header */}
@@ -134,7 +133,7 @@ export default function BirthdayPromoPage() {
           </div>
 
           <Link 
-            href="/catalog" 
+            href="/" 
             className="bg-primary rounded-3xl p-6 shadow-xl shadow-primary/25 flex items-center justify-center gap-3 text-white font-black hover:scale-105 transition-all text-lg"
           >
             Lihat Menu Kami
