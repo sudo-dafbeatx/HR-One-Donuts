@@ -5,24 +5,32 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { BoltIcon, ClockIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState, useRef } from 'react';
-import CountdownTimer from './CountdownTimer';
+import { getEventTiming, formatCountdown } from '@/lib/date-utils';
 
 export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
   const [mounted, setMounted] = useState(false);
+  const [, setTick] = useState(0); 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Find the event ending soonest to use for the countdown
-  const targetDate = events
-    .map(e => e.end_at)
-    .filter(Boolean)
-    .sort((a, b) => new Date(a!).getTime() - new Date(b!).getTime())[0];
-
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(timer);
+    requestAnimationFrame(() => setMounted(true));
+    const timer = setInterval(() => setTick(t => t + 1), 1000);
+    return () => clearInterval(timer);
   }, []);
 
   if (!mounted || !events || events.length === 0) return null;
+
+  // Find the active or next closest event for the header timer
+  const activeEvents = events.map(e => ({
+    ...e,
+    timing: e.active_weekday 
+      ? getEventTiming(e.active_weekday, e.start_time || '00:00', e.end_time || '23:59', e.title)
+      : null
+  }));
+
+  const globalTargetEvent = activeEvents
+    .filter(e => e.timing?.isActive)
+    .sort((a, b) => (a.timing?.secondsUntilEnd || 0) - (b.timing?.secondsUntilEnd || 0))[0];
 
   return (
     <section className="w-full bg-white py-8 border-b border-slate-100">
@@ -38,7 +46,14 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
                 <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight leading-none">
                   Flash <span className="text-primary">Sale</span>
                 </h2>
-                {targetDate && <CountdownTimer targetDate={targetDate} />}
+                {globalTargetEvent?.timing?.isActive && (
+                  <div className="flex items-center gap-1.5 bg-slate-900 text-white px-2.5 py-1 rounded-lg">
+                    <ClockIcon className="size-3 text-primary animate-pulse" />
+                    <span className="font-mono text-[11px] font-black tracking-tighter">
+                      {formatCountdown(globalTargetEvent.timing.secondsUntilEnd)}
+                    </span>
+                  </div>
+                )}
               </div>
               <p className="text-[10px] font-medium text-slate-400 tracking-wide mt-1">Penawaran Terbatas</p>
             </div>
@@ -59,59 +74,68 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
             className="flex gap-3 overflow-x-auto pb-6 hide-scrollbar snap-x snap-mandatory scroll-smooth"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {events.map((event) => (
-              <div 
-                key={event.id}
-                className="flex-shrink-0 w-[46%] sm:w-[32%] lg:w-[280px] snap-start"
-              >
-                <Link 
-                  href="/catalog?filter=promo"
-                  className="block h-full group/card"
+            {activeEvents.map((event) => {
+              const timing = event.timing;
+              const statusLabel = timing?.isActive 
+                ? 'Sedang Berlangsung' 
+                : timing 
+                  ? `Mulai dlm ${formatCountdown(timing.secondsUntilNext)}` 
+                  : 'Terbatas';
+
+              return (
+                <div 
+                  key={event.id}
+                  className="flex-shrink-0 w-[46%] sm:w-[32%] lg:w-[280px] snap-start"
                 >
-                  <div className="h-full bg-white border border-primary/10 rounded-2xl p-3 md:p-4 flex flex-col gap-3 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300">
-                    {/* Top Row: Icon/Image & Badge */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-shrink-0 size-8 md:size-10 rounded-xl bg-primary/5 flex items-center justify-center overflow-hidden border border-primary/5">
-                        {event.banner_image_url ? (
-                          <div className="relative size-full">
-                            <Image 
-                              src={event.banner_image_url} 
-                              alt={event.title} 
-                              fill 
-                              className="object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <BoltIcon className="size-5 md:size-6 text-primary" />
-                        )}
+                  <Link 
+                    href={`/promo/${event.event_type}`}
+                    className="block h-full group/card"
+                  >
+                    <div className={`h-full bg-white border ${timing?.isActive ? 'border-primary/20 shadow-primary/5' : 'border-slate-100'} rounded-2xl p-3 md:p-4 flex flex-col gap-3 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300`}>
+                      {/* Top Row: Icon/Image & Badge */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-shrink-0 size-8 md:size-10 rounded-xl bg-primary/5 flex items-center justify-center overflow-hidden border border-primary/5">
+                          {event.banner_image_url ? (
+                            <div className="relative size-full">
+                              <Image 
+                                src={event.banner_image_url} 
+                                alt={event.title} 
+                                fill 
+                                className="object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <BoltIcon className="size-5 md:size-6 text-primary" />
+                          )}
+                        </div>
+                        
+                        <div className={`flex-shrink-0 ${timing?.isActive ? 'bg-primary' : 'bg-slate-400'} text-white px-2 py-0.5 md:py-1 rounded-full text-[7px] md:text-[8px] font-black uppercase tracking-wider shadow-sm transition-colors`}>
+                          {event.discount_percent ? `${event.discount_percent}% OFF` : 'PROMO'}
+                        </div>
                       </div>
-                      
-                      <div className="flex-shrink-0 bg-primary text-white px-2 py-0.5 md:py-1 rounded-full text-[7px] md:text-[8px] font-black uppercase tracking-wider shadow-sm shadow-primary/20">
-                        {event.discount_percent ? `${event.discount_percent}% OFF` : 'PROMO'}
+
+                      {/* Content Section */}
+                      <div className="flex-1 flex flex-col justify-center">
+                        <h3 className="text-slate-900 font-bold text-[11px] md:text-sm leading-tight line-clamp-1 mb-0.5 group-hover/card:text-primary transition-colors">
+                          {event.title}
+                        </h3>
+                        <p className="text-slate-400 text-[9px] md:text-[10px] leading-snug line-clamp-2 md:line-clamp-1 font-medium">
+                          {event.description || 'Penawaran terbatas, cek sekarang!'}
+                        </p>
+                      </div>
+
+                      {/* Bottom: Time Badge */}
+                      <div className="flex items-center gap-1.5 pt-1 border-t border-slate-50">
+                        <ClockIcon className={`size-3 ${timing?.isActive ? 'text-primary' : 'text-slate-300'}`} />
+                        <span className={`text-[8px] md:text-[9px] font-bold uppercase tracking-tighter ${timing?.isActive ? 'text-primary' : 'text-slate-400'}`}>
+                          {statusLabel}
+                        </span>
                       </div>
                     </div>
-
-                    {/* Content Section */}
-                    <div className="flex-1 flex flex-col justify-center">
-                      <h3 className="text-slate-900 font-bold text-[11px] md:text-sm leading-tight line-clamp-1 mb-0.5 group-hover/card:text-primary transition-colors">
-                        {event.title}
-                      </h3>
-                      <p className="text-slate-400 text-[9px] md:text-[10px] leading-snug line-clamp-2 md:line-clamp-1 font-medium">
-                        {event.description || 'Penawaran terbatas, cek sekarang!'}
-                      </p>
-                    </div>
-
-                    {/* Bottom: Time Badge */}
-                    <div className="flex items-center gap-1.5 pt-1 border-t border-slate-50">
-                      <ClockIcon className="size-3 text-primary/60" />
-                      <span className="text-[8px] md:text-[9px] font-bold text-primary uppercase tracking-tighter">
-                        Terbatas
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
+                  </Link>
+                </div>
+              );
+            })}
           </div>
 
           {/* Navigation Hints - Only visible on desktop if many items */}

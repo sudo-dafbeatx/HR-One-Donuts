@@ -30,6 +30,9 @@ export interface PromoEvent {
   discount_percent: number;
   start_at: string | null;
   end_at: string | null;
+  active_weekday?: number | null;
+  start_time?: string | null;
+  end_time?: string | null;
   is_active: boolean;
   created_at?: string;
 }
