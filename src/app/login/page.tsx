@@ -9,7 +9,7 @@ import { useLoading } from '@/context/LoadingContext';
 import { logTraffic } from '@/app/actions/traffic-actions';
 import { verifyCaptcha } from '@/app/actions/verify-captcha';
 import { SiteSettings } from '@/types/cms';
-// import LogoBrand from '@/components/ui/LogoBrand'; // Not used in refined UI
+import Image from 'next/image';
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
@@ -178,21 +178,7 @@ function LoginContent() {
   }, [otpStep, countdown]);
 
   // Compute Password Strength during render
-  const getPasswordStrength = () => {
-    if (!password) return { score: 0, label: '', color: '' };
 
-    let score = 0;
-    if (password.length >= 8) score += 1;
-    if (/[A-Z]/.test(password)) score += 1;
-    if (/[0-9]/.test(password)) score += 1;
-    if (/[^A-Za-z0-9]/.test(password)) score += 1;
-
-    if (score <= 1) return { score, label: 'Lemah', color: 'bg-red-500' };
-    if (score <= 2) return { score, label: 'Sedang', color: 'bg-orange-500' };
-    return { score, label: 'Kuat', color: 'bg-green-500' };
-  };
-
-  const strength = getPasswordStrength();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -436,11 +422,12 @@ function LoginContent() {
           {/* Circular Logo Header */}
           <div className="relative -mt-12 mb-4 flex justify-center">
             <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
-              <img 
+              <Image 
                 src="/images/Logos.png" 
                 alt="Logo" 
+                width={96}
+                height={96}
                 className="w-full h-full object-cover"
-                onError={(e) => (e.currentTarget.src = "/images/Logos.png")}
               />
             </div>
           </div>
@@ -516,11 +503,12 @@ function LoginContent() {
           {/* Circular Logo Header */}
           <div className="relative -mt-12 mb-4 flex justify-center">
             <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
-              <img 
+              <Image 
                 src="/images/Logos.png" 
                 alt="Logo" 
+                width={96}
+                height={96}
                 className="w-full h-full object-cover"
-                onError={(e) => (e.currentTarget.src = "/images/Logos.png")}
               />
             </div>
           </div>
@@ -613,11 +601,12 @@ function LoginContent() {
           {/* Circular Logo Header */}
           <div className="relative -mt-12 mb-4 flex justify-center">
             <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
-              <img 
+              <Image 
                 src="/images/Logos.png" 
                 alt="Logo" 
+                width={96}
+                height={96}
                 className="w-full h-full object-cover"
-                onError={(e) => (e.currentTarget.src = "/images/Logos.png")}
               />
             </div>
           </div>
@@ -776,11 +765,12 @@ function LoginContent() {
         {/* Circular Logo Header */}
         <div className="relative -mt-12 mb-4 flex justify-center">
           <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
-            <img 
+            <Image 
               src="/images/Logos.png" 
               alt="Logo" 
+              width={96}
+              height={96}
               className="w-full h-full object-cover"
-              onError={(e) => (e.currentTarget.src = "/images/Logos.png")}
             />
           </div>
         </div>
