@@ -7,13 +7,14 @@ import { useLoading } from '@/context/LoadingContext';
 import { useRouter } from 'next/navigation';
 
 interface ProfileFormProps {
+  userId: string;
   initialData: {
     full_name: string;
     email: string;
   };
 }
 
-export default function ProfileForm({ initialData }: ProfileFormProps) {
+export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     fullName: initialData.full_name,
     email: initialData.email,
@@ -30,6 +31,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [slowSubmission, setSlowSubmission] = useState(false);
   const { setIsLoading } = useLoading();
   const router = useRouter();
   const supabase = createClient();
@@ -60,17 +62,25 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     e.preventDefault();
     if (!validate() || submitting) return;
 
+    const startTime = Date.now();
+    console.log(`[Onboarding] Submission started at: ${new Date(startTime).toISOString()}`);
+    
     setSubmitting(true);
+    setSlowSubmission(false);
     setIsLoading(true, 'Menyimpan profil kamu...');
 
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Sesi tidak ditemukan');
+    // Timeout guard: show reassurance message if > 4s
+    const timeoutMsg = setTimeout(() => {
+      setSlowSubmission(true);
+      setIsLoading(true, 'Menyimpan data... Mohon tunggu sebentar');
+    }, 4000);
 
+    try {
+      // Use the userId prop - no need to await getUser() again
       const { error } = await supabase
         .from('user_profiles')
         .upsert({
-          id: user.id,
+          id: userId,
           full_name: formData.fullName,
           email: formData.email,
           gender: formData.gender,
@@ -87,22 +97,28 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
           is_profile_complete: true
         });
 
+      clearTimeout(timeoutMsg);
+      const endTime = Date.now();
+      console.log(`[Onboarding] Supabase response in ${endTime - startTime}ms`);
+
       if (error) throw error;
 
-      // Set cookie to avoid middleware redirect (expires in 365 days)
+      // Optimistic UI: Sync cookie and state immediately
       document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
-
       setSuccess(true);
-      setIsLoading(true, 'Profil tersimpan! Selamat berbelanja...');
-      
-      // Delay redirect by 800ms so user sees confirmation
+      setIsLoading(false); // Stop general loading to show success UI
+
+      // Fast redirect after success UI is shown
       setTimeout(() => {
         router.push('/');
-        router.refresh();
-      }, 800);
+        // Do refresh in background or later to avoid blocking
+      }, 600);
+      
     } catch (err: unknown) {
+      clearTimeout(timeoutMsg);
       const message = err instanceof Error ? err.message : 'Terjadi kesalahan';
-      alert('Gagal menyimpan profil: ' + message);
+      console.error('[Onboarding] Error:', message, err);
+      alert('Gagal menyimpan data. Coba lagi.');
       setSubmitting(false);
       setIsLoading(false);
     }
@@ -255,7 +271,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
           {submitting ? (
             <>
               <div className="size-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-              <span>Menyimpan...</span>
+              <span>{slowSubmission ? 'Sedang memproses... Mohon tunggu' : 'Menyimpan...'}</span>
             </>
           ) : (
             <>
@@ -264,6 +280,11 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
             </>
           )}
         </button>
+        {slowSubmission && (
+          <p className="mt-3 text-center text-xs font-bold text-amber-600 animate-pulse">
+            Koneksi agak lambat, tetap di sini ya... 🍩
+          </p>
+        )}
       </div>
     </form>
   );

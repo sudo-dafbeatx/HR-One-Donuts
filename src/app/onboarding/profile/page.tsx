@@ -71,6 +71,7 @@ export default async function OnboardingProfilePage() {
           {/* Form Section */}
           <div className="px-5 md:px-12 pb-8 md:pb-12">
             <ProfileForm 
+              userId={user.id}
               initialData={{
                 full_name: user.user_metadata?.full_name || '',
                 email: user.email || ''
