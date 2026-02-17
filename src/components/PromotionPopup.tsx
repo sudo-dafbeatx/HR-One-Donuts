@@ -53,10 +53,10 @@ export default function PromotionPopup() {
           onClick={handleNavigate}
           className="relative cursor-pointer group"
         >
-          <div className="relative aspect-square">
+          <div className="relative aspect-[2/3]">
             <Image 
-              src="/images/Popup.png" 
-              alt="Promosi Ulang Tahun" 
+              src="/images/Popup1.webp" 
+              alt="Promo Spesial Ulang Tahun HR-One Donuts" 
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-700"
               priority

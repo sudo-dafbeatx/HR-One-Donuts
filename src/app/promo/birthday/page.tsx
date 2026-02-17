@@ -35,7 +35,7 @@ export default function BirthdayPromoPage() {
 
   return (
     <div className="min-h-screen bg-rose-50/30">
-      <Navbar />
+      <Navbar hideLogo />
       
       <main className="max-w-4xl mx-auto px-4 py-16 text-center">
         {/* Celebration Header */}
@@ -63,7 +63,7 @@ export default function BirthdayPromoPage() {
                 Penawaran Spesial
               </div>
               <h2 className="text-3xl font-black text-slate-900 leading-tight">
-                Gratis <span className="text-primary">1 Box Donat</span> Isi 6 Pilihan Kamu!
+                Gratis <span className="text-primary">1 Box Donat</span> Spesial Untukmu!
               </h2>
               
               <div className="space-y-4">
@@ -82,7 +82,7 @@ export default function BirthdayPromoPage() {
                   </li>
                   <li className="flex gap-3 text-sm">
                     <span className="font-bold text-primary">3.</span>
-                    Promo ini hanya berlaku hari ini dan tidak dapat diwakilkan.
+                    Promo eksklusif ini hanya berlaku khusus di hari spesialmu.
                   </li>
                 </ul>
               </div>
