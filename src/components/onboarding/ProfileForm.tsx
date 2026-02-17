@@ -103,10 +103,10 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div>
-          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Nama Lengkap</label>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Nama Lengkap</label>
           <input
             type="text"
             value={formData.fullName}
@@ -118,7 +118,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         </div>
 
         <div>
-          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Email (Akun)</label>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Email (Akun)</label>
           <input
             type="email"
             value={formData.email}
@@ -130,14 +130,14 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div>
-          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Jenis Kelamin</label>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Jenis Kelamin</label>
           <div className="flex gap-3">
             {['male', 'female'].map((g) => (
               <label 
                 key={g}
                 className={`flex-1 flex items-center justify-center gap-2 h-12 md:h-13 rounded-2xl border-2 cursor-pointer transition-all ${
                   formData.gender === g 
-                    ? 'border-primary bg-primary/5 text-primary font-bold' 
+                    ? 'border-primary bg-primary/5 text-primary font-bold shadow-sm shadow-primary/10' 
                     : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'
                 }`}
               >
@@ -160,7 +160,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         </div>
 
         <div>
-          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Usia (Tahun)</label>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Usia (Tahun)</label>
           <input
             type="number"
             min="13"
@@ -176,7 +176,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div>
-          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Tempat Lahir</label>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Tempat Lahir</label>
           <input
             type="text"
             value={formData.birthPlace}
@@ -188,7 +188,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         </div>
 
         <div>
-          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Tanggal Lahir</label>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Tanggal Lahir</label>
           <input
             type="date"
             value={formData.birthDate}
@@ -199,8 +199,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         </div>
       </div>
 
-      <div className="bg-slate-50/50 p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 space-y-5">
-        <h3 className="text-[15px] md:text-lg font-bold text-slate-800 flex items-center gap-2">
+      <div className="bg-slate-50/50 p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 space-y-4">
+        <h3 className="text-[14px] md:text-lg font-bold text-slate-800 flex items-center gap-2">
           <span className="material-symbols-outlined text-primary text-[20px]">location_on</span>
           Wilayah Pengiriman
         </h3>
@@ -217,7 +217,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         />
 
         <div>
-          <label className="block text-[12px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Alamat Lengkap (Opsional)</label>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Alamat Lengkap (Opsional)</label>
           <textarea
             value={formData.addressDetail}
             onChange={(e) => setFormData({ ...formData, addressDetail: e.target.value })}
@@ -228,7 +228,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         </div>
       </div>
 
-      <div className="pt-2 sticky bottom-0 bg-white/80 backdrop-blur-md -mx-5 px-5 py-3 border-t border-slate-100 md:relative md:bg-transparent md:border-none md:p-0 md:m-0">
+      <div className="pt-2 sticky bottom-0 bg-white/90 backdrop-blur-md -mx-5 px-5 py-4 pb-safe border-t border-slate-100 md:relative md:bg-transparent md:border-none md:p-0 md:m-0 z-20">
         <button
           type="submit"
           disabled={submitting}
