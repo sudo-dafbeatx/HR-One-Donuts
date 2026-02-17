@@ -35,6 +35,10 @@ export default async function OnboardingProfilePage() {
     tagline?: string;
   };
 
+  const adminNumber = process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117';
+  const waMessage = "Halo Admin HR-One Donuts, mohon bantuannya. Saya mengalami kendala saat mengisi form pendaftaran di website HR-One Donuts. Terima kasih atas bantuannya.";
+  const waUrl = `https://wa.me/${adminNumber}?text=${encodeURIComponent(waMessage)}`;
+
   return (
     <div 
       className="min-h-screen flex flex-col py-6 md:py-12 px-4 sm:px-6 lg:px-8 pb-24 md:pb-12"
@@ -75,9 +79,8 @@ export default async function OnboardingProfilePage() {
           </div>
 
           {/* Footer Info */}
-          <div className="bg-slate-50 px-8 py-5 border-t border-slate-100 flex items-center justify-center gap-2.5">
-            <span className="material-symbols-outlined text-primary text-[20px] md:text-[22px] leading-none">shield_with_heart</span>
-            <p className="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-[0.15em] text-center leading-relaxed">
+          <div className="bg-slate-50 px-8 py-5 border-t border-slate-100 flex items-center justify-center">
+            <p className="text-[10px] md:text-xs font-medium text-slate-400 uppercase tracking-[0.2em] text-center leading-relaxed opacity-80">
               Data Terenkripsi & Aman di Supabase
             </p>
           </div>
@@ -85,7 +88,7 @@ export default async function OnboardingProfilePage() {
 
         {/* Support Link */}
         <p className="mt-10 mb-8 text-center text-slate-400 text-[13px] font-medium">
-          Ada kendala? <a href="https://wa.me/6285810658117" target="_blank" rel="noopener noreferrer" className="text-primary font-extrabold hover:underline">Hubungi Admin</a>
+          Ada kendala? <a href={waUrl} target="_blank" rel="noopener noreferrer" className="text-primary font-extrabold hover:underline">Hubungi Admin</a>
         </p>
       </main>
     </div>
