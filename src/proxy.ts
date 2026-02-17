@@ -19,10 +19,13 @@ export default async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
   // Skip auth check for public routes
-  const isPublicRoute = pathname.startsWith('/login') || 
-                         pathname.startsWith('/auth') || 
+  const isAuthPath = pathname.startsWith('/login') || pathname.startsWith('/auth');
+  const isPublicRoute = isAuthPath || 
                          pathname.startsWith('/api') ||
-                         pathname.startsWith('/license-expired');
+                         pathname.startsWith('/license-expired') ||
+                         pathname.startsWith('/_next') ||
+                         pathname.startsWith('/images') ||
+                         pathname.match(/\.(.*)$/);
   
   if (!isPublicRoute) {
     let supabaseResponse = NextResponse.next({ request });
@@ -55,6 +58,22 @@ export default async function proxy(request: NextRequest) {
       url.pathname = '/login';
       url.searchParams.set('next', pathname);
       return NextResponse.redirect(url);
+    }
+
+    // =====================================================
+    // ONBOARDING PROTECTION - Customer Profile Check
+    // =====================================================
+    const isOnboardingPath = pathname.startsWith('/onboarding');
+    const isAdminPath = pathname.startsWith('/admin');
+
+    if (!isOnboardingPath && !isAdminPath) {
+      const profileCompleteCookie = request.cookies.get('hr_profile_complete');
+      
+      if (!profileCompleteCookie || profileCompleteCookie.value !== 'true') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/onboarding/profile';
+        return NextResponse.redirect(url);
+      }
     }
 
     return supabaseResponse;

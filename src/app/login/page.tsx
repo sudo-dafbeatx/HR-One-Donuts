@@ -96,32 +96,43 @@ function LoginContent() {
   const handleRedirection = useCallback(async (userId: string) => {
     const attemptFetchAndRedirect = async (count: number): Promise<void> => {
       try {
-        // Use maybeSingle to prevent "single() expected 1 row" errors if trigger is slow
-        const { data: profile, error } = await supabase
+        // 1. Check existing profiles for role (admin)
+        const { data: profile } = await supabase
           .from('profiles')
-          .select('role, full_name')
+          .select('role')
           .eq('id', userId)
           .maybeSingle();
-
-        if (error) {
-          console.error('Profile fetch error:', error);
-        }
-
-        // If profile is not found yet, it might be due to a slow trigger.
-        // We retry up to 2 times (total 3 attempts) with a delay.
-        if (!profile && count < 2) {
-          console.log(`Profile not found for user ${userId}, retrying (${count + 1}/2)...`);
-          await new Promise(r => setTimeout(r, 1500));
-          return attemptFetchAndRedirect(count + 1);
-        }
 
         if (profile?.role === 'admin') {
           router.push('/admin');
           setTimeout(() => router.refresh(), 100);
-        } else if (!profile?.full_name && !profileCompletionStep) {
-          setProfileCompletionStep(true);
+          return;
+        }
+
+        // 2. Check new user_profiles for completeness
+        const { data: userProfile, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('is_profile_complete')
+          .eq('id', userId)
+          .maybeSingle();
+
+        if (profileError) {
+          console.error('User Profile fetch error:', profileError);
+        }
+
+        // If profile is not found, it might be a new user (especially Google Auth)
+        if (!userProfile && count < 2) {
+          console.log(`User profile not found for ${userId}, retrying...`);
+          await new Promise(r => setTimeout(r, 1500));
+          return attemptFetchAndRedirect(count + 1);
+        }
+
+        if (!userProfile?.is_profile_complete) {
+          router.push('/onboarding/profile');
         } else {
-          // Ensure redirectTo is relative or same-origin
+          // Set cookie flag for middleware
+          document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
+          
           const target = redirectTo.startsWith('http') ? new URL(redirectTo).pathname : redirectTo;
           router.push(target || '/');
           setTimeout(() => router.refresh(), 100);
@@ -133,7 +144,7 @@ function LoginContent() {
     };
 
     return attemptFetchAndRedirect(0);
-  }, [supabase, router, redirectTo, profileCompletionStep]);
+  }, [supabase, router, redirectTo]);
 
   useEffect(() => {
     const checkUser = async () => {
