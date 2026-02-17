@@ -70,13 +70,17 @@ export default function GeoDropdown({ onProvinceChange, onCityChange, onDistrict
       setFetchError(null);
       try {
         const data = await getCities(selectedProvince.id);
-        if (data.length === 0) {
+        if (data && data.length > 0) {
+          setCities(data);
+          setFetchError(null);
+        } else {
           setFetchError(`Data kota untuk ${selectedProvince.name} tidak tersedia`);
+          setCities([]);
         }
-        setCities(data);
       } catch (err) {
         console.error(err);
-        setFetchError('Gagal memuat daftar kota');
+        setFetchError('Gagal memuat daftar kota. Silakan coba pilih provinsi lagi.');
+        setCities([]);
       } finally {
         setLoading(prev => ({ ...prev, cities: false }));
       }
@@ -94,13 +98,17 @@ export default function GeoDropdown({ onProvinceChange, onCityChange, onDistrict
       setFetchError(null);
       try {
         const data = await getDistricts(selectedCity.id);
-        if (data.length === 0) {
+        if (data && data.length > 0) {
+          setDistricts(data);
+          setFetchError(null);
+        } else {
           setFetchError(`Data kecamatan untuk ${selectedCity.name} tidak tersedia`);
+          setDistricts([]);
         }
-        setDistricts(data);
       } catch (err) {
         console.error(err);
-        setFetchError('Gagal memuat daftar kecamatan');
+        setFetchError('Gagal memuat daftar kecamatan. Silakan coba pilih kota lagi.');
+        setDistricts([]);
       } finally {
         setLoading(prev => ({ ...prev, districts: false }));
       }

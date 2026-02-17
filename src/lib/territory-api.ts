@@ -1,6 +1,7 @@
 'use client';
 
-const BASE_URL = 'https://emsifa.github.io/api-wilayah-indonesia/api';
+const PRIMARY_BASE_URL = 'https://emsifa.github.io/api-wilayah-indonesia/api';
+const SECONDARY_BASE_URL = 'https://www.emsifa.com/api-wilayah-indonesia/api';
 
 export interface Province {
   id: string;
@@ -67,13 +68,18 @@ const getCached = <T,>(key: string): T | null => {
     if (!cached) return null;
     
     const { data, timestamp } = JSON.parse(cached);
+    
+    // If cache is empty array (except for provinces), treat as stale
+    if (Array.isArray(data) && data.length === 0 && key !== 'provinces') {
+      return null;
+    }
+
     if (Date.now() - timestamp > CACHE_EXPIRY) {
       localStorage.removeItem(CACHE_KEY_PREFIX + key);
       return null;
     }
     return data;
   } catch (e) {
-    console.error('Cache read error:', e);
     return null;
   }
 };
@@ -85,24 +91,40 @@ const setCached = (key: string, data: Province[] | City[] | District[]) => {
       data,
       timestamp: Date.now()
     }));
-  } catch (e) {
-    console.warn('Cache write error (possibly quota exceeded):', e);
+  } catch {
+    console.warn('Cache write error: Storage quota might be exceeded');
   }
 };
+
+async function smartFetch(path: string) {
+  try {
+    // Try primary first
+    const res1 = await fetch(`${PRIMARY_BASE_URL}/${path}`, { cache: 'no-store' });
+    if (res1.ok) return await res1.json();
+    
+    // Fallback to secondary if primary fails
+    const res2 = await fetch(`${SECONDARY_BASE_URL}/${path}`, { cache: 'no-store' });
+    if (res2.ok) return await res2.json();
+    
+    throw new Error(`Failed to fetch from both sources: ${path}`);
+  } catch (err) {
+    // If it's a network error, try secondary as last resort
+    const res2 = await fetch(`${SECONDARY_BASE_URL}/${path}`, { cache: 'no-store' });
+    if (res2.ok) return await res2.json();
+    throw err;
+  }
+}
 
 export async function getProvinces(): Promise<Province[]> {
   try {
     const cached = getCached<Province[]>('provinces');
     if (cached) return cached;
 
-    const res = await fetch(`${BASE_URL}/provinces.json`);
-    if (!res.ok) throw new Error('Failed to fetch provinces');
-    const data = await res.json();
+    const data = await smartFetch('provinces.json');
     setCached('provinces', data);
     return data;
   } catch (err) {
     console.error('getProvinces error:', err);
-    // Return fallback provinces list if API fails
     return FALLBACK_PROVINCES;
   }
 }
@@ -114,14 +136,14 @@ export async function getCities(provinceId: string): Promise<City[]> {
     const cached = getCached<City[]>(cacheKey);
     if (cached) return cached;
 
-    const res = await fetch(`${BASE_URL}/regencies/${provinceId}.json`);
-    if (!res.ok) throw new Error('Failed to fetch cities');
-    const data = await res.json();
-    setCached(cacheKey, data);
+    const data = await smartFetch(`regencies/${provinceId}.json`);
+    if (Array.isArray(data) && data.length > 0) {
+      setCached(cacheKey, data);
+    }
     return data;
   } catch (err) {
     console.error('getCities error:', err);
-    return [];
+    throw err; // Throw to let component handle retry or error UI
   }
 }
 
@@ -132,13 +154,13 @@ export async function getDistricts(cityId: string): Promise<District[]> {
     const cached = getCached<District[]>(cacheKey);
     if (cached) return cached;
 
-    const res = await fetch(`${BASE_URL}/districts/${cityId}.json`);
-    if (!res.ok) throw new Error('Failed to fetch districts');
-    const data = await res.json();
-    setCached(cacheKey, data);
+    const data = await smartFetch(`districts/${cityId}.json`);
+    if (Array.isArray(data) && data.length > 0) {
+      setCached(cacheKey, data);
+    }
     return data;
   } catch (err) {
     console.error('getDistricts error:', err);
-    return [];
+    throw err; // Throw to let component handle
   }
 }
