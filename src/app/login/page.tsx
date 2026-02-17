@@ -9,7 +9,7 @@ import { useLoading } from '@/context/LoadingContext';
 import { logTraffic } from '@/app/actions/traffic-actions';
 import { verifyCaptcha } from '@/app/actions/verify-captcha';
 import { SiteSettings } from '@/types/cms';
-import LogoBrand from '@/components/ui/LogoBrand';
+// import LogoBrand from '@/components/ui/LogoBrand'; // Not used in refined UI
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
@@ -431,19 +431,24 @@ function LoginContent() {
   // ─── Profile Completion Screen ───
   if (profileCompletionStep) {
     return (
-      <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6 md:p-12">
-        <div className="w-full max-w-xl rounded-lg bg-white shadow-lg overflow-hidden">
-          <img 
-            src="/images/Popup1.webp" 
-            alt="Registration Banner" 
-            className="w-full h-48 object-cover" 
-            onError={(e) => (e.currentTarget.src = "https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=1000&auto=format&fit=crop")}
-          />
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6 md:p-12 animate-in fade-in duration-500">
+        <div className="w-full max-w-xl rounded-2xl bg-white shadow-xl overflow-visible mt-12">
+          {/* Circular Logo Header */}
+          <div className="relative -mt-12 mb-4 flex justify-center">
+            <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
+              <img 
+                src="/images/Logos.png" 
+                alt="Logo" 
+                className="w-full h-full object-cover"
+                onError={(e) => (e.currentTarget.src = "/images/Logos.png")}
+              />
+            </div>
+          </div>
           
-          <div className="p-10">
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800">Lengkapi Profil</h2>
-              <p className="mt-2 text-sm text-gray-600">Bantu kami mengenal Anda untuk pengiriman yang pas!</p>
+          <div className="px-10 pb-10">
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-bold text-gray-800">Lengkapi Profil</h2>
+              <p className="mt-2 text-sm text-gray-500 font-medium">Bantu kami mengenal Anda untuk pengiriman yang pas!</p>
             </div>
 
             {error && (
@@ -506,19 +511,24 @@ function LoginContent() {
   // ─── OTP / Email Verification Screen ───
   if (otpStep) {
     return (
-      <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6 md:p-12">
-        <div className="w-full max-w-xl rounded-lg bg-white shadow-lg overflow-hidden">
-          <img 
-            src="/images/Popup1.webp" 
-            alt="Verification Banner" 
-            className="w-full h-48 object-cover" 
-            onError={(e) => (e.currentTarget.src = "https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=1000&auto=format&fit=crop")}
-          />
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6 md:p-12 animate-in fade-in duration-500">
+        <div className="w-full max-w-xl rounded-2xl bg-white shadow-xl overflow-visible mt-12">
+          {/* Circular Logo Header */}
+          <div className="relative -mt-12 mb-4 flex justify-center">
+            <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
+              <img 
+                src="/images/Logos.png" 
+                alt="Logo" 
+                className="w-full h-full object-cover"
+                onError={(e) => (e.currentTarget.src = "/images/Logos.png")}
+              />
+            </div>
+          </div>
 
-          <div className="p-10">
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800">Verifikasi Email</h2>
-              <p className="mt-2 text-sm text-gray-600">
+          <div className="px-10 pb-10">
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-bold text-gray-800">Verifikasi Email</h2>
+              <p className="mt-2 text-sm text-gray-500 font-medium">
                 {isRegistering 
                   ? <>Masukkan 6 digit kode yang dikirim ke <span className="font-bold text-gray-800">{email}</span></>
                   : <>Masukkan 6 digit kode masuk yang dikirim ke <span className="font-bold text-gray-800">{email}</span></>
@@ -598,19 +608,24 @@ function LoginContent() {
   // ═══════════════════════════════════════════════════════
   if (isRegistering) {
     return (
-      <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6 md:p-12">
-        <div className="w-full max-w-xl rounded-lg bg-white shadow-lg overflow-hidden">
-          <img 
-            src="/images/Popup1.webp" 
-            alt="Register Banner" 
-            className="w-full h-48 object-cover" 
-            onError={(e) => (e.currentTarget.src = "https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=1000&auto=format&fit=crop")}
-          />
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6 md:p-12 animate-in fade-in duration-500">
+        <div className="w-full max-w-xl rounded-2xl bg-white shadow-xl overflow-visible mt-12">
+          {/* Circular Logo Header */}
+          <div className="relative -mt-12 mb-4 flex justify-center">
+            <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
+              <img 
+                src="/images/Logos.png" 
+                alt="Logo" 
+                className="w-full h-full object-cover"
+                onError={(e) => (e.currentTarget.src = "/images/Logos.png")}
+              />
+            </div>
+          </div>
 
-          <div className="p-10">
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800">Register now</h2>
-              <p className="mt-2 text-sm text-gray-600">Buat akun untuk mulai belanja donat favoritmu.</p>
+          <div className="px-10 pb-10">
+            <div className="mb-8 text-center">
+              <h2 className="text-2xl font-bold text-gray-800">Register now</h2>
+              <p className="mt-2 text-sm text-gray-500 font-medium">Buat akun untuk mulai belanja donat favoritmu.</p>
             </div>
 
             {error && (
@@ -746,7 +761,7 @@ function LoginContent() {
   // ─── LOGIN SCREEN ───
   // ═══════════════════════════════════════════════════════
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6 md:p-12">
+    <div className="bg-gray-100 min-h-screen flex items-center justify-center p-6 md:p-12 animate-in fade-in duration-500">
       {/* Throttle Warning Toast */}
       {throttleWarning && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in">
@@ -757,18 +772,23 @@ function LoginContent() {
         </div>
       )}
 
-      <div className="w-full max-w-xl rounded-lg bg-white shadow-lg overflow-hidden">
-        <img 
-          src="/images/Popup1.webp" 
-          alt="Login Banner" 
-          className="w-full h-48 object-cover" 
-          onError={(e) => (e.currentTarget.src = "https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=1000&auto=format&fit=crop")}
-        />
+      <div className="w-full max-w-xl rounded-2xl bg-white shadow-xl overflow-visible mt-12">
+        {/* Circular Logo Header */}
+        <div className="relative -mt-12 mb-4 flex justify-center">
+          <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
+            <img 
+              src="/images/Logos.png" 
+              alt="Logo" 
+              className="w-full h-full object-cover"
+              onError={(e) => (e.currentTarget.src = "/images/Logos.png")}
+            />
+          </div>
+        </div>
 
-        <div className="p-10">
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800">Login to your account</h2>
-            <p className="mt-2 text-sm text-gray-600">Selamat datang kembali! Silakan masuk ke akun Anda.</p>
+        <div className="px-10 pb-10 pt-2">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-800">Login to your account</h2>
+            <p className="mt-2 text-sm text-gray-500 font-medium">Selamat datang kembali! Silakan masuk ke akun Anda.</p>
           </div>
 
           {error && (
