@@ -44,11 +44,11 @@ export default async function OnboardingProfilePage() {
         backgroundSize: '24px 24px'
       }}
     >
-      <main className="relative z-10 max-w-[800px] w-full mx-auto">
+      <main className="relative z-10 max-w-[800px] w-full mx-auto px-2 md:px-0">
         <div className="bg-white shadow-2xl rounded-[2.5rem] overflow-hidden border border-slate-100">
           {/* Header */}
-          <div className="px-8 pt-12 pb-10 text-center bg-gradient-to-b from-blue-50/50 to-white">
-            <div className="flex items-center justify-center mb-8">
+          <div className="px-5 pt-8 pb-6 md:px-8 md:pt-12 md:pb-10 text-center bg-gradient-to-b from-blue-50/50 to-white">
+            <div className="flex items-center justify-center mb-6 md:mb-8">
               <LogoBrand 
                 logoUrl={siteInfo?.logo_url || "/images/Logos.png"} 
                 storeName={siteInfo?.store_name || "HR-One Donuts"} 
@@ -56,16 +56,16 @@ export default async function OnboardingProfilePage() {
                 priority
               />
             </div>
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">
+            <h1 className="text-2xl md:text-4xl font-black text-slate-900 mb-3 md:mb-4 tracking-tight">
               Lengkapi Profil Kamu 🍩
             </h1>
-            <p className="text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
+            <p className="text-sm md:text-base text-slate-500 font-medium max-w-md mx-auto leading-relaxed px-4 md:px-0">
               Hai {user.user_metadata?.full_name || 'Teman Donat'}! Sedikit lagi selesai. Bantu kami mengenal wilayahmu agar pengiriman makin akurat.
             </p>
           </div>
 
           {/* Form Section */}
-          <div className="px-8 md:px-12 pb-12">
+          <div className="px-5 md:px-12 pb-10 md:pb-12">
             <ProfileForm 
               initialData={{
                 full_name: user.user_metadata?.full_name || '',

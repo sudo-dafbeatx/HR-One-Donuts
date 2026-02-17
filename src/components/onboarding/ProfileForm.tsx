@@ -19,6 +19,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
     email: initialData.email,
     gender: '' as 'male' | 'female' | '',
     age: '',
+    birthPlace: '',
+    birthDate: '',
     province: { id: '', name: '' },
     city: { id: '', name: '' },
     district: { id: '', name: '' },
@@ -43,6 +45,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
         newErrors.age = 'Usia harus antara 13–100 tahun';
       }
     }
+    if (!formData.birthPlace.trim()) newErrors.birthPlace = 'Tempat lahir wajib diisi';
+    if (!formData.birthDate) newErrors.birthDate = 'Tanggal lahir wajib diisi';
     if (!formData.province.id) newErrors.province = 'Provinsi wajib dipilih';
     if (!formData.city.id) newErrors.city = 'Kota/Kabupaten wajib dipilih';
     if (!formData.district.id) newErrors.district = 'Kecamatan wajib dipilih';
@@ -70,6 +74,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
           email: formData.email,
           gender: formData.gender,
           age: parseInt(formData.age),
+          birth_place: formData.birthPlace,
+          birth_date: formData.birthDate,
           province_id: formData.province.id,
           province_name: formData.province.name,
           city_id: formData.city.id,
@@ -97,8 +103,8 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
         <div>
           <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Nama Lengkap</label>
           <input
@@ -106,7 +112,7 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
             value={formData.fullName}
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             placeholder="Masukkan nama lengkap"
-            className={`block w-full rounded-full border px-6 py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.fullName ? 'border-red-300' : 'border-slate-200'}`}
+            className={`block w-full rounded-full border px-4 py-3 md:px-6 md:py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.fullName ? 'border-red-300' : 'border-slate-200'}`}
           />
           {errors.fullName && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{errors.fullName}</p>}
         </div>
@@ -117,19 +123,19 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
             type="email"
             value={formData.email}
             readOnly
-            className="block w-full rounded-full border border-slate-200 px-6 py-4 text-slate-400 outline-none bg-slate-100 cursor-not-allowed"
+            className="block w-full rounded-full border border-slate-200 px-4 py-3 md:px-6 md:py-4 text-slate-400 outline-none bg-slate-100 cursor-not-allowed"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-3 pl-1">Jenis Kelamin</label>
+          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Jenis Kelamin</label>
           <div className="flex gap-4">
             {['male', 'female'].map((g) => (
               <label 
                 key={g}
-                className={`flex-1 flex items-center justify-center gap-3 h-14 rounded-full border-2 cursor-pointer transition-all ${
+                className={`flex-1 flex items-center justify-center gap-3 h-12 md:h-14 rounded-full border-2 cursor-pointer transition-all ${
                   formData.gender === g 
                     ? 'border-primary bg-primary/5 text-primary font-bold shadow-md shadow-primary/10' 
                     : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'
@@ -162,9 +168,34 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
             value={formData.age}
             onChange={(e) => setFormData({ ...formData, age: e.target.value })}
             placeholder="Contoh: 25"
-            className={`block w-full rounded-full border px-6 py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.age ? 'border-red-300' : 'border-slate-200'}`}
+            className={`block w-full rounded-full border px-4 py-3 md:px-6 md:py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.age ? 'border-red-300' : 'border-slate-200'}`}
           />
           {errors.age && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{errors.age}</p>}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Tempat Lahir</label>
+          <input
+            type="text"
+            value={formData.birthPlace}
+            onChange={(e) => setFormData({ ...formData, birthPlace: e.target.value })}
+            placeholder="Kota kelahiran"
+            className={`block w-full rounded-full border px-4 py-3 md:px-6 md:py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthPlace ? 'border-red-300' : 'border-slate-200'}`}
+          />
+          {errors.birthPlace && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{errors.birthPlace}</p>}
+        </div>
+
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-2 pl-1">Tanggal Lahir</label>
+          <input
+            type="date"
+            value={formData.birthDate}
+            onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+            className={`block w-full rounded-full border px-4 py-3 md:px-6 md:py-4 text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthDate ? 'border-red-300' : 'border-slate-200'}`}
+          />
+          {errors.birthDate && <p className="mt-1.5 ml-1 text-[11px] font-bold text-red-500 uppercase tracking-wider">{errors.birthDate}</p>}
         </div>
       </div>
 
@@ -192,16 +223,16 @@ export default function ProfileForm({ initialData }: ProfileFormProps) {
             onChange={(e) => setFormData({ ...formData, addressDetail: e.target.value })}
             placeholder="Nama jalan, nomor rumah, RT/RW, or ciri-ciri bangunan"
             rows={3}
-            className="block w-full rounded-2xl border border-slate-200 px-6 py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-white resize-none"
+            className="block w-full rounded-2xl border border-slate-200 px-4 py-3 md:px-6 md:py-4 text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-white resize-none"
           />
         </div>
       </div>
 
-      <div className="pt-4">
+      <div className="pt-2">
         <button
           type="submit"
           disabled={submitting}
-          className="w-full h-16 rounded-full bg-primary text-white font-black text-lg shadow-xl shadow-primary/30 hover:bg-blue-600 hover:shadow-primary/40 focus:ring-4 focus:ring-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          className="w-full h-14 md:h-16 rounded-full bg-primary text-white font-black text-lg shadow-xl shadow-primary/30 hover:bg-blue-600 hover:shadow-primary/40 focus:ring-4 focus:ring-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
         >
           {submitting ? (
             <>
