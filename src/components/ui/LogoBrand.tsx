@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import NextImage from 'next/image';
 interface LogoBrandProps {
   logoUrl?: string;
@@ -26,24 +27,29 @@ export default function LogoBrand({
     xl: 'h-28 w-28 md:h-32 md:w-32'
   };
 
+  const [hasError, setHasError] = useState(false);
+  const finalLogoUrl = logoUrl || "/images/logo-hr-one.png";
+  
   const containerClasses = `relative flex items-center justify-center bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden p-1 transition-all ${sizeClasses[size]} ${className || ''}`;
 
-  if (logoUrl) {
+  if (!hasError && finalLogoUrl) {
     return (
       <div className={containerClasses}>
         <NextImage
-          src={logoUrl}
+          src={finalLogoUrl}
           alt={storeName}
           fill
           priority={priority}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className={`object-contain p-1 ${imageClassName || ''}`}
-          unoptimized={logoUrl.startsWith('http')}
+          unoptimized={finalLogoUrl.startsWith('http') || finalLogoUrl.includes('supabase.co')}
+          onError={() => setHasError(true)}
         />
       </div>
     );
   }
 
-  // Fallback if no logoUrl is provided
+  // Fallback if image fails or no URL provided
   return (
     <div className={`${containerClasses} bg-primary rounded-xl shadow-lg shadow-primary/20 hover:scale-105`}>
       <span className={`material-symbols-outlined text-white font-bold ${

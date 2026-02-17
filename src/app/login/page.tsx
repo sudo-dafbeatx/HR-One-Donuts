@@ -9,7 +9,7 @@ import { useLoading } from '@/context/LoadingContext';
 import { logTraffic } from '@/app/actions/traffic-actions';
 import { verifyCaptcha } from '@/app/actions/verify-captcha';
 import { SiteSettings } from '@/types/cms';
-import Image from 'next/image';
+import LogoBrand from '@/components/ui/LogoBrand';
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
@@ -421,15 +421,11 @@ function LoginContent() {
         <div className="w-full max-w-xl rounded-2xl bg-white shadow-xl overflow-visible mt-12">
           {/* Circular Logo Header */}
           <div className="relative -mt-12 mb-4 flex justify-center">
-            <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
-              <Image 
-                src="/images/Logos.png" 
-                alt="Logo" 
-                width={96}
-                height={96}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <LogoBrand 
+              logoUrl="/images/logo-hr-one.png"
+              size="lg"
+              priority
+            />
           </div>
           
           <div className="px-10 pb-10">
@@ -502,15 +498,11 @@ function LoginContent() {
         <div className="w-full max-w-xl rounded-2xl bg-white shadow-xl overflow-visible mt-12">
           {/* Circular Logo Header */}
           <div className="relative -mt-12 mb-4 flex justify-center">
-            <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
-              <Image 
-                src="/images/Logos.png" 
-                alt="Logo" 
-                width={96}
-                height={96}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <LogoBrand 
+              logoUrl="/images/logo-hr-one.png"
+              size="lg"
+              priority
+            />
           </div>
 
           <div className="px-10 pb-10">
@@ -600,15 +592,11 @@ function LoginContent() {
         <div className="w-full max-w-xl rounded-2xl bg-white shadow-xl overflow-visible mt-12">
           {/* Circular Logo Header */}
           <div className="relative -mt-12 mb-4 flex justify-center">
-            <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
-              <Image 
-                src="/images/Logos.png" 
-                alt="Logo" 
-                width={96}
-                height={96}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <LogoBrand 
+              logoUrl="/images/logo-hr-one.png"
+              size="lg"
+              priority
+            />
           </div>
 
           <div className="px-10 pb-10">
@@ -764,15 +752,11 @@ function LoginContent() {
       <div className="w-full max-w-xl rounded-2xl bg-white shadow-xl overflow-visible mt-12">
         {/* Circular Logo Header */}
         <div className="relative -mt-12 mb-4 flex justify-center">
-          <div className="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white hover:scale-105 transition-transform duration-300">
-            <Image 
-              src="/images/Logos.png" 
-              alt="Logo" 
-              width={96}
-              height={96}
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <LogoBrand 
+            logoUrl="/images/logo-hr-one.png"
+            size="lg"
+            priority
+          />
         </div>
 
         <div className="px-10 pb-10 pt-2">

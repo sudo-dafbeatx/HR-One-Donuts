@@ -50,9 +50,9 @@ export default async function OnboardingProfilePage() {
           <div className="px-5 pt-10 pb-6 md:px-8 md:pt-12 md:pb-10 text-center bg-gradient-to-b from-blue-50/50 to-white">
             <div className="flex items-center justify-center mb-6 md:mb-8">
               <LogoBrand 
-                logoUrl={siteInfo?.logo_url || "/images/Logos.png"} 
-                storeName={siteInfo?.store_name || "HR-One Donuts"} 
-                size="md"
+                logoUrl={siteInfo?.logo_url || "/images/logo-hr-one.png"} 
+                storeName={siteInfo?.store_name} 
+                size="lg"
                 priority
               />
             </div>
