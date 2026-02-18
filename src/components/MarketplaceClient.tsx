@@ -23,6 +23,7 @@ export default function MarketplaceClient({
   const { addToCart } = useCart();
   const { setIsLoading } = useLoading();
   const [activeCategory, setActiveCategory] = React.useState<string>('Semua');
+  const [searchQuery, setSearchQuery] = React.useState<string>('');
 
   const [localProducts] = React.useState<Product[]>(initialProducts);
 
@@ -33,9 +34,11 @@ export default function MarketplaceClient({
     return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
   });
 
-  const filteredProducts = activeCategory === 'Semua' 
-    ? sortedProducts 
-    : sortedProducts.filter(p => p.category === activeCategory);
+  const filteredProducts = sortedProducts.filter(p => {
+    const matchesCategory = activeCategory === 'Semua' || p.category === activeCategory;
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   function isPromoActive(p: Product) {
     if (p.sale_type === 'normal') return false;
@@ -96,7 +99,25 @@ export default function MarketplaceClient({
   };
 
   return (
-    <section className="w-full">
+    <section className="w-full flex flex-col gap-6 md:gap-8">
+      {/* Search Bar Section */}
+      <div className="sticky top-[56px] md:relative md:top-0 z-30 -mx-4 px-4 md:mx-0 md:px-0 py-2 bg-white/80 backdrop-blur-md md:bg-transparent">
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+              <span className="material-symbols-outlined text-xl">search</span>
+            </div>
+            <input
+              className="w-full bg-slate-100/50 border border-transparent rounded-2xl py-3 md:py-4 pl-12 pr-4 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 placeholder:font-medium transition-all text-sm md:text-base outline-none shadow-sm"
+              placeholder="Cari donat kesukaanmu..."
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Categories */}
       <div className="flex items-center gap-2 overflow-x-auto pb-6 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
         <button

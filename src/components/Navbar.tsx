@@ -104,21 +104,25 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
           </Link>
         </nav>
 
-        {/* Search Bar - Centered */}
-        <div className="flex-1 max-w-md hidden md:block">
-          <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
-              <span className="material-symbols-outlined text-xl">search</span>
+        {/* Search Bar - Centered (Hidden on Homepage) */}
+        {!pathname || pathname !== '/' ? (
+          <div className="flex-1 max-w-md hidden md:block">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                <span className="material-symbols-outlined text-xl">search</span>
+              </div>
+              <input
+                className="w-full bg-slate-100/50 border border-transparent rounded-2xl py-2.5 pl-12 pr-4 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 placeholder:font-medium transition-all text-sm outline-none shadow-sm"
+                placeholder={copy.search_placeholder}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-            <input
-              className="w-full bg-slate-100/50 border border-transparent rounded-2xl py-2.5 pl-12 pr-4 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 placeholder:font-medium transition-all text-sm outline-none shadow-sm"
-              placeholder={copy.search_placeholder}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
           </div>
-        </div>
+        ) : (
+          <div className="flex-1" />
+        )}
 
         {/* Utilities */}
         <div className="flex items-center gap-1.5 md:gap-4 shrink-0">
