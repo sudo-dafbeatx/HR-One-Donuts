@@ -13,6 +13,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types/cms';
 import ResetSalesButton from '@/components/admin/ResetSalesButton';
+import Breadcrumb from '@/components/admin/Breadcrumb';
 
 interface OrderItem {
   product_id: string;
@@ -38,19 +39,20 @@ interface StatsCardProps {
   description?: string;
 }
 
-function StatsCard({ title, value, icon: Icon, color, description }: StatsCardProps) {
+function StatsCard({ title, value, icon: Icon, color }: StatsCardProps) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden group hover:shadow-md transition-shadow">
-      <div className={`h-1.5 w-full ${color}`} />
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className={`p-2 rounded-lg bg-slate-50 text-slate-600 group-hover:scale-110 transition-transform`}>
-            <Icon className="size-6" />
-          </div>
-          <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">{title}</h3>
+    <div className="rounded-sm border border-slate-200 bg-white px-7.5 py-6 shadow-sm dark:border-slate-700 dark:bg-slate-800">
+      <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
+        <Icon className={`size-6 ${color.replace('bg-', 'text-')}`} />
+      </div>
+
+      <div className="mt-4 flex items-end justify-between">
+        <div>
+          <h4 className="text-title-md font-bold text-slate-800 dark:text-white">
+            {value}
+          </h4>
+          <span className="text-sm font-medium text-slate-500">{title}</span>
         </div>
-        <p className="text-4xl font-black text-slate-800 tracking-tight mb-1">{value}</p>
-        {description && <p className="text-xs font-medium text-slate-500">{description}</p>}
       </div>
     </div>
   );
@@ -87,63 +89,60 @@ export default async function AdminDashboard() {
     .slice(0, 5);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-20">
-      {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-4xl font-black text-slate-800 tracking-tight">Ringkasan Bisnis</h1>
-          <p className="text-slate-500 font-medium mt-1">
-            Selamat datang kembali! Ini yang terjadi dengan toko Anda hari ini.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <ResetSalesButton />
-          <Link 
-            href="/admin/products"
-            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-all text-sm shadow-sm"
-          >
-            <ListBulletIcon className="size-4" />
-            Kelola Produk
-          </Link>
-          <Link 
-            href="/admin/products"
-            className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all text-sm shadow-lg shadow-primary/20"
-          >
-            <PlusIcon className="size-4" />
-            Tambah Produk
-          </Link>
-        </div>
+    <div className="space-y-6 pb-20">
+      <Breadcrumb pageName="Dashboard" />
+
+      {/* Header section with Buttons */}
+      <div className="flex justify-end gap-3 mb-6">
+        <ResetSalesButton />
+        <Link 
+          href="/admin/products"
+          className="flex items-center gap-2 px-6 py-2 bg-white border border-slate-200 rounded-lg font-semibold text-slate-700 hover:bg-slate-50 transition-all text-sm"
+        >
+          <ListBulletIcon className="size-4" />
+          Kelola Produk
+        </Link>
+        <Link 
+          href="/admin/products"
+          className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-opacity-90 transition-all text-sm"
+        >
+          <PlusIcon className="size-4" />
+          Tambah Produk
+        </Link>
       </div>
 
       {ordersError && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-sm text-red-800 flex items-center gap-3">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800 flex items-center gap-3">
           <ExclamationTriangleIcon className="size-5 shrink-0" />
           <p><strong>Koneksi Bermasalah:</strong> Pastikan tabel database sudah siap di Supabase.</p>
         </div>
       )}
 
       {/* Primary Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 2xl:gap-7.5">
         <StatsCard 
           title="Total Pendapatan" 
           value={`Rp ${totalRevenue.toLocaleString('id-ID')}`}
           icon={CurrencyDollarIcon}
           color="bg-primary"
-          description="Total akumulasi semua pesanan"
         />
         <StatsCard 
           title="Total Pesanan" 
           value={totalOrders}
           icon={ShoppingBagIcon}
           color="bg-primary"
-          description="Jumlah paket yang telah dipesan"
         />
         <StatsCard 
           title="Item Terjual" 
           value={totalItemsSold}
           icon={ArchiveBoxIcon}
           color="bg-primary"
-          description="Total donat yang keluar dari dapur"
+        />
+        <StatsCard 
+          title="Produk Aktif" 
+          value={activeProducts}
+          icon={CheckBadgeIcon}
+          color="bg-primary"
         />
       </div>
 
@@ -176,21 +175,21 @@ export default async function AdminDashboard() {
         {/* Recently Added Products */}
         <div className="lg:col-span-3 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
+            <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
               <ClockIcon className="size-5 text-primary" />
               Produk Terbaru
             </h2>
-            <Link href="/admin/products" className="text-xs font-bold text-primary hover:underline uppercase tracking-widest">
+            <Link href="/admin/products" className="text-sm font-semibold text-primary hover:underline">
               Lihat Semua
             </Link>
           </div>
           
-          <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+          <div className="rounded-sm border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800 overflow-hidden">
             {recentlyAddedProducts.length > 0 ? (
-              <div className="divide-y divide-slate-100 text-sm">
+              <div className="divide-y divide-slate-100 dark:divide-slate-700 text-sm">
                 {recentlyAddedProducts.map((product) => (
-                  <div key={product.id} className="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors group">
-                    <div className="size-12 rounded-xl bg-slate-100 flex-shrink-0 relative overflow-hidden">
+                  <div key={product.id} className="p-4.5 flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+                    <div className="size-12 rounded-lg bg-slate-100 dark:bg-slate-700 flex-shrink-0 relative overflow-hidden">
                       {product.image_url ? (
                         <Image src={product.image_url} alt={product.name} fill className="object-cover" />
                       ) : (
@@ -198,12 +197,12 @@ export default async function AdminDashboard() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-slate-800 truncate group-hover:text-primary transition-colors">{product.name}</p>
-                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{product.category}</p>
+                      <p className="font-semibold text-slate-800 dark:text-white truncate group-hover:text-primary transition-colors">{product.name}</p>
+                      <p className="text-xs font-medium text-slate-500">{product.category}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-black text-slate-800">Rp {product.price.toLocaleString('id-ID')}</p>
-                      <p className={`text-[10px] font-black uppercase tracking-widest ${product.stock > 5 ? 'text-green-500' : 'text-red-500'}`}>
+                      <p className="font-bold text-slate-800 dark:text-white">Rp {product.price.toLocaleString('id-ID')}</p>
+                      <p className={`text-[10px] font-bold uppercase tracking-wider ${product.stock > 5 ? 'text-green-500' : 'text-red-500'}`}>
                         Stok: {product.stock}
                       </p>
                     </div>
@@ -212,12 +211,12 @@ export default async function AdminDashboard() {
               </div>
             ) : (
               <div className="p-12 text-center">
-                <div className="size-20 mx-auto bg-slate-50 rounded-full flex items-center justify-center text-4xl mb-4 border border-slate-100">🍩</div>
-                <p className="text-slate-800 font-black text-lg">Belum ada produk</p>
+                <div className="size-20 mx-auto bg-slate-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-4xl mb-4">🍩</div>
+                <p className="text-slate-800 dark:text-white font-bold text-lg">Belum ada produk</p>
                 <p className="text-slate-500 text-sm mb-6">Mulai isi tokomu dengan donat-donat lezat.</p>
                 <Link 
                   href="/admin/products"
-                  className="px-6 py-3 bg-primary text-white rounded-xl font-bold inline-flex items-center gap-2 shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all"
+                  className="px-6 py-2.5 bg-primary text-white rounded-lg font-semibold inline-flex items-center gap-2 hover:bg-opacity-90 transition-all"
                 >
                   <PlusIcon className="size-5" />
                   Tambah Produk Pertama
@@ -227,28 +226,29 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Top Product Summary */}
+        {/* Info / Activity Summary */}
         <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-xl font-black text-slate-800">Ringkasan Aktivitas</h2>
-          <div className="bg-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
-             {/* Background decoration */}
-             <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 size-40 bg-primary rounded-full blur-[80px] opacity-40"></div>
-            
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider text-sm opacity-50">Ringkasan Aktivitas</h2>
+          <div className="rounded-sm border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800 relative overflow-hidden">
              <div className="relative z-10 space-y-6">
                 <div>
-                  <p className="text-xs font-black text-white/40 uppercase tracking-[0.2em] mb-4">Tips Operasional</p>
-                  <p className="text-sm font-medium leading-relaxed text-white/80">
-                    Gunakan fitur <strong>Flash Sale</strong> untuk menghabiskan stok berlebih di akhir hari dengan cepat!
+                  <h4 className="text-base font-bold text-slate-800 dark:text-white mb-2">Tips untuk Anda</h4>
+                  <p className="text-sm font-medium leading-relaxed text-slate-500">
+                    Gunakan fitur <strong>Flash Sale</strong> untuk menghabiskan stok berlebih di akhir hari dengan cepat! Produk yang sedang promo akan diprioritaskan di katalog.
                   </p>
                 </div>
                 
-                <div className="pt-6 border-t border-white/10 space-y-4">
-                  <div className="flex items-center gap-4 text-sm font-bold">
+                <div className="pt-6 border-t border-slate-100 dark:border-slate-700 space-y-4">
+                  <div className="flex items-center gap-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
                     <div className="size-2 rounded-full bg-green-500"></div>
-                    Pesanan diproses otomatis via WA
+                    Pesanan diproses otomatis via WhatsApp
                   </div>
-                  <div className="flex items-center gap-4 text-sm font-bold text-white/60">
-                    <div className="size-2 rounded-full bg-blue-500"></div>
+                  <div className="flex items-center gap-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <div className="size-2 rounded-full bg-[#3C50E0]"></div>
+                    Koneksi ke Supabase Database Aktif
+                  </div>
+                  <div className="flex items-center gap-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <div className="size-2 rounded-full bg-orange-400"></div>
                     Sistem dalam kondisi optimal
                   </div>
                 </div>

@@ -54,7 +54,7 @@ export default async function AdminLayout({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex">
+    <div className="min-h-screen bg-[#F1F5F9] flex">
       {/* Desktop Sidebar */}
       <AdminSidebar 
         userEmail={user.email || undefined} 
@@ -63,11 +63,11 @@ export default async function AdminLayout({
       />
       
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col md:pl-64">
+      <div className="flex-1 flex flex-col md:pl-[290px]">
         {/* Top Header */}
-        <header className="bg-white border-b border-slate-200 sticky top-0 z-40 h-16 flex items-center shrink-0">
-          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            {/* Mobile Nav Button & Title */}
+        <header className="bg-white border-b border-slate-200 sticky top-0 z-40 h-20 flex items-center shrink-0 shadow-sm">
+          <div className="w-full px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            {/* Mobile Nav Button */}
             <div className="flex items-center gap-4">
               <AdminMobileNav 
                 userEmail={user.email || undefined} 
@@ -75,36 +75,43 @@ export default async function AdminLayout({
                 storeName={storeName}
               />
               
-              <div className="flex flex-col md:hidden">
-                <span className="text-base font-black text-slate-800 tracking-tighter leading-tight">
-                  {storeName.split(' ')[0]} <span className="text-primary">{storeName.split(' ').slice(1).join(' ')}</span>
-                </span>
-                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Admin</span>
+              {/* Search Bar - Hidden on mobile, streamlined for desktop */}
+              <div className="hidden md:block relative group">
+                <span className="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors pl-3">search</span>
+                <input 
+                  type="text" 
+                  placeholder="Cari fitur atau data..."
+                  className="bg-transparent border-none py-2 pl-12 pr-4 outline-none text-sm w-64 lg:w-96 placeholder:text-slate-400"
+                />
               </div>
             </div>
 
             {/* Right Side Header Items */}
-            <div className="flex items-center gap-4">
-              <Link 
-                href="/" 
-                target="_blank"
-                className="hidden lg:flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-primary transition-colors pr-4 border-r border-slate-100"
-              >
-                <ArrowTopRightOnSquareIcon className="size-4" />
-                Live Site
-              </Link>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3 pr-4 border-r border-slate-100">
+                <Link 
+                  href="/" 
+                  target="_blank"
+                  className="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-full transition-all"
+                  title="Lihat Situs Utama"
+                >
+                  <ArrowTopRightOnSquareIcon className="size-5" />
+                </Link>
+              </div>
 
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-xs font-bold text-slate-800 line-clamp-1 max-w-[120px]">{user.email?.split('@')[0]}</span>
-                  <span className="text-[9px] font-medium text-slate-400">Admin</span>
+                  <span className="text-sm font-bold text-slate-800 line-clamp-1 max-w-[150px]">{user.email?.split('@')[0]}</span>
+                  <span className="text-[10px] font-medium text-slate-400 uppercase tracking-widest leading-none mt-0.5">Administrator</span>
                 </div>
-                <div className="size-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
-                  <UserCircleIcon className="size-5" />
+                <div className="size-11 rounded-full bg-slate-100 border-2 border-slate-200 flex items-center justify-center text-slate-400 relative">
+                  <UserCircleIcon className="size-7" />
+                  <div className="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-white rounded-full"></div>
                 </div>
+                
                 <form action={handleSignOut} className="hidden md:block">
-                  <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all group">
-                    <ArrowRightOnRectangleIcon className="size-4 group-hover:translate-x-0.5 transition-transform" title="Logout" />
+                  <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Keluar">
+                    <ArrowRightOnRectangleIcon className="size-5" />
                   </button>
                 </form>
               </div>
