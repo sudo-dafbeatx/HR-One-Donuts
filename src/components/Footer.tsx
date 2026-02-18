@@ -75,14 +75,19 @@ export default function Footer({ siteSettings }: FooterProps) {
             <div>
               <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-8 opacity-50">Bantuan</h4>
               <ul className="space-y-4">
-                {['FAQ', 'Pengiriman', 'Retur', 'Kontak'].map((item) => (
-                  <li key={item}>
+                {[
+                  { label: 'Cara Pesan', path: '/cara-pesan' },
+                  { label: 'FAQ', path: '#' },
+                  { label: 'Pengiriman', path: '#' },
+                  { label: 'Kontak', path: '#' }
+                ].map((item) => (
+                  <li key={item.label}>
                     <Link 
                       className="text-slate-400 hover:text-primary text-sm font-bold transition-all flex items-center gap-3 group" 
-                      href="#"
+                      href={item.path}
                     >
                       <span className="size-1.5 bg-slate-800 rounded-full group-hover:bg-primary group-hover:scale-150 transition-all" />
-                      {item}
+                      {item.label}
                     </Link>
                   </li>
                 ))}

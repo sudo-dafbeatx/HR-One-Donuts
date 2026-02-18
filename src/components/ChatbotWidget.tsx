@@ -84,10 +84,17 @@ export default function ChatbotWidget() {
         );
       }
       // Ordering process
+      else if (input.includes("cara pesan")) {
+        window.location.href = "/cara-pesan";
+        addBotMessage(
+          "Mengarahkan Anda ke panduan cara pesan kami... 📖",
+          ["Kembali"]
+        );
+      }
       else if (input.includes("pesan") || input.includes("order") || input.includes("beli")) {
         addBotMessage(
-          "Cara pesan sangat mudah! 🎯\n\n1. Klik 'Katalog Lengkap' untuk lihat semua produk\n2. Pilih donat favorit Anda\n3. Tambahkan ke keranjang\n4. Klik 'Pesan via WhatsApp'\n5. Konfirmasi pesanan\n\nAtau saya bisa bantu hubungkan langsung ke WhatsApp?",
-          ["Katalog Lengkap", "Hubungi WhatsApp"]
+          "Cara pesan sangat mudah! 🎯\n\n1. Lihat menu di katalog kami\n2. Pilih donat favorit Anda\n3. Tambahkan ke keranjang\n4. Lakukan checkout & pembayaran\n\nIngin melihat panduan lengkapnya?",
+          ["Cara Pesan", "Katalog Lengkap"]
         );
       }
       // WhatsApp contact

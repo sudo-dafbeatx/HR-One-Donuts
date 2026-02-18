@@ -71,7 +71,7 @@ export default function BottomNav() {
     },
     { 
       label: "Cara Pesan", 
-      href: "/#how-to-order", 
+      href: "/cara-pesan", 
       icon: QuestionMarkCircleIcon, 
       activeIcon: QuestionMarkCircleIconSolid 
     },
@@ -95,7 +95,7 @@ export default function BottomNav() {
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/80 backdrop-blur-xl border-t border-slate-100 pb-safe-area-inset-bottom">
       <div className="grid grid-cols-5 h-16">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href.startsWith('#') && pathname === '/');
+          const isActive = pathname === item.href;
           const Icon = isActive ? item.activeIcon : item.icon;
 
           const content = (

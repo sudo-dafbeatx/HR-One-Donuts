@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -17,6 +18,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarProps) {
+  const pathname = usePathname();
   const { copy: liveCopy } = useEditMode();
   const copy = liveCopy || _copy || DEFAULT_COPY;
   const { totalItems, setIsCartOpen } = useCart();
@@ -82,8 +84,28 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
           </Link>
         )}
 
+        {/* Navigation Links - Desktop */}
+        <nav className="hidden md:flex items-center gap-6 shrink-0 mr-4">
+          <Link 
+            href="/catalog" 
+            className={`text-sm font-bold uppercase tracking-wider transition-all hover:text-primary ${
+              pathname === '/catalog' ? 'text-primary' : 'text-slate-600'
+            }`}
+          >
+            Menu
+          </Link>
+          <Link 
+            href="/cara-pesan" 
+            className={`text-sm font-bold uppercase tracking-wider transition-all hover:text-primary ${
+              pathname === '/cara-pesan' ? 'text-primary' : 'text-slate-600'
+            }`}
+          >
+            Cara Pesan
+          </Link>
+        </nav>
+
         {/* Search Bar - Centered */}
-        <div className="flex-1 max-w-xl hidden md:block">
+        <div className="flex-1 max-w-md hidden md:block">
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
               <span className="material-symbols-outlined text-xl">search</span>

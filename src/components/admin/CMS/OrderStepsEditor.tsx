@@ -8,9 +8,11 @@ import { TrashIcon, PlusIcon, Bars3Icon } from '@heroicons/react/24/outline';
 
 export default function OrderStepsEditor({ initialSteps }: { initialSteps: OrderStep[] }) {
   const [steps, setSteps] = useState<OrderStep[]>(initialSteps.length > 0 ? initialSteps : [
-    { id: crypto.randomUUID(), step_number: 1, title: 'Pilih Donat', description: 'Lihat menu katalog kami dan pilih favorit Anda.' },
-    { id: crypto.randomUUID(), step_number: 2, title: 'Pesan WhatsApp', description: 'Kirim list pesanan Anda ke nomor WhatsApp kami.' },
-    { id: crypto.randomUUID(), step_number: 3, title: 'Donat Diantar', description: 'Selesaikan pembayaran dan donat akan segera meluncur.' },
+    { id: crypto.randomUUID(), step_number: 1, title: "Pilih Produk", description: "Temukan donat favorit Anda di menu katalog kami." },
+    { id: crypto.randomUUID(), step_number: 2, title: "Tambah ke Keranjang", description: "Pilih jumlah dan tambahkan ke keranjang belanja." },
+    { id: crypto.randomUUID(), step_number: 3, title: "Login / Daftar", description: "Masuk ke akun Anda untuk proses pemesanan yang lebih cepat." },
+    { id: crypto.randomUUID(), step_number: 4, title: "Isi Alamat & Pembayaran", description: "Tentukan lokasi pengiriman dan pilih metode pembayaran." },
+    { id: crypto.randomUUID(), step_number: 5, title: "Konfirmasi Pesanan", description: "Periksa kembali pesanan Anda dan konfirmasi pembayaran." }
   ]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);

@@ -5,11 +5,12 @@ import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { ShoppingBagIcon, ChatBubbleLeftIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
-
+import { usePathname } from "next/navigation";
 import { SiteSettings } from "@/types/cms";
 import LogoBrand from "@/components/ui/LogoBrand";
 
 export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSettings }) {
+  const pathname = usePathname();
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
   const [profileLink, setProfileLink] = useState("/login");
@@ -41,6 +42,13 @@ export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSet
     return () => clearTimeout(timer);
   }, [supabase]);
 
+  const navLinks = [
+    { label: "Beranda", href: "/" },
+    { label: "Menu", href: "/catalog" },
+    { label: "Tentang Kami", href: "/#about" },
+    { label: "Cara Pesan", href: "/cara-pesan" },
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-header-bg backdrop-blur-md px-6 md:px-10 lg:px-40 py-3 transition-colors duration-300">
       <div className="flex items-center justify-between gap-8 max-w-[1280px] mx-auto">
@@ -59,18 +67,22 @@ export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSet
             )}
           </Link>
           <nav className="hidden sm:flex items-center gap-8">
-            <Link href="/" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">
-              Beranda
-            </Link>
-            <Link href="/catalog" className="text-primary text-sm font-bold border-b-2 border-primary pb-0.5">
-              Menu
-            </Link>
-            <Link href="/#about" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">
-              Tentang Kami
-            </Link>
-            <Link href="/#how-to-order" className="text-subheading text-sm font-semibold hover:text-primary transition-colors">
-              Cara Pesan
-            </Link>
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link 
+                  key={link.href}
+                  href={link.href} 
+                  className={`text-sm font-semibold transition-colors pb-0.5 ${
+                    isActive 
+                      ? "text-primary border-b-2 border-primary" 
+                      : "text-subheading hover:text-primary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
