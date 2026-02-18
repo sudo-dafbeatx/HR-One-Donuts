@@ -80,21 +80,14 @@ export default async function Home() {
             <FlashSaleServer />
           </Suspense>
 
-          {/* Product Marketplace Section */}
+          {/* Product Marketplace Section - Always render to show Search Bar */}
           <section className="w-full">
-            {!products || products.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-                <span className="material-symbols-outlined text-4xl mb-4">inventory_2</span>
-                <p className="text-lg font-medium">{copy.empty_products}</p>
-              </div>
-            ) : (
-              <MarketplaceClient 
-                initialProducts={products as Product[]} 
-                categories={categories || []} 
-                copy={copy} 
-                reviewStats={reviewStats || []}
-              />
-            )}
+            <MarketplaceClient 
+              initialProducts={products as Product[]} 
+              categories={categories || []} 
+              copy={copy} 
+              reviewStats={reviewStats || []}
+            />
           </section>
         </div>
       </main>
