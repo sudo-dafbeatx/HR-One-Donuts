@@ -126,10 +126,12 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
 
         {/* Utilities */}
         <div className="flex items-center gap-1.5 md:gap-4 shrink-0">
-          {/* Mobile Search Icon */}
-          <button className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 md:hidden transition-colors">
-            <span className="material-symbols-outlined">search</span>
-          </button>
+          {/* Mobile Search Icon (Hidden on Homepage) */}
+          {(!pathname || pathname !== '/') && (
+            <button className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 md:hidden transition-colors">
+              <span className="material-symbols-outlined">search</span>
+            </button>
+          )}
 
           {/* Cart */}
           <button
