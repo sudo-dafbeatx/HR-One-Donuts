@@ -367,7 +367,11 @@ export default function ChatbotWidget() {
           className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-16 h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-50 group hover:animate-none select-none touch-none"
           aria-label="Chat dengan Dona AI"
         >
-          <SparklesIcon className="w-8 h-8 group-hover:rotate-12 transition-transform" />
+          <img 
+            src="/images/Dona.webp" 
+            className="w-12 h-12 rounded-full object-cover group-hover:scale-110 transition-transform bg-white border-2 border-white shadow-inner" 
+            alt="Dona"
+          />
           
           {/* Badge for cart count or notification */}
           {cart.length > 0 && (
