@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
+import { SiteSettings } from '@/types/cms';
 
-export default function DelayedCardPopup() {
+export default function DelayedCardPopup({ siteSettings }: { siteSettings?: SiteSettings }) {
   const [isVisible, setIsVisible] = useState(false);
   const [hasClosed, setHasClosed] = useState(false);
   const [render, setRender] = useState(false);
@@ -77,9 +78,9 @@ export default function DelayedCardPopup() {
     }, 400);
   };
 
-  // Skip showing on admin/login pages
+  // Skip showing on admin/login pages or if disabled
   const hidePaths = ['/onboarding', '/auth', '/login', '/admin'];
-  const shouldHide = hidePaths.some(path => pathname?.startsWith(path));
+  const shouldHide = hidePaths.some(path => pathname?.startsWith(path)) || siteSettings?.is_popup_enabled === false;
 
   if (shouldHide || hasClosed || !render) return null;
 

@@ -76,7 +76,7 @@ export default async function RootLayout({
         className={`${sourGummy.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
       >
         <ScrollToTop />
-        <DelayedCardPopup />
+        <DelayedCardPopup siteSettings={siteSettings} />
         <ThemeProvider theme={theme}>
           <EditModeProvider initialCopy={copy} initialTheme={theme} isAdmin={isAdmin}>
             <LoadingProvider>

@@ -1,12 +1,13 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { 
-  ShoppingBagIcon, 
   CurrencyDollarIcon, 
   ArchiveBoxIcon, 
   CheckBadgeIcon, 
   ExclamationTriangleIcon,
   PlusIcon,
-  ListBulletIcon
+  ListBulletIcon,
+  UserGroupIcon,
+  ClockIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -64,6 +65,26 @@ export default async function AdminDashboard() {
     .select('*')
     .order('created_at', { ascending: false });
 
+  // Fetch admin logs
+  const { data: logsData } = await supabase
+    .from('admin_logs')
+    .select('*, profiles(full_name, email)')
+    .order('created_at', { ascending: false })
+    .limit(5);
+
+  // Fetch Users
+  const { data: adminUsersResult } = await supabase.rpc('get_admin_users_list');
+  let usersList: { last_sign_in_at: string | null }[] = [];
+  try {
+    if (typeof adminUsersResult === 'string') {
+      usersList = JSON.parse(adminUsersResult);
+    } else if (Array.isArray(adminUsersResult)) {
+      usersList = adminUsersResult;
+    }
+  } catch(e: unknown) {
+    console.error(e);
+  }
+
   // Fetch products for extra stats
   const { data: productsData } = await supabase
     .from('products')
@@ -73,12 +94,16 @@ export default async function AdminDashboard() {
   const products = productsData as Product[] | null;
 
   // Calculate stats
-  const totalOrders = orders?.length || 0;
   const totalRevenue = orders?.reduce((sum, o) => sum + (o.total_amount || 0), 0) || 0;
-  const totalItemsSold = orders?.reduce((sum, o) => sum + (o.total_items || 0), 0) || 0;
   
   const activeProducts = products?.filter(p => p.is_active).length || 0;
   const lowStockProducts = products?.filter(p => p.stock <= 5 && p.stock > 0).length || 0;
+  
+  // User Stats
+  const totalUsers = usersList.length;
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const activeUsersToday = usersList.filter((u: { last_sign_in_at: string | null }) => u.last_sign_in_at && new Date(u.last_sign_in_at) >= today).length;
   
   // Get recently added products
   const recentlyAddedProducts = [...(products || [])]
@@ -109,21 +134,21 @@ export default async function AdminDashboard() {
           iconColor="text-[#09cc06]"
         />
         <StatsCard 
-          title="Total Pesanan" 
-          value={totalOrders}
-          icon={ShoppingBagIcon}
+          title="Total Pengguna" 
+          value={totalUsers}
+          icon={UserGroupIcon}
           iconColor="text-[#1b00ff]"
         />
         <StatsCard 
-          title="Item Terjual" 
-          value={totalItemsSold}
-          icon={ArchiveBoxIcon}
+          title="User Aktif Hari Ini" 
+          value={activeUsersToday}
+          icon={CheckBadgeIcon}
           iconColor="text-[#00eccf]"
         />
         <StatsCard 
-          title="Produk Aktif" 
+          title="Total Konten Utama (Produk)" 
           value={activeProducts}
-          icon={CheckBadgeIcon}
+          icon={ArchiveBoxIcon}
           iconColor="text-[#ff5b5b]"
         />
       </div>
@@ -233,7 +258,7 @@ export default async function AdminDashboard() {
              </div>
           </div>
 
-          {/* Alert Card */}
+          {/* Low Stock Alert */}
           {lowStockProducts > 0 && (
              <div className="bg-[#fff5f5] rounded-lg shadow-[0_0_28px_0_rgba(82,63,105,0.08)] border border-red-100 p-6">
                <div className="flex items-start gap-4">
@@ -255,6 +280,37 @@ export default async function AdminDashboard() {
                </div>
              </div>
           )}
+
+          {/* Admin Activity Logs */}
+          <div className="bg-white rounded-lg shadow-[0_0_28px_0_rgba(82,63,105,0.08)] border border-slate-100/50 overflow-hidden">
+             <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2 bg-slate-50/50">
+               <ClockIcon className="w-5 h-5 text-slate-500" />
+               <h4 className="text-sm font-bold text-slate-800">Log Aktivitas Admin</h4>
+             </div>
+             <div className="p-0">
+                {logsData && logsData.length > 0 ? (
+                  <div className="divide-y divide-slate-100">
+                    {logsData.map((log: { id: string; created_at: string; action: string; details: string; profiles?: { full_name: string; email: string } }) => (
+                      <div key={log.id} className="p-4 flex flex-col gap-1">
+                        <div className="text-xs text-slate-400 font-medium">
+                          {new Date(log.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })}
+                        </div>
+                        <div className="text-sm text-slate-800">
+                          <span className="font-semibold text-indigo-600">{log.action}:</span> {log.details}
+                        </div>
+                        <div className="text-[10px] text-slate-500 mt-1">
+                          Oleh: {log.profiles?.full_name || log.profiles?.email || 'Admin'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-6 text-center text-sm text-slate-500">
+                    Belum ada log aktivitas yang tercatat.
+                  </div>
+                )}
+             </div>
+          </div>
         </div>
       </div>
     </div>

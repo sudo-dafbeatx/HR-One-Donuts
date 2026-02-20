@@ -18,6 +18,7 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
     email: '',
     address: '',
     opening_hours: '',
+    is_popup_enabled: true,
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -86,6 +87,24 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
               onChange={e => setSettings({...settings, address: e.target.value})}
             />
           </div>
+        </div>
+      </AdminCard>
+
+      <AdminCard title="Pengaturan Lanjutan">
+        <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-xl">
+          <div>
+            <h4 className="font-semibold text-slate-800">Tampilkan Promo Pop-up?</h4>
+            <p className="text-xs text-slate-500 mt-0.5">Munculkan banner gambar saat pengunjung kembali ke website (Return Visit).</p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input 
+              type="checkbox" 
+              className="sr-only peer" 
+              checked={settings.is_popup_enabled !== false}
+              onChange={(e) => setSettings({...settings, is_popup_enabled: e.target.checked})}
+            />
+            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1b00ff]"></div>
+          </label>
         </div>
       </AdminCard>
 
