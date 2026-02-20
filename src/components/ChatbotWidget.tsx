@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { XMarkIcon, PaperAirplaneIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
+import { Product } from "@/types/cms";
 
 interface Message {
   id: string;
@@ -75,6 +76,7 @@ export default function ChatbotWidget() {
   const dragStartPos = useRef({ x: 0, y: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   const { cart, totalPrice } = useCart();
   const pathname = usePathname();
 
@@ -127,7 +129,21 @@ export default function ChatbotWidget() {
         console.error("Failed to parse saved chat position", e);
       }
     }
-  }, []);
+
+    // Fetch products for real-time menu sync
+    const fetchProducts = async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('is_active', true)
+        .order('name', { ascending: true });
+      
+      if (!error && data) {
+        setProducts(data as Product[]);
+      }
+    };
+    fetchProducts();
+  }, [supabase]);
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -147,13 +163,33 @@ export default function ChatbotWidget() {
 
     setIsTyping(true);
 
-    // 1. Check for basic hardcoded commands first
-    if (input.includes("menu") || input.includes("lihat menu") || input.includes("produk")) {
+    // 1. Dynamic Menu / Product Search
+    if (input.includes("menu") || input.includes("lihat menu") || input.includes("produk") || input.includes("bestseller") || input.includes("laris")) {
       setTimeout(() => {
-        addBotMessage(
-          "Berikut menu donat kami:\n\n🍩 Classic Glazed - Rp 12.000\n🍫 Chocolate Dream - Rp 15.000\n🍪 Lotus Biscoff - Rp 18.000\n🍓 Strawberry Sparkle - Rp 15.000\n🥜 Pistachio Perfection - Rp 22.000\n\nIngin melihat katalog lengkap?",
-          ["Katalog Lengkap", "Cara Pesan"]
-        );
+        if (products.length === 0) {
+          addBotMessage(
+            "Maaf, sepertinya menu kami belum tersedia saat ini di sistem. 🍩\n\nSilakan cek kembali nanti atau hubungi kami via WhatsApp untuk informasi stok terbaru.",
+            ["Hubungi WhatsApp", "Cara Pesan"]
+          );
+        } else {
+          let menuText = "Berikut menu donat kami yang tersedia:\n\n";
+          
+          // If asking for bestseller, sort by sold_count if available
+          const displayProducts = input.includes("bestseller") || input.includes("laris")
+            ? [...products].sort((a, b) => (b.sold_count || 0) - (a.sold_count || 0)).slice(0, 5)
+            : products.slice(0, 8); // General list
+
+          displayProducts.forEach((p) => {
+            menuText += `🍩 ${p.name} - Rp ${p.price.toLocaleString("id-ID")}\n`;
+          });
+
+          if (products.length > displayProducts.length) {
+            menuText += `\n...dan ${products.length - displayProducts.length} pilihan lainnya!`;
+          }
+
+          menuText += "\n\nIngin melihat katalog lengkap dengan gambar?";
+          addBotMessage(menuText, ["Katalog Lengkap", "Hubungi WhatsApp"]);
+        }
       }, 800);
       return;
     }
