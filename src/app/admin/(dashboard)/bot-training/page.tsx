@@ -56,6 +56,7 @@ export default function BotTrainingPage() {
   }, [supabase]);
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     fetchData();
   }, [fetchData]);
 
