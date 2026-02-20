@@ -633,6 +633,8 @@ body.edit-mode-panel-open #main-content {
   transform: scale(0.95) rotateZ(1.7deg);
 }
 
+/* ===== Delayed Image-Only Popup Styles ===== */
+
 /* --- Overlay taking full screen --- */
 .popup-overlay {
   position: fixed;
@@ -640,7 +642,7 @@ body.edit-mode-panel-open #main-content {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+  background: rgba(0, 0, 0, 0.7); /* Dark overlay */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -663,60 +665,64 @@ body.popup-open {
   overflow: hidden;
 }
 
-/* --- Responsive popup overrides for the card --- */
-.popup-card {
+/* --- Container for the image --- */
+.popup-image-container {
   position: relative;
-  /* Override dimensions to make it responsive on mobile/desktop */
   width: 90vw;
   max-width: 400px;
-  height: auto;
-  aspect-ratio: 190 / 254;
-  padding: 0;
-  overflow: hidden;
-  border: 1px solid white;
-  
-  /* Reset cursor to default since it's a modal */
-  cursor: default; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Disable the hover/active bounce effects from the base card for the modal */
-.popup-card:hover {
-  border: 1px solid white; 
-  transform: none;
+.popup-image-container.animate-in {
+  opacity: 1;
+  transform: scale(1);
 }
-.popup-card:active {
-  transform: none;
+
+.popup-image-container.animate-out {
+  opacity: 0;
+  transform: scale(0.95);
 }
 
 /* --- The Close (X) Button --- */
 .popup-close-btn {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background: rgba(0, 0, 0, 0.4);
-  border: none;
+  top: -12px;
+  right: -12px;
+  background: white;
+  border: 2px solid #e2e8f0;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 20px;
+  color: #0f172a;
+  font-size: 22px;
   font-weight: bold;
   cursor: pointer;
   z-index: 10;
   transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .popup-close-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background: #f1f5f9;
   transform: scale(1.1);
 }
 
-/* --- Image inside the card --- */
+/* --- Actual Image --- */
 .popup-image {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 10px;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.popup-image:active {
+  transform: scale(0.98);
 }

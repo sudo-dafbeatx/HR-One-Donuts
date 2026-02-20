@@ -91,12 +91,19 @@ export default function DelayedCardPopup() {
         if (e.target === e.currentTarget) closePopup();
       }}
     >
-      <div className="card popup-card">
-        <button className="popup-close-btn" onClick={closePopup}>&times;</button>
+      <div className={`popup-image-container ${isVisible ? 'animate-in' : 'animate-out'}`}>
+        <button 
+          className="popup-close-btn" 
+          onClick={closePopup}
+          aria-label="Tutup promo"
+        >
+          &times;
+        </button>
         <Image 
           src="/Popup.webp" 
           alt="Popup Promotion" 
-          fill 
+          width={400}
+          height={535}
           className="popup-image cursor-pointer" 
           onClick={handleNavigate}
           priority
