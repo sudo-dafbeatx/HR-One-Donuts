@@ -11,7 +11,8 @@ import {
   SparklesIcon,
   ArrowTopRightOnSquareIcon,
   ArrowRightOnRectangleIcon,
-  XMarkIcon
+  XMarkIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline';
 
 const navGroups = [
@@ -20,6 +21,7 @@ const navGroups = [
     items: [
       { name: 'Dashboard', href: '/admin', icon: HomeIcon },
       { name: 'Menu Produk', href: '/admin/products', icon: ArchiveBoxIcon },
+      { name: 'Manajemen Pengguna', href: '/admin/users', icon: UserGroupIcon },
     ]
   },
   {

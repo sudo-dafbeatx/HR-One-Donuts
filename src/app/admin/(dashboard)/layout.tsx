@@ -36,7 +36,7 @@ export default async function AdminLayout({
     .maybeSingle();
   
   const siteSettings = siteInfo?.value as unknown as SiteSettings | undefined;
-  const logo_url = siteSettings?.logo_url;
+  const logo_url = siteSettings?.logo_url || '/images/logo-hr-one.webp';
   const storeName = siteSettings?.store_name || "HR-One Donuts";
 
   return (

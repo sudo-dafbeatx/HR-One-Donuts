@@ -12,6 +12,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/types/cms';
 import ResetSalesButton from '@/components/admin/ResetSalesButton';
+import DashboardChart from '@/components/admin/DashboardChart';
 
 interface OrderItem {
   product_id: string;
@@ -128,8 +129,14 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
-        {/* Recently Added Products List */}
+        
+        {/* Sales Chart Section */}
         <div className="lg:col-span-2">
+           <DashboardChart orders={orders || []} />
+        </div>
+
+        {/* Recently Added Products List */}
+        <div className="lg:col-span-2 mt-6 lg:mt-0">
           <div className="bg-white rounded-lg shadow-[0_0_28px_0_rgba(82,63,105,0.08)] border border-slate-100/50 h-full">
             <div className="flex flex-wrap items-center justify-between px-6 py-5 border-b border-slate-100">
               <h4 className="text-lg font-bold text-slate-800">Produk Terbaru</h4>
