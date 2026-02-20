@@ -79,7 +79,14 @@ export default function ProfilePage() {
         return;
       }
 
-      // Fetch Profile from user_profiles (new standard)
+      // Fetch both profile tables to ensure we have avatar_url (which only exists in legacy profiles)
+      // and new detailed data (which exists in user_profiles)
+      const { data: legacyProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+
       const { data: profileData } = await supabase
         .from('user_profiles')
         .select('*')
@@ -87,24 +94,21 @@ export default function ProfilePage() {
         .maybeSingle();
       
       if (profileData) {
-        setProfile(profileData as unknown as Profile);
-        setEditFullName(profileData.full_name || '');
-        setEditPhone(''); 
-        setEditAddress(profileData.address_detail || '');
-      } else {
-        // Fallback to legacy profiles
-        const { data: legacyProfile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
+        // Merge them so we get `avatar_url` from legacy metadata but detailed info from new standard
+        setProfile({
+          ...legacyProfile,
+          ...profileData
+        } as unknown as Profile);
         
-        if (legacyProfile) {
-          setProfile(legacyProfile);
-          setEditFullName(legacyProfile.full_name || '');
-          setEditPhone(legacyProfile.phone || '');
-          setEditAddress(legacyProfile.address || '');
-        }
+        setEditFullName(profileData.full_name || legacyProfile?.full_name || '');
+        setEditPhone(legacyProfile?.phone || ''); 
+        setEditAddress(profileData.address_detail || legacyProfile?.address || '');
+      } else if (legacyProfile) {
+        // Fallback to legacy profiles only
+        setProfile(legacyProfile as unknown as Profile);
+        setEditFullName(legacyProfile.full_name || '');
+        setEditPhone(legacyProfile.phone || '');
+        setEditAddress(legacyProfile.address || '');
       }
 
       // Fetch Recent Orders
