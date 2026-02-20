@@ -43,7 +43,7 @@ export default function PromoBanner({ events }: { events: PromoEvent[] }) {
                    <div className="bg-primary/90 text-white px-3 py-1 rounded-full flex items-center gap-1">
                       <Icon className="w-3 h-3" />
                       <span className="text-[10px] font-bold uppercase tracking-wide leading-none">
-                        {event.event_slug.replace('_', ' ')}
+                        {event.event_slug?.replace('_', ' ') || 'PROMO'}
                       </span>
                    </div>
                    {event.discount_percent && (

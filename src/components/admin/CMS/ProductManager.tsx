@@ -170,7 +170,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
                 </span>
                 {product.sale_type !== 'normal' && (
                   <span className={`px-2 py-0.5 text-[10px] font-bold rounded uppercase tracking-wider ${isPromoActive(product) ? 'bg-primary text-white' : 'bg-slate-200 text-slate-500'}`}>
-                    {product.sale_type.replace('_', ' ')}
+                    {product.sale_type?.replace('_', ' ') || 'PROMO'}
                     {!isPromoActive(product) && ' (Inactive)'}
                   </span>
                 )}

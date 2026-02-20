@@ -80,7 +80,7 @@ export default function ProductInfo({
           </span>
           {sale_type !== 'normal' && (
             <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
-              {sale_type.replace('_', ' ')}
+              {sale_type?.replace('_', ' ') || 'PROMO'}
             </span>
           )}
           {stock <= 5 && stock > 0 && (

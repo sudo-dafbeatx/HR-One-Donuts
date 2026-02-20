@@ -40,7 +40,7 @@ export default function AdminActivityLogsWidget({ logs }: AdminActivityLogsWidge
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-0.5">
                       <span className="text-xs font-black text-indigo-600 uppercase tracking-tight">
-                        {log.action.replace(/_/g, ' ')}
+                        {log.action?.replace(/_/g, ' ') || 'ACTION'}
                       </span>
                       <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">
                         {new Date(log.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}

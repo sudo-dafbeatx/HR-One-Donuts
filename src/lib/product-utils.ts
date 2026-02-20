@@ -27,5 +27,5 @@ export function getEffectivePrice(product: Product): number {
 
 export function getPromoLabel(product: Product): string {
   if (!isPromoActive(product)) return "";
-  return product.sale_type.replace('_', ' ');
+  return product.sale_type?.replace('_', ' ') || "PROMO";
 }

@@ -84,7 +84,7 @@ export default function EventManager({ initialEvents }: { initialEvents: PromoEv
                 <h4 className="font-bold text-slate-800 uppercase tracking-tight">{event.headline}</h4>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded">
-                    {event.event_slug.replace('_', ' ')}
+                    {event.event_slug?.replace('_', ' ') || 'PROMO'}
                   </span>
                   {!event.is_enabled && (
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
