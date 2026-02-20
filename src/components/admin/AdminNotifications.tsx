@@ -31,9 +31,9 @@ export default function AdminNotifications() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border border-slate-100 py-2 z-50 overflow-hidden text-left origin-top-right animate-scale-in">
+        <div className="fixed inset-x-4 top-[76px] sm:absolute sm:inset-x-auto sm:top-auto sm:right-0 sm:mt-3 w-auto sm:w-96 max-h-[calc(100vh-90px)] sm:max-h-none bg-white rounded-xl shadow-2xl border border-slate-100 py-2 z-[100] sm:z-50 flex flex-col overflow-hidden text-left origin-top sm:origin-top-right animate-scale-in">
           {/* Header Panel */}
-          <div className="px-4 py-3 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+          <div className="shrink-0 px-4 py-3 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
             <h3 className="font-semibold text-slate-800">Notifikasi Terbaru</h3>
             <span className="text-xs bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-medium">
               {notifications.length} Total
@@ -42,7 +42,7 @@ export default function AdminNotifications() {
 
           {/* Banner Peringatan Izin Browser */}
           {permission === 'default' && (
-            <div className="mx-4 my-2 p-3 bg-blue-50 border border-blue-100 rounded-lg flex flex-col gap-2">
+            <div className="shrink-0 mx-4 my-2 p-3 bg-blue-50 border border-blue-100 rounded-lg flex flex-col gap-2">
               <p className="text-xs text-blue-800">Izinkan notifikasi desktop/smartphone agar Anda tak tertinggal info order!</p>
               <button 
                 onClick={requestPermission}
@@ -53,13 +53,13 @@ export default function AdminNotifications() {
             </div>
           )}
           {permission === 'denied' && (
-            <div className="mx-4 my-2 p-2 bg-amber-50 rounded-lg text-xs text-amber-800">
+            <div className="shrink-0 mx-4 my-2 p-2 bg-amber-50 rounded-lg text-xs text-amber-800">
               Browser telah menolak izin Notifikasi Popup. Atur via ikon gembok Site Settings.
             </div>
           )}
 
           {/* List Pesan */}
-          <div className="max-h-[360px] overflow-y-auto no-scrollbar scroll-smooth">
+          <div className="flex-1 overflow-y-auto max-h-[360px] sm:max-h-[420px] no-scrollbar scroll-smooth">
             {notifications.length === 0 ? (
               <div className="py-8 text-center flex flex-col items-center gap-3">
                 <EnvelopeOpenIcon className="w-10 h-10 text-slate-200" />
