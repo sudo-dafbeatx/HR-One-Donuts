@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 import { XMarkIcon, PaperAirplaneIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { createClient } from "@/lib/supabase/client";
 
 interface Message {
   id: string;
@@ -108,6 +109,8 @@ export default function ChatbotWidget() {
     scrollToBottom();
   }, [messages]);
 
+  const supabase = createClient();
+
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       // Send welcome message when chat opens
@@ -121,54 +124,44 @@ export default function ChatbotWidget() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  const handleBotResponse = (userInput: string) => {
+  const handleBotResponse = async (userInput: string) => {
     const input = userInput.toLowerCase();
 
     setIsTyping(true);
 
-    setTimeout(() => {
-      // Product queries
-      if (input.includes("menu") || input.includes("lihat menu") || input.includes("produk")) {
+    // 1. Check for basic hardcoded commands first
+    if (input.includes("menu") || input.includes("lihat menu") || input.includes("produk")) {
+      setTimeout(() => {
         addBotMessage(
           "Berikut menu donat kami:\n\n🍩 Classic Glazed - Rp 12.000\n🍫 Chocolate Dream - Rp 15.000\n🍪 Lotus Biscoff - Rp 18.000\n🍓 Strawberry Sparkle - Rp 15.000\n🥜 Pistachio Perfection - Rp 22.000\n\nIngin melihat katalog lengkap?",
           ["Katalog Lengkap", "Cara Pesan"]
         );
-      }
-      // Bestseller query
-      else if (input.includes("bestseller") || input.includes("terlaris") || input.includes("favorit")) {
-        addBotMessage(
-          "Donat bestseller kami adalah:\n\n⭐ Classic Glazed - Rp 12.000\n⭐ Chocolate Dream - Rp 15.000\n⭐ Lotus Biscoff - Rp 18.000\n\nSemuanya dibuat fresh setiap hari! Mau pesan yang mana?",
-          ["Pesan Sekarang", "Lihat Menu"]
-        );
-      }
-      // Ordering process
-      else if (input.includes("cara pesan")) {
+      }, 800);
+      return;
+    }
+
+    if (input.includes("cara pesan")) {
+      setTimeout(() => {
         window.location.href = "/cara-pesan";
         addBotMessage(
           "Mengarahkan Anda ke panduan cara pesan kami... 📖",
           ["Kembali"]
         );
-      }
-      else if (input.includes("pesan") || input.includes("order") || input.includes("beli")) {
-        addBotMessage(
-          "Cara pesan sangat mudah! 🎯\n\n1. Lihat menu di katalog kami\n2. Pilih donat favorit Anda\n3. Tambahkan ke keranjang\n4. Lakukan checkout & pembayaran\n\nIngin melihat panduan lengkapnya?",
-          ["Cara Pesan", "Katalog Lengkap"]
-        );
-      }
-      // WhatsApp contact
-      else if (input.includes("whatsapp") || input.includes("wa") || input.includes("hubungi") || input.includes("kontak")) {
+      }, 800);
+      return;
+    }
+
+    if (input.includes("whatsapp") || input.includes("wa") || input.includes("hubungi") || input.includes("kontak")) {
+      setTimeout(() => {
         const phoneNumber = "6285810658117";
         if (cart.length > 0) {
-          // If there's cart, generate order message
-          let message = "Halo HR-One Donuts! 🍩 Saya ingin memesan:\n\n";
+          let messageArr = ["Halo HR-One Donuts! 🍩 Saya ingin memesan:\n\n"];
           cart.forEach((item, index) => {
-            message += `${index + 1}. ${item.name}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${(item.price * item.quantity).toLocaleString("id-ID")}\n\n`;
+            messageArr.push(`${index + 1}. ${item.name}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${(item.price * item.quantity).toLocaleString("id-ID")}\n\n`);
           });
-          message += `*Total: Rp ${totalPrice.toLocaleString("id-ID")}*\n\nMohon konfirmasi ketersediaan. Terima kasih!`;
-          
-          const encodedMessage = encodeURIComponent(message);
+          messageArr.push(`*Total: Rp ${totalPrice.toLocaleString("id-ID")}*\n\nMohon konfirmasi ketersediaan. Terima kasih!`);
+          const encodedMessage = encodeURIComponent(messageArr.join(""));
           window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, "_blank");
-          
           addBotMessage(
             "Saya sudah buatkan pesan dengan detail pesanan Anda di WhatsApp! 📱\n\nSilakan konfirmasi pesanan dengan tim kami. Ada yang bisa saya bantu lagi?",
             ["Lihat Menu", "Selesai"]
@@ -176,35 +169,45 @@ export default function ChatbotWidget() {
         } else {
           const message = encodeURIComponent("Halo HR-One Donuts! 👋\n\nSaya tertarik untuk memesan donat. Boleh info lebih lanjut?");
           window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
-          
           addBotMessage(
             "Saya sudah hubungkan Anda ke WhatsApp kami! 📱\n\nTim kami akan segera membantu Anda. Ada yang lain?",
             ["Lihat Menu", "Selesai"]
           );
         }
+      }, 800);
+      return;
+    }
+
+    // 2. Dynamic Search from Knowledge Base
+    const { data: kbData, error } = await supabase
+      .from("knowledge_base")
+      .select("question, answer")
+      .order("created_at", { ascending: false });
+
+    if (!error && kbData) {
+      // Simple keyword matching or fuzzy-ish match
+      const matched = kbData.find(item => 
+        input.includes(item.question.toLowerCase()) || 
+        item.question.toLowerCase().includes(input)
+      );
+
+      if (matched) {
+        setTimeout(() => {
+          addBotMessage(matched.answer);
+        }, 800);
+        return;
       }
-      // Catalog link
-      else if (input.includes("katalog")) {
-        window.location.href = "/catalog";
-        addBotMessage(
-          "Mengarahkan Anda ke katalog lengkap... 📖",
-          ["Kembali"]
-        );
-      }
-      // Closing/thank you
-      else if (input.includes("selesai") || input.includes("terima kasih") || input.includes("thanks")) {
-        addBotMessage(
-          "Sama-sama! 😊 Senang bisa membantu Anda.\n\nJika butuh bantuan lagi, jangan ragu untuk chat saya ya! 🍩",
-          ["Lihat Menu", "Tutup Chat"]
-        );
-      }
-      // Default response
-      else {
-        addBotMessage(
-          "Maaf, saya belum mengerti pertanyaan Anda 😅\n\nApa yang bisa saya bantu?",
-          ["Lihat Menu", "Cara Pesan", "Hubungi WhatsApp", "Bestseller"]
-        );
-      }
+    }
+
+    // 3. Fallback & Logging
+    setTimeout(async () => {
+      // Log the unanswered question
+      await supabase.from("bot_questions_log").insert([{ question: userInput }]);
+      
+      addBotMessage(
+        "Maaf, saya belum mengerti pertanyaan Anda 😅\n\nTim kami sudah mencatat pertanyaan ini untuk dipelajari lebih lanjut. Apa ada yang lain?",
+        ["Lihat Menu", "Cara Pesan", "Hubungi WhatsApp", "Bestseller"]
+      );
     }, 800);
   };
 

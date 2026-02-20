@@ -12,7 +12,8 @@ import {
   ArrowTopRightOnSquareIcon,
   ArrowRightOnRectangleIcon,
   XMarkIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
 
 const navGroups = [
@@ -29,6 +30,7 @@ const navGroups = [
     items: [
       { name: 'Kustom Konten', href: '/admin/content', icon: PaintBrushIcon },
       { name: 'Theme & Teks', href: '/admin/theme', icon: SparklesIcon },
+      { name: 'Latih Chat Bot', href: '/admin/bot-training', icon: ChatBubbleLeftRightIcon },
       { name: 'Lihat Live Site', href: '/', icon: ArrowTopRightOnSquareIcon, external: true },
     ]
   }
