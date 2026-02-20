@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
@@ -119,7 +119,7 @@ export default function ChatbotWidget() {
     scrollToBottom();
   }, [messages]);
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     // Load saved position
@@ -135,13 +135,17 @@ export default function ChatbotWidget() {
     // First visit hint logic
     const hintSeen = localStorage.getItem("dona_hint_seen");
     if (!hintSeen) {
-      setTimeout(() => setShowHint(true), 2000); // Show after 2s
+      const showTimer = setTimeout(() => setShowHint(true), 2000); // Show after 2s
+      const hideTimer = setTimeout(() => setShowHint(false), 10000); // Auto hide hint after 10s
       
-      // Auto hide hint after 8s
-      const timer = setTimeout(() => setShowHint(false), 10000);
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+      };
     }
+  }, []);
 
+  useEffect(() => {
     // Fetch products for real-time menu sync
     const fetchProducts = async () => {
       const { data, error } = await supabase
@@ -268,7 +272,7 @@ export default function ChatbotWidget() {
 
     if (!error && kbData) {
       // Simple keyword matching or fuzzy-ish match
-      const matched = kbData.find(item => 
+      const matched = kbData.find((item: { question: string; answer: string }) => 
         input.includes(item.question.toLowerCase()) || 
         item.question.toLowerCase().includes(input)
       );
@@ -386,7 +390,8 @@ export default function ChatbotWidget() {
     handleBotResponse(reply);
   };
 
-  if (pathname?.startsWith('/admin')) {
+  const hiddenRoutes = ['/admin', '/login', '/register', '/onboarding'];
+  if (pathname && hiddenRoutes.some(route => pathname.startsWith(route))) {
     return null;
   }
 
