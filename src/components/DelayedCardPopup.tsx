@@ -12,20 +12,25 @@ export default function DelayedCardPopup() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Show popup after 10 seconds
-    const timer = setTimeout(() => {
-      // Don't show if already closed in this session
-      const isClosed = sessionStorage.getItem('delayed_card_closed');
-      if (!isClosed) {
-        setRender(true);
-        setTimeout(() => {
-          setIsVisible(true);
-          document.body.classList.add('popup-open');
-        }, 50);
-      }
-    }, 10000);
+    // Check if user has visited the site before (persists across sessions)
+    const hasVisited = localStorage.getItem('has_visited');
+    
+    if (!hasVisited) {
+      // First ever visit: record it, but DO NOT show popup
+      localStorage.setItem('has_visited', 'true');
+      return;
+    }
 
-    return () => clearTimeout(timer);
+    // Returning user: check if we've already shown it in this specific session
+    const isClosed = sessionStorage.getItem('delayed_card_closed');
+    if (!isClosed) {
+      setTimeout(() => setRender(true), 0);
+      // Small timeout to allow DOM to render before applying transition class
+      setTimeout(() => {
+        setIsVisible(true);
+        document.body.classList.add('popup-open');
+      }, 50);
+    }
   }, []);
 
   const closePopup = (e?: React.MouseEvent) => {
