@@ -8,14 +8,20 @@ import {
   TrashIcon, 
   CheckCircleIcon,
   ExclamationCircleIcon,
-  ClockIcon
+  ClockIcon,
+  ArrowUpTrayIcon,
+  ArrowDownTrayIcon,
+  XMarkIcon,
+  DocumentArrowDownIcon
 } from "@heroicons/react/24/outline";
+import { saveBotKnowledge, deleteBotKnowledge, exportBotKnowledge, importBotKnowledge } from "@/app/admin/actions";
 
 interface QAPair {
   id: string;
   question: string;
   answer: string;
   category: string;
+  tags?: string[];
   created_at: string;
 }
 
@@ -26,14 +32,25 @@ interface QuestionLog {
   is_answered: boolean;
 }
 
+interface ImportEntry {
+  question: string;
+  answer: string;
+  category?: string;
+  tags?: string[];
+}
+
 export default function BotTrainingPage() {
   const [qaList, setQaList] = useState<QAPair[]>([]);
   const [questionLogs, setQuestionLogs] = useState<QuestionLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQa, setEditingQa] = useState<QAPair | null>(null);
-  const [formData, setFormData] = useState({ question: "", answer: "", category: "general" });
+  const [formData, setFormData] = useState({ question: "", answer: "", category: "general", tags: [] as string[] });
   const [status, setStatus] = useState<{ type: "success" | "error"; msg: string } | null>(null);
+  const [tagInput, setTagInput] = useState("");
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [importedData, setImportedData] = useState<ImportEntry[]>([]);
+  const [importErrors, setImportErrors] = useState<string[]>([]);
 
   const supabase = useMemo(() => createClient(), []);
 
@@ -65,36 +82,145 @@ export default function BotTrainingPage() {
     e.preventDefault();
     if (!formData.question || !formData.answer) return;
 
-    const op = editingQa 
-      ? supabase.from("knowledge_base").update(formData).eq("id", editingQa.id)
-      : supabase.from("knowledge_base").insert([formData]);
-
-    const { error } = await op;
-
-    if (error) {
+    try {
+      const { success } = await saveBotKnowledge(editingQa ? { ...formData, id: editingQa.id } : formData);
+      if (success) {
+        setStatus({ type: "success", msg: "Data berhasil disimpan" });
+        setIsModalOpen(false);
+        setEditingQa(null);
+        setFormData({ question: "", answer: "", category: "general", tags: [] });
+        setIsLoading(true);
+        fetchData();
+      } else {
+        setStatus({ type: "error", msg: "Gagal menyimpan data" });
+      }
+    } catch (err) {
+      console.error(err);
       setStatus({ type: "error", msg: "Gagal menyimpan data" });
-    } else {
-      setStatus({ type: "success", msg: "Data berhasil disimpan" });
-      setIsModalOpen(false);
-      setEditingQa(null);
-      setFormData({ question: "", answer: "", category: "general" });
-      setIsLoading(true);
-      fetchData();
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Hapus Q&A ini?")) return;
-    const { error } = await supabase.from("knowledge_base").delete().eq("id", id);
-    if (error) setStatus({ type: "error", msg: "Gagal menghapus" });
-    else {
-      setIsLoading(true);
-      fetchData();
+    try {
+      const { success } = await deleteBotKnowledge(id);
+      if (success) {
+        setIsLoading(true);
+        fetchData();
+      } else {
+        setStatus({ type: "error", msg: "Gagal menghapus" });
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus({ type: "error", msg: "Gagal menghapus" });
     }
   };
 
+  const handleExport = async () => {
+    try {
+      const data = await exportBotKnowledge();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `bot-dona-training-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal mengekspor data");
+    }
+  };
+
+  const handleDownloadSchema = async () => {
+    try {
+      const response = await fetch('/schemas/bot-dona-training.schema.json');
+      const data = await response.json();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bot-dona-training.schema.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Gagal mendownload schema");
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        if (!Array.isArray(json)) {
+          alert("Data JSON harus berupa array.");
+          return;
+        }
+
+        // Validate preview
+        const CATEGORIES = ["general", "ordering", "products", "delivery", "payment", "other"];
+        const errors: string[] = [];
+        json.forEach((entry, idx) => {
+           if (!entry.question || entry.question.length < 5) errors.push(`Entry #${idx+1}: Question minimal 5 karakter.`);
+           if (!entry.answer || entry.answer.length < 5) errors.push(`Entry #${idx+1}: Answer minimal 5 karakter.`);
+           if (entry.category && !CATEGORIES.includes(entry.category)) errors.push(`Entry #${idx+1}: Kategori tidak valid.`);
+        });
+
+        setImportedData(json);
+        setImportErrors(errors);
+        setIsPreviewModalOpen(true);
+      } catch {
+        alert("Gagal membaca file JSON. Pastikan format benar.");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ""; // Clear input
+  };
+
+  const confirmImport = async () => {
+    if (importErrors.length > 0) {
+      alert("Harap perbaiki error sebelum mengimpor.");
+      return;
+    }
+
+    try {
+      const res = await importBotKnowledge(importedData);
+      if (res.success) {
+        setStatus({ type: "success", msg: `${res.count} data berhasil diimpor` });
+        setIsPreviewModalOpen(false);
+        setIsLoading(true);
+        fetchData();
+      } else if (res.errors) {
+        setImportErrors(res.errors);
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus({ type: "error", msg: "Gagal mengimpor data" });
+    }
+  };
+
+  const addTag = () => {
+    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+      setFormData({ ...formData, tags: [...formData.tags, tagInput.trim()] });
+      setTagInput("");
+    }
+  };
+
+  const removeTag = (tag: string) => {
+    setFormData({ ...formData, tags: formData.tags.filter(t => t !== tag) });
+  };
+
   const handleUseFromLog = (question: string) => {
-    setFormData({ ...formData, question });
+    setFormData({ ...formData, question, tags: [] });
     setIsModalOpen(true);
   };
 
@@ -107,17 +233,31 @@ export default function BotTrainingPage() {
           </h1>
           <p className="text-slate-500 text-sm">Kelola basis pengetahuan AI assistant Anda</p>
         </div>
-        <button
-          onClick={() => {
-            setEditingQa(null);
-            setFormData({ question: "", answer: "", category: "general" });
-            setIsModalOpen(true);
-          }}
-          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-all shadow-lg shadow-primary/20"
-        >
-          <PlusIcon className="w-5 h-5" />
-          Tambah Q&A
-        </button>
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 cursor-pointer bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all shadow-sm">
+            <ArrowUpTrayIcon className="w-5 h-5 text-slate-400" />
+            <span className="text-sm font-bold">Import JSON</span>
+            <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
+          </label>
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-50 transition-all shadow-sm"
+          >
+            <ArrowDownTrayIcon className="w-5 h-5 text-slate-400" />
+            <span className="text-sm font-bold">Export JSON</span>
+          </button>
+          <button
+            onClick={() => {
+              setEditingQa(null);
+              setFormData({ question: "", answer: "", category: "general", tags: [] });
+              setIsModalOpen(true);
+            }}
+            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl hover:bg-blue-600 transition-all shadow-lg shadow-primary/20"
+          >
+            <PlusIcon className="w-5 h-5" />
+            Tambah Q&A
+          </button>
+        </div>
       </div>
 
       {status && (
@@ -146,17 +286,24 @@ export default function BotTrainingPage() {
                   <div key={qa.id} className="p-6 hover:bg-slate-50/50 transition-colors group">
                     <div className="flex justify-between items-start gap-4">
                       <div className="flex-1">
-                        <span className="inline-block px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded uppercase tracking-wider mb-2">
-                          {qa.category}
-                        </span>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          <span className="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded uppercase tracking-wider">
+                            {qa.category}
+                          </span>
+                          {qa.tags?.map(tag => (
+                            <span key={tag} className="inline-block px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded uppercase tracking-wider">
+                              #{tag}
+                            </span>
+                          ))}
+                        </div>
                         <h4 className="font-bold text-slate-900 mb-1">Q: {qa.question}</h4>
-                        <p className="text-slate-600 text-sm">A: {qa.answer}</p>
+                        <p className="text-slate-600 text-sm italic">A: {qa.answer}</p>
                       </div>
                       <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
                           onClick={() => {
                             setEditingQa(qa);
-                            setFormData({ question: qa.question, answer: qa.answer, category: qa.category });
+                            setFormData({ question: qa.question, answer: qa.answer, category: qa.category, tags: qa.tags || [] });
                             setIsModalOpen(true);
                           }}
                           className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
@@ -247,7 +394,7 @@ export default function BotTrainingPage() {
                   required
                 />
               </div>
-              <div>
+               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-1">Kategori</label>
                 <select 
                   value={formData.category}
@@ -258,7 +405,39 @@ export default function BotTrainingPage() {
                   <option value="ordering">Cara Pesan</option>
                   <option value="products">Produk</option>
                   <option value="delivery">Pengiriman</option>
+                  <option value="payment">Pembayaran</option>
+                  <option value="other">Lainnya</option>
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-1">Tags (Keywords)</label>
+                <div className="flex gap-2 mb-2 flex-wrap">
+                   {formData.tags.map(tag => (
+                     <span key={tag} className="flex items-center gap-1 bg-slate-100 text-slate-600 px-2 py-1 rounded-lg text-xs font-bold">
+                       {tag}
+                       <button type="button" onClick={() => removeTag(tag)} className="text-slate-400 hover:text-red-500">
+                         <XMarkIcon className="w-3 h-3" />
+                       </button>
+                     </span>
+                   ))}
+                </div>
+                <div className="flex gap-2">
+                  <input 
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                    placeholder="Tambah tag..."
+                    className="flex-1 px-4 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/50 focus:outline-none text-sm"
+                  />
+                  <button 
+                    type="button"
+                    onClick={addTag}
+                    className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 font-bold text-sm"
+                  >
+                    Tambah
+                  </button>
+                </div>
               </div>
               <div className="flex gap-3 mt-6">
                 <button 
@@ -276,6 +455,69 @@ export default function BotTrainingPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Import Preview Modal */}
+      {isPreviewModalOpen && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold text-slate-800">Preview Import JSON</h3>
+                <p className="text-slate-500 text-xs">Periksa data sebelum disimpan ke database</p>
+              </div>
+              <button onClick={() => setIsPreviewModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {importErrors.length > 0 && (
+                <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+                  <h4 className="text-red-700 font-bold text-sm mb-2 flex items-center gap-2">
+                    <ExclamationCircleIcon className="w-4 h-4" />
+                    Banyak Error ditemukan:
+                  </h4>
+                  <ul className="text-red-600 text-[11px] list-disc pl-4 space-y-1">
+                    {importErrors.map((err, i) => <li key={i}>{err}</li>)}
+                  </ul>
+                </div>
+              )}
+              
+              <div className="space-y-3">
+                {importedData.map((entry, i) => (
+                  <div key={i} className="p-4 border border-slate-100 rounded-2xl bg-slate-50/50">
+                    <div className="flex items-center gap-2 mb-2 text-[10px] font-bold uppercase tracking-wider">
+                      <span className="text-blue-600 px-2 py-0.5 bg-blue-50 rounded">
+                        {entry.category || 'general'}
+                      </span>
+                      {Array.isArray(entry.tags) && entry.tags.map((t: string) => <span key={t} className="text-slate-400">#{t}</span>)}
+                    </div>
+                    <p className="text-sm font-bold text-slate-800 mb-1">Q: {entry.question}</p>
+                    <p className="text-xs text-slate-600 italic">A: {entry.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-slate-100 grid grid-cols-2 gap-4 bg-slate-50/30">
+              <button 
+                 onClick={handleDownloadSchema}
+                 className="flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-2xl hover:bg-white font-bold transition-all text-sm"
+              >
+                <DocumentArrowDownIcon className="w-5 h-5" />
+                Download Schema
+              </button>
+              <button 
+                onClick={confirmImport}
+                disabled={importErrors.length > 0}
+                className="px-4 py-2.5 bg-primary text-white rounded-2xl hover:bg-blue-600 font-bold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:shadow-none transition-all text-sm"
+              >
+                Impor Sekarang
+              </button>
+            </div>
           </div>
         </div>
       )}

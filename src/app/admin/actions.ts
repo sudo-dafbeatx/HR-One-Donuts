@@ -381,3 +381,108 @@ export async function resetSalesData() {
   
   return { success: true };
 }
+
+// --- Bot Knowledge Actions ---
+export async function saveBotKnowledge(data: { id?: string; question: string; answer: string; category?: string; tags?: string[] }) {
+  const supabase = await checkAdmin();
+  
+  const qaData = {
+    id: data.id || crypto.randomUUID(),
+    question: data.question.trim(),
+    answer: data.answer.trim(),
+    category: data.category || 'general',
+    tags: data.tags || [],
+    updated_at: new Date().toISOString()
+  };
+
+  const { error } = await supabase
+    .from('knowledge_base')
+    .upsert(qaData);
+
+  if (error) throw new Error(error.message);
+  
+  revalidatePath('/admin/(dashboard)/bot-training');
+  return { success: true };
+}
+
+export async function deleteBotKnowledge(id: string) {
+  const supabase = await checkAdmin();
+  
+  const { error } = await supabase
+    .from('knowledge_base')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+  
+  revalidatePath('/admin/(dashboard)/bot-training');
+  return { success: true };
+}
+
+export async function exportBotKnowledge() {
+  const supabase = await checkAdmin();
+  
+  const { data, error } = await supabase
+    .from('knowledge_base')
+    .select('question, answer, tags, category')
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  
+  return data;
+}
+
+export async function importBotKnowledge(entries: any[]) {
+  const supabase = await checkAdmin();
+
+  // Basic manual schema validation
+  const validEntries: any[] = [];
+  const errors: string[] = [];
+
+  const CATEGORIES = ["general", "ordering", "products", "delivery", "payment", "other"];
+
+  entries.forEach((entry, index) => {
+    const context = `Entry #${index + 1}`;
+    
+    if (!entry.question || typeof entry.question !== 'string' || entry.question.length < 5) {
+      errors.push(`${context}: 'question' is required and must be at least 5 characters.`);
+      return;
+    }
+    if (!entry.answer || typeof entry.answer !== 'string' || entry.answer.length < 5) {
+      errors.push(`${context}: 'answer' is required and must be at least 5 characters.`);
+      return;
+    }
+    if (entry.category && !CATEGORIES.includes(entry.category)) {
+      errors.push(`${context}: 'category' must be one of [${CATEGORIES.join(', ')}].`);
+      return;
+    }
+    if (entry.tags && !Array.isArray(entry.tags)) {
+      errors.push(`${context}: 'tags' must be an array of strings.`);
+      return;
+    }
+
+    validEntries.push({
+      question: entry.question.trim(),
+      answer: entry.answer.trim(),
+      category: entry.category || 'general',
+      tags: entry.tags || [],
+      updated_at: new Date().toISOString()
+    });
+  });
+
+  if (errors.length > 0) {
+    return { success: false, errors };
+  }
+
+  const { error: upsertError } = await supabase
+    .from('knowledge_base')
+    .upsert(validEntries, { onConflict: 'question' }); // Prefer updating existing questions or skip if duplicate
+
+  if (upsertError) {
+    console.error('Import Error:', upsertError);
+    throw new Error(`Gagal mengimpor data: ${upsertError.message}`);
+  }
+
+  revalidatePath('/admin/(dashboard)/bot-training');
+  return { success: true, count: validEntries.length };
+}
