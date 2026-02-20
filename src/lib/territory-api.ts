@@ -79,7 +79,7 @@ const getCached = <T,>(key: string): T | null => {
       return null;
     }
     return data;
-  } catch (e) {
+  } catch {
     return null;
   }
 };
