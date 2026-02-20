@@ -13,7 +13,7 @@ import {
   UserIcon 
 } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import Image from 'next/image';
+
 
 interface AdminHeaderProps {
   userEmail?: string;
