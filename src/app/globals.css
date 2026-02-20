@@ -602,3 +602,119 @@ body.edit-mode-panel-open #main-content {
     stroke-dashoffset: -351.86;
   }
 }
+
+/* ===== Delayed Card Popup Styles ===== */
+.card {
+  box-sizing: border-box;
+  width: 190px;
+  height: 254px;
+  background: rgba(217, 217, 217, 0.58);
+  border: 1px solid white;
+  box-shadow: 12px 17px 51px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(6px);
+  border-radius: 17px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.5s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  font-weight: bolder;
+  color: black;
+}
+
+.card:hover {
+  border: 1px solid black;
+  transform: scale(1.05);
+}
+
+.card:active {
+  transform: scale(0.95) rotateZ(1.7deg);
+}
+
+/* --- Overlay taking full screen --- */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  
+  /* Smooth Fade Animations */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/* Class to show the popup */
+.popup-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Prevent body scrolling while open */
+body.popup-open {
+  overflow: hidden;
+}
+
+/* --- Responsive popup overrides for the card --- */
+.popup-card {
+  position: relative;
+  /* Override dimensions to make it responsive on mobile/desktop */
+  width: 90%;
+  max-width: 400px;
+  height: auto;
+  min-height: 400px;
+  padding: 1rem;
+  
+  /* Reset cursor to default since it's a modal */
+  cursor: default; 
+}
+
+/* Disable the hover/active bounce effects from the base card for the modal */
+.popup-card:hover {
+  border: 1px solid white; 
+  transform: none;
+}
+.popup-card:active {
+  transform: none;
+}
+
+/* --- The Close (X) Button --- */
+.popup-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s;
+}
+.popup-close-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}
+
+/* --- Image inside the card --- */
+.popup-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
