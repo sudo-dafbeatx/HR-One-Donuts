@@ -389,7 +389,11 @@ export default function ChatbotWidget() {
           <div className="bg-gradient-to-r from-primary to-blue-600 text-white px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
-                <SparklesIcon className="w-6 h-6" />
+                <img 
+                  src="/images/Dona.webp" 
+                  className="w-10 h-10 rounded-full object-cover border border-white/50 bg-white" 
+                  alt="Dona"
+                />
               </div>
               <div>
                 <h3 className="font-bold text-lg">Dona</h3>
