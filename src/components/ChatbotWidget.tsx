@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
@@ -386,10 +387,13 @@ export default function ChatbotWidget() {
           className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-50 group hover:animate-none select-none touch-none"
           aria-label="Chat dengan Dona AI"
         >
-          <img 
+          <Image 
             src="/images/Dona.webp" 
+            width={48} 
+            height={48}
             className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover group-hover:scale-110 transition-transform bg-white border-2 border-white shadow-inner" 
             alt="Dona"
+            priority
           />
           
           {/* Badge for cart count or notification */}
@@ -408,8 +412,10 @@ export default function ChatbotWidget() {
           <div className="bg-gradient-to-r from-primary to-blue-600 text-white px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
-                <img 
+                <Image 
                   src="/images/Dona.webp" 
+                  width={40}
+                  height={40}
                   className="w-10 h-10 rounded-full object-cover border border-white/50 bg-white" 
                   alt="Dona"
                 />
