@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
-import { XMarkIcon, PaperAirplaneIcon, SparklesIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import { Product } from "@/types/cms";
 
