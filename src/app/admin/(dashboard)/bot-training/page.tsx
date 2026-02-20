@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { 
   PlusIcon, 
   PencilIcon, 
   TrashIcon, 
-  ChatBubbleLeftRightIcon,
   CheckCircleIcon,
   ExclamationCircleIcon,
   ClockIcon
@@ -36,13 +35,9 @@ export default function BotTrainingPage() {
   const [formData, setFormData] = useState({ question: "", answer: "", category: "general" });
   const [status, setStatus] = useState<{ type: "success" | "error"; msg: string } | null>(null);
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     const { data: qa, error: qaErr } = await supabase
       .from("knowledge_base")
@@ -58,7 +53,11 @@ export default function BotTrainingPage() {
     if (!qaErr) setQaList(qa || []);
     if (!logsErr) setQuestionLogs(logs || []);
     setIsLoading(false);
-  };
+  }, [supabase]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
