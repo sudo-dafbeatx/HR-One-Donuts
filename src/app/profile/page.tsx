@@ -13,6 +13,7 @@ import {
 import Link from 'next/link';
 import { useLoading } from '@/context/LoadingContext';
 import { uploadAvatar, setPredefinedAvatar } from '@/app/actions/avatar-actions';
+import { normalizePhoneToID } from '@/lib/phone';
 import Image from 'next/image';
 import { CameraIcon, PhotoIcon, SparklesIcon } from '@heroicons/react/24/solid';
 
@@ -132,21 +133,28 @@ export default function ProfilePage() {
     setIsLoading(true, 'Memperbarui profil...');
     
     try {
+      const normalizedPhone = normalizePhoneToID(editPhone);
+
       const { error } = await supabase
         .from('profiles')
         .update({
           full_name: editFullName,
-          phone: editPhone,
+          phone: normalizedPhone,
           address: editAddress
         })
         .eq('id', profile.id);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '23505' || error.message.toLowerCase().includes('unique')) {
+          throw new Error('Nomor HP ini sudah terdaftar. Pakai nomor lain.');
+        }
+        throw error;
+      }
 
       setProfile({
         ...profile,
         full_name: editFullName,
-        phone: editPhone,
+        phone: normalizedPhone,
         address: editAddress
       });
       setIsEditing(false);

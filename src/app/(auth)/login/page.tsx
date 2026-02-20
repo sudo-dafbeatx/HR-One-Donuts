@@ -8,6 +8,7 @@ import { useLoading } from '@/context/LoadingContext';
 
 import { logTraffic } from '@/app/actions/traffic-actions';
 import { verifyCaptcha } from '@/app/actions/verify-captcha';
+import { normalizePhoneToID } from '@/lib/phone';
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
@@ -183,13 +184,15 @@ function LoginContent() {
         return;
       }
 
+      const normalizedPhone = normalizePhoneToID(phone);
+
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             full_name: fullName,
-            phone: phone,
+            phone: normalizedPhone,
             address: address,
           },
           emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
@@ -198,7 +201,12 @@ function LoginContent() {
 
       if (signUpError) {
         console.error('Sign Up Error:', signUpError);
-        setError(`Gagal mendaftar: ${signUpError.message}`);
+        // Catch constraint violation from the trigger
+        if (signUpError.message.includes('already exists') || signUpError.message.includes('unique constraint') || signUpError.message.includes('23505')) {
+          setError('Nomor HP ini sudah terdaftar. Pakai nomor lain.');
+        } else {
+          setError(`Gagal mendaftar: ${signUpError.message}`);
+        }
         setLoading(false);
       } else if (signUpData.user) {
         setOtpStep(true);
@@ -280,18 +288,24 @@ function LoginContent() {
       return;
     }
 
+    const normalizedPhone = normalizePhoneToID(phone);
+
     const { error: updateError } = await supabase
       .from('profiles')
       .update({
         full_name: fullName,
-        phone,
+        phone: normalizedPhone,
         address
       })
       .eq('id', user.id);
 
     if (updateError) {
       console.error('Profile update error detail:', updateError);
-      setError(`Gagal menyimpan profil: ${updateError.message} (Kode: ${updateError.code})`);
+      if (updateError.code === '23505' || updateError.message.toLowerCase().includes('unique')) {
+        setError('Nomor HP ini sudah terdaftar. Pakai nomor lain.');
+      } else {
+        setError(`Gagal menyimpan profil: ${updateError.message} (Kode: ${updateError.code})`);
+      }
       setLoading(false);
     } else {
       setLoading(false);
