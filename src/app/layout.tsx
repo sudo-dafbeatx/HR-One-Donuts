@@ -13,19 +13,11 @@ import EditModeToggle from "@/components/cms/EditModeToggle";
 import ThemePanel from "@/components/cms/ThemePanel";
 import ScrollToTop from "@/components/utils/ScrollToTop";
 import DelayedCardPopup from "@/components/DelayedCardPopup";
-import { Sora, Public_Sans } from "next/font/google";
+import { sourGummy } from "@/lib/fonts";
 import OnboardingHelpCTA from "@/components/OnboardingHelpCTA";
 import "./globals.css";
 
-const sora = Sora({
-  subsets: ["latin"],
-  variable: "--font-display",
-});
-
-const publicSans = Public_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+// Font definition moved to lib/fonts.ts
 
 export const metadata: Metadata = {
   title: "HR-One Donuts - Resep Tradisional, Rasa Internasional",
@@ -81,7 +73,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${sora.variable} ${publicSans.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
+        className={`${sourGummy.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
       >
         <ScrollToTop />
         <DelayedCardPopup />

@@ -1,13 +1,7 @@
-import { Sora, Public_Sans } from "next/font/google";
+import localFont from "next/font/local";
 
-export const sora = Sora({
-  subsets: ["latin"],
-  variable: "--font-sora",
-  display: "swap",
-});
-
-export const publicSans = Public_Sans({
-  subsets: ["latin"],
-  variable: "--font-public-sans",
+export const sourGummy = localFont({
+  src: "../../public/fonts/SourGummy-Variable.ttf",
+  variable: "--font-sour-gummy",
   display: "swap",
 });

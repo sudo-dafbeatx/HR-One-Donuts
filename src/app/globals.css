@@ -22,8 +22,8 @@
   --color-subheading: var(--subheading);
   --color-border: var(--border-color);
 
-  --font-sans: "Public Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Sour Gummy", var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sour Gummy", var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif;
 
   --radius-default: 8px;
   --radius-lg: 0.75rem;
@@ -77,8 +77,8 @@
   /* These override the @theme compiled values so bg-primary, text-primary, etc. are CMS-dynamic */
   --color-primary: var(--theme-primary, #1152d4);
   --color-secondary: var(--theme-secondary, #3b82f6);
-  --font-sans: var(--theme-body-font, "Public Sans"), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--theme-heading-font, "Sora"), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--theme-body-font, "Sour Gummy"), var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--theme-heading-font, "Sour Gummy"), var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif;
   --radius-default: var(--theme-card-radius, 8px);
 
   /* ===== DEFAULTS for ThemeProvider variables ===== */
@@ -87,8 +87,8 @@
   --theme-secondary: #3b82f6;
   --theme-bg: #f6f7f8;
   --theme-text: #0f172a;
-  --theme-heading-font: "Sora";
-  --theme-body-font: "Public Sans";
+  --theme-heading-font: "Sour Gummy";
+  --theme-body-font: "Sour Gummy";
   --theme-btn-radius: 8px;
   --theme-card-radius: 8px;
   --theme-card-bg: #ffffff;
