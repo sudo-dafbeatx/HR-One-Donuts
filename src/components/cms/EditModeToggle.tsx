@@ -135,12 +135,12 @@ export default function EditModeToggle() {
         className={`
           group flex items-center gap-2.5 pl-4 pr-5 py-3 rounded-[14px]
           text-[13px] font-semibold tracking-tight
-          shadow-xl transition-all active:scale-[0.97]
+          transition-all active:scale-[0.97]
           backdrop-blur-xl border select-none
           ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}
           ${isEditMode 
-            ? 'bg-slate-900/95 text-white border-slate-700 hover:bg-slate-800/95 shadow-slate-900/40' 
-            : 'bg-white/95 text-slate-800 border-slate-200 hover:border-slate-300 hover:shadow-2xl shadow-slate-200/60'
+            ? 'bg-slate-900/95 text-white border-slate-700 hover:bg-slate-800/95' 
+            : 'bg-white/95 text-slate-800 border-slate-200 hover:border-slate-300'
           }
         `}
       >
