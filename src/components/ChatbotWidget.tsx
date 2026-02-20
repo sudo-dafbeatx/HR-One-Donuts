@@ -69,6 +69,10 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 }); // Offset from default bottom-right
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartPos = useRef({ x: 0, y: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { cart, totalPrice } = useCart();
 
@@ -110,6 +114,18 @@ export default function ChatbotWidget() {
   }, [messages]);
 
   const supabase = createClient();
+
+  useEffect(() => {
+    // Load saved position
+    const savedPos = localStorage.getItem("dona_chat_pos");
+    if (savedPos) {
+      try {
+        setPosition(JSON.parse(savedPos));
+      } catch (e) {
+        console.error("Failed to parse saved chat position", e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -233,8 +249,17 @@ export default function ChatbotWidget() {
       {/* Chat Button */}
       {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-16 h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-50 group hover:animate-none"
+          ref={buttonRef}
+          onMouseDown={handleDragStart}
+          onTouchStart={handleDragStart}
+          onClick={() => {
+            if (!isDragging) setIsOpen(true);
+          }}
+          style={{
+            transform: `translate(${position.x}px, ${position.y}px)`,
+            cursor: isDragging ? 'grabbing' : 'pointer'
+          }}
+          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-16 h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-50 group hover:animate-none select-none touch-none"
           aria-label="Chat dengan Dona AI"
         >
           <SparklesIcon className="w-8 h-8 group-hover:rotate-12 transition-transform" />
