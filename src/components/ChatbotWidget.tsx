@@ -329,18 +329,25 @@ export default function ChatbotWidget() {
     const padding = 20;
     const iconSize = isMobile ? 56 : 64;
     
-    // Limits
-    const minX = -(window.innerWidth - iconSize - padding * 2); 
-    const maxX = 0; 
+    // Horizontal Limits (relative to right-6/right-8)
+    // maxX = 0 (can't move right of initial position)
+    // minX = -(screen - iconSize - padding)
+    const maxX = 12; // Allow small nudge right
+    const minX = -(window.innerWidth - iconSize - padding * 2);
     
-    // Bottom limits (don't cover bottom nav on mobile)
-    const minYa = isMobile ? -32 : -10; 
-    const maxYa = window.innerHeight - (isMobile ? 120 : 80); 
+    // Vertical Limits (relative to bottom-24/bottom-8)
+    // For translate(y), moving UP is negative.
+    // Initial: bottom-24 (96px). Navbar: 64px.
+    // Safe bottom limit: stay at least at initial bottom.
+    // maxY = how much it can move DOWN. Since initial is 96px, and navbar is 64px,
+    // we can move down a bit but not too much.
+    const maxY = isMobile ? 24 : 8; // Small buffer down
+    const minY = -(window.innerHeight - iconSize - (isMobile ? 180 : 100)); // Limit how much it can move UP
 
     newX = Math.max(minX, Math.min(maxX, newX));
-    newY = Math.max(minYa, Math.min(maxYa, newY));
+    newY = Math.max(minY, Math.min(maxY, newY));
     
-    setPosition({ x: newX, y: -newY }); // Using negative Y because it's relative to 'bottom-24'
+    setPosition({ x: newX, y: newY });
   }, [isDragging]);
 
   const handleDragEnd = useCallback(() => {
