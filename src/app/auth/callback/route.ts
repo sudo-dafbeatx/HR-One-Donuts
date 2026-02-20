@@ -9,9 +9,26 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createServerSupabaseClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
-      return NextResponse.redirect(new URL(next, request.url));
+    const { error, data: authData } = await supabase.auth.exchangeCodeForSession(code);
+    
+    if (!error && authData.user) {
+      // Check if profile is complete
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('is_profile_complete')
+        .eq('id', authData.user.id)
+        .maybeSingle();
+
+      const response = NextResponse.redirect(
+        new URL(!profile?.is_profile_complete ? '/onboarding/profile' : next, request.url)
+      );
+      
+      // Sync cookie if complete so middleware allows pass
+      if (profile?.is_profile_complete) {
+         response.cookies.set('hr_profile_complete', 'true', { path: '/', maxAge: 31536000 });
+      }
+
+      return response;
     }
   }
 

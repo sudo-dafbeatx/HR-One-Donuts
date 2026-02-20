@@ -56,9 +56,16 @@ export async function uploadAvatar(formData: FormData) {
       throw uploadError;
     }
     
-    const { data: { publicUrl } } = supabase.storage
+    // getPublicUrl is synchronous and returns { data: { publicUrl: string } }
+    const { data } = supabase.storage
       .from('images')
       .getPublicUrl(filePath);
+      
+    if (!data || !data.publicUrl) {
+      throw new Error('Gagal mendapatkan URL gambar');
+    }
+    
+    const publicUrl = `${data.publicUrl}?t=${Date.now()}`;
     
     console.log(`🔗 [uploadAvatar] Public URL: ${publicUrl}`);
     

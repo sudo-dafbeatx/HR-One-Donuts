@@ -86,15 +86,17 @@ export default function DelayedCardPopup({ siteSettings }: { siteSettings?: Site
 
   return (
     <div 
-      className={`popup-overlay ${isVisible ? 'show' : ''}`}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       onClick={(e) => {
         // Close if clicking the dark overlay background
         if (e.target === e.currentTarget) closePopup();
       }}
     >
-      <div className={`popup-image-container ${isVisible ? 'animate-in' : 'animate-out'}`}>
+      <div 
+        className={`relative max-w-[300px] sm:max-w-sm md:max-w-md w-full bg-white rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+      >
         <button 
-          className="popup-close-btn" 
+          className="absolute top-2 right-2 md:top-4 md:right-4 z-20 size-8 flex items-center justify-center bg-white/80 backdrop-blur rounded-full text-slate-900 hover:bg-white hover:scale-110 transition-all shadow-lg border border-slate-100" 
           onClick={closePopup}
           aria-label="Tutup promo"
         >
@@ -105,7 +107,7 @@ export default function DelayedCardPopup({ siteSettings }: { siteSettings?: Site
           alt="Popup Promotion" 
           width={400}
           height={535}
-          className="popup-image cursor-pointer" 
+          className="w-full h-auto object-cover cursor-pointer" 
           onClick={handleNavigate}
           priority
         />
