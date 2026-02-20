@@ -50,7 +50,7 @@ export default function DelayedCardPopup() {
     document.body.classList.remove('popup-open');
     setTimeout(() => {
       setRender(false);
-      router.push('/birthday');
+      router.push('/promo/birthday');
     }, 400);
   };
 
