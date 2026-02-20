@@ -14,7 +14,6 @@ import ThemePanel from "@/components/cms/ThemePanel";
 import ScrollToTop from "@/components/utils/ScrollToTop";
 import DelayedCardPopup from "@/components/DelayedCardPopup";
 import { sourGummy } from "@/lib/fonts";
-import OnboardingHelpCTA from "@/components/OnboardingHelpCTA";
 import UserDailyNotification from "@/components/UserDailyNotification";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import "./globals.css";
@@ -92,7 +91,6 @@ export default async function RootLayout({
                 <EditModeToggle />
                 <ThemePanel />
                 <UserDailyNotification />
-                <OnboardingHelpCTA />
                 <ChatbotWidget />
                 
                 {/* Global Accessibility Fix for Google Identity Services (One Tap) */}

@@ -386,6 +386,11 @@ function LoginContent() {
           </div>
           <button type="submit" disabled={loading} className="w-full rounded-md bg-primary px-6 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-50">{loading ? 'Menyimpan...' : 'Selesai & Lanjut'}</button>
         </form>
+        <div className="mt-6 text-center">
+          <a href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-primary hover:underline">
+            Butuh bantuan? Hubungi Admin
+          </a>
+        </div>
       </div>
     );
   }
@@ -409,6 +414,11 @@ function LoginContent() {
         </form>
         <div className="mt-8 text-center text-sm text-gray-600">
           {countdown > 0 ? (<span>Kirim ulang dalam <span className="text-primary font-bold">{countdown}s</span></span>) : (<button onClick={handleResendOtp} disabled={loading} className="text-primary font-bold hover:underline">Kirim ulang</button>)}
+          <div className="mt-4">
+            <a href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-primary hover:underline">
+              Butuh bantuan? Hubungi Admin
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -455,6 +465,11 @@ function LoginContent() {
           <button type="submit" disabled={loading} className="w-full rounded-md bg-primary px-6 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-50">{loading ? 'Mendaftarkan...' : 'Daftar Sekarang'}</button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-600">Sudah punya akun? <button onClick={() => setIsRegistering(false)} className="text-primary font-bold hover:underline">Masuk</button></p>
+        <div className="mt-4 text-center">
+          <a href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-primary hover:underline">
+            Butuh bantuan? Hubungi Admin
+          </a>
+        </div>
       </div>
     );
   }
@@ -486,7 +501,12 @@ function LoginContent() {
       </form>
       <div className="mt-8 pt-8 border-t border-gray-100"><button onClick={handleGoogleLogin} disabled={loading} className="w-full flex items-center justify-center gap-3 h-12 rounded-md border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-all"><GoogleIcon /> Masuk dengan Google</button></div>
       <p className="mt-8 text-center text-sm text-gray-600">Belum punya akun? <button onClick={() => setIsRegistering(true)} className="text-primary font-bold hover:underline">Daftar sekarang</button></p>
-      <div className="mt-10 pt-6 border-t border-gray-50 text-center"><p className="text-[10px] text-gray-400 font-medium uppercase tracking-widest">© {new Date().getFullYear()} HR-One Donuts. All rights reserved.</p></div>
+      <div className="mt-10 pt-6 border-t border-gray-50 text-center">
+        <a href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-primary hover:underline mb-4 block">
+          Butuh bantuan? Hubungi Admin
+        </a>
+        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-widest">© {new Date().getFullYear()} HR-One Donuts. All rights reserved.</p>
+      </div>
     </div>
   );
 }

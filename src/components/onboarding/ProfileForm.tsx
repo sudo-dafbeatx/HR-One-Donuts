@@ -285,6 +285,11 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
             Koneksi agak lambat, tetap di sini ya... 🍩
           </p>
         )}
+        <div className="mt-4 text-center">
+          <a href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-primary hover:underline">
+            Butuh bantuan? Hubungi Admin
+          </a>
+        </div>
       </div>
     </form>
   );
