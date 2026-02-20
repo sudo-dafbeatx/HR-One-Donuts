@@ -1,10 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { GiftIcon, BoltIcon } from '@heroicons/react/24/solid';
-import Link from 'next/link';
 
 interface NotifData {
   title: string;
@@ -14,16 +11,10 @@ interface NotifData {
 }
 
 export default function UserDailyNotification() {
-  const [notification, setNotification] = useState<NotifData | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const supabase = createClient();
 
-  // Function to show the notification both in-app and native (if allowed)
+  // Function to show the native notification
   const showNotification = useCallback((data: NotifData) => {
-    setNotification(data);
-    setIsVisible(true);
-
-    // Try native notification
     if ('Notification' in window && Notification.permission === 'granted') {
       try {
         const nativeNotif = new Notification(data.title, {
@@ -101,21 +92,26 @@ export default function UserDailyNotification() {
 
       // 6. Trigger Notification if any
       if (notifToTrigger) {
-        // Request permission if default to support future native pushes
-        if ('Notification' in window && Notification.permission === 'default') {
-          try {
-            await Notification.requestPermission();
-          } catch {
-            // ignore
+        let hasPermission = false;
+        
+        if ('Notification' in window) {
+          if (Notification.permission === 'granted') {
+            hasPermission = true;
+          } else if (Notification.permission === 'default') {
+            try {
+              const perm = await Notification.requestPermission();
+              hasPermission = perm === 'granted';
+            } catch {
+              // ignore
+            }
           }
         }
-        
-        showNotification(notifToTrigger);
-        // Mark as notified today
-        localStorage.setItem(storageKey, todayString);
-        
-        // Auto-hide in-app toast after 8 seconds
-        setTimeout(() => setIsVisible(false), 8000);
+
+        if (hasPermission) {
+          showNotification(notifToTrigger);
+          // Only mark as notified if we successfully showed the native notification
+          localStorage.setItem(storageKey, todayString);
+        }
       }
     };
 
@@ -124,36 +120,5 @@ export default function UserDailyNotification() {
     return () => clearTimeout(timeoutId);
   }, [supabase, showNotification]);
 
-  if (!isVisible || !notification) return null;
-
-  return (
-    <div className="fixed top-4 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none animate-slide-in-bottom">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-4 w-full max-w-sm pointer-events-auto flex items-start gap-4 transition-all duration-300 transform">
-        <div className={`mt-1 shrink-0 p-2.5 rounded-full ${notification.type === 'BIRTHDAY' ? 'bg-rose-100 text-rose-500' : 'bg-primary/10 text-primary'}`}>
-          {notification.type === 'BIRTHDAY' ? (
-            <GiftIcon className="size-6" />
-          ) : (
-            <BoltIcon className="size-6 animate-pulse" />
-          )}
-        </div>
-        <div className="flex-1 min-w-0 pt-1">
-          <Link href={notification.link} onClick={() => setIsVisible(false)} className="block group">
-            <h4 className="text-sm font-bold text-slate-800 mb-1 group-hover:text-primary transition-colors">
-              {notification.title}
-            </h4>
-            <p className="text-xs text-slate-500 leading-relaxed font-medium">
-              {notification.message}
-            </p>
-          </Link>
-        </div>
-        <button 
-          onClick={() => setIsVisible(false)}
-          className="shrink-0 p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-          aria-label="Tutup notifikasi"
-        >
-          <XMarkIcon className="size-5" />
-        </button>
-      </div>
-    </div>
-  );
+  return null; // UI is completely Native OS-based now.
 }
