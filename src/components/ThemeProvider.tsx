@@ -18,8 +18,8 @@ export default function ThemeProvider({ theme, children }: ThemeProviderProps) {
     root.style.setProperty("--theme-secondary", t.secondary_color);
     root.style.setProperty("--theme-bg", t.background_color);
     root.style.setProperty("--theme-text", t.text_color);
-    root.style.setProperty("--theme-heading-font", `"${t.heading_font}", ui-sans-serif, system-ui, sans-serif`);
-    root.style.setProperty("--theme-body-font", `"${t.body_font}", ui-sans-serif, system-ui, sans-serif`);
+    root.style.setProperty("--theme-heading-font", t.heading_font === 'Sour Gummy' ? 'var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif' : `"${t.heading_font}", ui-sans-serif, system-ui, sans-serif`);
+    root.style.setProperty("--theme-body-font", t.body_font === 'Sour Gummy' ? 'var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif' : `"${t.body_font}", ui-sans-serif, system-ui, sans-serif`);
     root.style.setProperty("--theme-btn-radius", `${t.button_radius}px`);
     root.style.setProperty("--theme-card-radius", `${t.card_radius}px`);
     root.style.setProperty("--theme-card-bg", t.card_bg_color);
@@ -45,9 +45,9 @@ export default function ThemeProvider({ theme, children }: ThemeProviderProps) {
     t.account_text_color
   ]);
 
-  // Dynamically load Google Fonts
+  // Dynamically load Google Fonts (Exclude local fonts like 'Sour Gummy')
   useEffect(() => {
-    const fonts = [t.heading_font, t.body_font].filter(Boolean);
+    const fonts = [t.heading_font, t.body_font].filter(f => f && f !== 'Sour Gummy');
     const uniqueFonts = [...new Set(fonts)];
     
     uniqueFonts.forEach((font) => {

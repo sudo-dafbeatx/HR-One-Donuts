@@ -5,8 +5,19 @@ import { UITheme } from "@/types/cms";
 import { saveTheme } from "@/app/admin/actions";
 
 const FONT_OPTIONS = [
-  "Sora", "Inter", "Poppins", "Outfit", "Nunito", "Montserrat", 
-  "Public Sans", "DM Sans", "Plus Jakarta Sans", "Roboto", "Open Sans"
+  "Sora",
+  "Public Sans",
+  "Inter",
+  "Roboto",
+  "Poppins",
+  "Playfair Display",
+  "Montserrat",
+  "Lato",
+  "Oswald",
+  "Sour Gummy",
+  "DM Sans",
+  "Plus Jakarta Sans",
+  "Open Sans"
 ];
 
 export default function ThemeEditor({ initialTheme }: { initialTheme: UITheme }) {

@@ -163,8 +163,35 @@ export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin:
     if (updates.secondary_color) root.style.setProperty('--theme-secondary', updates.secondary_color);
     if (updates.background_color) root.style.setProperty('--theme-bg', updates.background_color);
     if (updates.text_color) root.style.setProperty('--theme-text', updates.text_color);
-    if (updates.heading_font) root.style.setProperty('--theme-heading-font', `"${updates.heading_font}", ui-sans-serif, system-ui, sans-serif`);
-    if (updates.body_font) root.style.setProperty('--theme-body-font', `"${updates.body_font}", ui-sans-serif, system-ui, sans-serif`);
+
+    // Collect fonts to load from Google Fonts, excluding "Sour Gummy"
+    const fontsToLoad = [updates.heading_font, updates.body_font].filter(f => f && f !== 'Sour Gummy');
+    const uniqueFontsToLoad = [...new Set(fontsToLoad)];
+
+    // Remove existing Google Fonts link tags
+    document.querySelectorAll('link[data-google-font-link]').forEach(link => link.remove());
+
+    // Dynamically load Google Fonts if any are selected and not "Sour Gummy"
+    if (uniqueFontsToLoad.length > 0) {
+      const fontFamilies = uniqueFontsToLoad
+        .filter((font): font is string => typeof font === 'string')
+        .map(font => `${font.replace(/\s/g, '+')}:wght@400;700`)
+        .join('&family=');
+      const link = document.createElement('link');
+      link.href = `https://fonts.googleapis.com/css2?family=${fontFamilies}&display=swap`;
+      link.rel = 'stylesheet';
+      link.setAttribute('data-google-font-link', 'true'); // Mark for easy removal
+      document.head.appendChild(link);
+    }
+
+    if (updates.heading_font) {
+      const hVal = updates.heading_font === 'Sour Gummy' ? 'var(--font-sour-gummy)' : `"${updates.heading_font}"`;
+      root.style.setProperty('--theme-heading-font', `${hVal}, ui-sans-serif, system-ui, sans-serif`);
+    }
+    if (updates.body_font) {
+      const bVal = updates.body_font === 'Sour Gummy' ? 'var(--font-sour-gummy)' : `"${updates.body_font}"`;
+      root.style.setProperty('--theme-body-font', `${bVal}, ui-sans-serif, system-ui, sans-serif`);
+    }
     if (updates.button_radius !== undefined) root.style.setProperty('--theme-btn-radius', `${updates.button_radius}px`);
     if (updates.card_radius !== undefined) root.style.setProperty('--theme-card-radius', `${updates.card_radius}px`);
     if (updates.card_bg_color) root.style.setProperty('--theme-card-bg', updates.card_bg_color);

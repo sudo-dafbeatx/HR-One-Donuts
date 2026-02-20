@@ -5,8 +5,16 @@ import { useEditMode } from '@/context/EditModeContext';
 import { UITheme } from '@/types/cms';
 
 const FONT_OPTIONS = [
-  'Sora', 'Inter', 'Poppins', 'Outfit', 'Nunito', 'Montserrat',
-  'Public Sans', 'DM Sans', 'Plus Jakarta Sans', 'Roboto', 'Open Sans'
+  "Sora",
+  "Public Sans",
+  "Inter",
+  "Roboto",
+  "Poppins",
+  "Playfair Display",
+  "Montserrat",
+  "Lato",
+  "Oswald",
+  "Sour Gummy",
 ];
 
 interface ColorFieldConfig {
@@ -74,8 +82,9 @@ export default function ThemePanel() {
     setLocalTheme(prev => ({ ...prev, [key]: value }));
     setHasChanges(true);
     const root = document.documentElement;
-    if (key === 'heading_font') root.style.setProperty('--theme-heading-font', `"${value}", ui-sans-serif, system-ui, sans-serif`);
-    if (key === 'body_font') root.style.setProperty('--theme-body-font', `"${value}", ui-sans-serif, system-ui, sans-serif`);
+    const fontVal = value === 'Sour Gummy' ? 'var(--font-sour-gummy)' : `"${value}"`;
+    if (key === 'heading_font') root.style.setProperty('--theme-heading-font', `${fontVal}, ui-sans-serif, system-ui, sans-serif`);
+    if (key === 'body_font') root.style.setProperty('--theme-body-font', `${fontVal}, ui-sans-serif, system-ui, sans-serif`);
   };
 
   const handleRadiusChange = (key: keyof UITheme, value: number) => {
