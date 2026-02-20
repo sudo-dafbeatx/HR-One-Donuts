@@ -10,8 +10,7 @@ import {
   Tooltip, 
   ResponsiveContainer,
   LineChart,
-  Line,
-  Legend
+  Line
 } from 'recharts';
 
 interface OrderData {
@@ -23,14 +22,18 @@ interface DashboardChartProps {
   orders: OrderData[];
 }
 
+interface ChartDataItem {
+  name: string;
+  date: string;
+  Pendapatan: number;
+}
+
 export default function DashboardChart({ orders }: DashboardChartProps) {
-  const [chartData, setChartData] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<ChartDataItem[]>([]);
   const [chartType, setChartType] = useState<'bar' | 'line'>('bar');
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-    
     // Process orders into daily revenue
     const processData = () => {
       if (!orders || orders.length === 0) return [];
@@ -60,11 +63,16 @@ export default function DashboardChart({ orders }: DashboardChartProps) {
           name: d.toLocaleDateString('id-ID', { weekday: 'short' }),
           date: d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
           Pendapatan: revenue
-        };
+        } as ChartDataItem;
       });
     };
 
-    setChartData(processData());
+    // Tunda state update untuk mount render agar tidak bentrok sinkron
+    const timer = setTimeout(() => {
+      setChartData(processData());
+      setIsMounted(true);
+    }, 10);
+    return () => clearTimeout(timer);
   }, [orders]);
 
   if (!isMounted) return <div className="h-[300px] bg-slate-50 animate-pulse rounded-lg" />;
