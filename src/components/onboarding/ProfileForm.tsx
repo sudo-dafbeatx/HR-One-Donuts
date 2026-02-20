@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import GeoDropdown from './GeoDropdown';
 import { useLoading } from '@/context/LoadingContext';
 import { useRouter } from 'next/navigation';
+import { normalizePhoneToID } from '@/lib/phone';
 
 interface ProfileFormProps {
   userId: string;
@@ -18,6 +19,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     fullName: initialData.full_name,
     email: initialData.email,
+    phone: '',
     gender: '' as 'male' | 'female' | '',
     age: '',
     birthPlace: '',
@@ -36,9 +38,22 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
   const router = useRouter();
   const supabase = createClient();
 
+  const calculateAge = (dateStr: string) => {
+    if (!dateStr) return '';
+    const birthDate = new Date(dateStr);
+    const today = new Date();
+    let computedAge = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      computedAge--;
+    }
+    return computedAge.toString();
+  };
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.fullName.trim()) newErrors.fullName = 'Nama wajib diisi';
+    if (!formData.phone.trim()) newErrors.phone = 'Nomor HP wajib diisi';
     if (!formData.gender) newErrors.gender = 'Pilih jenis kelamin';
     if (!formData.age) {
       newErrors.age = 'Usia wajib diisi';
@@ -76,7 +91,25 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
     }, 4000);
 
     try {
-      // Use the userId prop - no need to await getUser() again
+      const normalizedPhone = normalizePhoneToID(formData.phone);
+
+      // Update basic profiles table for phone/name sync and unique constraint
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          full_name: formData.fullName,
+          phone: normalizedPhone,
+        })
+        .eq('id', userId);
+
+      if (profileError) {
+        if (profileError.code === '23505' || profileError.message.toLowerCase().includes('unique')) {
+           throw new Error('Nomor HP ini sudah terdaftar. Pakai nomor lain.');
+        }
+        throw profileError;
+      }
+
+      // Update detailed user_profiles
       const { error } = await supabase
         .from('user_profiles')
         .upsert({
@@ -164,6 +197,20 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Nomor HP</label>
+          <input
+            type="tel"
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            placeholder="0812xxxx"
+            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.phone ? 'border-red-300' : 'border-slate-200'}`}
+          />
+          {errors.phone && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.phone}</p>}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+        <div>
           <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Jenis Kelamin</label>
           <div className="flex gap-3">
             {['male', 'female'].map((g) => (
@@ -194,42 +241,28 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
         </div>
 
         <div>
-          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Usia (Tahun)</label>
-          <input
-            type="number"
-            min="13"
-            max="100"
-            value={formData.age}
-            onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-            placeholder="Contoh: 25"
-            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.age ? 'border-red-300' : 'border-slate-200'}`}
-          />
-          {errors.age && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.age}</p>}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        <div>
-          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Tempat Lahir</label>
-          <input
-            type="text"
-            value={formData.birthPlace}
-            onChange={(e) => setFormData({ ...formData, birthPlace: e.target.value })}
-            placeholder="Kota kelahiran"
-            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthPlace ? 'border-red-300' : 'border-slate-200'}`}
-          />
-          {errors.birthPlace && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.birthPlace}</p>}
-        </div>
-
-        <div>
           <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Tanggal Lahir</label>
           <input
             type="date"
             value={formData.birthDate}
-            onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, birthDate: e.target.value, age: calculateAge(e.target.value) })}
             className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthDate ? 'border-red-300' : 'border-slate-200'}`}
           />
           {errors.birthDate && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.birthDate}</p>}
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+        <div>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Usia (Tahun)</label>
+          <input
+            type="number"
+            value={formData.age}
+            readOnly
+            placeholder="Terisi Otomatis"
+            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-400 outline-none bg-slate-100 cursor-not-allowed ${errors.age ? 'border-red-300' : 'border-slate-200'}`}
+          />
+          {errors.age && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.age}</p>}
         </div>
       </div>
 

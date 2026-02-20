@@ -415,7 +415,7 @@ export default function ChatbotWidget() {
         >
           {/* Hint Bubble */}
           {showHint && (
-            <div className="absolute bottom-full right-0 mb-4 animate-bounce-subtle pointer-events-auto z-[9999]" style={{ width: 'max-content' }}>
+            <div className="absolute bottom-full right-0 mb-4 animate-[bounce_2s_infinite] pointer-events-auto z-[99999] origin-bottom-right drop-shadow-2xl" style={{ width: 'max-content' }}>
               <div className="bg-white text-slate-800 px-4 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 whitespace-nowrap">
                 <p className="text-sm font-bold">Butuh bantuan aku?</p>
                 <button onClick={dismissHint} className="text-slate-400 hover:text-slate-600 p-1">

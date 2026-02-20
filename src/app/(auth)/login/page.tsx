@@ -67,6 +67,7 @@ function LoginContent() {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [birthDate, setBirthDate] = useState('');
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -194,6 +195,7 @@ function LoginContent() {
             full_name: fullName,
             phone: normalizedPhone,
             address: address,
+            birth_date: birthDate,
           },
           emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
         }
@@ -295,7 +297,8 @@ function LoginContent() {
       .update({
         full_name: fullName,
         phone: normalizedPhone,
-        address
+        address,
+        birth_date: birthDate
       })
       .eq('id', user.id);
 
@@ -395,6 +398,10 @@ function LoginContent() {
             <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-primary focus:outline-none" required />
           </div>
           <div>
+            <label className="mb-2 block text-sm font-medium text-gray-600">Tanggal Lahir</label>
+            <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-700 focus:border-primary focus:outline-none" required />
+          </div>
+          <div>
             <label className="mb-2 block text-sm font-medium text-gray-600">Alamat Pengiriman</label>
             <textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={3} className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-primary focus:outline-none resize-none" required />
           </div>
@@ -453,13 +460,19 @@ function LoginContent() {
               <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-500">WhatsApp</label>
-              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
+              <label className="mb-1 block text-xs font-medium text-gray-500">Tanggal Lahir</label>
+              <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-700" required />
             </div>
           </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-gray-500">Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-500">WhatsApp</label>
+              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" placeholder="Contoh: 0812..." required />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs font-medium text-gray-500">Email</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
+            </div>
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-gray-500">Alamat</label>

@@ -15,7 +15,7 @@ import { useLoading } from '@/context/LoadingContext';
 import { uploadAvatar, setPredefinedAvatar } from '@/app/actions/avatar-actions';
 import { normalizePhoneToID } from '@/lib/phone';
 import Image from 'next/image';
-import { CameraIcon, PhotoIcon, SparklesIcon } from '@heroicons/react/24/solid';
+import { CameraIcon, PhotoIcon, SparklesIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 
 interface Profile {
   id: string;
@@ -32,6 +32,7 @@ interface Profile {
   city_name?: string;
   district_name?: string;
   address_detail?: string;
+  is_verified?: boolean;
 }
 
 interface OrderItem {
@@ -275,8 +276,11 @@ export default function ProfilePage() {
                 <span className="size-1.5 bg-cyan-300 rounded-full animate-ping"></span>
                 Pelanggan
               </div>
-              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-1 drop-shadow-sm truncate">
-                {profile?.full_name || 'Teman Donat'}
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-1 drop-shadow-sm truncate flex items-center gap-2">
+                <span className="truncate">{profile?.full_name || 'Teman Donat'}</span>
+                {profile?.is_verified && (
+                  <CheckBadgeIcon className="size-6 md:size-8 text-blue-400 drop-shadow-md shrink-0 mb-1" title="Akun Terverifikasi" />
+                )}
               </h1>
               <p className="text-blue-50/80 font-medium mb-0 opacity-90 text-sm md:text-base truncate">{profile?.email}</p>
             </div>
