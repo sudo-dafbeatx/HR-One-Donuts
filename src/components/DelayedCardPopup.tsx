@@ -12,25 +12,48 @@ export default function DelayedCardPopup() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Check if user has visited the site before (persists across sessions)
-    const hasVisited = localStorage.getItem('has_visited');
-    
-    if (!hasVisited) {
-      // First ever visit: record it, but DO NOT show popup
-      localStorage.setItem('has_visited', 'true');
-      return;
+    // 1. Mark first visit if it doesn't exist.
+    if (!localStorage.getItem('first_visit_done')) {
+      localStorage.setItem('first_visit_done', 'true');
+      return; // Never show on very first visit
     }
 
-    // Returning user: check if we've already shown it in this specific session
-    const isClosed = sessionStorage.getItem('delayed_card_closed');
-    if (!isClosed) {
+    // 2. Logic to SHOW popup on return load
+    // If 'left_at' exists, it means the user closed the tab or backgrounded the app previously
+    // and is now returning.
+    const leftAt = localStorage.getItem('left_at');
+    const isClosedInSession = sessionStorage.getItem('delayed_card_closed');
+
+    if (leftAt && !isClosedInSession) {
+      // Clear the 'left_at' flag so it doesn't trigger repeatedly on simple reloads
+      localStorage.removeItem('left_at'); 
+      
+      // Trigger the popup immediately
       setTimeout(() => setRender(true), 0);
-      // Small timeout to allow DOM to render before applying transition class
       setTimeout(() => {
         setIsVisible(true);
         document.body.classList.add('popup-open');
       }, 50);
     }
+
+    // 3. Logic to SET 'left_at' when user leaves
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        localStorage.setItem('left_at', Date.now().toString());
+      }
+    };
+
+    const handlePageHide = () => {
+      localStorage.setItem('left_at', Date.now().toString());
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pagehide', handlePageHide);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pagehide', handlePageHide);
+    };
   }, []);
 
   const closePopup = (e?: React.MouseEvent) => {
