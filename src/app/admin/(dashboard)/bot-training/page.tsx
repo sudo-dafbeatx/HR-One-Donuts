@@ -38,7 +38,6 @@ export default function BotTrainingPage() {
   const supabase = useMemo(() => createClient(), []);
 
   const fetchData = useCallback(async () => {
-    setIsLoading(true);
     const { data: qa, error: qaErr } = await supabase
       .from("knowledge_base")
       .select("*")
@@ -56,7 +55,10 @@ export default function BotTrainingPage() {
   }, [supabase]);
 
   useEffect(() => {
-    fetchData();
+    const timer = setTimeout(() => {
+      fetchData();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,6 +78,7 @@ export default function BotTrainingPage() {
       setIsModalOpen(false);
       setEditingQa(null);
       setFormData({ question: "", answer: "", category: "general" });
+      setIsLoading(true);
       fetchData();
     }
   };
@@ -84,7 +87,10 @@ export default function BotTrainingPage() {
     if (!confirm("Hapus Q&A ini?")) return;
     const { error } = await supabase.from("knowledge_base").delete().eq("id", id);
     if (error) setStatus({ type: "error", msg: "Gagal menghapus" });
-    else fetchData();
+    else {
+      setIsLoading(true);
+      fetchData();
+    }
   };
 
   const handleUseFromLog = (question: string) => {
