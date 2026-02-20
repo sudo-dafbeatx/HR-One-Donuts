@@ -10,7 +10,58 @@ interface Message {
   content: string;
   timestamp: Date;
   quickReplies?: string[];
+  isAnimated?: boolean;
 }
+
+const TypewriterText = ({ 
+  content, 
+  onComplete, 
+  isAnimated 
+}: { 
+  content: string; 
+  onComplete: () => void;
+  isAnimated?: boolean;
+}) => {
+  const [currentIndex, setCurrentIndex] = useState(isAnimated ? content.length : 0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (isAnimated) return;
+
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex((prev) => {
+        if (prev >= content.length) {
+          if (intervalRef.current) clearInterval(intervalRef.current);
+          onComplete();
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 20); // Natural speed
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [content, onComplete, isAnimated]);
+
+  const handleSkip = () => {
+    if (isAnimated) return;
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    setCurrentIndex(content.length);
+    onComplete();
+  };
+
+  const displayText = content.slice(0, currentIndex);
+
+  return (
+    <div onClick={handleSkip} className="cursor-pointer select-none">
+      <p className="text-sm whitespace-pre-line">{displayText}</p>
+      {!isAnimated && currentIndex < content.length && (
+        <span className="inline-block w-1.5 h-4 bg-primary/40 ml-1 animate-pulse align-middle" />
+      )}
+    </div>
+  );
+};
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,15 +76,22 @@ export default function ChatbotWidget() {
   };
 
   const addBotMessage = (content: string, quickReplies?: string[]) => {
+    setIsTyping(false);
     const botMessage: Message = {
       id: crypto.randomUUID(),
       type: "bot",
       content,
       timestamp: new Date(),
       quickReplies,
+      isAnimated: false,
     };
     setMessages((prev) => [...prev, botMessage]);
-    setIsTyping(false);
+  };
+
+  const markMessageAsAnimated = (id: string) => {
+    setMessages((prev) =>
+      prev.map((msg) => (msg.id === id ? { ...msg, isAnimated: true } : msg))
+    );
   };
 
   const addUserMessage = (content: string) => {
@@ -223,7 +281,15 @@ export default function ChatbotWidget() {
                       : "bg-white border border-slate-200 text-slate-800 rounded-bl-sm shadow-sm"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-line">{message.content}</p>
+                  {message.type === "bot" ? (
+                    <TypewriterText
+                      content={message.content}
+                      isAnimated={message.isAnimated}
+                      onComplete={() => markMessageAsAnimated(message.id)}
+                    />
+                  ) : (
+                    <p className="text-sm whitespace-pre-line">{message.content}</p>
+                  )}
                   
                   {/* Quick Replies */}
                   {message.type === "bot" && message.quickReplies && (
@@ -247,10 +313,15 @@ export default function ChatbotWidget() {
             {isTyping && (
               <div className="flex justify-start">
                 <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                      <div className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                      <div className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                    </div>
+                    <span className="text-xs font-medium text-slate-500 animate-pulse">
+                      Bot Dona sedang mengetik...
+                    </span>
                   </div>
                 </div>
               </div>
