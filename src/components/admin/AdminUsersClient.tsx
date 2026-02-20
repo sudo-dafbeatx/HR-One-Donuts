@@ -160,10 +160,10 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-slate-600">
+                <td className="px-6 py-4 text-slate-600" suppressHydrationWarning>
                   {new Date(u.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </td>
-                <td className="px-6 py-4 text-slate-600">
+                <td className="px-6 py-4 text-slate-600" suppressHydrationWarning>
                    {u.last_sign_in_at 
                       ? new Date(u.last_sign_in_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) 
                       : '-'}
