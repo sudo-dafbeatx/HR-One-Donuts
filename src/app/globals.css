@@ -667,11 +667,13 @@ body.popup-open {
 .popup-card {
   position: relative;
   /* Override dimensions to make it responsive on mobile/desktop */
-  width: 90%;
+  width: 90vw;
   max-width: 400px;
   height: auto;
-  min-height: 400px;
-  padding: 1rem;
+  aspect-ratio: 190 / 254;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid white;
   
   /* Reset cursor to default since it's a modal */
   cursor: default; 
