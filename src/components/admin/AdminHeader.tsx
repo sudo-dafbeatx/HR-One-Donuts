@@ -6,13 +6,13 @@ import { createClient } from '@/lib/supabase/client';
 import { 
   Bars3Icon, 
   MagnifyingGlassIcon, 
-  BellIcon, 
   Cog8ToothIcon, 
   QuestionMarkCircleIcon, 
   ArrowRightOnRectangleIcon, 
   UserIcon 
 } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import AdminNotifications from './AdminNotifications';
 
 
 interface AdminHeaderProps {
@@ -66,10 +66,7 @@ export default function AdminHeader({ userEmail, onMenuToggle }: AdminHeaderProp
 
       <div className="flex items-center gap-3 sm:gap-6">
         {/* Notifications */}
-        <button className="relative p-2 text-slate-800 hover:text-[#1b00ff] transition-colors">
-          <BellIcon className="w-6 h-6" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#1b00ff] rounded-full animate-pulse"></span>
-        </button>
+        <AdminNotifications />
 
         {/* User Profile */}
         <div className="relative">
