@@ -100,28 +100,25 @@ export default function MarketplaceClient({
 
   return (
     <div className="w-full flex flex-col gap-6 md:gap-8">
-      {/* Search Bar Section - Exact Snippet for Homepage */}
-      <div className="flex items-center justify-center p-5">
-        <div className="w-full max-w-md rounded-lg bg-gray-200 p-5">
-          <div className="flex w-full">
-            <div className="flex w-12 items-center justify-center rounded-tl-lg rounded-bl-lg border-r border-gray-200 bg-white">
-              <svg viewBox="0 0 20 20" aria-hidden="true" className="w-5 fill-gray-500">
-                <path d="M16.72 17.78a.75.75 0 1 0 1.06-1.06l-1.06 1.06ZM9 14.5A5.5 5.5 0 0 1 3.5 9H2a7 7 0 0 0 7 7v-1.5ZM3.5 9A5.5 5.5 0 0 1 9 3.5V2a7 7 0 0 0-7 7h1.5ZM9 3.5A5.5 5.5 0 0 1 14.5 9H16a7 7 0 0 0 7-7v1.5Zm3.89 10.45 3.83 3.83 1.06-1.06-3.83-3.83-1.06 1.06ZM14.5 9a5.48 5.48 0 0 1-1.61 3.89l1.06 1.06A6.98 6.98 0 0 0 16 9h-1.5Zm-1.61 3.89A5.48 5.48 0 0 1 9 14.5V16a6.98 6.98 0 0 0 4.95-2.05l-1.06-1.06Z"></path>
-              </svg>
-            </div>
-            <input 
-              type="text" 
-              className="w-full bg-white pl-2 text-base font-semibold outline-0" 
-              placeholder="Cari donat..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <input 
-              type="button" 
-              value="Search" 
-              className="bg-blue-500 p-2 rounded-tr-lg rounded-br-lg text-white font-semibold hover:bg-blue-800 transition-colors cursor-pointer" 
-            />
+      {/* Search Bar Section */}
+      <div className="w-full max-w-md mx-auto px-4 md:px-0 mb-4">
+        <div className="relative group">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+            <span className="material-symbols-outlined text-xl">search</span>
           </div>
+          <input 
+            type="text" 
+            className="w-full bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-28 focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 font-medium transition-all text-sm outline-none shadow-sm" 
+            placeholder="Cari donat..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <button 
+            className="absolute right-1.5 top-1.5 bottom-1.5 px-5 bg-primary text-white text-xs font-black uppercase tracking-wider rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20"
+            onClick={() => {/* search is handled by state filter */}}
+          >
+            Search
+          </button>
         </div>
       </div>
 
