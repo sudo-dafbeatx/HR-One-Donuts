@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { ShieldCheckIcon, UserIcon, ArrowPathIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { forceLogoutUser } from '@/app/actions/admin-actions';
+import { useRouter } from 'next/navigation';
 
 interface UserData {
   id: string;
@@ -21,6 +23,7 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const supabase = createClient();
+  const router = useRouter();
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     if (!window.confirm(`Apakah Anda yakin ingin mengubah hak akses pengguna ini menjadi ${newRole.toUpperCase()}?`)) return;
@@ -75,9 +78,14 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
     setLoadingId(userId);
     setErrorMsg(null); setSuccessMsg(null);
     try {
-      const { error } = await supabase.rpc('revoke_user_session', { target_user_id: userId });
-      if (error) throw error;
-      setSuccessMsg('Sesi user berhasil dicabut.');
+      const response = await forceLogoutUser(userId);
+      if (!response?.success) throw new Error(response?.error || 'Gagal menarik sesi login.');
+      
+      setSuccessMsg('Sesi user berhasil dicabut secara global dari server.');
+      // Avoid fake optimistic updates. Let router refresh trigger a server re-render
+      // to pull the true active sessions if your UI shows that (currently it just reloads the list).
+      router.refresh();
+      
       setTimeout(() => setSuccessMsg(null), 3000);
     } catch (err: unknown) {
       const e = err as Error;
