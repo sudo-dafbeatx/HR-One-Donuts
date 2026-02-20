@@ -10,7 +10,8 @@ import {
   PaintBrushIcon, 
   SparklesIcon,
   ArrowTopRightOnSquareIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 
 const navGroups = [
@@ -31,7 +32,15 @@ const navGroups = [
   }
 ];
 
-export default function AdminSidebar({ userEmail, logo_url, storeName }: { userEmail?: string; logo_url?: string; storeName?: string }) {
+interface AdminSidebarProps {
+  userEmail?: string;
+  logo_url?: string;
+  storeName?: string;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function AdminSidebar({ logo_url, storeName, isOpen, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const supabase = createClient();
   const router = useRouter();
@@ -43,10 +52,14 @@ export default function AdminSidebar({ userEmail, logo_url, storeName }: { userE
   };
 
   return (
-    <aside className="hidden md:flex flex-col w-[290px] bg-[#1C2434] fixed inset-y-0 left-0 z-50 transition-all duration-300">
+    <aside 
+      className={`fixed inset-y-0 left-0 z-50 w-[280px] bg-[#1C2434] transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}
+    >
       <div className="flex flex-col h-full overflow-y-auto custom-scrollbar">
         {/* Logo Section */}
-        <div className="p-6 pb-10">
+        <div className="flex items-center justify-between p-6 pb-10">
           <Link href="/admin" className="flex items-center gap-3 group">
             <LogoBrand 
               logoUrl={logo_url} 
@@ -55,17 +68,24 @@ export default function AdminSidebar({ userEmail, logo_url, storeName }: { userE
               className="brightness-0 invert group-hover:scale-105 transition-transform"
             />
             <div className="flex flex-col">
-              <span className="text-xl font-black text-white tracking-tighter leading-tight">Admin <span className="text-[#3C50E0]">Panel</span></span>
+              <span className="text-xl font-black text-white tracking-tighter leading-tight">Admin <span className="text-[#1b00ff]">Panel</span></span>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">Administrator</span>
             </div>
           </Link>
+          
+          <button 
+            onClick={onClose}
+            className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors"
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </button>
         </div>
 
         {/* Navigation Groups */}
-        <div className="flex-1 px-6 space-y-8">
+        <div className="flex-1 px-4 space-y-8">
           {navGroups.map((group) => (
             <div key={group.title}>
-              <h3 className="mb-4 text-xs font-semibold text-slate-400 uppercase tracking-[0.2em] px-4">
+              <h3 className="mb-4 text-xs font-semibold text-slate-400 uppercase tracking-[0.2em] px-2">
                 {group.title}
               </h3>
               <nav className="space-y-1.5">
@@ -78,11 +98,11 @@ export default function AdminSidebar({ userEmail, logo_url, storeName }: { userE
                       target={item.external ? "_blank" : undefined}
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group ${
                         isActive 
-                          ? "bg-[#333A48] text-white" 
+                          ? "bg-[#1b00ff] text-white shadow-lg shadow-[#1b00ff]/20" 
                           : "text-slate-400 hover:text-white hover:bg-[#333A48]"
                       }`}
                     >
-                      <item.icon className={`size-5 transition-colors ${isActive ? "text-white" : "text-slate-400 group-hover:text-white"}`} />
+                      <item.icon className={`w-5 h-5 transition-colors ${isActive ? "text-white" : "text-slate-400 group-hover:text-white"}`} />
                       {item.name}
                     </Link>
                   );
@@ -93,22 +113,12 @@ export default function AdminSidebar({ userEmail, logo_url, storeName }: { userE
         </div>
 
         {/* User & Logout Section */}
-        <div className="p-6 mt-auto border-t border-slate-700/50 bg-[#1C2434]">
-          <div className="flex items-center gap-3 px-4 py-3 mb-4 rounded-xl bg-[#24303F]">
-            <div className="size-10 rounded-full bg-[#3C50E0] flex items-center justify-center text-white font-black text-xs uppercase">
-              {userEmail?.[0] || 'A'}
-            </div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-xs font-bold text-white truncate">{userEmail?.split('@')[0]}</span>
-              <span className="text-[10px] text-slate-400 uppercase tracking-widest font-medium">Administrator</span>
-            </div>
-          </div>
-          
+        <div className="p-4 mt-auto">
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-[#333A48] transition-all w-full text-left"
+            className="flex items-center justify-center gap-2 px-4 py-3 w-full rounded-lg text-sm font-medium text-white bg-slate-800 hover:bg-slate-700 transition-all text-center"
           >
-            <ArrowRightOnRectangleIcon className="size-5" />
+            <ArrowRightOnRectangleIcon className="w-5 h-5" />
             Keluar Sistem
           </button>
         </div>
