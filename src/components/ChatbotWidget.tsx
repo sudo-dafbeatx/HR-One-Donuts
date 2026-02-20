@@ -72,8 +72,9 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 }); // Offset from default bottom-right
+  const [position, setPosition] = useState({ x: 0, y: 0 }); 
   const [isDragging, setIsDragging] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const dragStartPos = useRef({ x: 0, y: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -131,6 +132,16 @@ export default function ChatbotWidget() {
       }
     }
 
+    // First visit hint logic
+    const hintSeen = localStorage.getItem("dona_hint_seen");
+    if (!hintSeen) {
+      setTimeout(() => setShowHint(true), 2000); // Show after 2s
+      
+      // Auto hide hint after 8s
+      const timer = setTimeout(() => setShowHint(false), 10000);
+      return () => clearTimeout(timer);
+    }
+
     // Fetch products for real-time menu sync
     const fetchProducts = async () => {
       const { data, error } = await supabase
@@ -145,6 +156,11 @@ export default function ChatbotWidget() {
     };
     fetchProducts();
   }, [supabase]);
+
+  const dismissHint = () => {
+    setShowHint(false);
+    localStorage.setItem("dona_hint_seen", "true");
+  };
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
@@ -286,8 +302,9 @@ export default function ChatbotWidget() {
   };
 
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
-    if (isOpen) return; // Don't drag when open
+    if (isOpen) return; 
     setIsDragging(true);
+    if (showHint) dismissHint();
     
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
@@ -305,20 +322,25 @@ export default function ChatbotWidget() {
     const clientX = isTouch ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX;
     const clientY = isTouch ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
     
-    const newX = clientX - dragStartPos.current.x;
-    const newY = clientY - dragStartPos.current.y;
+    let newX = clientX - dragStartPos.current.x;
+    let newY = clientY - dragStartPos.current.y;
     
-    // Limits (basic): prevent going too far left or top
-    // Also prevent going below the navbar area on mobile
     const isMobile = window.innerWidth < 768;
-    // BottomNav height is 64px (h-16). Icon starts at bottom-24 (96px).
-    // To stay above navbar: bottom-24 + y >= 64 => y >= -32.
-    const bottomLimit = isMobile ? -32 : -10; 
+    const padding = 20;
+    const iconSize = isMobile ? 56 : 64;
     
-    setPosition({
-      x: Math.min(0, newX), // Don't allow moving right of default
-      y: Math.max(bottomLimit, newY), // Don't go below bottom limit
-    });
+    // Limits
+    const minX = -(window.innerWidth - iconSize - padding * 2); 
+    const maxX = 0; 
+    
+    // Bottom limits (don't cover bottom nav on mobile)
+    const minYa = isMobile ? -32 : -10; 
+    const maxYa = window.innerHeight - (isMobile ? 120 : 80); 
+
+    newX = Math.max(minX, Math.min(maxX, newX));
+    newY = Math.max(minYa, Math.min(maxYa, newY));
+    
+    setPosition({ x: newX, y: -newY }); // Using negative Y because it's relative to 'bottom-24'
   }, [isDragging]);
 
   const handleDragEnd = useCallback(() => {
@@ -371,38 +393,61 @@ export default function ChatbotWidget() {
         />
       )}
 
-      {/* Chat Button */}
+      {/* Chat Button Container */}
       {!isOpen && (
-        <button
-          ref={buttonRef}
-          onMouseDown={handleDragStart}
-          onTouchStart={handleDragStart}
-          onClick={() => {
-            if (!isDragging) setIsOpen(true);
-          }}
+        <div 
+          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 transition-transform duration-75 select-none touch-none"
           style={{
             transform: `translate(${position.x}px, ${position.y}px)`,
-            cursor: isDragging ? 'grabbing' : 'pointer'
           }}
-          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-50 group hover:animate-none select-none touch-none"
-          aria-label="Chat dengan Dona AI"
         >
-          <Image 
-            src="/images/Dona.webp" 
-            width={48} 
-            height={48}
-            className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover group-hover:scale-110 transition-transform bg-white border-2 border-white shadow-inner" 
-            alt="Dona"
-            priority
-          />
-          
-          {/* Badge for cart count or notification */}
-          {cart.length > 0 && (
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold">
-              {cart.reduce((sum, item) => sum + item.quantity, 0)}
-            </span>
+          {/* Hint Bubble */}
+          {showHint && (
+            <div className="absolute bottom-full right-0 mb-4 animate-bounce-subtle pointer-events-auto">
+              <div className="bg-white text-slate-800 px-4 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 whitespace-nowrap">
+                <p className="text-sm font-bold">Butuh bantuan aku?</p>
+                <button onClick={dismissHint} className="text-slate-400 hover:text-slate-600">
+                  <XMarkIcon className="w-4 h-4" />
+                </button>
+                {/* Arrow */}
+                <div className="absolute top-full right-6 w-3 h-3 bg-white border-r border-b border-slate-100 rotate-45 -translate-y-1.5"></div>
+              </div>
+            </div>
           )}
-        </button>
+
+          <button
+            ref={buttonRef}
+            onMouseDown={handleDragStart}
+            onTouchStart={handleDragStart}
+            onClick={() => {
+              if (!isDragging) {
+                setIsOpen(true);
+                dismissHint();
+              }
+            }}
+            style={{
+              cursor: isDragging ? 'grabbing' : 'pointer'
+            }}
+            className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 group hover:rotate-6"
+            aria-label="Chat dengan Dona AI"
+          >
+            <Image 
+              src="/images/Dona.webp" 
+              width={48} 
+              height={48}
+              className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover group-hover:scale-110 transition-transform bg-white border-2 border-white shadow-inner" 
+              alt="Dona"
+              priority
+            />
+            
+            {/* Badge for cart count or notification */}
+            {cart.length > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold border-2 border-white">
+                {cart.reduce((sum, item) => sum + item.quantity, 0)}
+              </span>
+            )}
+          </button>
+        </div>
       )}
 
       {/* Chat Window */}
