@@ -158,6 +158,17 @@ export default function ChatbotWidget() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   const handleBotResponse = async (userInput: string) => {
     const input = userInput.toLowerCase();
 
@@ -351,6 +362,14 @@ export default function ChatbotWidget() {
 
   return (
     <>
+      {/* Backdrop for Mobile */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 md:hidden animate-fade-in"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       {/* Chat Button */}
       {!isOpen && (
         <button
@@ -364,12 +383,12 @@ export default function ChatbotWidget() {
             transform: `translate(${position.x}px, ${position.y}px)`,
             cursor: isDragging ? 'grabbing' : 'pointer'
           }}
-          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-16 h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-50 group hover:animate-none select-none touch-none"
+          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-50 group hover:animate-none select-none touch-none"
           aria-label="Chat dengan Dona AI"
         >
           <img 
             src="/images/Dona.webp" 
-            className="w-12 h-12 rounded-full object-cover group-hover:scale-110 transition-transform bg-white border-2 border-white shadow-inner" 
+            className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover group-hover:scale-110 transition-transform bg-white border-2 border-white shadow-inner" 
             alt="Dona"
           />
           
