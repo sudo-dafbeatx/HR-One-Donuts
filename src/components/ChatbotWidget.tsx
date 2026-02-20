@@ -155,7 +155,7 @@ export default function ChatbotWidget() {
       setTimeout(() => {
         const phoneNumber = "6285810658117";
         if (cart.length > 0) {
-          let messageArr = ["Halo HR-One Donuts! 🍩 Saya ingin memesan:\n\n"];
+          const messageArr = ["Halo HR-One Donuts! 🍩 Saya ingin memesan:\n\n"];
           cart.forEach((item, index) => {
             messageArr.push(`${index + 1}. ${item.name}\n   Jumlah: ${item.quantity} pcs\n   Harga: Rp ${(item.price * item.quantity).toLocaleString("id-ID")}\n\n`);
           });
