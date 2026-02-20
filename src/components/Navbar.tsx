@@ -92,7 +92,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
               pathname === '/catalog' ? 'text-primary' : 'text-slate-600'
             }`}
           >
-            Menu
+            {copy.nav_menu}
           </Link>
           <Link 
             href="/cara-pesan" 
@@ -100,7 +100,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
               pathname === '/cara-pesan' ? 'text-primary' : 'text-slate-600'
             }`}
           >
-            Cara Pesan
+            {copy.nav_how_to_order}
           </Link>
         </nav>
 

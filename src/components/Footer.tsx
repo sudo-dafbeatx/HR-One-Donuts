@@ -7,7 +7,7 @@ interface FooterProps {
   copy?: Record<string, string>;
 }
 
-export default function Footer({ siteSettings }: FooterProps) {
+export default function Footer({ siteSettings, copy }: FooterProps) {
   return (
     <footer className="bg-slate-900 text-white pt-20 pb-10 overflow-hidden relative">
       {/* Abstract Background Element */}
@@ -51,7 +51,9 @@ export default function Footer({ siteSettings }: FooterProps) {
           {/* Navigasi & Bantuan */}
           <div className="grid grid-cols-2 lg:col-span-2 gap-8">
             <div>
-              <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-8 opacity-50">Navigasi</h4>
+              <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-8 opacity-50">
+                {copy?.footer_navigation || 'Navigasi'}
+              </h4>
               <ul className="space-y-4">
                 {[
                   { label: 'Beranda', path: '/' },
@@ -73,7 +75,9 @@ export default function Footer({ siteSettings }: FooterProps) {
             </div>
 
             <div>
-              <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-8 opacity-50">Bantuan</h4>
+              <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-8 opacity-50">
+                {copy?.footer_help || 'Bantuan'}
+              </h4>
               <ul className="space-y-4">
                 {[
                   { label: 'Cara Pesan', path: '/cara-pesan' },
@@ -97,7 +101,9 @@ export default function Footer({ siteSettings }: FooterProps) {
 
           {/* Contact Information */}
           <div className="space-y-8">
-            <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-2 text-center md:text-left opacity-50">Hubungi Kami</h4>
+            <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-2 text-center md:text-left opacity-50">
+              {copy?.footer_contact || 'Hubungi Kami'}
+            </h4>
             <div className="space-y-6">
               <div className="flex items-start gap-4 group">
                 <div className="size-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all">
@@ -141,7 +147,7 @@ export default function Footer({ siteSettings }: FooterProps) {
         {/* Bottom Bar */}
         <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-8">
           <p className="text-slate-500 text-[11px] font-bold order-2 md:order-1 tracking-wider uppercase">
-            © 2025 {siteSettings?.store_name || "HR-One Donuts"}. Crafted with <span className="text-rose-500 inline-block animate-pulse">❤</span>
+            {copy?.footer_copyright || `© 2025 ${siteSettings?.store_name || "HR-One Donuts"}. Crafted with love`}
           </p>
           <div className="flex flex-wrap justify-center gap-x-10 gap-y-4 order-1 md:order-2">
             {[

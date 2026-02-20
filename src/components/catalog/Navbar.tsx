@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { SiteSettings } from "@/types/cms";
 import LogoBrand from "@/components/ui/LogoBrand";
 
-export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSettings }) {
+export default function CatalogNavbar({ siteSettings, copy }: { siteSettings?: SiteSettings, copy?: Record<string, string> }) {
   const pathname = usePathname();
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
@@ -43,10 +43,10 @@ export default function CatalogNavbar({ siteSettings }: { siteSettings?: SiteSet
   }, [supabase]);
 
   const navLinks = [
-    { label: "Beranda", href: "/" },
-    { label: "Menu", href: "/catalog" },
-    { label: "Tentang Kami", href: "/#about" },
-    { label: "Cara Pesan", href: "/cara-pesan" },
+    { label: copy?.nav_home || "Beranda", href: "/" },
+    { label: copy?.nav_menu || "Menu", href: "/catalog" },
+    { label: "Tentang Kami", href: "/#about" }, // This one is not in UICopyEditor yet but keeping for now
+    { label: copy?.nav_how_to_order || "Cara Pesan", href: "/cara-pesan" },
   ];
 
   return (

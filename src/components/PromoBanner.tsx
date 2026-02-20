@@ -11,7 +11,7 @@ const eventIcons: Record<string, React.ElementType> = {
   seasonal: CalendarDaysIcon,
 };
 
-export default function PromoBanner({ events }: { events: PromoEvent[] }) {
+export default function PromoBanner({ events, copy }: { events: PromoEvent[], copy?: Record<string, string> }) {
   if (!events || events.length === 0) return null;
 
   return (
@@ -42,13 +42,13 @@ export default function PromoBanner({ events }: { events: PromoEvent[] }) {
                 <div className="flex items-center gap-2 mb-2">
                    <div className="bg-primary/90 text-white px-3 py-1 rounded-full flex items-center gap-1">
                       <Icon className="w-3 h-3" />
-                      <span className="text-[10px] font-bold uppercase tracking-wide leading-none">
-                        {event.event_slug?.replace('_', ' ') || 'PROMO'}
+                       <span className="text-[10px] font-bold uppercase tracking-wide leading-none">
+                        {event.event_slug?.replace('_', ' ') || (copy?.badge_promo || 'PROMO')}
                       </span>
                    </div>
                    {event.discount_percent && (
                       <span className="bg-red-600 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide leading-none">
-                        DISKON {event.discount_percent}%
+                        {copy?.badge_promo || 'DISKON'} {event.discount_percent}%
                       </span>
                    )}
                 </div>
@@ -61,7 +61,7 @@ export default function PromoBanner({ events }: { events: PromoEvent[] }) {
                   href={`/promo/${event.event_slug}`}
                   className="w-fit bg-white text-slate-900 px-6 py-2.5 rounded-xl font-semibold text-xs hover:bg-primary hover:text-white transition-all active:scale-95 shadow-xl"
                 >
-                   Lihat Promo
+                   {copy?.cta_view_promo || 'Lihat Promo'}
                 </Link>
               </div>
             </div>

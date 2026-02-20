@@ -7,7 +7,7 @@ import { BoltIcon, ClockIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState, useRef } from 'react';
 import { getEventTiming, formatCountdown } from '@/lib/date-utils';
 
-export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
+export default function FlashSaleSection({ events, copy }: { events: PromoEvent[], copy?: Record<string, string> }) {
   const [mounted, setMounted] = useState(false);
   const [, setTick] = useState(0); 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -56,7 +56,9 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
                   </div>
                 )}
               </div>
-              <p className="text-[10px] font-medium text-slate-400 tracking-wide mt-1">Penawaran Terbatas</p>
+              <p className="text-[10px] font-medium text-slate-400 tracking-wide mt-1">
+                {copy?.section_flash_sale_subtitle || 'Penawaran Terbatas'}
+              </p>
             </div>
           </div>
           
@@ -64,7 +66,7 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
             href="/catalog?filter=promo" 
             className="text-xs font-semibold text-primary hover:underline decoration-2 underline-offset-4 transition-all self-end sm:self-auto"
           >
-            Lihat Semua
+            {copy?.cta_view_all || 'Lihat Semua'}
           </Link>
         </div>
 

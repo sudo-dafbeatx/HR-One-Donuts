@@ -13,8 +13,10 @@ const COPY_GROUPS: { title: string; keys: { key: string; label: string }[] }[] =
     keys: [
       { key: "nav_home", label: "Label: Home" },
       { key: "nav_menu", label: "Label: Menu" },
+      { key: "nav_how_to_order", label: "Label: Cara Pesan" },
       { key: "nav_account", label: "Label: Account" },
       { key: "search_placeholder", label: "Placeholder Pencarian" },
+      { key: "cta_search", label: "Tombol Cari" },
     ]
   },
   {
@@ -29,6 +31,9 @@ const COPY_GROUPS: { title: string; keys: { key: string; label: string }[] }[] =
       { key: "banner_3_label", label: "Banner 3 - Label" },
       { key: "banner_3_title", label: "Banner 3 - Judul" },
       { key: "banner_3_subtitle", label: "Banner 3 - Subtitle" },
+      { key: "section_flash_sale_subtitle", label: "Flash Sale - Subtitle" },
+      { key: "cta_view_all", label: "Tombol Lihat Semua" },
+      { key: "cta_view_promo", label: "Tombol Lihat Promo" },
     ]
   },
   {
@@ -36,8 +41,10 @@ const COPY_GROUPS: { title: string; keys: { key: string; label: string }[] }[] =
     keys: [
       { key: "section_catalog", label: "Judul Section" },
       { key: "section_catalog_desc", label: "Deskripsi Section" },
+      { key: "category_all", label: "Label Kategori: Semua" },
       { key: "cta_add_cart", label: "Tombol Tambah Keranjang" },
       { key: "cta_buy", label: "Tombol Beli" },
+      { key: "loading_add_cart", label: "Pesan Loading Keranjang" },
       { key: "sold_label", label: "Label Terjual" },
     ]
   },
@@ -53,6 +60,8 @@ const COPY_GROUPS: { title: string; keys: { key: string; label: string }[] }[] =
     title: "Footer",
     keys: [
       { key: "footer_copyright", label: "Copyright" },
+      { key: "footer_navigation", label: "Judul Navigasi" },
+      { key: "footer_help", label: "Judul Bantuan" },
       { key: "footer_quicklinks", label: "Judul Quick Links" },
       { key: "footer_support", label: "Judul Support" },
       { key: "footer_contact", label: "Judul Contact" },
