@@ -30,6 +30,9 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
     .filter(e => e.timing.isActive)
     .sort((a, b) => a.timing.secondsUntilEnd - b.timing.secondsUntilEnd)[0];
 
+  // Check if today is Tuesday (2) or Friday (5)
+  const isFlashSaleDay = new Date().getDay() === 2 || new Date().getDay() === 5;
+
   return (
     <section className="w-full bg-white py-8 border-b border-slate-100">
       <div className="container mx-auto px-4">
@@ -44,7 +47,7 @@ export default function FlashSaleSection({ events }: { events: PromoEvent[] }) {
                 <h2 className="text-xl md:text-2xl font-bold text-slate-800 tracking-tight leading-none">
                   Flash <span className="text-primary">Sale</span>
                 </h2>
-                {globalTargetEvent?.timing?.isActive && (
+                {isFlashSaleDay && globalTargetEvent?.timing?.isActive && (
                   <div className="flex items-center gap-1.5 bg-slate-100 text-slate-900 border border-slate-200 px-2.5 py-1 rounded-lg">
                     <ClockIcon className="size-3 text-red-500 animate-pulse" />
                     <span className="font-mono text-[11px] font-black tracking-tighter">
