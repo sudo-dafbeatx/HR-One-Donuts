@@ -100,8 +100,8 @@ export default function DashboardChart({ orders }: DashboardChartProps) {
          </div>
       </div>
 
-      <div className="flex-1 min-h-[300px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="flex-1 min-h-[300px] w-full" style={{ minWidth: 0 }}>
+        <ResponsiveContainer width="100%" height={300} minHeight={300}>
           {chartType === 'bar' ? (
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -116,7 +116,8 @@ export default function DashboardChart({ orders }: DashboardChartProps) {
                 axisLine={false} 
                 tickLine={false} 
                 tick={{ fill: '#94a3b8', fontSize: 12 }}
-                tickFormatter={(value) => value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                tickFormatter={(value: any) => value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value}
               />
               <Tooltip 
                 cursor={{ fill: '#f8fafc' }}
@@ -126,7 +127,8 @@ export default function DashboardChart({ orders }: DashboardChartProps) {
                   const numVal = Number(value) || 0;
                   return [`Rp ${numVal.toLocaleString('id-ID')}`, 'Pendapatan'];
                 }}
-                labelFormatter={(label, payload) => payload?.[0]?.payload?.date || label}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                labelFormatter={(label: any, payload: any) => payload?.[0]?.payload?.date || label}
               />
               <Bar 
                 dataKey="Pendapatan" 
@@ -150,7 +152,8 @@ export default function DashboardChart({ orders }: DashboardChartProps) {
                 axisLine={false} 
                 tickLine={false} 
                 tick={{ fill: '#94a3b8', fontSize: 12 }}
-                tickFormatter={(value) => value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                tickFormatter={(value: any) => value >= 1000000 ? `${(value / 1000000).toFixed(1)}M` : value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value}
               />
               <Tooltip 
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)', padding: '12px' }}
@@ -159,7 +162,7 @@ export default function DashboardChart({ orders }: DashboardChartProps) {
                   const numVal = Number(value) || 0;
                   return [`Rp ${numVal.toLocaleString('id-ID')}`, 'Pendapatan'];
                 }}
-                labelFormatter={(label, payload) => payload?.[0]?.payload?.date || label}
+                labelFormatter={(label: any, payload: any) => payload?.[0]?.payload?.date || label}
               />
               <Line 
                 type="monotone" 

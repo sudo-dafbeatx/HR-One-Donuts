@@ -138,7 +138,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
             <h2 className="text-xl font-bold flex items-center gap-3 text-heading dark:text-white">
               <div className="relative size-8">
                 <Image 
-                  src="/images/logo-hr-one.png"
+                  src="/images/logo-hr-one.webp"
                   alt="HR-One Donuts"
                   fill
                   className="object-contain"
