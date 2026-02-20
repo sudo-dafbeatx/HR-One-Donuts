@@ -235,6 +235,69 @@ export default function ChatbotWidget() {
     setInputValue("");
   };
 
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    if (isOpen) return; // Don't drag when open
+    setIsDragging(true);
+    
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+    
+    dragStartPos.current = {
+      x: clientX - position.x,
+      y: clientY - position.y,
+    };
+  };
+
+  const handleDragMove = useCallback((e: MouseEvent | TouchEvent) => {
+    if (!isDragging) return;
+    
+    const isTouch = 'touches' in e;
+    const clientX = isTouch ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX;
+    const clientY = isTouch ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
+    
+    const newX = clientX - dragStartPos.current.x;
+    const newY = clientY - dragStartPos.current.y;
+    
+    // Limits (basic): prevent going too far left or top
+    // Also prevent going below the navbar area on mobile
+    const isMobile = window.innerWidth < 768;
+    // BottomNav height is 64px (h-16). Icon starts at bottom-24 (96px).
+    // To stay above navbar: bottom-24 + y >= 64 => y >= -32.
+    const bottomLimit = isMobile ? -32 : -10; 
+    
+    setPosition({
+      x: Math.min(0, newX), // Don't allow moving right of default
+      y: Math.max(bottomLimit, newY), // Don't go below bottom limit
+    });
+  }, [isDragging]);
+
+  const handleDragEnd = useCallback(() => {
+    if (isDragging) {
+      setIsDragging(false);
+      localStorage.setItem("dona_chat_pos", JSON.stringify(position));
+    }
+  }, [isDragging, position]);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleDragMove);
+      window.addEventListener('mouseup', handleDragEnd);
+      window.addEventListener('touchmove', handleDragMove);
+      window.addEventListener('touchend', handleDragEnd);
+    } else {
+      window.removeEventListener('mousemove', handleDragMove);
+      window.removeEventListener('mouseup', handleDragEnd);
+      window.removeEventListener('touchmove', handleDragMove);
+      window.removeEventListener('touchend', handleDragEnd);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleDragMove);
+      window.removeEventListener('mouseup', handleDragEnd);
+      window.removeEventListener('touchmove', handleDragMove);
+      window.removeEventListener('touchend', handleDragEnd);
+    };
+  }, [isDragging, handleDragMove, handleDragEnd]);
+
   const handleQuickReply = (reply: string) => {
     if (reply === "Tutup Chat") {
       setIsOpen(false);
