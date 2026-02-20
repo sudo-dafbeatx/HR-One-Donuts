@@ -93,14 +93,14 @@ export default function AdminHeader({ userEmail, onMenuToggle }: AdminHeaderProp
                 <UserIcon className="w-4 h-4" /> Profile
               </Link>
               <Link 
-                href="/admin" 
+                href="/admin/settings" 
                 className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#1b00ff] transition-colors"
                 onClick={() => setIsProfileOpen(false)}
               >
                 <Cog8ToothIcon className="w-4 h-4" /> Setting
               </Link>
               <Link 
-                href="/admin" 
+                href="/admin/help" 
                 className="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-[#1b00ff] transition-colors"
                 onClick={() => setIsProfileOpen(false)}
               >
