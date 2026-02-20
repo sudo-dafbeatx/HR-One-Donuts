@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { XMarkIcon, PaperAirplaneIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
@@ -75,6 +76,7 @@ export default function ChatbotWidget() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { cart, totalPrice } = useCart();
+  const pathname = usePathname();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -306,6 +308,10 @@ export default function ChatbotWidget() {
     addUserMessage(reply);
     handleBotResponse(reply);
   };
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <>

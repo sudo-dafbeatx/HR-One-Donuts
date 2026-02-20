@@ -16,6 +16,7 @@ import DelayedCardPopup from "@/components/DelayedCardPopup";
 import { sourGummy } from "@/lib/fonts";
 import OnboardingHelpCTA from "@/components/OnboardingHelpCTA";
 import UserDailyNotification from "@/components/UserDailyNotification";
+import ChatbotWidget from "@/components/ChatbotWidget";
 import "./globals.css";
 
 // Font definition moved to lib/fonts.ts
@@ -92,6 +93,7 @@ export default async function RootLayout({
                 <ThemePanel />
                 <UserDailyNotification />
                 <OnboardingHelpCTA />
+                <ChatbotWidget />
                 
                 {/* Global Accessibility Fix for Google Identity Services (One Tap) */}
                 <script
