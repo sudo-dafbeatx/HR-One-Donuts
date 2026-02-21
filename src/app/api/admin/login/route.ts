@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { createClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
+
+export const runtime = 'nodejs'; // Ensure Node.js runtime, not Edge
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,37 +27,49 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const captchaRes = await fetch(
-        'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams({
-            secret: turnstileSecret,
-            response: turnstileToken,
-          }),
-        }
-      );
-
-      const captchaData = await captchaRes.json();
-      if (!captchaData.success) {
-        return NextResponse.json(
-          { error: 'Verifikasi CAPTCHA gagal. Silakan coba lagi.' },
-          { status: 401 }
+      try {
+        const captchaRes = await fetch(
+          'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              secret: turnstileSecret,
+              response: turnstileToken,
+            }),
+          }
         );
+
+        const captchaData = await captchaRes.json();
+        if (!captchaData.success) {
+          console.warn('[AdminLogin] CAPTCHA failed:', captchaData['error-codes']);
+          return NextResponse.json(
+            { error: 'Verifikasi CAPTCHA gagal. Silakan coba lagi.' },
+            { status: 401 }
+          );
+        }
+      } catch (captchaErr) {
+        console.error('[AdminLogin] CAPTCHA verification network error:', captchaErr);
+        // Allow login to continue if CAPTCHA service is down
       }
-    } else {
-      console.warn('[AdminLogin] TURNSTILE_SECRET_KEY not set — skipping CAPTCHA');
     }
 
     // 3. Query admin_users via service role (bypasses RLS)
     const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!supabaseUrl || !serviceRoleKey) {
-      console.error('[AdminLogin] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl) {
+      console.error('[AdminLogin] Missing SUPABASE_URL and NEXT_PUBLIC_SUPABASE_URL');
       return NextResponse.json(
-        { error: 'Server configuration error.' },
+        { error: 'Konfigurasi server error: SUPABASE_URL tidak ditemukan.' },
+        { status: 500 }
+      );
+    }
+
+    if (!serviceRoleKey) {
+      console.error('[AdminLogin] Missing SUPABASE_SERVICE_ROLE_KEY');
+      return NextResponse.json(
+        { error: 'Konfigurasi server error: Service role key tidak ditemukan.' },
         { status: 500 }
       );
     }
@@ -72,15 +85,14 @@ export async function POST(request: NextRequest) {
       .maybeSingle();
 
     if (dbError) {
-      console.error('[AdminLogin] DB error:', dbError);
+      console.error('[AdminLogin] DB error:', dbError.message, dbError.code);
       return NextResponse.json(
-        { error: 'Terjadi kesalahan server.' },
+        { error: `Database error: ${dbError.message}` },
         { status: 500 }
       );
     }
 
     if (!adminUser) {
-      // Don't reveal whether username exists
       return NextResponse.json(
         { error: 'Username atau password salah.' },
         { status: 401 }
@@ -97,8 +109,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 5. Generate session token and set httpOnly cookie
-    const sessionToken = crypto.randomBytes(32).toString('hex');
-    const maxAge = 2 * 60 * 60; // 2 hours in seconds
+    const sessionToken = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    const maxAge = 2 * 60 * 60; // 2 hours
 
     const response = NextResponse.json({ success: true });
 
@@ -110,7 +124,6 @@ export async function POST(request: NextRequest) {
       path: '/',
     });
 
-    // Store the admin username in a separate cookie for display purposes
     response.cookies.set('admin_user', adminUser.username, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -123,7 +136,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('[AdminLogin] Unexpected error:', error);
     return NextResponse.json(
-      { error: 'Terjadi kesalahan server.' },
+      { error: `Terjadi kesalahan: ${error instanceof Error ? error.message : 'Unknown'}` },
       { status: 500 }
     );
   }

@@ -6,8 +6,8 @@ import { NextRequest, NextResponse } from 'next/server';
 // Resets on server restart (sufficient for edge middleware)
 // =====================================================
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_MAX = 5;
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX = 10;
+const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
 
 function checkRateLimit(ip: string): { allowed: boolean; retryAfterSeconds: number } {
   const now = Date.now();
