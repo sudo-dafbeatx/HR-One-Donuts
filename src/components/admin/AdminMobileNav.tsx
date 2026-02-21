@@ -48,6 +48,7 @@ export default function AdminMobileNav({ userEmail, logo_url, storeName }: { use
   }
 
   const handleLogout = async () => {
+    await fetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
     await supabase.auth.signOut();
     router.push('/admin/login');
     router.refresh();

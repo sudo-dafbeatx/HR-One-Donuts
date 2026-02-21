@@ -60,7 +60,7 @@ export default async function proxy(request: NextRequest) {
   // RATE LIMITING - Protect login endpoints
   // =====================================================
   const isLoginAttempt = request.method === 'POST' && 
-    (pathname.startsWith('/login') || pathname.startsWith('/auth'));
+    (pathname.startsWith('/login') || pathname.startsWith('/auth') || pathname === '/api/admin/login');
   
   if (isLoginAttempt) {
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
@@ -87,6 +87,20 @@ export default async function proxy(request: NextRequest) {
                          pathname.startsWith('/_next') ||
                          pathname.startsWith('/images') ||
                          pathname.match(/\.(.*)$/);
+
+  // =====================================================
+  // ADMIN SESSION PROTECTION — cookie-based second layer
+  // =====================================================
+  const isAdminPath = pathname.startsWith('/admin');
+  const isAdminLoginPage = pathname === '/admin/login';
+  const isAdminApi = pathname.startsWith('/api/admin');
+
+  if (isAdminPath && !isAdminLoginPage && !isAdminApi) {
+    const adminSession = request.cookies.get('admin_session');
+    if (!adminSession?.value) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+  }
   
   if (!isPublicRoute) {
     let supabaseResponse = NextResponse.next({ request });

@@ -27,6 +27,7 @@ export default function AdminHeader({ userEmail, onMenuToggle }: AdminHeaderProp
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const handleLogout = async () => {
+    await fetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
     await supabase.auth.signOut();
     router.push('/admin/login');
     router.refresh();

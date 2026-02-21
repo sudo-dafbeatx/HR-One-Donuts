@@ -50,6 +50,8 @@ export default function AdminSidebar({ logo_url, storeName, isOpen, onClose }: A
   const router = useRouter();
 
   const handleLogout = async () => {
+    // Clear admin session cookie first
+    await fetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
     await supabase.auth.signOut();
     router.push('/admin/login');
     router.refresh();
