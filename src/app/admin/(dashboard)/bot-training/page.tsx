@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect, useCallback } from "react";
 import { 
   PlusIcon, 
   PencilIcon, 
@@ -14,7 +13,7 @@ import {
   XMarkIcon,
   DocumentArrowDownIcon
 } from "@heroicons/react/24/outline";
-import { saveBotKnowledge, deleteBotKnowledge, exportBotKnowledge, importBotKnowledge } from "@/app/admin/actions";
+import { saveBotKnowledge, deleteBotKnowledge, exportBotKnowledge, importBotKnowledge, getBotTrainingData } from "@/app/admin/actions";
 
 interface QAPair {
   id: string;
@@ -52,24 +51,17 @@ export default function BotTrainingPage() {
   const [importedData, setImportedData] = useState<ImportEntry[]>([]);
   const [importErrors, setImportErrors] = useState<string[]>([]);
 
-  const supabase = useMemo(() => createClient(), []);
-
   const fetchData = useCallback(async () => {
-    const { data: qa, error: qaErr } = await supabase
-      .from("knowledge_base")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    const { data: logs, error: logsErr } = await supabase
-      .from("bot_questions_log")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    if (!qaErr) setQaList(qa || []);
-    if (!logsErr) setQuestionLogs(logs || []);
-    setIsLoading(false);
-  }, [supabase]);
+    try {
+      const { qaList, questionLogs } = await getBotTrainingData();
+      setQaList(qaList);
+      setQuestionLogs(questionLogs);
+    } catch (err) {
+      console.error("Failed to fetch bot training data", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {

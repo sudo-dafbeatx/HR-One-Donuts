@@ -13,7 +13,8 @@ import {
   ArrowRightOnRectangleIcon,
   XMarkIcon,
   UserGroupIcon,
-  ChatBubbleLeftRightIcon
+  ChatBubbleLeftRightIcon,
+  Cog8ToothIcon
 } from '@heroicons/react/24/outline';
 
 const navGroups = [
@@ -31,6 +32,7 @@ const navGroups = [
       { name: 'Kustom Konten', href: '/admin/content', icon: PaintBrushIcon },
       { name: 'Theme & Teks', href: '/admin/theme', icon: SparklesIcon },
       { name: 'Latih Chat Bot', href: '/admin/bot-training', icon: ChatBubbleLeftRightIcon },
+      { name: 'Pengaturan Admin', href: '/admin/settings', icon: Cog8ToothIcon },
       { name: 'Lihat Live Site', href: '/', icon: ArrowTopRightOnSquareIcon, external: true },
     ]
   }

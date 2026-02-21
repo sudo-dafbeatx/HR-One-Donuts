@@ -6,20 +6,12 @@ import { Product, PromoEvent, UITheme, FlashSale } from '@/types/cms';
 import { extractStoragePath } from '@/lib/image-utils';
 import { deleteImage } from './upload-actions';
 
-import { cookies } from 'next/headers';
-import { createServiceRoleClient } from '@/lib/supabase/server';
+import { getAdminSession } from '@/lib/admin-auth';
 
 // Helper to verify admin role solely via admin_session cookie
 async function checkAdmin() {
-  const cookieStore = await cookies();
-  const adminSession = cookieStore.get('admin_session');
-  
-  if (!adminSession?.value) {
-    throw new Error('Forbidden: Admin access only');
-  }
-
-  // Return service role client to bypass RLS for admin operations
-  return createServiceRoleClient();
+  const { supabase } = await getAdminSession();
+  return supabase;
 }
 
 
@@ -550,4 +542,27 @@ export async function toggleUserBan(userId: string, currentStatus: boolean) {
   if (error) throw new Error(error.message);
   revalidatePath('/admin/users');
   return { success: true };
+}
+
+export async function getBotTrainingData() {
+  const supabase = await checkAdmin();
+  
+  const { data: qa, error: qaErr } = await supabase
+    .from("knowledge_base")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  const { data: logs, error: logsErr } = await supabase
+    .from("bot_questions_log")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (qaErr) console.error("Error fetching QA:", qaErr);
+  if (logsErr) console.error("Error fetching logs:", logsErr);
+
+  return {
+    qaList: qa || [],
+    questionLogs: logs || []
+  };
 }

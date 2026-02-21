@@ -1,8 +1,7 @@
 'use server';
 
 import sharp from 'sharp';
-import { cookies } from 'next/headers';
-import { createServiceRoleClient } from '@/lib/supabase/server';
+import { getAdminSession } from '@/lib/admin-auth';
 import { generateImageName } from '@/lib/image-utils';
 
 const MAX_WIDTH = 1000;
@@ -11,16 +10,8 @@ const WEBP_QUALITY = 75;
 export async function uploadImage(formData: FormData) {
   console.log('🚀 [uploadImage] Starting upload process...');
   
-  // Verify admin access solely via admin_session cookie
-  const cookieStore = await cookies();
-  const adminSession = cookieStore.get('admin_session');
-  
-  if (!adminSession?.value) {
-    throw new Error('Forbidden: Akses ditolak. Hanya admin yang boleh upload gambar.');
-  }
-
-  // Use service role client to bypass RLS for admin operations
-  const supabase = createServiceRoleClient();
+  // Verify admin access and get service role client
+  const { supabase } = await getAdminSession();
   
   const file = formData.get('file') as File;
   if (!file) {
@@ -106,14 +97,7 @@ export async function uploadImage(formData: FormData) {
 }
 
 export async function deleteImage(filePath: string) {
-  const cookieStore = await cookies();
-  const adminSession = cookieStore.get('admin_session');
-  
-  if (!adminSession?.value) {
-    throw new Error('Forbidden: Akses ditolak. Hanya admin yang boleh menghapus gambar.');
-  }
-
-  const supabase = createServiceRoleClient();
+  const { supabase } = await getAdminSession();
   
   const { error } = await supabase.storage
     .from('images')
