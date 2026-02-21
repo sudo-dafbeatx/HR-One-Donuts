@@ -14,6 +14,7 @@ export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
 export default async function Home() {
+  console.log("SUPABASE_URL_RUNTIME:", process.env.NEXT_PUBLIC_SUPABASE_URL);
   const supabase = await createServerSupabaseClient();
   const copy = await getCopy();
   
@@ -41,6 +42,7 @@ export default async function Home() {
       .order('created_at', { ascending: false });
     
     if (productsError) console.error(' [HomePage] Products error:', productsError);
+    console.log("HOMEPAGE_PRODUCT_COUNT:", productsData?.length || 0);
     products = (productsData as Product[]) || [];
 
     // 3. Fetch review stats
