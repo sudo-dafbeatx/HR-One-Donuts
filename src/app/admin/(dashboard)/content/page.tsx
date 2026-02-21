@@ -3,18 +3,20 @@ import SiteSettingsEditor from '@/components/admin/CMS/SiteSettingsEditor';
 import OrderStepsEditor from '@/components/admin/CMS/OrderStepsEditor';
 import CategoryManager from '@/components/admin/CMS/CategoryManager';
 import EventManager from '@/components/admin/CMS/EventManager';
-import { SiteSettings, OrderStep, Category } from '@/types/cms';
+import FlashSaleManager from '@/components/admin/CMS/FlashSaleManager';
+import { SiteSettings, OrderStep, Category, FlashSale } from '@/types/cms';
 
 export default async function ContentPage() {
   const supabase = await createServerSupabaseClient();
   
   try {
     // Fetch site info, order steps, and categories in parallel
-    const [siteInfoRes, orderStepsRes, categoryRes, eventsRes] = await Promise.all([
+    const [siteInfoRes, orderStepsRes, categoryRes, eventsRes, flashSalesRes] = await Promise.all([
       supabase.from('settings').select('value').eq('key', 'site_info').maybeSingle(),
       supabase.from('settings').select('value').eq('key', 'order_steps').maybeSingle(),
       supabase.from('categories').select('*').order('name', { ascending: true }),
-      supabase.from('promo_events').select('*').order('created_at', { ascending: false })
+      supabase.from('promo_events').select('*').order('created_at', { ascending: false }),
+      supabase.from('flash_sales').select('*').order('created_at', { ascending: false }),
     ]);
 
     if (eventsRes.error) console.error('Error fetching events:', eventsRes.error);
@@ -29,6 +31,7 @@ export default async function ContentPage() {
     const siteSettings = siteInfoRes.data?.value as unknown as SiteSettings | undefined;
     const orderSteps = (orderStepsRes.data?.value as unknown as { steps: OrderStep[] } | null)?.steps;
     const events = eventsRes.data || [];
+    const flashSales = (flashSalesRes.data as FlashSale[]) || [];
 
     return (
       <div className="space-y-6 max-w-7xl mx-auto pb-20">
@@ -43,7 +46,12 @@ export default async function ContentPage() {
         </section>
 
         <section className="space-y-6">
-          <h2 className="text-xl font-bold text-slate-800">2. Promo & Event</h2>
+          <h2 className="text-xl font-bold text-slate-800">2. Flash Sale</h2>
+          <FlashSaleManager initialData={flashSales} />
+        </section>
+
+        <section className="space-y-6">
+          <h2 className="text-xl font-bold text-slate-800">3. Promo & Event</h2>
           <EventManager initialEvents={events || []} />
         </section>
 

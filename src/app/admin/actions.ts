@@ -2,7 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { Product, PromoEvent, UITheme } from '@/types/cms';
+import { Product, PromoEvent, UITheme, FlashSale } from '@/types/cms';
 import { extractStoragePath } from '@/lib/image-utils';
 import { deleteImage } from './upload-actions';
 
@@ -213,6 +213,55 @@ export async function deleteEvent(id: string) {
   return { success: true };
 }
 
+// --- Flash Sale Actions ---
+export async function saveFlashSale(data: Partial<FlashSale>) {
+  const supabase = await checkAdmin();
+
+  if (!data.title?.trim()) {
+    throw new Error('Judul flash sale wajib diisi');
+  }
+  if (!data.slug?.trim()) {
+    throw new Error('Slug flash sale wajib diisi');
+  }
+
+  const flashSaleData = {
+    id: data.id || crypto.randomUUID(),
+    slug: data.slug.trim().toLowerCase().replace(/\s+/g, '-'),
+    title: data.title.trim(),
+    description: data.description || null,
+    discount_type: data.discount_type || 'percentage',
+    discount_value: data.discount_value ?? null,
+    is_active: data.is_active ?? true,
+    start_date: data.start_date || null,
+    end_date: data.end_date || null,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from('flash_sales')
+    .upsert(flashSaleData);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath('/');
+  revalidatePath('/admin/(dashboard)/content');
+  return { success: true };
+}
+
+export async function deleteFlashSale(id: string) {
+  const supabase = await checkAdmin();
+
+  const { error } = await supabase
+    .from('flash_sales')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath('/');
+  revalidatePath('/admin/(dashboard)/content');
+  return { success: true };
+}
 // --- Sales Tracking ---
 export async function incrementSoldCount(productIds: string[]) {
   const supabase = await createServerSupabaseClient();

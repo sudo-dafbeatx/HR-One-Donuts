@@ -36,6 +36,20 @@ export interface PromoEvent {
   updated_at?: string;
 }
 
+export interface FlashSale {
+  id: string;
+  slug: string;
+  title: string;
+  description?: string;
+  discount_type: 'percentage' | 'bogo';
+  discount_value?: number;
+  is_active: boolean;
+  start_date?: string;
+  end_date?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Category {
   id: string;
   name: string;
