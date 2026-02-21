@@ -43,6 +43,9 @@ export default async function Home() {
     
     if (productsError) console.error(' [HomePage] Products error:', productsError);
     console.log("HOMEPAGE_PRODUCT_COUNT:", productsData?.length || 0);
+    if (productsData && productsData.length > 0) {
+      console.log("FIRST_PRODUCT_DATA:", JSON.stringify(productsData[0]));
+    }
     products = (productsData as Product[]) || [];
 
     // 3. Fetch review stats
