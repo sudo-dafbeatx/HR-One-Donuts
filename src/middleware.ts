@@ -89,7 +89,8 @@ export default async function proxy(request: NextRequest) {
                          pathname.match(/\.(.*)$/);
 
   // =====================================================
-  // ADMIN SESSION PROTECTION — cookie-based second layer
+  // ADMIN SESSION PROTECTION — cookie-based auth for admin
+  // This replaces Supabase auth for /admin/* routes
   // =====================================================
   const isAdminPath = pathname.startsWith('/admin');
   const isAdminLoginPage = pathname === '/admin/login';
@@ -100,6 +101,8 @@ export default async function proxy(request: NextRequest) {
     if (!adminSession?.value) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
+    // Admin session is valid — allow through without Supabase auth
+    return NextResponse.next();
   }
   
   if (!isPublicRoute) {
