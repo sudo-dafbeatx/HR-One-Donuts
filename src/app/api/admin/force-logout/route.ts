@@ -52,13 +52,13 @@ export async function POST(request: NextRequest) {
 
     // 3. Revoke all sessions via Supabase Admin REST API using service role key
     //    This bypasses any JWT context issues since we call the REST endpoint directly.
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
-      console.error('[ForceLogout] Missing SUPABASE_URL or SERVICE_ROLE_KEY env vars');
+      console.error('[ForceLogout] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY env vars');
       return NextResponse.json(
-        { success: false, error: 'Konfigurasi server tidak lengkap.' },
+        { success: false, error: 'Konfigurasi server belum lengkap' },
         { status: 500 }
       );
     }
