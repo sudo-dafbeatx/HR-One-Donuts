@@ -120,7 +120,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     <>
       {/* Overlay */}
       <div 
-        className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-60 transition-opacity duration-300 ${
           isCartOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setIsCartOpen(false)}
@@ -258,7 +258,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
       {/* Checkout Animation Overlay */}
       {showCheckoutAnim && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white/95 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-white/95 backdrop-blur-sm animate-fade-in">
           <CheckoutAnimation />
         </div>
       )}

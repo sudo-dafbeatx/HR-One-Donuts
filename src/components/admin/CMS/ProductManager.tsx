@@ -182,7 +182,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
 
       {/* Edit Modal / Form overlay */}
       {editingProduct && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
           <div className="my-auto w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden scale-in-center">
             <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
               <h3 className="text-lg sm:text-xl font-black text-heading">
@@ -266,7 +266,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
                     <button
                       type="button"
                       onClick={() => setEditingProduct({...editingProduct, is_active: !editingProduct.is_active})}
-                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${editingProduct.is_active ? 'bg-primary' : 'bg-slate-300'}`}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${editingProduct.is_active ? 'bg-primary' : 'bg-slate-300'}`}
                     >
                       <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${editingProduct.is_active ? 'translate-x-5' : 'translate-x-0'}`} />
                     </button>

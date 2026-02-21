@@ -86,7 +86,7 @@ export default function DelayedCardPopup({ siteSettings }: { siteSettings?: Site
 
   return (
     <div 
-      className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      className={`fixed inset-0 z-9999 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
       onClick={(e) => {
         // Close if clicking the dark overlay background
         if (e.target === e.currentTarget) closePopup();

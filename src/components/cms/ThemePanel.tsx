@@ -111,7 +111,7 @@ export default function ThemePanel() {
       {/* Floating trigger */}
       <button
         onClick={toggle}
-        className="fixed bottom-5 left-5 z-[9999] size-11 rounded-[13px] bg-slate-900/90 backdrop-blur-xl text-white border border-slate-700 shadow-xl flex items-center justify-center hover:bg-slate-800/90 active:scale-[0.95] transition-all duration-200 editor-control"
+        className="fixed bottom-5 left-5 z-9999 size-11 rounded-[13px] bg-slate-900/90 backdrop-blur-xl text-white border border-slate-700 shadow-xl flex items-center justify-center hover:bg-slate-800/90 active:scale-[0.95] transition-all duration-200 editor-control"
         title="Theme"
       >
         <span className="material-symbols-outlined text-[18px]">palette</span>
@@ -121,7 +121,7 @@ export default function ThemePanel() {
       {isOpen && (
         <div 
           data-editor-panel
-          className="fixed inset-y-0 left-0 z-[9999] w-[300px] bg-white/98 backdrop-blur-2xl border-r border-slate-200/80 flex flex-col shadow-2xl shadow-slate-200/50 editor-control"
+          className="fixed inset-y-0 left-0 z-9999 w-[300px] bg-white/98 backdrop-blur-2xl border-r border-slate-200/80 flex flex-col shadow-2xl shadow-slate-200/50 editor-control"
           style={{ animation: 'slide-in-left 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards' }}
         >
           {/* Header */}

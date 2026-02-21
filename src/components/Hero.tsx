@@ -17,7 +17,7 @@ export default function Hero({
     <section className="w-full px-4 md:px-6 mb-6 mt-4">
       <div className="w-full relative rounded-2xl md:rounded-3xl overflow-hidden shadow-sm bg-slate-100 group">
         {/* Aspect Ratio Container: Mobile 16:9, Desktop 21:9 */}
-        <div className="aspect-video md:aspect-[21/9] w-full relative">
+        <div className="aspect-video md:aspect-21/9 w-full relative">
            {/* Mobile Image (Visible on < md) */}
            <div className="block md:hidden absolute inset-0">
              {siteSettings?.hero_banner_mobile_image || siteSettings?.hero_banner_image ? (

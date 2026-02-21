@@ -440,7 +440,7 @@ export default function ChatbotWidget() {
             style={{
               cursor: isDragging ? 'grabbing' : 'pointer'
             }}
-            className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 group hover:rotate-6"
+            className="w-14 h-14 md:w-16 md:h-16 bg-linear-to-br from-primary to-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 group hover:rotate-6"
             aria-label="Chat dengan Dona AI"
           >
             <Image 

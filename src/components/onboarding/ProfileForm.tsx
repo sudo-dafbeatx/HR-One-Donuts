@@ -266,7 +266,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
         </div>
       </div>
 
-      <div className="bg-slate-50/50 p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-slate-100 space-y-4">
+      <div className="bg-slate-50/50 p-5 md:p-8 rounded-[1.5rem] md:rounded-4xl border border-slate-100 space-y-4">
         <h3 className="text-[14px] md:text-lg font-bold text-slate-800 flex items-center gap-2">
           <span className="material-symbols-outlined text-primary text-[20px]">location_on</span>
           Wilayah Pengiriman

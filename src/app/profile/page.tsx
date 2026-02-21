@@ -229,7 +229,7 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-slate-50 pb-32 overflow-x-hidden">
       {/* Premium Header with Gradient */}
-      <div className="relative bg-gradient-to-br from-primary via-blue-600 to-cyan-500">
+      <div className="relative bg-linear-to-br from-primary via-blue-600 to-cyan-500">
         {/* Abstract shapes for premium feel */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 anim-pulse pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
@@ -300,13 +300,13 @@ export default function ProfilePage() {
 
       {/* Avatar Selection Modal/Overlay */}
       {showAvatarSelector && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
           <div 
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
             onClick={() => setShowAvatarSelector(false)}
           ></div>
           
-          <div className="relative w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+          <div className="relative w-full max-w-md bg-white rounded-4xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
             <div className="p-8">
               <div className="flex items-center justify-between mb-8">
                 <div>
@@ -393,7 +393,7 @@ export default function ProfilePage() {
           
           {/* Main Content Info */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 p-8 border border-white">
+            <div className="bg-white rounded-4xl shadow-xl shadow-slate-200/50 p-8 border border-white">
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold text-slate-800">Informasi Pribadi</h2>
@@ -516,7 +516,7 @@ export default function ProfilePage() {
               </div>
 
               {orders.length === 0 ? (
-                <div className="bg-white rounded-[2rem] border border-dashed border-slate-200 p-12 text-center shadow-sm">
+                <div className="bg-white rounded-4xl border border-dashed border-slate-200 p-12 text-center shadow-sm">
                   <div className="size-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
                     <ShoppingBagIcon className="size-8" />
                   </div>
@@ -536,7 +536,7 @@ export default function ProfilePage() {
                   {orders.map((order) => (
                     <div 
                       key={order.id}
-                      className="bg-white p-4 md:p-6 rounded-2xl md:rounded-[1.5rem] border border-slate-100 md:border-white shadow-sm hover:shadow-md hover:border-primary/20 transition-all flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 md:gap-5 group cursor-default"
+                      className="bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl border border-slate-100 md:border-white shadow-sm hover:shadow-md hover:border-primary/20 transition-all flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 md:gap-5 group cursor-default"
                     >
                       <div className="flex items-center gap-4 md:gap-5 min-w-0">
                         <div className="size-10 md:size-14 bg-blue-50/50 rounded-xl md:rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform shrink-0">
@@ -571,7 +571,7 @@ export default function ProfilePage() {
 
           {/* Sidebar Area */}
           <div className="lg:col-span-4 space-y-6">
-            <Link href="/catalog" className="relative block h-full min-h-[220px] bg-primary rounded-[2rem] shadow-xl shadow-primary/30 overflow-hidden group">
+            <Link href="/catalog" className="relative block h-full min-h-[220px] bg-primary rounded-4xl shadow-xl shadow-primary/30 overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-700"></div>
               <div className="absolute inset-0 p-8 flex flex-col justify-end text-white">
                 <div className="size-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 border border-white/20">

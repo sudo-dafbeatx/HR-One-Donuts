@@ -126,7 +126,7 @@ export default function MarketplaceClient({
       <div className="flex items-center gap-2 overflow-x-auto pb-6 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
         <button
           onClick={() => setActiveCategory(copy?.category_all || 'Semua')}
-          className={`flex-shrink-0 px-5 py-2 rounded-full text-[10px] md:text-[11px] font-black uppercase tracking-wider transition-all ${
+          className={`shrink-0 px-5 py-2 rounded-full text-[10px] md:text-[11px] font-black uppercase tracking-wider transition-all ${
             activeCategory === (copy?.category_all || 'Semua')
               ? 'bg-primary text-white shadow-lg shadow-primary/25'
               : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200'
@@ -138,7 +138,7 @@ export default function MarketplaceClient({
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`flex-shrink-0 px-5 py-2 rounded-full text-[10px] md:text-[11px] font-black uppercase tracking-wider transition-all ${
+            className={`shrink-0 px-5 py-2 rounded-full text-[10px] md:text-[11px] font-black uppercase tracking-wider transition-all ${
               activeCategory === cat
                 ? 'bg-primary text-white shadow-lg shadow-primary/25'
                 : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200'

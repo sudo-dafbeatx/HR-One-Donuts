@@ -65,7 +65,7 @@ export default function AdminMobileNav({ userEmail, logo_url, storeName }: { use
       {/* Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
+          className="fixed inset-0 z-100 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
           onClick={() => setIsOpen(false)}
         >
           {/* Drawer from LEFT */}

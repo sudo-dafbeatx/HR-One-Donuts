@@ -100,7 +100,7 @@ export default function EditModeToggle() {
   return (
     <div 
       ref={dragRef}
-      className={`fixed bottom-[20px] right-[20px] z-[9999] flex flex-col items-end gap-2.5 editor-control touch-none transition-transform ${isDragging ? 'duration-0' : 'duration-300 ease-out'}`}
+      className={`fixed bottom-[20px] right-[20px] z-9999 flex flex-col items-end gap-2.5 editor-control touch-none transition-transform ${isDragging ? 'duration-0' : 'duration-300 ease-out'}`}
       style={{ transform: `translate3d(${position.x}px, ${position.y}px, 0)` }}
     >
       {/* Status toast */}

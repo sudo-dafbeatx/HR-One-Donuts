@@ -18,7 +18,7 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
           {/* Brand Section */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-8">
             <Link href="/" className="inline-block transition-all hover:scale-105 active:scale-95 group">
-              <div className="bg-white p-3 rounded-[2rem] shadow-xl shadow-black/20 group-hover:rotate-3 transition-transform">
+              <div className="bg-white p-3 rounded-4xl shadow-xl shadow-black/20 group-hover:rotate-3 transition-transform">
                 <LogoBrand 
                   logoUrl={siteSettings?.logo_url} 
                   storeName={siteSettings?.store_name} 

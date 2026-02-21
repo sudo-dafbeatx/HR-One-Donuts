@@ -31,7 +31,7 @@ export default function AdminNotifications() {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-x-4 top-[76px] sm:absolute sm:inset-x-auto sm:top-auto sm:right-0 sm:mt-3 w-auto sm:w-96 max-h-[calc(100vh-90px)] sm:max-h-none bg-white rounded-xl shadow-2xl border border-slate-100 py-2 z-[100] sm:z-50 flex flex-col overflow-hidden text-left origin-top sm:origin-top-right animate-scale-in">
+        <div className="fixed inset-x-4 top-[76px] sm:absolute sm:inset-x-auto sm:top-auto sm:right-0 sm:mt-3 w-auto sm:w-96 max-h-[calc(100vh-90px)] sm:max-h-none bg-white rounded-xl shadow-2xl border border-slate-100 py-2 z-100 sm:z-50 flex flex-col overflow-hidden text-left origin-top sm:origin-top-right animate-scale-in">
           {/* Header Panel */}
           <div className="shrink-0 px-4 py-3 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
             <h3 className="font-semibold text-slate-800">Notifikasi Terbaru</h3>

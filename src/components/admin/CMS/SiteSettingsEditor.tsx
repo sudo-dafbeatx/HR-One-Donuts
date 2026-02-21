@@ -195,7 +195,7 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
               
               <div className="w-full md:w-1/2">
                 <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Preview Desktop</label>
-                <div className="relative aspect-[21/9] bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center group">
+                <div className="relative aspect-21/9 bg-slate-100 rounded-xl overflow-hidden border-2 border-dashed border-slate-200 flex items-center justify-center group">
                   {settings.hero_banner_image ? (
                     <>
                       <Image 

@@ -17,7 +17,7 @@ export default function FlashSaleSkeleton() {
 
         <div className="flex gap-3 overflow-hidden">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="flex-shrink-0 w-[46%] sm:w-[32%] lg:w-[280px] bg-white border border-slate-100 rounded-2xl p-3 md:p-4 flex flex-col gap-3 h-[120px] md:h-[140px]">
+            <div key={i} className="shrink-0 w-[46%] sm:w-[32%] lg:w-[280px] bg-white border border-slate-100 rounded-2xl p-3 md:p-4 flex flex-col gap-3 h-[120px] md:h-[140px]">
               <div className="flex justify-between items-start">
                 <div className="size-8 md:size-10 rounded-xl bg-slate-100" />
                 <div className="h-4 w-12 bg-slate-100 rounded-full" />

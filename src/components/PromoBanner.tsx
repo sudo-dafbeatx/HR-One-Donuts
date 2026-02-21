@@ -23,7 +23,7 @@ export default function PromoBanner({ events, copy }: { events: PromoEvent[], co
           return (
             <div 
               key={event.id}
-              className="flex-shrink-0 w-[85vw] md:w-[600px] aspect-[21/9] bg-slate-900 rounded-2xl overflow-hidden snap-center relative group shadow-lg"
+              className="shrink-0 w-[85vw] md:w-[600px] aspect-21/9 bg-slate-900 rounded-2xl overflow-hidden snap-center relative group shadow-lg"
             >
               {event.banner_image_url ? (
                 <Image 
@@ -33,12 +33,12 @@ export default function PromoBanner({ events, copy }: { events: PromoEvent[], co
                   className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
                 />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/40 to-slate-900 flex items-center justify-center">
+                <div className="absolute inset-0 bg-linear-to-br from-primary/40 to-slate-900 flex items-center justify-center">
                    <Icon className="w-20 h-20 text-white/10" />
                 </div>
               )}
               
-              <div className="absolute inset-0 p-4 flex flex-col justify-end bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+              <div className="absolute inset-0 p-4 flex flex-col justify-end bg-linear-to-t from-black/80 via-black/20 to-transparent">
                 <div className="flex items-center gap-2 mb-2">
                    <div className="bg-primary/90 text-white px-3 py-1 rounded-full flex items-center gap-1">
                       <Icon className="w-3 h-3" />

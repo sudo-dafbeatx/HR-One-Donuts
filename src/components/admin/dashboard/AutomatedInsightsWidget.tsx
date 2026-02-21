@@ -54,7 +54,7 @@ export default function AutomatedInsightsWidget({ stats }: AutomatedInsightsWidg
   }
 
   return (
-    <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-lg shadow-xl p-6 text-white h-full relative overflow-hidden group">
+    <div className="bg-linear-to-br from-indigo-600 to-blue-700 rounded-lg shadow-xl p-6 text-white h-full relative overflow-hidden group">
       {/* Decorative SVG background */}
       <div className="absolute top-0 right-0 -mr-16 -mt-16 opacity-10 group-hover:rotate-12 transition-transform duration-700">
         <SparklesIcon className="w-64 h-64" />

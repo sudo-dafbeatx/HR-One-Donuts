@@ -88,7 +88,7 @@ export default function FlashSaleSection({ events, copy }: { events: PromoEvent[
               return (
                 <div 
                   key={event.id}
-                  className="flex-shrink-0 w-[46%] sm:w-[32%] lg:w-[280px] snap-start"
+                  className="shrink-0 w-[46%] sm:w-[32%] lg:w-[280px] snap-start"
                 >
                   <Link 
                     href={`/promo/${event.event_slug}`}
@@ -97,7 +97,7 @@ export default function FlashSaleSection({ events, copy }: { events: PromoEvent[
                     <div className={`h-full bg-white border ${timing.isActive ? 'border-primary/20 shadow-primary/5' : 'border-slate-100'} rounded-2xl p-3 md:p-4 flex flex-col gap-3 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300`}>
                       {/* Top Row: Icon/Image & Badge */}
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex-shrink-0 size-8 md:size-10 rounded-xl bg-primary/5 flex items-center justify-center overflow-hidden border border-primary/5">
+                        <div className="shrink-0 size-8 md:size-10 rounded-xl bg-primary/5 flex items-center justify-center overflow-hidden border border-primary/5">
                           {event.banner_image_url ? (
                             <div className="relative size-full">
                               <Image 
@@ -112,7 +112,7 @@ export default function FlashSaleSection({ events, copy }: { events: PromoEvent[
                           )}
                         </div>
                         
-                        <div className={`flex-shrink-0 ${timing.isActive ? 'bg-primary' : 'bg-slate-400'} text-white px-2 py-0.5 md:py-1 rounded-full text-[7px] md:text-[8px] font-black uppercase tracking-wider shadow-sm transition-colors`}>
+                        <div className={`shrink-0 ${timing.isActive ? 'bg-primary' : 'bg-slate-400'} text-white px-2 py-0.5 md:py-1 rounded-full text-[7px] md:text-[8px] font-black uppercase tracking-wider shadow-sm transition-colors`}>
                           {event.discount_percent ? `${event.discount_percent}% OFF` : 'PROMO'}
                         </div>
                       </div>

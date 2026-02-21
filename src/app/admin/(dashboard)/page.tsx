@@ -51,7 +51,7 @@ function StatsCard({ title, value, icon: Icon, iconColor }: StatsCardProps) {
           <div className="font-bold text-2xl text-slate-800 mb-1">{value}</div>
           <div className="text-sm text-slate-500 font-medium">{title}</div>
         </div>
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <div className="w-14 h-14 rounded-full flex items-center justify-center bg-slate-50 border border-slate-100 group">
             <Icon className={`w-7 h-7 ${iconColor} transition-transform group-hover:scale-110`} />
           </div>
