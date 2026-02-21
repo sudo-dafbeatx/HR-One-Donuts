@@ -190,7 +190,7 @@ export default async function AdminDashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 items-start">
         
         {/* CENTER MAIN CONTENT */}
         <div className="lg:col-span-2 space-y-6">
@@ -262,7 +262,7 @@ export default async function AdminDashboard() {
                     href="/admin/products"
                     className="px-6 py-3 bg-[#1b00ff] text-white rounded-xl text-sm font-black inline-flex items-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-[#1b00ff]/30 active:scale-95"
                   >
-                    <PlusIcon className="w-4 h-4 stroke-[3]" />
+                    <PlusIcon className="w-4 h-4 stroke-3" />
                     Tambah Produk Sekarang
                   </Link>
                 </div>
