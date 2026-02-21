@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { createServerSupabaseClient } from '../../../lib/supabase/server';
 import AdminLayoutWrapper from '@/components/admin/AdminLayoutWrapper';
@@ -8,27 +9,18 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createServerSupabaseClient();
-  
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
+  // Check admin_session cookie (set by /api/admin/login)
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get('admin_session');
+  const adminUser = cookieStore.get('admin_user');
+
+  if (!adminSession?.value) {
     redirect('/admin/login');
   }
 
-  // Check user role
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle();
+  // Fetch site settings for branding (using service-independent query)
+  const supabase = await createServerSupabaseClient();
 
-  if (profileError || !profile || profile.role !== 'admin') {
-    if (profileError) console.error(' [AdminLayout] Profile check error:', profileError);
-    redirect('/');
-  }
-
-  // Fetch site settings for branding
   const { data: siteInfo } = await supabase
     .from('settings')
     .select('value')
@@ -41,7 +33,7 @@ export default async function AdminLayout({
 
   return (
     <AdminLayoutWrapper 
-      userEmail={user?.email || undefined}
+      userEmail={adminUser?.value || 'admin'}
       logo_url={logo_url}
       storeName={storeName}
     >
