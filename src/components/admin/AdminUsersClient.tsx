@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { ShieldCheckIcon, UserIcon, ArrowPathIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
-import { forceLogoutUser } from '@/app/actions/admin-actions';
 import { useRouter } from 'next/navigation';
 
 interface UserData {
@@ -78,14 +77,22 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
     setLoadingId(userId);
     setErrorMsg(null); setSuccessMsg(null);
     try {
-      const response = await forceLogoutUser(userId);
-      if (!response?.success) throw new Error(response?.error || 'Gagal menarik sesi login.');
+      // Call server-side API route — revocation is done entirely server-side
+      // using the service role key. Frontend never touches JWT/tokens.
+      const res = await fetch('/api/admin/force-logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: userId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || `Gagal memaksa logout (HTTP ${res.status})`);
+      }
       
       setSuccessMsg('Sesi user berhasil dicabut secara global dari server.');
-      // Avoid fake optimistic updates. Let router refresh trigger a server re-render
-      // to pull the true active sessions if your UI shows that (currently it just reloads the list).
       router.refresh();
-      
       setTimeout(() => setSuccessMsg(null), 3000);
     } catch (err: unknown) {
       const e = err as Error;
