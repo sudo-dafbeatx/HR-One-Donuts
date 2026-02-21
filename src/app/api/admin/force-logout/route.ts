@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 
 /**
  * POST /api/admin/force-logout
@@ -24,30 +25,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 2. Verify the caller is authenticated and is an admin
-    const supabaseUser = await createServerSupabaseClient();
-    const { data: { user: caller }, error: authError } = await supabaseUser.auth.getUser();
-
-    if (authError || !caller) {
-      console.error('[ForceLogout] Auth error:', authError?.message || 'No user session');
-      return NextResponse.json(
-        { success: false, error: 'Tidak terautentikasi.' },
-        { status: 401 }
-      );
-    }
-
-    const { data: profile } = await supabaseUser
-      .from('profiles')
-      .select('role')
-      .eq('id', caller.id)
-      .single();
-
-    if (profile?.role !== 'admin') {
-      console.error(`[ForceLogout] Non-admin user ${caller.id} attempted force logout`);
+    // 2. Verify the caller is an admin using admin_session cookie
+    const cookieStore = await cookies();
+    const adminSession = cookieStore.get('admin_session');
+    
+    if (!adminSession?.value) {
+      console.error('[ForceLogout] Missing admin_session cookie');
       return NextResponse.json(
         { success: false, error: 'Akses ditolak: Anda bukan admin.' },
         { status: 403 }
       );
+    }
+
+    const adminUsername = cookieStore.get('admin_user')?.value;
+    const supabaseService = createServiceRoleClient();
+
+    let adminId = null;
+    if (adminUsername) {
+      const { data: au } = await supabaseService.from('admin_users').select('id').eq('username', adminUsername).maybeSingle();
+      adminId = au?.id;
     }
 
     // 3. Revoke all sessions via Supabase Admin REST API using service role key
@@ -139,13 +135,15 @@ export async function POST(request: NextRequest) {
 
     // 4. Log the admin action
     try {
-      await supabaseUser.from('admin_activity_log').insert({
-        admin_id: caller.id,
-        action: 'force_logout',
-        target_type: 'user',
-        target_id: targetUserId,
-        details: { method: 'server_side_service_role' },
-      });
+      if (adminId) {
+        await supabaseService.from('admin_activity_log').insert({
+          admin_id: adminId,
+          action: 'force_logout',
+          target_type: 'user',
+          target_id: targetUserId,
+          details: { method: 'server_side_service_role' },
+        });
+      }
     } catch (logError) {
       // Non-critical: don't fail the request if logging fails
       console.warn('[ForceLogout] Failed to log admin activity:', logError);
@@ -153,14 +151,16 @@ export async function POST(request: NextRequest) {
 
     // 5. Record in auth_logs for audit trail
     try {
-      const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-      const userAgent = request.headers.get('user-agent') || 'unknown';
-      await supabaseUser.from('auth_logs').insert({
-        user_id: targetUserId,
-        event_type: 'force_logout',
-        ip_address: ipAddress,
-        user_agent: userAgent,
-      });
+      if (adminId) {
+        const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+        const userAgent = request.headers.get('user-agent') || 'unknown';
+        await supabaseService.from('auth_logs').insert({
+          user_id: targetUserId,
+          event_type: 'force_logout',
+          ip_address: ipAddress,
+          user_agent: userAgent,
+        });
+      }
     } catch {
       // Non-critical
     }

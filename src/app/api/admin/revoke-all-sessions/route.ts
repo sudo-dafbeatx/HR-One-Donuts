@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 
 /**
  * POST /api/admin/revoke-all-sessions
@@ -9,29 +10,29 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
  */
 export async function POST(request: NextRequest) {
   try {
-    // 1. Verify the caller is an admin
-    const supabase = await createServerSupabaseClient();
-    const { data: { user: caller }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !caller) {
-      return NextResponse.json(
-        { success: false, error: 'Tidak terautentikasi.' },
-        { status: 401 }
-      );
-    }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', caller.id)
-      .single();
-
-    if (profile?.role !== 'admin') {
-      console.error(`[RevokeAll] Non-admin user ${caller.id} attempted revoke-all`);
+    // 1. Verify the caller is an admin using admin_session cookie
+    const cookieStore = await cookies();
+    const adminSession = cookieStore.get('admin_session');
+    
+    if (!adminSession?.value) {
+      console.error('[RevokeAll] Missing admin_session cookie');
       return NextResponse.json(
         { success: false, error: 'Akses ditolak: Anda bukan admin.' },
         { status: 403 }
       );
+    }
+
+    const adminUsername = cookieStore.get('admin_user')?.value;
+    const supabase = createServiceRoleClient();
+
+    let adminId = null;
+    let authUserId = null; // We might need this to avoid locking ourselves out, but admin might not have one. 
+                           // If admin doesn't have an auth.users ID, we just don't skip them, OR we can query it.
+    
+    if (adminUsername) {
+      const { data: au } = await supabase.from('admin_users').select('id, user_id').eq('username', adminUsername).maybeSingle();
+      adminId = au?.id;
+      authUserId = au?.user_id;
     }
 
     // 2. Get service role credentials
@@ -71,8 +72,8 @@ export async function POST(request: NextRequest) {
 
     // 4. Revoke each user's sessions
     for (const user of users) {
-      // Skip the current admin to avoid locking themselves out
-      if (user.id === caller.id) continue;
+      // Skip the current admin's linked Auth user (if any) to avoid logging out their customer account
+      if (authUserId && user.id === authUserId) continue;
 
       const logoutRes = await fetch(
         `${supabaseUrl}/auth/v1/admin/users/${user.id}/logout`,
@@ -97,31 +98,35 @@ export async function POST(request: NextRequest) {
 
     // 5. Log the admin action
     try {
-      await supabase.from('admin_activity_log').insert({
-        admin_id: caller.id,
-        action: 'revoke_all_sessions',
-        target_type: 'system',
-        target_id: null,
-        details: { revoked: revokedCount, failed: failedCount, total: users.length },
-      });
+      if (adminId) {
+        await supabase.from('admin_activity_log').insert({
+          admin_id: adminId,
+          action: 'revoke_all_sessions',
+          target_type: 'system',
+          target_id: null,
+          details: { revoked: revokedCount, failed: failedCount, total: users.length },
+        });
+      }
     } catch (logError) {
       console.warn('[RevokeAll] Failed to log admin activity:', logError);
     }
 
-    // Also add to auth_logs
+    // Also add to auth_logs if we have an auth user id for the admin
     try {
-      const headerStore = request.headers;
-      await supabase.from('auth_logs').insert({
-        user_id: caller.id,
-        event_type: 'revoke_all_sessions',
-        ip_address: headerStore.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown',
-        user_agent: headerStore.get('user-agent') || 'unknown',
-      });
+      if (authUserId) {
+        const headerStore = request.headers;
+        await supabase.from('auth_logs').insert({
+          user_id: authUserId,
+          event_type: 'revoke_all_sessions',
+          ip_address: headerStore.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown',
+          user_agent: headerStore.get('user-agent') || 'unknown',
+        });
+      }
     } catch {
       // Non-critical
     }
 
-    console.log(`[RevokeAll] Admin ${caller.id} revoked ${revokedCount} sessions (${failedCount} failed)`);
+    console.log(`[RevokeAll] Admin ${adminUsername || 'Unknown'} revoked ${revokedCount} sessions (${failedCount} failed)`);
 
     return NextResponse.json({
       success: true,

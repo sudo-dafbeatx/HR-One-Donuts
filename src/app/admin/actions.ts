@@ -6,26 +6,20 @@ import { Product, PromoEvent, UITheme, FlashSale } from '@/types/cms';
 import { extractStoragePath } from '@/lib/image-utils';
 import { deleteImage } from './upload-actions';
 
-// Helper to verify admin role
+import { cookies } from 'next/headers';
+import { createServiceRoleClient } from '@/lib/supabase/server';
+
+// Helper to verify admin role solely via admin_session cookie
 async function checkAdmin() {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
-
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (profileError) {
-    console.error(' [checkAdmin] Profile error:', profileError);
-  }
-
-  if (profile?.role !== 'admin') {
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get('admin_session');
+  
+  if (!adminSession?.value) {
     throw new Error('Forbidden: Admin access only');
   }
-  return supabase;
+
+  // Return service role client to bypass RLS for admin operations
+  return createServiceRoleClient();
 }
 
 
@@ -534,4 +528,26 @@ export async function importBotKnowledge(entries: any[]) {
 
   revalidatePath('/admin/(dashboard)/bot-training');
   return { success: true, count: validEntries.length };
+}
+
+export async function updateUserRole(userId: string, newRole: string) {
+  const supabase = await checkAdmin();
+  const { error } = await supabase.rpc('update_user_role', {
+    target_user_id: userId,
+    new_role: newRole
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath('/admin/users');
+  return { success: true };
+}
+
+export async function toggleUserBan(userId: string, currentStatus: boolean) {
+  const supabase = await checkAdmin();
+  const { error } = await supabase.rpc('toggle_user_ban', {
+    target_user_id: userId,
+    ban_status: currentStatus
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath('/admin/users');
+  return { success: true };
 }

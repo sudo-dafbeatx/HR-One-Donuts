@@ -1,7 +1,8 @@
 'use server';
 
 import sharp from 'sharp';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 import { generateImageName } from '@/lib/image-utils';
 
 const MAX_WIDTH = 1000;
@@ -10,24 +11,16 @@ const WEBP_QUALITY = 75;
 export async function uploadImage(formData: FormData) {
   console.log('🚀 [uploadImage] Starting upload process...');
   
-  const supabase = await createServerSupabaseClient();
+  // Verify admin access solely via admin_session cookie
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get('admin_session');
   
-  // Check authentication & role
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    throw new Error('Unauthorized');
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (profileError || !profile || profile.role !== 'admin') {
-    if (profileError) console.error(' [uploadImage] Profile error:', profileError);
+  if (!adminSession?.value) {
     throw new Error('Forbidden: Akses ditolak. Hanya admin yang boleh upload gambar.');
   }
+
+  // Use service role client to bypass RLS for admin operations
+  const supabase = createServiceRoleClient();
   
   const file = formData.get('file') as File;
   if (!file) {
@@ -113,23 +106,14 @@ export async function uploadImage(formData: FormData) {
 }
 
 export async function deleteImage(filePath: string) {
-  const supabase = await createServerSupabaseClient();
+  const cookieStore = await cookies();
+  const adminSession = cookieStore.get('admin_session');
   
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    throw new Error('Unauthorized');
+  if (!adminSession?.value) {
+    throw new Error('Forbidden: Akses ditolak. Hanya admin yang boleh menghapus gambar.');
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (profileError || !profile || profile.role !== 'admin') {
-    if (profileError) console.error(' [deleteImage] Profile error:', profileError);
-    throw new Error('Forbidden');
-  }
+  const supabase = createServiceRoleClient();
   
   const { error } = await supabase.storage
     .from('images')

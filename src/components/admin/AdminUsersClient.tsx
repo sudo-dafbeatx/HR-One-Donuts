@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
 import { ShieldCheckIcon, UserIcon, ArrowPathIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
+import { updateUserRole, toggleUserBan } from '@/app/admin/actions';
 
 interface UserData {
   id: string;
@@ -21,7 +21,6 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const supabase = createClient();
   const router = useRouter();
 
   const handleRoleChange = async (userId: string, newRole: string) => {
@@ -32,18 +31,11 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
     setSuccessMsg(null);
 
     try {
-      const { data, error } = await supabase.rpc('update_user_role', {
-        target_user_id: userId,
-        new_role: newRole
-      });
+      await updateUserRole(userId, newRole);
 
-      if (error) throw error;
-
-      if (data) {
-        setUsers(users.map(u => u.id === userId ? { ...u, role: newRole as 'admin' | 'user' } : u));
-        setSuccessMsg("Hak akses pengguna berhasil diperbarui!");
-        setTimeout(() => setSuccessMsg(null), 3000);
-      }
+      setUsers(users.map(u => u.id === userId ? { ...u, role: newRole as 'admin' | 'user' } : u));
+      setSuccessMsg("Hak akses pengguna berhasil diperbarui!");
+      setTimeout(() => setSuccessMsg(null), 3000);
     } catch (err: unknown) {
       console.error(err);
       setErrorMsg((err as Error).message || 'Gagal mengubah hak akses');
@@ -58,8 +50,7 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
     setLoadingId(userId);
     setErrorMsg(null); setSuccessMsg(null);
     try {
-      const { error } = await supabase.rpc('toggle_user_ban', { target_user_id: userId, ban_status: currentStatus });
-      if (error) throw error;
+      await toggleUserBan(userId, currentStatus);
       setUsers(users.map(u => u.id === userId ? { ...u, is_active: !currentStatus } : u));
       setSuccessMsg(`Status berhasil diubah menjadi ${currentStatus ? 'Nonaktif' : 'Aktif'}`);
       setTimeout(() => setSuccessMsg(null), 3000);
