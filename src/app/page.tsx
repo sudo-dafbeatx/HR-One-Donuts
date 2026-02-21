@@ -9,6 +9,10 @@ import FlashSaleSkeleton from "@/components/FlashSaleSkeleton";
 import { Suspense } from "react";
 import { getCopy } from "@/lib/theme";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
+
 export default async function Home() {
   const supabase = await createServerSupabaseClient();
   const copy = await getCopy();
