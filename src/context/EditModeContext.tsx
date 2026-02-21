@@ -4,7 +4,6 @@ import { createContext, useContext, useState, useCallback, useTransition, ReactN
 import { UITheme } from '@/types/cms';
 import { DEFAULT_THEME, DEFAULT_COPY } from '@/lib/theme-defaults';
 import { saveTheme, saveUICopy } from '@/app/admin/actions';
-import { createClient } from '@/lib/supabase/client';
 
 interface EditModeContextType {
   isEditMode: boolean;
@@ -46,33 +45,15 @@ interface EditModeProviderProps {
 }
 
 export function EditModeProvider({ children, initialCopy, initialTheme, isAdmin: initialIsAdmin }: EditModeProviderProps) {
-  const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
+  const [isAdmin] = useState(initialIsAdmin);
   const [isEditMode, setIsEditMode] = useState(false);
   const [copy, setCopy] = useState<Record<string, string>>(() => ({ ...DEFAULT_COPY, ...initialCopy }));
   const [theme, setTheme] = useState<UITheme>(() => ({ ...DEFAULT_THEME, ...initialTheme }));
   const [isSaving, setIsSaving] = useState(false);
   const [lastMessage, setLastMessage] = useState('');
   const [, startTransition] = useTransition();
-  const supabase = createClient();
   const editModeRef = useRef(false);
 
-  // Client-side admin verification
-  useEffect(() => {
-    const checkAdmin = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-        if (profile?.role === 'admin') {
-          setIsAdmin(true);
-        }
-      }
-    };
-    checkAdmin();
-  }, [supabase]);
 
   // JavaScript-based click interceptor — blocks ALL clicks on non-editor elements
   useEffect(() => {

@@ -45,24 +45,16 @@ export default async function RootLayout({
   const theme = await getTheme();
   const copy = await getCopy();
 
-  // Check if user is admin
+  // Check if user is admin via secure cookie
   let isAdmin = false;
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        console.error(' [RootLayout] Failed to fetch profile:', profileError);
-      }
-      isAdmin = profile?.role === 'admin';
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    if (cookieStore.get('admin_session')?.value) {
+      isAdmin = true;
     }
-  } catch {
-    // Not logged in
+  } catch (error) {
+    console.error(' [RootLayout] Failed to check admin cookie:', error);
   }
 
   return (

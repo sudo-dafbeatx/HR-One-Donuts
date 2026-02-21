@@ -74,8 +74,8 @@ export default function AdminSettingsClient({ currentUsername }: { currentUserna
       // In case username changed, refresh the page context
       router.refresh();
       
-    } catch (err: any) {
-      setStatus({ type: 'error', message: err.message || 'Terjadi kesalahan jaringan.' });
+    } catch (err: unknown) {
+      setStatus({ type: 'error', message: (err as Error).message || 'Terjadi kesalahan jaringan.' });
     }
   };
 
@@ -185,7 +185,7 @@ export default function AdminSettingsClient({ currentUsername }: { currentUserna
               placeholder="Ulangi password baru"
             />
             {formData.confirmPassword && formData.newPassword !== formData.confirmPassword && (
-              <p className="text-xs text-red-500 mt-1 font-medium mt-1">Password tidak cocok.</p>
+              <p className="text-xs text-red-500 font-medium mt-1">Password tidak cocok.</p>
             )}
           </div>
 

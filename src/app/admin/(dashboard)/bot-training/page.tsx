@@ -220,7 +220,7 @@ export default function BotTrainingPage() {
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-600">
+          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-linear-to-r from-primary to-blue-600">
             Training Bot Dona
           </h1>
           <p className="text-slate-500 text-sm">Kelola basis pengetahuan AI assistant Anda</p>
@@ -453,7 +453,7 @@ export default function BotTrainingPage() {
 
       {/* Import Preview Modal */}
       {isPreviewModalOpen && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-110 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center">
               <div>

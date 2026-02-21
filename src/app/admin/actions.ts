@@ -467,11 +467,19 @@ export async function exportBotKnowledge() {
   return data;
 }
 
-export async function importBotKnowledge(entries: any[]) {
+interface BotKnowledgeEntry {
+  question: string;
+  answer: string;
+  category?: string;
+  tags?: string[];
+  updated_at?: string;
+}
+
+export async function importBotKnowledge(entries: BotKnowledgeEntry[]) {
   const supabase = await checkAdmin();
 
   // Basic manual schema validation
-  const validEntries: any[] = [];
+  const validEntries: BotKnowledgeEntry[] = [];
   const errors: string[] = [];
 
   const CATEGORIES = ["general", "ordering", "products", "delivery", "payment", "other"];

@@ -12,11 +12,28 @@ export default async function OnboardingProfilePage() {
   }
 
   // Check if profile is already complete
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('is_profile_complete')
-    .eq('id', user.id)
-    .maybeSingle();
+  let profile;
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('is_profile_complete')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (error) throw error;
+    profile = data;
+  } catch (error) {
+    console.error('[Onboarding] Error fetching user_profile:', error);
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#f6f7f8' }}>
+        <div className="bg-white p-8 rounded-2xl shadow-sm text-center max-w-md border border-red-100">
+          <h2 className="text-xl font-bold text-red-600 mb-2">Terjadi Kesalahan Server</h2>
+          <p className="text-slate-600 font-medium text-sm mb-6">Gagal memuat profil pengguna. Pastikan koneksi aman dan coba muat ulang.</p>
+          <a href="/onboarding/profile" className="px-6 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl text-sm inline-block">Muat Ulang</a>
+        </div>
+      </div>
+    );
+  }
 
   if (profile?.is_profile_complete) {
     redirect('/');
@@ -45,7 +62,7 @@ export default async function OnboardingProfilePage() {
       <main className="relative z-10 max-w-[800px] w-full mx-auto px-1 md:px-0">
         <div className="bg-white shadow-xl rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden border border-slate-100">
           {/* Header */}
-          <div className="px-5 pt-8 pb-4 md:px-8 md:pt-12 md:pb-10 text-center bg-gradient-to-b from-blue-50/50 to-white">
+          <div className="px-5 pt-8 pb-4 md:px-8 md:pt-12 md:pb-10 text-center bg-linear-to-b from-blue-50/50 to-white">
             <div className="flex items-center justify-center mb-4 md:mb-8">
               <LogoBrand 
                 logoUrl="/images/logo-hr-one.webp" 
