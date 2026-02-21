@@ -45,7 +45,6 @@ export default function CatalogNavbar({ siteSettings, copy }: { siteSettings?: S
   const navLinks = [
     { label: copy?.nav_home || "Beranda", href: "/" },
     { label: copy?.nav_menu || "Menu", href: "/catalog" },
-    { label: "Tentang Kami", href: "/#about" }, // This one is not in UICopyEditor yet but keeping for now
     { label: copy?.nav_how_to_order || "Cara Pesan", href: "/cara-pesan" },
   ];
 
@@ -114,7 +113,7 @@ export default function CatalogNavbar({ siteSettings, copy }: { siteSettings?: S
               className="hidden sm:flex items-center justify-center gap-2 rounded-xl h-10 px-5 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all shadow-sm"
             >
               <ChatBubbleLeftIcon className="w-5 h-5" />
-              <span className="truncate">Pesan via WhatsApp</span>
+              <span className="truncate">{copy?.btn_order_whatsapp || "Pesan via WhatsApp"}</span>
             </a>
           </div>
       </div>

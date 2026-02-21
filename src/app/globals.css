@@ -25,9 +25,13 @@
   --font-sans: "Sour Gummy", var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif;
   --font-display: "Sour Gummy", var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif;
 
-  --radius-default: 8px;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  --radius-none: 0;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
   --radius-full: 9999px;
 }
 
@@ -79,7 +83,7 @@
   --color-secondary: var(--theme-secondary, #3b82f6);
   --font-sans: var(--theme-body-font, "Sour Gummy"), var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--theme-heading-font, "Sour Gummy"), var(--font-sour-gummy), ui-sans-serif, system-ui, sans-serif;
-  --radius-default: var(--theme-card-radius, 8px);
+  --radius: var(--theme-card-radius, 0.5rem);
 
   /* ===== DEFAULTS for ThemeProvider variables ===== */
   --theme-primary: #1152d4;
