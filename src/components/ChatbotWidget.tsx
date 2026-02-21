@@ -415,7 +415,7 @@ export default function ChatbotWidget() {
         >
           {/* Hint Bubble */}
           {showHint && (
-            <div className="absolute bottom-full right-0 mb-4 animate-[bounce_2s_infinite] pointer-events-auto z-[99999] origin-bottom-right drop-shadow-2xl" style={{ width: 'max-content' }}>
+            <div className="absolute bottom-full right-0 mb-4 animate-[bounce_2s_infinite] pointer-events-auto z-99999 origin-bottom-right drop-shadow-2xl" style={{ width: 'max-content' }}>
               <div className="bg-white text-slate-800 px-4 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-2 whitespace-nowrap">
                 <p className="text-sm font-bold">Butuh bantuan aku?</p>
                 <button onClick={dismissHint} className="text-slate-400 hover:text-slate-600 p-1">
@@ -466,7 +466,7 @@ export default function ChatbotWidget() {
       {isOpen && (
         <div className="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-[400px] h-[600px] max-w-[calc(100vw-3rem)] max-h-[calc(100vh-10rem)] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden z-50 animate-scale-in border border-slate-200">
           {/* Header */}
-          <div className="bg-gradient-to-r from-primary to-blue-600 text-white px-6 py-4 flex items-center justify-between">
+          <div className="bg-linear-to-r from-primary to-blue-600 text-white px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
                 <Image 
@@ -491,7 +491,7 @@ export default function ChatbotWidget() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-slate-50 to-white">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-linear-to-b from-slate-50 to-white">
             {messages.map((message) => (
               <div
                 key={message.id}
