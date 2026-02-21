@@ -151,6 +151,20 @@ export async function POST(request: NextRequest) {
       console.warn('[ForceLogout] Failed to log admin activity:', logError);
     }
 
+    // 5. Record in auth_logs for audit trail
+    try {
+      const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+      const userAgent = request.headers.get('user-agent') || 'unknown';
+      await supabaseUser.from('auth_logs').insert({
+        user_id: targetUserId,
+        event_type: 'force_logout',
+        ip_address: ipAddress,
+        user_agent: userAgent,
+      });
+    } catch {
+      // Non-critical
+    }
+
     return NextResponse.json({ success: true });
 
   } catch (error: unknown) {

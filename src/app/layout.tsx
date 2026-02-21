@@ -1,3 +1,4 @@
+import '@/lib/env-check';
 import type { Metadata } from "next";
 import { CartProvider } from "@/context/CartContext";
 import { LoadingProvider } from "@/context/LoadingContext";

@@ -8,6 +8,7 @@ import { useLoading } from '@/context/LoadingContext';
 
 import { logTraffic } from '@/app/actions/traffic-actions';
 import { verifyCaptcha } from '@/app/actions/verify-captcha';
+import { logAuthEvent } from '@/app/actions/auth-log-action';
 import { normalizePhoneToID } from '@/lib/phone';
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
@@ -228,11 +229,14 @@ function LoginContent() {
       setError('Email atau password salah. Silakan coba lagi.');
       setLoading(false);
     } else if (authData.user) {
-      await logTraffic({
-        event_type: 'login_success',
-        path: '/login',
-        user_id: authData.user.id,
-      });
+      await Promise.all([
+        logTraffic({
+          event_type: 'login_success',
+          path: '/login',
+          user_id: authData.user.id,
+        }),
+        logAuthEvent(authData.user.id, 'login'),
+      ]);
       handleRedirection(authData.user.id);
     }
   };
@@ -317,11 +321,14 @@ function LoginContent() {
   };
 
   const finishOtpLogin = async (userId: string) => {
-    await logTraffic({
-      event_type: 'login_success',
-      path: '/login',
-      user_id: userId,
-    });
+    await Promise.all([
+      logTraffic({
+        event_type: 'login_success',
+        path: '/login',
+        user_id: userId,
+      }),
+      logAuthEvent(userId, 'otp_login'),
+    ]);
     handleRedirection(userId);
   };
 
