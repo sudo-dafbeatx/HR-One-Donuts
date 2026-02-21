@@ -36,26 +36,66 @@ interface Order {
   session_id?: string;
 }
 
-interface StatsCardProps {
+interface MetricCardProps {
   title: string;
   value: string | number;
+  percentChange?: number;
   icon: React.ElementType;
-  iconColor: string;
+  progress?: number;
+  trend?: 'up' | 'down' | 'neutral';
 }
 
-function StatsCard({ title, value, icon: Icon, iconColor }: StatsCardProps) {
+function MetricCard({ title, value, percentChange, icon: Icon, progress = 0, trend = 'neutral' }: MetricCardProps) {
+  // Determine trend indicators
+  const isUp = trend === 'up';
+  const isDown = trend === 'down';
+  const isNeutral = trend === 'neutral';
+
+  let trendColorClass = 'text-slate-400 bg-slate-100'; // neutral
+  if (isUp) trendColorClass = 'text-emerald-600 bg-emerald-100';
+  if (isDown) trendColorClass = 'text-red-600 bg-red-100';
+
   return (
-    <div className="bg-white rounded-lg shadow-[0_0_28px_0_rgba(82,63,105,0.08)] p-6 h-full transition-all hover:shadow-[0_0_28px_0_rgba(82,63,105,0.12)] border border-slate-100/50">
-      <div className="flex flex-wrap items-center">
-        <div className="flex-1 pr-4">
-          <div className="font-bold text-2xl text-slate-800 mb-1">{value}</div>
-          <div className="text-sm text-slate-500 font-medium">{title}</div>
+    <div className="w-full relative overflow-hidden rounded-2xl border border-slate-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-[--color-card-bg,#ffffff] group transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex flex-col p-5">
+      {/* Background Glow Effect synced to Theme Primary */}
+      <div 
+        className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-[50px] opacity-10 pointer-events-none transition-colors duration-500"
+        style={{ background: 'var(--color-primary, #1152d4)' }}
+      />
+      
+      {/* Header (Title & Icon) */}
+      <div className="flex items-start justify-between mb-4 relative z-10">
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-slate-50 border border-slate-100 group-hover:bg-slate-100/80 transition-colors">
+          <Icon className="w-6 h-6 text-slate-600 transition-transform group-hover:scale-110" style={{ color: 'var(--color-primary, #1152d4)' }} />
         </div>
-        <div className="shrink-0">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center bg-slate-50 border border-slate-100 group">
-            <Icon className={`w-7 h-7 ${iconColor} transition-transform group-hover:scale-110`} />
+        
+        {percentChange !== undefined && (
+           <div className={`flex items-center gap-1 mt-1 px-2 py-1 rounded-md text-xs font-bold ${trendColorClass}`}>
+            {isUp && <span className="material-symbols-outlined text-[12px]">trending_up</span>}
+            {isDown && <span className="material-symbols-outlined text-[12px]">trending_down</span>}
+            {isNeutral && <span className="material-symbols-outlined text-[12px]">horizontal_rule</span>}
+            <span>{percentChange > 0 ? '+' : ''}{percentChange.toFixed(1)}%</span>
           </div>
+        )}
+      </div>
+
+      {/* Content (Value & Title) */}
+      <div className="relative z-10 flex-1 flex flex-col justify-end">
+        <div className="font-black text-3xl text-slate-800 mb-1 leading-none tracking-tight" style={{ color: 'var(--color-text, #1e293b)' }}>
+          {value}
         </div>
+        <div className="text-sm font-semibold text-slate-500">{title}</div>
+      </div>
+
+      {/* Progress Bar (Dynamic Theme Color) */}
+      <div className="mt-5 w-full bg-slate-100 rounded-full h-1.5 relative overflow-hidden z-10">
+        <div 
+          className="absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out"
+          style={{ 
+            width: `${Math.min(Math.max(progress, 2), 100)}%`, // min 2% so it's always slightly visible
+            backgroundColor: isDown ? '#ef4444' : 'var(--color-primary, #1152d4)' // Red if down, theme primary otherwise
+          }}
+        />
       </div>
     </div>
   );
@@ -80,7 +120,7 @@ export default async function AdminDashboard() {
 
   // 3. Fetch Users via RPC
   const { data: adminUsersResult } = await supabase.rpc('get_admin_users_list');
-  let usersList: { last_sign_in_at: string | null }[] = [];
+  let usersList: { created_at: string; last_sign_in_at: string | null }[] = [];
   try {
     if (typeof adminUsersResult === 'string') {
       usersList = JSON.parse(adminUsersResult);
@@ -120,13 +160,54 @@ export default async function AdminDashboard() {
   const hero = heroData?.[0] || null;
 
   // --- STATS CALCULATION ---
-  const totalRevenue = orders?.reduce((sum, o) => sum + (o.total_amount || 0), 0) || 0;
-  const activeProducts = products?.filter(p => p.is_active).length || 0;
-  const totalUsers = usersList.length;
-  
   const todayStart = new Date();
   todayStart.setHours(0,0,0,0);
+  
+  // Orders 7 days calculation
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const fourteenDaysAgo = new Date(now);
+  fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+
+  let currentRevenue = 0;
+  let prevRevenue = 0;
+  
+  if (orders) {
+    orders.forEach(o => {
+      const orderDate = new Date(o.created_at);
+      if (orderDate >= sevenDaysAgo) {
+        currentRevenue += (o.total_amount || 0);
+      } else if (orderDate >= fourteenDaysAgo && orderDate < sevenDaysAgo) {
+        prevRevenue += (o.total_amount || 0);
+      }
+    });
+  }
+
+  const revenueChange = prevRevenue === 0 
+    ? (currentRevenue > 0 ? 100 : 0) 
+    : ((currentRevenue - prevRevenue) / prevRevenue) * 100;
+
+  // Users calculation
+  const totalUsers = usersList.length;
+  let currentUsers = 0;
+  let prevUsers = 0;
+  
+  usersList.forEach(u => {
+    const uDate = new Date(u.created_at);
+    if (uDate >= sevenDaysAgo) {
+      currentUsers++;
+    } else if (uDate >= fourteenDaysAgo && uDate < sevenDaysAgo) {
+      prevUsers++;
+    }
+  });
+
+  const usersChange = prevUsers === 0 
+    ? (currentUsers > 0 ? 100 : 0) 
+    : ((currentUsers - prevUsers) / prevUsers) * 100;
+
   const activeUsersToday = usersList.filter((u) => u.last_sign_in_at && new Date(u.last_sign_in_at) >= todayStart).length;
+  const activeProducts = products?.filter(p => p.is_active).length || 0;
+  const totalProductsCount = products?.length || 1; // Avoid division by zero
   
   const recentlyAddedProducts = [...(products || [])]
     .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
@@ -148,6 +229,42 @@ export default async function AdminDashboard() {
   const hasDescription = !!hero?.description;
   const hasActivePromo = events.length > 0;
 
+  // Metric Cards Mapping
+  const metrics = [
+    {
+      title: "Total Pendapatan",
+      value: `Rp ${currentRevenue.toLocaleString('id-ID')}`,
+      percentChange: revenueChange,
+      icon: CurrencyDollarIcon,
+      trend: revenueChange > 0 ? 'up' : revenueChange < 0 ? 'down' : 'neutral' as const,
+      progress: Math.min(100, (currentRevenue / (prevRevenue || 1)) * 50) // visual relation to prev
+    },
+    {
+      title: "Total User Database",
+      value: totalUsers,
+      percentChange: usersChange,
+      icon: UserGroupIcon,
+      trend: usersChange > 0 ? 'up' : usersChange < 0 ? 'down' : 'neutral' as const,
+      progress: Math.min(100, (currentUsers / (totalUsers || 1)) * 100)
+    },
+    {
+      title: "User Aktif (24 jam)",
+      value: activeUsersToday,
+      percentChange: 0, // No easy week-over-week daily active sequence from db right now, keep neutral
+      icon: CheckBadgeIcon,
+      trend: 'neutral' as const,
+      progress: Math.min(100, (activeUsersToday / (totalUsers || 1)) * 100)
+    },
+    {
+      title: "Katalog Aktif",
+      value: activeProducts,
+      percentChange: undefined, // Hide percentage for this since it's a fixed pool
+      icon: ArchiveBoxIcon,
+      trend: 'neutral' as const,
+      progress: (activeProducts / totalProductsCount) * 100
+    }
+  ];
+
   return (
     <div className="space-y-6 pb-20">
       <div className="flex items-center justify-between pb-2">
@@ -162,32 +279,19 @@ export default async function AdminDashboard() {
         activeEventsCount={events.length}
       />
 
-      {/* PRIMARY STATS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard 
-          title="Total Pendapatan" 
-          value={`Rp ${totalRevenue.toLocaleString('id-ID')}`}
-          icon={CurrencyDollarIcon}
-          iconColor="text-[#09cc06]"
-        />
-        <StatsCard 
-          title="Total User Database" 
-          value={totalUsers}
-          icon={UserGroupIcon}
-          iconColor="text-[#1b00ff]"
-        />
-        <StatsCard 
-          title="User Aktif (24 jam)" 
-          value={activeUsersToday}
-          icon={CheckBadgeIcon}
-          iconColor="text-[#00eccf]"
-        />
-        <StatsCard 
-          title="Katalog Aktif" 
-          value={activeProducts}
-          icon={ArchiveBoxIcon}
-          iconColor="text-[#ff5b5b]"
-        />
+      {/* METRIC CARDS GRID */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {metrics.map((metric, idx) => (
+          <MetricCard 
+            key={idx}
+            title={metric.title}
+            value={metric.value}
+            icon={metric.icon}
+            percentChange={metric.percentChange}
+            progress={metric.progress}
+            trend={metric.trend as 'up' | 'down' | 'neutral' | undefined}
+          />
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 items-start">
