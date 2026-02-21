@@ -19,13 +19,18 @@ export async function GET(request: Request) {
         .eq('id', authData.user.id)
         .maybeSingle();
 
-      const response = NextResponse.redirect(
-        new URL(!profile?.is_profile_complete ? '/onboarding/profile' : next, request.url)
-      );
+      const isSecure = process.env.NODE_ENV === 'production';
+      const redirectUrl = !profile?.is_profile_complete ? '/onboarding/profile' : next;
+      const response = NextResponse.redirect(new URL(redirectUrl, request.url));
       
       // Sync cookie if complete so middleware allows pass
       if (profile?.is_profile_complete) {
-         response.cookies.set('hr_profile_complete', 'true', { path: '/', maxAge: 31536000 });
+        response.cookies.set('hr_profile_complete', 'true', {
+          path: '/',
+          maxAge: 31536000,
+          sameSite: 'lax',
+          secure: isSecure,
+        });
       }
 
       return response;

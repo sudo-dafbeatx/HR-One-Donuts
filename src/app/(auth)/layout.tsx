@@ -11,7 +11,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 md:p-12 font-sans">
+    <div className="min-h-dvh bg-slate-50 flex flex-col items-center justify-center p-4 md:p-12 font-sans">
       <div className="w-full max-w-xl flex flex-col items-center">
         <div className="mb-8 animate-in fade-in zoom-in duration-700">
           <AuthLogo />

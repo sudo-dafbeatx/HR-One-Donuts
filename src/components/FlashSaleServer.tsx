@@ -13,12 +13,14 @@ export default async function FlashSaleServer() {
       .from('promo_events')
       .select('*')
       .eq('is_enabled', true)
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .limit(1),
     supabase
       .from('flash_sales')
       .select('*')
       .eq('is_active', true)
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .limit(1),
   ]);
 
   const events = (eventsRes.data as PromoEvent[]) || [];

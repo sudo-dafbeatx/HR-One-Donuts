@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import GeoDropdown from './GeoDropdown';
 import { useLoading } from '@/context/LoadingContext';
@@ -34,6 +34,15 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [slowSubmission, setSlowSubmission] = useState(false);
+  const [phoneDuplicate, setPhoneDuplicate] = useState(false);
+  const [phoneChecking, setPhoneChecking] = useState(false);
+  const phoneDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const [agreements, setAgreements] = useState({
+    terms: false,
+    syarat: false,
+    cookies: false,
+    notifikasi: false,
+  });
   const { setIsLoading } = useLoading();
   const router = useRouter();
   const supabase = createClient();
@@ -49,6 +58,32 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
     }
     return computedAge.toString();
   };
+
+  const allAgreed = agreements.terms && agreements.syarat && agreements.cookies && agreements.notifikasi;
+
+  const checkPhoneDuplicate = useCallback(async (phoneValue: string) => {
+    if (!phoneValue || phoneValue.length < 8) {
+      setPhoneDuplicate(false);
+      return;
+    }
+    setPhoneChecking(true);
+    try {
+      const res = await fetch(`/api/check-phone?phone=${encodeURIComponent(phoneValue)}`);
+      const data = await res.json();
+      setPhoneDuplicate(data.exists === true);
+    } catch {
+      setPhoneDuplicate(false);
+    } finally {
+      setPhoneChecking(false);
+    }
+  }, []);
+
+  const handlePhoneChange = useCallback((value: string) => {
+    setFormData(prev => ({ ...prev, phone: value }));
+    setPhoneDuplicate(false);
+    if (phoneDebounceRef.current) clearTimeout(phoneDebounceRef.current);
+    phoneDebounceRef.current = setTimeout(() => checkPhoneDuplicate(value), 500);
+  }, [checkPhoneDuplicate]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -68,6 +103,8 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
     if (!formData.province.id) newErrors.province = 'Provinsi wajib dipilih';
     if (!formData.city.id) newErrors.city = 'Kota/Kabupaten wajib dipilih';
     if (!formData.district.id) newErrors.district = 'Kecamatan wajib dipilih';
+    if (phoneDuplicate) newErrors.phone = 'Nomor HP sudah terdaftar';
+    if (!allAgreed) newErrors.agreements = 'Semua persetujuan wajib dicentang';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -160,8 +197,10 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
   if (success) {
     return (
       <div className="py-12 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500">
-        <div className="size-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-          <span className="material-symbols-outlined text-green-600 text-4xl">check_circle</span>
+        <div className="size-20 bg-green-100 rounded-full flex items-center justify-center mb-6 ring-4 ring-green-200">
+          <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
         </div>
         <h2 className="text-2xl font-black text-slate-900 mb-2">Pendaftaran Berhasil! 👋</h2>
         <p className="text-slate-500 font-medium">Selamat datang di HR-One Donuts. Kamu sedang diarahkan ke beranda...</p>
@@ -201,11 +240,13 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
           <input
             type="tel"
             value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            onChange={(e) => handlePhoneChange(e.target.value)}
             placeholder="0812xxxx"
-            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.phone ? 'border-red-300' : 'border-slate-200'}`}
+            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${phoneDuplicate ? 'border-red-400 bg-red-50' : errors.phone ? 'border-red-300' : 'border-slate-200'}`}
           />
-          {errors.phone && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.phone}</p>}
+          {phoneChecking && <p className="mt-1.5 ml-1 text-[10px] text-slate-400">Memeriksa nomor...</p>}
+          {phoneDuplicate && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">Nomor HP sudah terdaftar. Gunakan nomor lain.</p>}
+          {errors.phone && !phoneDuplicate && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.phone}</p>}
         </div>
       </div>
 
@@ -295,11 +336,45 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
         </div>
       </div>
 
+      {/* Mandatory Agreements */}
+      <div className="bg-blue-50/50 p-5 md:p-8 rounded-[1.5rem] md:rounded-4xl border border-blue-100 space-y-3">
+        <h3 className="text-[14px] md:text-lg font-bold text-slate-800 flex items-center gap-2">
+          <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Persetujuan Wajib
+        </h3>
+        {[
+          { key: 'terms' as const, label: 'Saya menyetujui Terms of Service', link: '/terms' },
+          { key: 'syarat' as const, label: 'Saya menyetujui Syarat & Ketentuan', link: '/privacy' },
+          { key: 'cookies' as const, label: 'Saya menyetujui pengumpulan Cookies', link: '/cookies' },
+          { key: 'notifikasi' as const, label: 'Saya bersedia menerima Notifikasi', link: null },
+        ].map((item) => (
+          <label key={item.key} className="flex items-start gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              checked={agreements[item.key]}
+              onChange={(e) => setAgreements(prev => ({ ...prev, [item.key]: e.target.checked }))}
+              className="mt-0.5 w-5 h-5 rounded border-2 border-slate-300 text-primary focus:ring-primary/30 accent-primary cursor-pointer shrink-0"
+            />
+            <span className="text-[12px] md:text-sm text-slate-600 font-medium group-hover:text-slate-800 transition-colors">
+              {item.label}
+              {item.link && (
+                <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-primary font-bold ml-1 hover:underline">
+                  (Baca)
+                </a>
+              )}
+            </span>
+          </label>
+        ))}
+        {errors.agreements && <p className="text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.agreements}</p>}
+      </div>
+
       <div className="pt-2 sticky bottom-0 bg-white/90 backdrop-blur-md -mx-5 px-5 py-4 pb-safe border-t border-slate-100 md:relative md:bg-transparent md:border-none md:p-0 md:m-0 z-20">
         <button
           type="submit"
-          disabled={submitting}
-          className="w-full h-14 rounded-2xl bg-primary text-white font-black text-base md:text-lg shadow-lg shadow-primary/25 hover:bg-blue-600 hover:shadow-primary/35 focus:ring-4 focus:ring-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          disabled={submitting || !allAgreed || phoneDuplicate}
+          className={`w-full h-14 rounded-2xl text-white font-black text-base md:text-lg shadow-lg focus:ring-4 focus:ring-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${allAgreed && !phoneDuplicate ? 'bg-primary shadow-primary/25 hover:bg-blue-600 hover:shadow-primary/35' : 'bg-slate-300 cursor-not-allowed'}`}
         >
           {submitting ? (
             <>

@@ -30,9 +30,13 @@ function LoginContent() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [redirecting, setRedirecting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [phoneDuplicate, setPhoneDuplicate] = useState(false);
+  const [phoneChecking, setPhoneChecking] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
+  const phoneDebounceRef = useRef<NodeJS.Timeout | null>(null);
   
   const { setIsLoading } = useLoading();
 
@@ -76,21 +80,36 @@ function LoginContent() {
   
   const redirectTo = searchParams.get('next') || '/';
 
+  const checkPhoneDuplicate = useCallback(async (phoneValue: string) => {
+    if (!phoneValue || phoneValue.length < 8) {
+      setPhoneDuplicate(false);
+      return;
+    }
+    setPhoneChecking(true);
+    try {
+      const res = await fetch(`/api/check-phone?phone=${encodeURIComponent(phoneValue)}`);
+      const data = await res.json();
+      setPhoneDuplicate(data.exists === true);
+    } catch {
+      setPhoneDuplicate(false);
+    } finally {
+      setPhoneChecking(false);
+    }
+  }, []);
+
+  const handlePhoneChange = useCallback((value: string) => {
+    setPhone(value);
+    setPhoneDuplicate(false);
+    if (phoneDebounceRef.current) clearTimeout(phoneDebounceRef.current);
+    phoneDebounceRef.current = setTimeout(() => checkPhoneDuplicate(value), 500);
+  }, [checkPhoneDuplicate]);
+
   const handleRedirection = useCallback(async (userId: string) => {
+    if (redirecting) return;
+    setRedirecting(true);
     const attemptFetchAndRedirect = async (count: number): Promise<void> => {
       try {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', userId)
-          .maybeSingle();
-
-        if (profile?.role === 'admin') {
-          router.push('/admin');
-          setTimeout(() => router.refresh(), 100);
-          return;
-        }
-
+        // Do NOT check admin role here — admin panel is accessed via /admin/login only
         const { data: userProfile, error: profileError } = await supabase
           .from('user_profiles')
           .select('is_profile_complete')
@@ -122,7 +141,7 @@ function LoginContent() {
     };
 
     return attemptFetchAndRedirect(0);
-  }, [supabase, router, redirectTo]);
+  }, [supabase, router, redirectTo, redirecting]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -177,6 +196,11 @@ function LoginContent() {
     if (isRegistering) {
       if (password !== confirmPassword) {
         setError('Password dan konfirmasi password tidak cocok.');
+        setLoading(false);
+        return;
+      }
+      if (phoneDuplicate) {
+        setError('Nomor HP sudah terdaftar. Gunakan nomor lain.');
         setLoading(false);
         return;
       }
@@ -460,8 +484,8 @@ function LoginContent() {
           <p className="mt-2 text-sm text-gray-500 font-medium">Ayo bergabung dan nikmati donat spesial kami.</p>
         </div>
         {error && <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-lg text-sm">{error}</div>}
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleLogin} noValidate className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">Nama</label>
               <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
@@ -471,10 +495,12 @@ function LoginContent() {
               <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-700" required />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">WhatsApp</label>
-              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" placeholder="Contoh: 0812..." required />
+              <input type="tel" value={phone} onChange={(e) => handlePhoneChange(e.target.value)} className={`w-full rounded-md border p-3 text-sm ${phoneDuplicate ? 'border-red-400 bg-red-50' : 'border-gray-300'}`} placeholder="Contoh: 0812..." required />
+              {phoneChecking && <p className="mt-1 text-xs text-gray-400">Memeriksa nomor...</p>}
+              {phoneDuplicate && <p className="mt-1 text-xs font-bold text-red-500">Nomor HP sudah terdaftar</p>}
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">Email</label>
@@ -485,7 +511,7 @@ function LoginContent() {
             <label className="mb-1 block text-xs font-medium text-gray-500">Alamat</label>
             <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">Password</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
@@ -496,7 +522,7 @@ function LoginContent() {
             </div>
           </div>
           {TURNSTILE_SITE_KEY && (<div className="flex justify-center"><Turnstile ref={turnstileRef} siteKey={TURNSTILE_SITE_KEY} onSuccess={(token) => setCaptchaToken(token)} /></div>)}
-          <button type="submit" disabled={loading} className="w-full rounded-md bg-primary px-6 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-50">{loading ? 'Mendaftarkan...' : 'Daftar Sekarang'}</button>
+          <button type="submit" disabled={loading || phoneDuplicate} className="relative z-10 w-full rounded-md bg-primary px-6 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-50">{loading ? 'Mendaftarkan...' : 'Daftar Sekarang'}</button>
         </form>
         <div className="mt-6 text-center text-sm text-gray-600">Sudah punya akun? <button onClick={() => setIsRegistering(false)} className="text-primary font-bold hover:underline">Masuk</button></div>
         <div className="mt-4 text-center">
