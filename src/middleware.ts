@@ -81,7 +81,17 @@ export default async function proxy(request: NextRequest) {
   
   // Skip auth check for public routes
   const isAuthPath = pathname.startsWith('/login') || pathname.startsWith('/auth');
+  const isStorefrontRoute = pathname === '/' ||
+                             pathname.startsWith('/catalog') ||
+                             pathname.startsWith('/cara-pesan') ||
+                             pathname.startsWith('/news') ||
+                             pathname.startsWith('/promo') ||
+                             pathname.startsWith('/cookies') ||
+                             pathname.startsWith('/privacy') ||
+                             pathname.startsWith('/terms') ||
+                             pathname.startsWith('/onboarding');
   const isPublicRoute = isAuthPath || 
+                         isStorefrontRoute ||
                          pathname.startsWith('/api') ||
                          pathname.startsWith('/license-expired') ||
                          pathname.startsWith('/_next') ||
