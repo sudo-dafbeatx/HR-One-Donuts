@@ -54,31 +54,63 @@ export default function AutomatedInsightsWidget({ stats }: AutomatedInsightsWidg
   }
 
   return (
-    <div className="bg-linear-to-br from-indigo-600 to-blue-700 rounded-lg shadow-xl p-6 text-white h-full relative overflow-hidden group">
+    <div className="bg-linear-to-br from-indigo-600 to-blue-700 rounded-lg shadow-xl p-4 md:p-5 text-white h-fit max-h-[60vh] md:max-h-[420px] flex flex-col relative overflow-hidden group">
       {/* Decorative SVG background */}
-      <div className="absolute top-0 right-0 -mr-16 -mt-16 opacity-10 group-hover:rotate-12 transition-transform duration-700">
-        <SparklesIcon className="w-64 h-64" />
+      <div className="absolute top-0 right-0 -mr-12 -mt-12 opacity-10 group-hover:rotate-12 transition-transform duration-700 pointer-events-none">
+        <SparklesIcon className="w-48 h-48" />
       </div>
 
-      <div className="relative z-10">
-        <div className="flex items-center gap-2 mb-4">
-          <LightBulbIcon className="w-5 h-5 text-amber-300 fill-amber-300" />
-          <h4 className="text-sm font-black uppercase tracking-wider">Smart Insights</h4>
+      <div className="relative z-10 flex flex-col h-full auto-rows-max overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-3 shrink-0">
+          <LightBulbIcon className="w-4 h-4 text-amber-300 fill-amber-300" />
+          <h4 className="text-xs font-black uppercase tracking-wider leading-none">Smart Insights</h4>
         </div>
 
-        <div className="space-y-4">
-          {insights.map((insight) => (
-            <div key={insight.id} className="bg-white/10 backdrop-blur-sm border border-white/10 p-4 rounded-xl">
-              <p className="text-sm font-medium leading-relaxed italic">
+        {/* Scrollable List */}
+        <div className="space-y-2.5 overflow-y-auto pr-1 shrink">
+          {insights.map((insight, index) => (
+            <div 
+              key={insight.id} 
+              className={`bg-white/10 backdrop-blur-sm border border-white/10 p-3 rounded-lg ${
+                index >= 2 ? 'hidden md:block' : ''
+              } ${
+                index >= 3 ? 'hidden!' : ''
+              }`}
+            >
+              <p className="text-[12px] md:text-[13px] font-medium leading-snug italic text-white/90">
                 &quot;{insight.text}&quot;
               </p>
             </div>
           ))}
+
+          {/* Tombol Lihat Semua (Mobile & Desktop) */}
+          {insights.length > 2 && (
+            <div className="pt-0.5 md:hidden">
+              <button 
+                type="button" 
+                className="text-[10px] font-semibold text-white/70 hover:text-white transition-colors"
+              >
+                + {insights.length - 2} Insight Lainnya
+              </button>
+            </div>
+          )}
+          {insights.length > 3 && (
+            <div className="pt-0.5 hidden md:block">
+              <button 
+                type="button" 
+                className="text-[11px] font-semibold text-white/70 hover:text-white transition-colors"
+              >
+                + {insights.length - 3} Insight Lainnya
+              </button>
+            </div>
+          )}
         </div>
         
-        <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
-          <div className="text-[10px] font-bold text-white/50 tracking-widest uppercase">AI Engine Beta</div>
-          <SparklesIcon className="w-4 h-4 text-white/40" />
+        {/* Footer */}
+        <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between shrink-0">
+          <div className="text-[9px] font-bold text-white/50 tracking-widest uppercase">AI Engine Beta</div>
+          <SparklesIcon className="w-3.5 h-3.5 text-white/40" />
         </div>
       </div>
     </div>
