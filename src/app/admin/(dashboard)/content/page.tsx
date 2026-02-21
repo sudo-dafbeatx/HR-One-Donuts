@@ -14,7 +14,7 @@ export default async function ContentPage() {
       supabase.from('settings').select('value').eq('key', 'site_info').maybeSingle(),
       supabase.from('settings').select('value').eq('key', 'order_steps').maybeSingle(),
       supabase.from('categories').select('*').order('name', { ascending: true }),
-      supabase.from('events').select('*').order('created_at', { ascending: false })
+      supabase.from('promo_events').select('*').order('created_at', { ascending: false })
     ]);
 
     if (eventsRes.error) console.error('Error fetching events:', eventsRes.error);

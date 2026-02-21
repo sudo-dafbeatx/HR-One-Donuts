@@ -98,9 +98,9 @@ export default async function AdminDashboard() {
 
   // 5. Fetch Events (Promo)
   const { data: eventsData } = await supabase
-    .from('events')
+    .from('promo_events')
     .select('*')
-    .eq('is_active', true);
+    .eq('is_enabled', true);
 
   // 6. Fetch Settings (for Checklist)
   const { data: settingsData } = await supabase
