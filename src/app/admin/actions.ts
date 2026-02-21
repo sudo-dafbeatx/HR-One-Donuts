@@ -530,16 +530,7 @@ export async function importBotKnowledge(entries: BotKnowledgeEntry[]) {
   return { success: true, count: validEntries.length };
 }
 
-export async function updateUserRole(userId: string, newRole: string) {
-  const supabase = await checkAdmin();
-  const { error } = await supabase.rpc('update_user_role', {
-    target_user_id: userId,
-    new_role: newRole
-  });
-  if (error) throw new Error(error.message);
-  revalidatePath('/admin/users');
-  return { success: true };
-}
+
 
 export async function toggleUserBan(userId: string, currentStatus: boolean) {
   const supabase = await checkAdmin();

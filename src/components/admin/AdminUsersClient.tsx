@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ShieldCheckIcon, UserIcon, ArrowPathIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
-import { updateUserRole, toggleUserBan } from '@/app/admin/actions';
+import { toggleUserBan } from '@/app/admin/actions';
 
 interface UserData {
   id: string;
@@ -23,27 +23,7 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleRoleChange = async (userId: string, newRole: string) => {
-    if (!window.confirm(`Apakah Anda yakin ingin mengubah hak akses pengguna ini menjadi ${newRole.toUpperCase()}?`)) return;
-    
-    setLoadingId(userId);
-    setErrorMsg(null);
-    setSuccessMsg(null);
 
-    try {
-      await updateUserRole(userId, newRole);
-
-      setUsers(users.map(u => u.id === userId ? { ...u, role: newRole as 'admin' | 'user' } : u));
-      setSuccessMsg("Hak akses pengguna berhasil diperbarui!");
-      setTimeout(() => setSuccessMsg(null), 3000);
-    } catch (err: unknown) {
-      console.error(err);
-      setErrorMsg((err as Error).message || 'Gagal mengubah hak akses');
-      setTimeout(() => setErrorMsg(null), 5000);
-    } finally {
-      setLoadingId(null);
-    }
-  };
 
   const handleToggleBan = async (userId: string, currentStatus: boolean) => {
     if (!window.confirm(`Yakin ingin ${currentStatus ? 'Menonaktifkan' : 'Mengaktifkan'} user ini?`)) return;
@@ -169,15 +149,6 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
                 <td className="px-6 py-4 text-right">
                   <div className="flex flex-col items-end gap-2">
                     <div className="flex items-center gap-2">
-                      <select 
-                        value={u.role || 'user'}
-                        onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                        disabled={loadingId === u.id}
-                        className="text-xs bg-white border border-slate-200 rounded-md py-1 px-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:opacity-50"
-                      >
-                         <option value="user">USER Biasa</option>
-                         <option value="admin">ADMIN</option>
-                      </select>
                       {loadingId === u.id && <ArrowPathIcon className="w-4 h-4 text-indigo-600 animate-spin" />}
                     </div>
                     
