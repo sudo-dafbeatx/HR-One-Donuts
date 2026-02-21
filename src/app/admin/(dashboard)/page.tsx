@@ -3,8 +3,6 @@ import {
   CurrencyDollarIcon, 
   ArchiveBoxIcon, 
   CheckBadgeIcon, 
-  PlusIcon,
-  ListBulletIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -96,6 +94,100 @@ function MetricCard({ title, value, percentChange, icon: Icon, progress = 0, tre
             backgroundColor: isDown ? '#ef4444' : 'var(--color-primary, #1152d4)' // Red if down, theme primary otherwise
           }}
         />
+      </div>
+    </div>
+  );
+}
+
+interface RecentProductsCardProps {
+  products: Product[];
+}
+
+function RecentProductsCard({ products }: RecentProductsCardProps) {
+  return (
+    <div className="w-full relative overflow-hidden rounded-2xl border border-slate-100/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-[var(--color-card-bg,#ffffff)] flex flex-col transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 md:p-6 border-b border-slate-100/60 bg-slate-50/30">
+        <div>
+          <h4 className="text-lg font-black tracking-tight" style={{ color: 'var(--color-text, #1e293b)' }}>
+            Katalog Produk Terbaru
+          </h4>
+          <p className="text-xs font-semibold mt-1" style={{ color: 'var(--color-muted, #94a3b8)' }}>
+            Produk terbaru yang ditambahkan
+          </p>
+        </div>
+        <Link 
+          href="/admin/products"
+          className="text-[11px] font-bold px-4 py-2 rounded-lg transition-all shadow-sm hover:shadow active:scale-95"
+          style={{ 
+            backgroundColor: 'var(--color-primary, #1152d4)', 
+            color: '#ffffff'
+          }}
+        >
+          KELOLA SEMUA
+        </Link>
+      </div>
+
+      {/* Product List */}
+      <div className="p-2 md:p-3 flex flex-col gap-1">
+        {products.length === 0 ? (
+          <div className="p-8 text-center flex flex-col items-center justify-center">
+             <ArchiveBoxIcon className="w-12 h-12 mb-3 opacity-20" style={{ color: 'var(--color-text, #1e293b)' }} />
+             <p className="font-bold text-sm" style={{ color: 'var(--color-muted, #94a3b8)' }}>Belum ada produk</p>
+          </div>
+        ) : (
+          products.map((product) => (
+            <div 
+              key={product.id} 
+              className="group flex items-center justify-between p-3 rounded-xl hover:bg-slate-50/80 transition-colors"
+            >
+              {/* Left & Middle: Image + Details */}
+              <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
+                <div 
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex shrink-0 items-center justify-center relative overflow-hidden shadow-sm border border-white/50"
+                  style={{ backgroundColor: 'color-mix(in srgb, var(--color-primary) 10%, transparent)' }}
+                >
+                  {product.image_url ? (
+                    <Image src={product.image_url} alt={product.name} fill className="object-cover" />
+                  ) : (
+                    <ArchiveBoxIcon className="w-5 h-5 md:w-6 md:h-6" style={{ color: 'var(--color-primary, #1152d4)' }} />
+                  )}
+                </div>
+                
+                <div className="flex flex-col overflow-hidden">
+                  <span 
+                    className="font-bold text-sm md:text-base truncate group-hover:text-primary transition-colors"
+                    style={{ color: 'var(--color-text, #1e293b)' }}
+                  >
+                    {product.name}
+                  </span>
+                  <span 
+                    className="text-[10px] md:text-xs font-semibold uppercase tracking-wider mt-0.5 truncate"
+                    style={{ color: 'var(--color-muted, #94a3b8)' }}
+                  >
+                    {product.category || 'Uncategorized'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right: Price & Status */}
+              <div className="flex flex-col items-end shrink-0 pl-3">
+                <span 
+                  className="font-black text-sm md:text-base tracking-tight"
+                  style={{ color: 'var(--color-text, #1e293b)' }}
+                >
+                  Rp {product.price.toLocaleString('id-ID')}
+                </span>
+                <div className="mt-1 flex items-center gap-1.5">
+                  <span className={`w-1.5 h-1.5 rounded-full ${product.is_active ? 'bg-emerald-500' : 'bg-slate-300'}`}></span>
+                  <span className="text-[10px] font-bold text-slate-400">
+                    {product.is_active ? 'Aktif' : 'Draft'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
@@ -304,75 +396,7 @@ export default async function AdminDashboard() {
           </div>
 
           {/* Recently Added Products List */}
-          <div className="bg-white rounded-lg shadow-[0_0_28px_0_rgba(82,63,105,0.08)] border border-slate-100/50 overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/20">
-              <h4 className="text-lg font-bold text-slate-800">Katalog Produk Terbaru</h4>
-              <Link 
-                href="/admin/products"
-                className="text-xs font-black text-[#1b00ff] hover:text-blue-800 border-b-2 border-primary/20 hover:border-primary transition-all pb-0.5"
-              >
-                KELOLA SEMUA
-              </Link>
-            </div>
-            
-            <div className="p-0">
-              {recentlyAddedProducts.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm text-left">
-                    <thead className="text-[11px] text-slate-500 uppercase bg-slate-50/80 border-b border-slate-100 tracking-wider">
-                      <tr>
-                        <th className="px-6 py-4 font-black">Produk</th>
-                        <th className="px-6 py-4 font-black">Kategori</th>
-                        <th className="px-6 py-4 font-black">Harga</th>
-                        <th className="px-6 py-4 font-black text-right">Detail</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {recentlyAddedProducts.map((product) => (
-                        <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-100 relative overflow-hidden shrink-0 shadow-sm">
-                                {product.image_url ? (
-                                  <Image src={product.image_url} alt={product.name} fill className="object-cover" />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-sm">🍩</div>
-                                )}
-                              </div>
-                              <div className="font-bold text-slate-800 whitespace-nowrap">{product.name}</div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-xs font-bold uppercase text-slate-400">{product.category}</td>
-                          <td className="px-6 py-4 font-black text-slate-800">Rp {product.price.toLocaleString('id-ID')}</td>
-                          <td className="px-6 py-4 text-right">
-                             <Link 
-                                href={`/admin/products/${product.id}`}
-                                className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
-                             >
-                                <ListBulletIcon className="w-4 h-4" />
-                             </Link>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <div className="p-12 text-center">
-                  <div className="w-16 h-16 mx-auto bg-slate-50 rounded-full flex items-center justify-center text-2xl mb-4 border border-slate-100">🍩</div>
-                  <p className="text-slate-800 font-black mb-1">Belum ada katalog</p>
-                  <p className="text-slate-500 text-xs mb-8 max-w-xs mx-auto">Mulai isi tokomu dengan produk pertama agar website bisa mulai beroperasi.</p>
-                  <Link 
-                    href="/admin/products"
-                    className="px-6 py-3 bg-[#1b00ff] text-white rounded-xl text-sm font-black inline-flex items-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-[#1b00ff]/30 active:scale-95"
-                  >
-                    <PlusIcon className="w-4 h-4 stroke-3" />
-                    Tambah Produk Sekarang
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
+          <RecentProductsCard products={recentlyAddedProducts} />
         </div>
 
         {/* SIDE WIDGETS COLUMN */}
