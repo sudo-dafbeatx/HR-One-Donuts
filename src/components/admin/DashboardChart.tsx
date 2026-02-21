@@ -162,6 +162,7 @@ export default function DashboardChart({ orders }: DashboardChartProps) {
                   const numVal = Number(value) || 0;
                   return [`Rp ${numVal.toLocaleString('id-ID')}`, 'Pendapatan'];
                 }}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 labelFormatter={(label: any, payload: any) => payload?.[0]?.payload?.date || label}
               />
               <Line 
