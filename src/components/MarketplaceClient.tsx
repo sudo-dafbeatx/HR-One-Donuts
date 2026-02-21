@@ -23,11 +23,11 @@ export default function MarketplaceClient({
   const router = useRouter();
   const { addToCart } = useCart();
   const { setIsLoading } = useLoading();
-  const [localProducts] = React.useState<Product[]>(initialProducts);
+  // Derived state from props to ensure UI updates during client navigation
   const [activeCategory, setActiveCategory] = React.useState<string>(copy?.category_all || 'Semua');
   const [searchQuery, setSearchQuery] = React.useState<string>('');
 
-  const sortedProducts = [...localProducts].sort((a, b) => {
+  const sortedProducts = [...initialProducts].sort((a, b) => {
     const isAPromo = isPromoActive(a) ? 1 : 0;
     const isBPromo = isPromoActive(b) ? 1 : 0;
     if (isAPromo !== isBPromo) return isBPromo - isAPromo;
