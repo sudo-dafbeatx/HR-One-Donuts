@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { createServerSupabaseClient } from '../../../lib/supabase/server';
+import { createServiceRoleClient } from '../../../lib/supabase/server';
 import AdminLayoutWrapper from '@/components/admin/AdminLayoutWrapper';
 import { SiteSettings } from '@/types/cms';
 
@@ -19,7 +19,7 @@ export default async function AdminLayout({
   }
 
   // Fetch site settings for branding (using service-independent query)
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleClient();
 
   const { data: siteInfo } = await supabase
     .from('settings')

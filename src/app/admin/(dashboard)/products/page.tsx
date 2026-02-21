@@ -1,9 +1,9 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 import ProductManager from '@/components/admin/CMS/ProductManager';
 import { Product, Category } from '@/types/cms';
 
 export default async function ProductsAdminPage() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleClient();
   
   try {
     const [productsRes, categoriesRes] = await Promise.all([

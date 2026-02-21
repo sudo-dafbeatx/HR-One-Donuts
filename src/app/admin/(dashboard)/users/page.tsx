@@ -1,9 +1,9 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 import AdminUsersClient from '@/components/admin/AdminUsersClient';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 export default async function UsersAdminPage() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleClient();
   
   // Call our new RPC function to get all users
   const { data: usersData, error } = await supabase.rpc('get_admin_users_list');

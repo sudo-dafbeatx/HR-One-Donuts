@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 import { 
   CurrencyDollarIcon, 
   ArchiveBoxIcon, 
@@ -194,7 +194,7 @@ function RecentProductsCard({ products }: RecentProductsCardProps) {
 }
 
 export default async function AdminDashboard() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleClient();
   const now = new Date();
 
   // 1. Fetch orders

@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 import SiteSettingsEditor from '@/components/admin/CMS/SiteSettingsEditor';
 import OrderStepsEditor from '@/components/admin/CMS/OrderStepsEditor';
 import CategoryManager from '@/components/admin/CMS/CategoryManager';
@@ -7,7 +7,7 @@ import FlashSaleManager from '@/components/admin/CMS/FlashSaleManager';
 import { SiteSettings, OrderStep, Category, FlashSale } from '@/types/cms';
 
 export default async function ContentPage() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleClient();
   
   try {
     // Fetch site info, order steps, and categories in parallel

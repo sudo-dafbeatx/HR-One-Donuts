@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 import ThemeEditor from '@/components/admin/CMS/ThemeEditor';
 import UICopyEditor from '@/components/admin/CMS/UICopyEditor';
 import { getTheme, getCopy } from '@/lib/theme';
@@ -10,7 +10,7 @@ export default async function ThemePage() {
 
   try {
     // Verify table exists by attempting fetch
-    const supabase = await createServerSupabaseClient();
+    const supabase = createServiceRoleClient();
     const { error: themeError } = await supabase.from('ui_theme').select('id').limit(1);
     
     if (themeError) {
