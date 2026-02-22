@@ -18,6 +18,7 @@ interface ProfileFormProps {
 export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
   const [formData, setFormData] = useState({
     fullName: initialData.full_name,
+    username: '',
     email: initialData.email,
     phone: '',
     gender: '' as 'male' | 'female' | '',
@@ -88,6 +89,13 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.fullName.trim()) newErrors.fullName = 'Nama wajib diisi';
+    if (!formData.username.trim()) {
+      newErrors.username = 'Username wajib diisi';
+    } else if (formData.username.length < 3) {
+      newErrors.username = 'Username minimal 3 karakter';
+    } else if (!/^[a-zA-Z0-9_.]+$/.test(formData.username)) {
+      newErrors.username = 'Username hanya boleh huruf, angka, underscore, dan titik';
+    }
     if (!formData.phone.trim()) newErrors.phone = 'Nomor HP wajib diisi';
     if (!formData.gender) newErrors.gender = 'Pilih jenis kelamin';
     if (!formData.age) {
@@ -152,6 +160,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
         .upsert({
           id: userId,
           full_name: formData.fullName,
+          username: formData.username.toLowerCase(),
           email: formData.email,
           gender: formData.gender,
           age: parseInt(formData.age),
@@ -167,11 +176,25 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
           is_profile_complete: true
         });
 
-      clearTimeout(timeoutMsg);
-      const endTime = Date.now();
-      console.log(`[Onboarding] Supabase response in ${endTime - startTime}ms`);
-
       if (error) throw error;
+
+      // Also create an initial entry in user_addresses Table
+      await supabase
+        .from('user_addresses')
+        .insert({
+          user_id: userId,
+          label: 'Alamat Pendaftaran',
+          receiver_name: formData.fullName,
+          phone_number: normalizedPhone,
+          province_id: formData.province.id,
+          province_name: formData.province.name,
+          city_id: formData.city.id,
+          city_name: formData.city.name,
+          district_id: formData.district.id,
+          district_name: formData.district.name,
+          detail_address: formData.addressDetail,
+          is_main: true
+        });
 
       // Optimistic UI: Sync cookie and state immediately
       document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
@@ -231,6 +254,19 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
             readOnly
             className="block w-full rounded-2xl border border-slate-200 px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-400 outline-none bg-slate-100 cursor-not-allowed"
           />
+        </div>
+
+        <div>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Username</label>
+          <input
+            type="text"
+            value={formData.username}
+            onChange={(e) => setFormData({ ...formData, username: e.target.value.replace(/\s/g, '').toLowerCase() })}
+            placeholder="Pilih username unik"
+            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.username ? 'border-red-300' : 'border-slate-200'}`}
+          />
+          {errors.username && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.username}</p>}
+          <p className="mt-1.5 ml-1 text-[10px] text-slate-400 uppercase tracking-widest font-bold">Digunakan untuk profil publikmu</p>
         </div>
       </div>
 

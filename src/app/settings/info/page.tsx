@@ -36,7 +36,7 @@ export default function AppInfoPage() {
         <div className="bg-white border border-slate-100 rounded-3xl p-6 divide-y divide-slate-50 shadow-sm">
            <div className="flex justify-between py-3">
               <span className="text-xs font-bold text-slate-400 uppercase">Vendor</span>
-              <span className="text-xs font-black text-slate-800">Google Antigravity</span>
+              <span className="text-xs font-black text-slate-800">Google Antigravity & DAFBEATX</span>
            </div>
            <div className="flex justify-between py-3">
               <span className="text-xs font-bold text-slate-400 uppercase">Database</span>

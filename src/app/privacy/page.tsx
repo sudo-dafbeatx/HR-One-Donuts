@@ -28,7 +28,7 @@ export default async function PrivacyPage() {
           
           <div className="space-y-10 text-slate-600 leading-relaxed">
             {/* Section 1 */}
-            <section>
+            <section id="kebijakan-privasi">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">1</span>
                 Informasi yang Kami Kumpulkan
@@ -39,7 +39,7 @@ export default async function PrivacyPage() {
             </section>
 
             {/* Section 2 */}
-            <section>
+            <section id="pengelolaan-data">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">2</span>
                 Penggunaan Informasi

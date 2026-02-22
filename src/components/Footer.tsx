@@ -129,14 +129,14 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
                 </div>
               </a>
 
-              <a href={`mailto:${siteSettings?.email || 'hello@hrone-donuts.com'}`} className="flex items-start gap-4 group">
+              <a href={`mailto:${siteSettings?.email || 'Heri.irawan.hr1@gmail.com'}`} className="flex items-start gap-4 group">
                 <div className="size-10 md:size-11 rounded-xl md:rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:text-white transition-all">
                   <span className="material-symbols-outlined text-lg md:text-xl">mail</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5 md:mb-1">Email Support</span>
                   <span className="text-slate-300 text-xs md:text-sm font-bold group-hover:text-blue-500 transition-colors">
-                    {siteSettings?.email || 'hello@hrone-donuts.com'}
+                    {siteSettings?.email || 'Heri.irawan.hr1@gmail.com'}
                   </span>
                 </div>
               </a>

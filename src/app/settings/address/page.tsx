@@ -29,6 +29,17 @@ interface Address {
   longitude?: number;
 }
 
+interface ProfileAddress {
+  id: string;
+  full_name: string | null;
+  phone?: string | null;
+  province_name: string;
+  city_name: string;
+  district_name: string;
+  address_detail: string | null;
+  province_id?: string;
+}
+
 export default function AddressPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isAdding, setIsAdding] = useState(false);
@@ -37,6 +48,7 @@ export default function AddressPage() {
     label: 'Rumah',
     phone: '+62'
   });
+  const [profileAddress, setProfileAddress] = useState<ProfileAddress | null>(null);
   const supabase = createClient();
 
   useEffect(() => {
@@ -51,6 +63,18 @@ export default function AddressPage() {
         .order('is_default', { ascending: false });
 
       setAddresses(data || []);
+      
+      if (!data || data.length === 0) {
+        const { data: profileData } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (profileData && profileData.province_id) {
+          setProfileAddress(profileData);
+        }
+      }
       setLoading(false);
     }
     fetchAddresses();
@@ -218,6 +242,35 @@ export default function AddressPage() {
               </div>
               <h3 className="text-lg font-bold text-slate-800 mb-2">Belum ada alamat</h3>
               <p className="text-slate-500 text-sm font-medium mb-8">Tambahkan alamat pengiriman favoritmu sekarang.</p>
+              
+              {profileAddress && (
+                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 text-left animate-in slide-in-from-top-4 duration-500">
+                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3">Saran dari Profil</p>
+                  <p className="text-sm font-bold text-slate-800 mb-1">{profileAddress.full_name}</p>
+                  <p className="text-xs text-slate-500 mb-4 whitespace-pre-line">
+                    {profileAddress.district_name}, {profileAddress.city_name}, {profileAddress.province_name}
+                    {profileAddress.address_detail ? `\n${profileAddress.address_detail}` : ''}
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setFormData({
+                        label: 'Utama',
+                        full_name: profileAddress.full_name || '',
+                        phone: profileAddress.phone || '+62',
+                        province: profileAddress.province_name,
+                        city: profileAddress.city_name,
+                        district: profileAddress.district_name,
+                        street_name: profileAddress.address_detail || '',
+                        is_default: true
+                      });
+                      setIsAdding(true);
+                    }}
+                    className="w-full py-3 bg-primary text-white font-bold rounded-xl text-xs uppercase tracking-widest shadow-md active:scale-95 transition-all"
+                  >
+                    Gunakan Alamat Pendaftaran
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { 
   UserCircleIcon, 
-  KeyIcon, 
   ShieldCheckIcon,
   DevicePhoneMobileIcon,
   EnvelopeIcon,
@@ -13,6 +12,7 @@ import {
   ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
+import Link from 'next/link';
 
 interface AuthLog {
   id: string;
@@ -40,13 +40,16 @@ export default function AccountSettingsPage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
+  const [isGoogleUser, setIsGoogleUser] = useState(false); // Added isGoogleUser state
   const [authLogs, setAuthLogs] = useState<AuthLog[]>([]);
   const supabase = createClient();
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchUser = async () => { // Renamed fetchData to fetchUser
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
+      setIsGoogleUser(user.app_metadata.provider === 'google'); // Set isGoogleUser
 
       const { data: profileData } = await supabase
         .from('user_profiles')
@@ -65,7 +68,7 @@ export default function AccountSettingsPage() {
       setAuthLogs(logsData || []);
       setLoading(false);
     }
-    fetchData();
+    fetchUser(); // Called fetchUser
   }, [supabase]);
 
   if (loading) return (
@@ -78,13 +81,13 @@ export default function AccountSettingsPage() {
     <div className="space-y-6 pb-20">
       {/* Tabs */}
       <div className="flex bg-white border-b border-slate-100 px-4 sticky top-16 z-20">
-        <button 
+        <button
           onClick={() => setActiveTab('profile')}
           className={`flex-1 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === 'profile' ? 'border-primary text-primary' : 'border-transparent text-slate-400'}`}
         >
           Akun
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab('security')}
           className={`flex-1 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === 'security' ? 'border-primary text-primary' : 'border-transparent text-slate-400'}`}
         >
@@ -111,11 +114,22 @@ export default function AccountSettingsPage() {
           </section>
 
           {/* Details Section */}
-          <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 divide-y divide-slate-50">
-            <EditableItem icon={UserCircleIcon} label="Nama Lengkap" value={profile?.full_name || '-'} />
-            <EditableItem icon={FingerPrintIcon} label="Username" value={profile?.username || '-'} />
-            <EditableItem icon={DevicePhoneMobileIcon} label="No. Handphone" value={profile?.phone_number || '-'} />
-            <EditableItem icon={EnvelopeIcon} label="Email" value={profile?.email || '-'} />
+          <div className="space-y-4"> {/* Added a wrapper div for the new structure */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Informasi Dasar</h3>
+              <Link
+                href="/settings/account/edit"
+                className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline"
+              >
+                Ubah
+              </Link>
+            </div>
+            <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 divide-y divide-slate-50">
+              <EditableItem icon={UserCircleIcon} label="Nama Lengkap" value={profile?.full_name || '-'} />
+              <EditableItem icon={FingerPrintIcon} label="Username" value={profile?.username || '-'} />
+              <EditableItem icon={DevicePhoneMobileIcon} label="No. Handphone" value={profile?.phone_number || '-'} />
+              <EditableItem icon={EnvelopeIcon} label="Email" value={profile?.email || '-'} />
+            </div>
           </div>
 
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Akun Media Sosial</p>
@@ -128,10 +142,24 @@ export default function AccountSettingsPage() {
           </div>
 
           <div className="px-2">
-            <button className="w-full flex items-center justify-center gap-2 py-4 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">
-              <KeyIcon className="size-5" />
-              Ganti Password
-            </button>
+            {/* Conditional rendering for password change button */}
+            {!isGoogleUser && (
+              <Link
+                href="/auth/forgot-password"
+                className="w-full flex items-center justify-between p-4 bg-primary/5 border border-primary/10 rounded-2xl group active:scale-[0.98] transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-2 bg-white rounded-xl text-primary shadow-sm group-hover:scale-110 transition-transform">
+                    <FingerPrintIcon className="size-5" />
+                  </div>
+                  <div className="flex flex-col text-left">
+                    <span className="text-sm font-bold text-slate-800">Ganti Password</span>
+                    <span className="text-[10px] text-slate-500 font-medium">Ubah kata sandi secara berkala</span>
+                  </div>
+                </div>
+                <ChevronRightIcon className="size-4 text-slate-300" />
+              </Link>
+            )}
           </div>
         </div>
       ) : (

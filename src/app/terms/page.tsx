@@ -28,7 +28,7 @@ export default async function TermsPage() {
           
           <div className="space-y-10 text-slate-600 leading-relaxed">
             {/* Section 1 */}
-            <section>
+            <section id="syarat-layanan">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">1</span>
                 Ketentuan Umum
@@ -37,11 +37,22 @@ export default async function TermsPage() {
                 Selamat datang di {siteSettings?.store_name || "HR-One Donuts"}. Dengan mengakses dan melakukan pemesanan di website kami, Anda dianggap telah menyetujui syarat dan ketentuan yang berlaku. Kami berhak mengubah syarat ini sewaktu-waktu tanpa pemberitahuan sebelumnya.
               </p>
             </section>
-
+            
             {/* Section 2 */}
-            <section>
+            <section id="ketentuan-donat-box">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">2</span>
+                Ketentuan Donat Box
+              </h2>
+              <p className="pl-11">
+                Pemesanan unit Donat Box harus mengikuti kelipatan yang tersedia.
+              </p>
+            </section>
+
+            {/* Section 3 */}
+            <section id="pemesanan">
+              <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
+                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">3</span>
                 Pemesanan & Pembayaran
               </h2>
               <ul className="list-disc pl-16 space-y-2">
@@ -52,10 +63,10 @@ export default async function TermsPage() {
               </ul>
             </section>
 
-            {/* Section 3 */}
-            <section>
+            {/* Section 4 */}
+            <section id="pengiriman">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">3</span>
+                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">4</span>
                 Pengiriman
               </h2>
               <ul className="list-disc pl-16 space-y-2">
@@ -65,10 +76,34 @@ export default async function TermsPage() {
               </ul>
             </section>
 
-            {/* Section 4 */}
-            <section>
+            <section id="event-ulang-tahun">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">4</span>
+                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">5</span>
+                Persyaratan Event Ulang Tahun
+              </h2>
+              <p className="pl-11">Syarat dan ketentuan khusus untuk paket ulang tahun.</p>
+            </section>
+
+            <section id="flash-sale">
+              <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
+                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">6</span>
+                Persyaratan Flash Sale
+              </h2>
+              <p className="pl-11">Ketentuan promo SMS dan Jum&apos;at Berkah.</p>
+            </section>
+
+            <section id="ketentuan-donat-eceran">
+              <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
+                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">7</span>
+                Ketentuan Donat Eceran
+              </h2>
+              <p className="pl-11">Pembelian satuan tersedia di outlet offline.</p>
+            </section>
+
+            {/* Section 8 */}
+            <section id="kualitas-produk">
+              <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
+                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">8</span>
                 Kualitas Produk
               </h2>
               <p className="pl-11">

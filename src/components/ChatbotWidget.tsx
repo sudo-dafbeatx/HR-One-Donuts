@@ -139,8 +139,11 @@ export default function ChatbotWidget() {
     };
     checkBotPref();
 
+    const openChat = () => setIsOpen(true);
+
     // Listen for preference changes from settings menu
     window.addEventListener('chatbot_preference_change', checkBotPref);
+    window.addEventListener('open_dona_chat', openChat);
 
     // First visit hint logic
     const hintSeen = localStorage.getItem("dona_hint_seen");
@@ -152,10 +155,14 @@ export default function ChatbotWidget() {
         clearTimeout(showTimer);
         clearTimeout(hideTimer);
         window.removeEventListener('chatbot_preference_change', checkBotPref);
+        window.removeEventListener('open_dona_chat', openChat);
       };
     }
 
-    return () => window.removeEventListener('chatbot_preference_change', checkBotPref);
+    return () => {
+      window.removeEventListener('chatbot_preference_change', checkBotPref);
+      window.removeEventListener('open_dona_chat', openChat);
+    };
   }, []);
 
   useEffect(() => {

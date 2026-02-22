@@ -5,6 +5,7 @@
 ALTER TABLE public.user_profiles 
 ADD COLUMN IF NOT EXISTS username TEXT UNIQUE,
 ADD COLUMN IF NOT EXISTS phone_number TEXT,
+ADD COLUMN IF NOT EXISTS avatar_url TEXT,
 ADD COLUMN IF NOT EXISTS social_links JSONB DEFAULT '{"facebook": "", "instagram": "", "tiktok": ""}',
 ADD COLUMN IF NOT EXISTS chatbot_disabled BOOLEAN DEFAULT false;
 
