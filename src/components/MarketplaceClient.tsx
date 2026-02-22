@@ -79,17 +79,17 @@ export default function MarketplaceClient({
         </div>
 
         {/* Mobile: Compact Badge (1 Star + Num) */}
-        <div className="flex md:hidden items-center bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100 gap-1">
+        <div className="flex md:hidden items-center bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100 gap-0.5">
           <span 
-            className="material-symbols-outlined text-[8px] text-amber-500"
-            style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}
+            className="material-symbols-outlined text-amber-500"
+            style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20", fontSize: '10px' }}
           >
             star
           </span>
-          <span className="text-[9px] text-amber-900 font-black">
+          <span className="text-[8px] text-amber-900 font-bold">
             {rating > 0 ? rating.toFixed(1) : 'new'}
           </span>
-          <span className="text-[8px] text-amber-700/60 font-medium">
+          <span className="text-[7px] text-amber-700/60 font-medium">
             ({total})
           </span>
         </div>
