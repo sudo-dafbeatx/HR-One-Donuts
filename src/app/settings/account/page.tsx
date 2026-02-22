@@ -9,8 +9,7 @@ import {
   DevicePhoneMobileIcon,
   EnvelopeIcon,
   ClockIcon,
-  FingerPrintIcon,
-  ChevronRightIcon // Added ChevronRightIcon
+  FingerPrintIcon
 } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 
