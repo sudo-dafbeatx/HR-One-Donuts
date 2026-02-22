@@ -245,7 +245,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
         {/* Footer */}
         {cart.length > 0 && (
-          <div className="p-6 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+          <div className="p-6 bg-background border-t border-slate-100 dark:border-white/10">
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span className="text-sm">Subtotal</span>
