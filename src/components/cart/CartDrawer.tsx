@@ -208,7 +208,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start gap-2">
-                    <p className="font-bold text-slate-900 dark:text-white line-clamp-1">{item.name}</p>
+                    <p className="font-bold text-slate-900 dark:text-white break-words leading-tight">{item.name}</p>
                     <button 
                       onClick={() => removeFromCart(item.id)}
                       className="text-slate-400 hover:text-red-500 transition-colors"
@@ -270,7 +270,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
               <span className="text-[10px] tracking-wide opacity-90 font-medium">Kirim rincian pesanan otomatis</span>
             </button>
             <p className="mt-4 text-[10px] text-center text-slate-500 dark:text-slate-400 leading-relaxed">
-              Layanan Pengambilan & Pengiriman Area Jakarta Saja
+              Layanan Pengambilan & Pengiriman Area Bogor
             </p>
           </div>
         )}
