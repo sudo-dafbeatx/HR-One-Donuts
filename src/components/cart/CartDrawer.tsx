@@ -148,14 +148,14 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
       {/* Drawer */}
       <aside 
-        className={`fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-background-dark shadow-2xl z-[70] flex flex-col transform transition-transform duration-300 ease-in-out ${
+        className={`fixed right-0 top-0 h-full w-full max-w-md bg-background text-foreground shadow-2xl z-70 flex flex-col transform transition-transform duration-300 ease-in-out ${
           isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div className="flex flex-col">
-            <h2 className="text-xl font-bold flex items-center gap-3 text-heading dark:text-white">
+            <h2 className="text-xl font-bold flex items-center gap-3 text-foreground">
               <div className="relative size-8">
                 <Image 
                   src="/images/logo-hr-one.webp"
@@ -208,7 +208,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start gap-2">
-                    <p className="font-bold text-slate-900 dark:text-white break-words leading-tight">{item.name}</p>
+                    <p className="font-bold text-foreground wrap-break-word leading-tight">{item.name}</p>
                     <button 
                       onClick={() => removeFromCart(item.id)}
                       className="text-slate-400 hover:text-red-500 transition-colors"

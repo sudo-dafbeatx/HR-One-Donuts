@@ -66,7 +66,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${sourGummy.variable} antialiased font-sans bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 transition-colors duration-300 pb-16 md:pb-0`}
+        className={`${sourGummy.variable} antialiased font-sans bg-background text-foreground transition-colors duration-300 pb-16 md:pb-0`}
       >
         <ScrollToTop />
         <DelayedCardPopup siteSettings={siteSettings} />
