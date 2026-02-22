@@ -67,12 +67,17 @@ export async function createOrder(data: {
     image: string;
   }>;
   session_id?: string;
+  delivery_method?: string;
+  shipping_fee?: number;
 }) {
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) throw new Error('Anda harus login untuk membuat pesanan');
+    // Normalize data (ensure proper types even if passed from client haphazardly)
+    const finalMethod = data.delivery_method || 'delivery';
+    const finalFee = finalMethod === 'pickup' ? 0 : (data.shipping_fee || 0);
 
     const { data: order, error } = await supabase
       .from('orders')
@@ -82,6 +87,8 @@ export async function createOrder(data: {
         total_items: data.total_items,
         items: data.items,
         session_id: data.session_id,
+        delivery_method: finalMethod,
+        shipping_fee: finalFee,
         status: 'pending'
       })
       .select()

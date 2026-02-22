@@ -51,6 +51,8 @@ interface Order {
   total_amount: number;
   total_items: number;
   items: OrderItem[];
+  delivery_method?: string;
+  shipping_fee?: number;
 }
 
 export default function ProfilePage() {
@@ -559,6 +561,20 @@ export default function ProfilePage() {
                                 <span className="flex items-center gap-1">
                                   <CalendarDaysIcon className="size-3 md:size-3.5" />
                                   {new Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}
+                                </span>
+                                <span className="hidden sm:inline size-1 bg-slate-200 rounded-full"></span>
+                                <span className="flex items-center gap-1">
+                                  {order.delivery_method === 'pickup' ? (
+                                    <>
+                                      <span className="material-symbols-outlined text-[14px]">storefront</span>
+                                      Ambil di Toko
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span className="material-symbols-outlined text-[14px]">local_shipping</span>
+                                      Antar ke Rumah
+                                    </>
+                                  )}
                                 </span>
                                 <span className="hidden sm:inline size-1 bg-slate-200 rounded-full"></span>
                                 <span>{order.total_items} item</span>

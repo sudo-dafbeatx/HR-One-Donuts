@@ -28,6 +28,10 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [showCheckoutAnim, setShowCheckoutAnim] = useState(false);
+  const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery');
+
+  const shippingFee = deliveryMethod === 'delivery' ? (siteSettings?.shipping_fee || 0) : 0;
+  const finalTotal = totalPrice + shippingFee;
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
@@ -64,8 +68,10 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
       // 3. Save Order to Database (this also tracks sales volume internally)
       await createOrder({
-        total_amount: totalPrice,
+        total_amount: finalTotal,
         total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
+        delivery_method: deliveryMethod,
+        shipping_fee: shippingFee,
         items: cart.map(item => ({
           product_id: item.id,
           name: item.name,
@@ -94,6 +100,11 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       
       const fullAddress = [detail, district, city, province].filter(Boolean).join(", ");
       message += `Alamat: ${fullAddress}\n\n`;
+
+      message += `🚚 *Metode Penerimaan:*\n`;
+      message += deliveryMethod === 'delivery' ? `✅ Antar ke Rumah\n` : `✅ Ambil Sendiri di Toko\n`;
+      message += `\n`;
+
       message += `🛒 *Detail Pesanan:*\n`;
       
       cart.forEach((item) => {
@@ -101,7 +112,11 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       });
       
       message += `-------------------\n`;
-      message += `💰 *Total Pembayaran: Rp ${totalPrice.toLocaleString("id-ID")}*\n\n`;
+      message += `Subtotal: Rp ${totalPrice.toLocaleString("id-ID")}\n`;
+      if (deliveryMethod === 'delivery') {
+        message += `Ongkir: Rp ${shippingFee.toLocaleString("id-ID")}\n`;
+      }
+      message += `💰 *Total Pembayaran: Rp ${finalTotal.toLocaleString("id-ID")}*\n\n`;
       message += `Mohon segera diproses ya. Terima kasih! 🙏`;
       
       const encodedMessage = encodeURIComponent(message);
@@ -241,6 +256,42 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
               </div>
             ))
           )}
+
+          {/* Delivery Method Selection */}
+          {cart.length > 0 && (
+            <div className="pt-4 space-y-3">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">Metode Penerimaan</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setDeliveryMethod('delivery')}
+                  className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all gap-1 ${
+                    deliveryMethod === 'delivery' 
+                    ? 'border-primary bg-primary/5 text-primary' 
+                    : 'border-slate-100 dark:border-slate-800 text-slate-500 hover:border-slate-200'
+                  }`}
+                >
+                  <span className="material-symbols-outlined">local_shipping</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Antar ke Rumah</span>
+                </button>
+                <button
+                  onClick={() => setDeliveryMethod('pickup')}
+                  className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all gap-1 ${
+                    deliveryMethod === 'pickup' 
+                    ? 'border-primary bg-primary/5 text-primary' 
+                    : 'border-slate-100 dark:border-slate-800 text-slate-500 hover:border-slate-200'
+                  }`}
+                >
+                  <span className="material-symbols-outlined">storefront</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider">Ambil di Toko</span>
+                </button>
+              </div>
+              {deliveryMethod === 'delivery' && (
+                <p className="text-[10px] text-slate-400 italic text-center">
+                  *Ongkir otomatis ditambahkan ke total pembayaran.
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Footer */}
@@ -248,12 +299,18 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           <div className="p-6 bg-background border-t border-slate-100 dark:border-white/10">
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                <span className="text-sm">Subtotal</span>
-                <span className="text-sm font-semibold">Rp {totalPrice.toLocaleString("id-ID")}</span>
+                <span className="text-sm font-medium">Subtotal</span>
+                <span className="text-sm font-bold">Rp {totalPrice.toLocaleString("id-ID")}</span>
               </div>
+              {deliveryMethod === 'delivery' && (
+                <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                  <span className="text-sm font-medium">Biaya Ongkir</span>
+                  <span className="text-sm font-bold">Rp {shippingFee.toLocaleString("id-ID")}</span>
+                </div>
+              )}
               <div className="flex justify-between items-center pt-3 border-t border-slate-200 dark:border-slate-800">
-                <span className="text-lg font-bold text-slate-900 dark:text-white">Total Estimasi</span>
-                <span className="text-2xl font-extrabold text-primary">Rp {totalPrice.toLocaleString("id-ID")}</span>
+                <span className="text-lg font-bold text-primary dark:text-primary-light">Total Estimasi</span>
+                <span className="text-2xl font-extrabold text-primary">Rp {finalTotal.toLocaleString("id-ID")}</span>
               </div>
             </div>
 

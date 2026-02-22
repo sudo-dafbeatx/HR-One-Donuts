@@ -80,6 +80,7 @@ export interface SiteSettings {
   hero_banner_mobile_image?: string;
   logo_url?: string;
   is_popup_enabled?: boolean;
+  shipping_fee?: number;
 }
 
 export interface ProductReview {
