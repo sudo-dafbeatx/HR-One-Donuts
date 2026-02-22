@@ -8,9 +8,9 @@ import {
   ShieldCheckIcon,
   DevicePhoneMobileIcon,
   EnvelopeIcon,
-  GlobeAltIcon,
   ClockIcon,
-  FingerPrintIcon
+  FingerPrintIcon,
+  ChevronRightIcon // Added ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 
@@ -112,10 +112,10 @@ export default function AccountSettingsPage() {
 
           {/* Details Section */}
           <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 divide-y divide-slate-50">
-            <EditableItem icon={UserCircleIcon} label="Nama Lengkap" value={profile?.full_name} />
+            <EditableItem icon={UserCircleIcon} label="Nama Lengkap" value={profile?.full_name || '-'} />
             <EditableItem icon={FingerPrintIcon} label="Username" value={profile?.username || '-'} />
             <EditableItem icon={DevicePhoneMobileIcon} label="No. Handphone" value={profile?.phone_number || '-'} />
-            <EditableItem icon={EnvelopeIcon} label="Email" value={profile?.email} />
+            <EditableItem icon={EnvelopeIcon} label="Email" value={profile?.email || '-'} />
           </div>
 
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Akun Media Sosial</p>
