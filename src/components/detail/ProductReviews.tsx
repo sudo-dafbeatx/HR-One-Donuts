@@ -33,10 +33,9 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
     setIsLoading(true);
     
     try {
-      // Get current user anonymously. We skip getUser() to avoid triggering
-      // refresh token errors on public pages. 
-      // If the user wants to review, they will be redirected to login.
-      setCurrentUserId(undefined);
+      // Get current user properly
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id);
 
       // Load all data in parallel
       const [reviewsResult, statsResult] = await Promise.all([
@@ -52,8 +51,13 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
         setStats(statsResult.data || null);
       }
       
-      // User specific check is deferred so it doesn't trigger auth on public pages.
-      setUserReview(null);
+      // If logged in, check if user already reviewed
+      if (user) {
+        const userReviewMatch = (reviewsResult.data || []).find(r => r.user_id === user.id);
+        setUserReview(userReviewMatch || null);
+      } else {
+        setUserReview(null);
+      }
     } catch (error) {
       console.error('Error loading review data:', error);
     } finally {

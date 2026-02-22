@@ -195,7 +195,7 @@ export default function MarketplaceClient({
                   {product.tag && (
                     <div className="absolute bottom-2 right-2 z-10">
                       <span className="px-2 py-0.5 bg-black/40 backdrop-blur-md text-white text-[7px] md:text-[8px] font-black uppercase tracking-wider rounded-md">
-                        {product.tag}
+                        {product.tag?.replace('Terlarais', 'Terlaris')}
                       </span>
                     </div>
                   )}
@@ -233,15 +233,47 @@ export default function MarketplaceClient({
                     <button
                       onClick={async (e) => {
                         e.stopPropagation();
-                        setIsLoading(true, copy?.loading_add_cart || 'Sabar ya...');
+                        
+                        // --- FLYING DOT ANIMATION ---
+                        const btn = e.currentTarget;
+                        const rect = btn.getBoundingClientRect();
+                        
+                        // Create flying dot
+                        const dot = document.createElement('div');
+                        dot.className = 'fixed z-[9999] size-4 bg-red-500 rounded-full border-2 border-white pointer-events-none shadow-lg';
+                        dot.style.left = `${rect.left + rect.width / 2}px`;
+                        dot.style.top = `${rect.top + rect.height / 2}px`;
+                        dot.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                        document.body.appendChild(dot);
+                        
+                        // Find destination (cart icon in navbar/bottomnav)
+                        // Looking for shopping_cart or shopping_bag icons
+                        const cartIcon = document.querySelector('.animate-cart-bounce') || 
+                                       document.querySelector('[aria-label*="cart"]') ||
+                                       document.querySelector('.material-symbols-outlined:contains("shopping_bag")');
+                        
+                        const destRect = cartIcon?.getBoundingClientRect() || { 
+                          left: window.innerWidth - 60, 
+                          top: window.innerHeight - 60 
+                        };
+                        
+                        // Animate
+                        requestAnimationFrame(() => {
+                          dot.style.transform = `translate(${destRect.left - rect.left}px, ${destRect.top - rect.top}px) scale(0.2)`;
+                          dot.style.opacity = '0.5';
+                        });
+                        
+                        // Wait for animation
+                        await new Promise(r => setTimeout(r, 600));
+                        dot.remove();
+                        // --- END ANIMATION ---
+
                         addToCart({
                           id: product.id,
                           name: product.name,
                           price: getEffectivePrice(product),
                           image: product.image_url || ''
                         }, 1);
-                        await new Promise(r => setTimeout(r, 600));
-                        setIsLoading(false);
                       }}
                       className="size-8 md:size-9 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white flex items-center justify-center transition-all active:scale-90"
                       aria-label="Add to cart"
