@@ -24,14 +24,11 @@ export default function PreferencesPage() {
   const [showLangPicker, setShowLangPicker] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    // Load bot preference from localStorage safely after mount
-    if (typeof window !== 'undefined') {
-      const savedBotPref = localStorage.getItem('chatbot_disabled');
-      if (savedBotPref === 'true') {
-        setBotEnabled(false);
-      }
+    const savedBotPref = localStorage.getItem('chatbot_disabled');
+    if (savedBotPref === 'true') {
+      setBotEnabled(false);
     }
+    setMounted(true);
   }, []);
 
   const toggleBot = () => {
