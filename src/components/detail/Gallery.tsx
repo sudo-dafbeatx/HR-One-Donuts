@@ -13,8 +13,8 @@ export default function ProductGallery({ images }: GalleryProps) {
   return (
     <div className="flex flex-col gap-6 w-full">
       {/* Main Image */}
-      <div className="w-full aspect-square rounded-xl bg-white dark:bg-slate-900 p-2 shadow-sm relative border border-slate-100 dark:border-slate-800">
-        <div className="w-full h-full relative rounded-lg overflow-hidden">
+      <div className="w-full aspect-square rounded-xl bg-white dark:bg-slate-900 relative">
+        <div className="w-full h-full relative rounded-xl overflow-hidden">
             <Image
               src={activeImage}
               alt="Product detail main view"
