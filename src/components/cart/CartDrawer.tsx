@@ -148,7 +148,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
       {/* Drawer */}
       <aside 
-        className={`fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-background-dark shadow-2xl z-[70] flex flex-col transform transition-transform duration-300 ease-in-out ${
+        className={`fixed right-0 top-0 h-full w-full max-w-md bg-white dark:bg-background-dark shadow-2xl z-70 flex flex-col transform transition-transform duration-300 ease-in-out ${
           isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
