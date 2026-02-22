@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { SiteSettings } from "@/types/cms";
 import { DEFAULT_COPY } from "@/lib/theme-defaults";
 import EditableText from "@/components/cms/EditableText";
@@ -24,36 +23,14 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [profileLink, setProfileLink] = useState("/login");
-  const supabase = createClient();
+  // Default to /login to satisfy "no auth calls on public pages" requirement.
+  // Real session state is handled at /profile or middleware.
+  const profileLink = "/login";
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .maybeSingle();
-        
-        if (profile?.role === 'admin') {
-          setProfileLink('/admin');
-        } else {
-          setProfileLink('/profile');
-        }
-      } else {
-        setProfileLink('/login');
-      }
-    };
-
-    checkUser();
-  }, [supabase]);
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-white/70 backdrop-blur-md border-b border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.03)] supports-backdrop-filter:bg-white/60">
@@ -153,7 +130,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
           <Link
             href={profileLink}
             className="flex items-center gap-3 p-1.5 md:pl-4 md:pr-1.5 rounded-2xl border border-slate-200/60 hover:border-primary/30 hover:shadow-md transition-all bg-white/50 backdrop-blur-sm group"
-            title={profileLink === '/admin' ? 'Admin Dashboard' : (profileLink === '/profile' ? 'My Profile' : 'Login')}
+            title="Login"
           >
             <span className="text-xs font-black text-slate-700 uppercase tracking-widest hidden lg:inline-block group-hover:text-primary transition-colors">
               <EditableText copyKey="nav_account" />

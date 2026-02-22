@@ -2,14 +2,13 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { createPublicClient } from '@/lib/supabase/client';
 import ReviewStats from './ReviewStats';
 import ReviewForm from './ReviewForm';
 import ReviewList from './ReviewList';
 import { 
   getProductReviews, 
-  getProductReviewStats, 
-  getUserReviewForProduct 
+  getProductReviewStats 
 } from '@/app/actions/review-actions';
 import type { ProductReview, ReviewStats as ReviewStatsType } from '@/types/cms';
 
@@ -25,7 +24,8 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
+  // Use public client for anonymous browsing to avoid refresh token errors
+  const supabase = createPublicClient();
 
   const INITIAL_DISPLAY_COUNT = 5;
 
@@ -33,15 +33,15 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
     setIsLoading(true);
     
     try {
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUserId(user?.id);
+      // Get current user anonymously. We skip getUser() to avoid triggering
+      // refresh token errors on public pages. 
+      // If the user wants to review, they will be redirected to login.
+      setCurrentUserId(undefined);
 
       // Load all data in parallel
-      const [reviewsResult, statsResult, userReviewResult] = await Promise.all([
+      const [reviewsResult, statsResult] = await Promise.all([
         getProductReviews(productId, 100), // Load up to 100 reviews
         getProductReviewStats(productId),
-        user ? getUserReviewForProduct(productId) : Promise.resolve({ success: true, data: null }),
       ]);
 
       if (reviewsResult.success) {
@@ -51,10 +51,9 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
       if (statsResult.success) {
         setStats(statsResult.data || null);
       }
-
-      if (userReviewResult.success) {
-        setUserReview(userReviewResult.data);
-      }
+      
+      // User specific check is deferred so it doesn't trigger auth on public pages.
+      setUserReview(null);
     } catch (error) {
       console.error('Error loading review data:', error);
     } finally {

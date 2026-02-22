@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createPublicServerSupabaseClient } from "@/lib/supabase/server";
 import { Product, SiteSettings, ReviewStats } from "@/types/cms";
 import MarketplaceClient from "@/components/MarketplaceClient";
 import Hero from "@/components/Hero";
@@ -15,7 +15,7 @@ export const revalidate = 0;
 
 export default async function Home() {
   console.log("SUPABASE_URL_RUNTIME:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-  const supabase = await createServerSupabaseClient();
+  const supabase = createPublicServerSupabaseClient();
   const copy = await getCopy();
   
   let siteSettings: SiteSettings | undefined;

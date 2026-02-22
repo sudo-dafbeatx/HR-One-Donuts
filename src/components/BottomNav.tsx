@@ -16,25 +16,18 @@ import {
   QuestionMarkCircleIcon as QuestionMarkCircleIconSolid,
   UserCircleIcon as UserCircleIconSolid
 } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useEffect } from "react";
 import { useCart } from "@/context/CartContext";
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const [profileLink, setProfileLink] = useState("/login");
-  const supabase = createClient();
+  const profileLink = "/login";
   const { totalItems, setIsCartOpen } = useCart();
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      // All users go to /profile — admin panel is accessed via /admin/login only
-      setProfileLink(user ? '/profile' : '/login');
-    };
-
-    checkUser();
-  }, [supabase]);
+    // Session state check removed to satisfy "no auth calls on public pages" requirement.
+    // Real session state is handled at /profile or middleware.
+  }, []);
 
   const navItems = [
     { 

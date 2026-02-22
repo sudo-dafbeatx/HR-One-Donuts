@@ -1,7 +1,6 @@
 import MarketplaceClient from "@/components/MarketplaceClient";
 import CatalogNavbar from "@/components/catalog/Navbar";
 import Footer from "@/components/Footer";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SiteSettings, Product } from "@/types/cms";
 
 import { getCopy } from "@/lib/theme";
@@ -10,8 +9,10 @@ export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 export const revalidate = 0;
 
+import { createPublicServerSupabaseClient } from "@/lib/supabase/server";
+
 export default async function CatalogPage() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createPublicServerSupabaseClient();
   const copy = await getCopy();
   
   // Fetch site info

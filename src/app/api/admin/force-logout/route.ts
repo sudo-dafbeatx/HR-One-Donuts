@@ -59,24 +59,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call the Admin API: POST /auth/v1/logout with scope=global
-    // Using the service role key as the Bearer token and specifying the target user
-    const logoutResponse = await fetch(`${supabaseUrl}/auth/v1/admin/users/${targetUserId}/logout`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${serviceRoleKey}`,
-        'apikey': serviceRoleKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ scope: 'global' }),
-    });
+    // 3. Revoke all sessions via Supabase Admin API
+    // Using the SDK method which handles the endpoint routing correctly
+    const { error: logoutError } = await supabaseService.auth.admin.signOut(targetUserId, 'global');
 
-    if (!logoutResponse.ok) {
-      const errorBody = await logoutResponse.text();
+    if (logoutError) {
       console.error('[ForceLogout] Supabase Admin API error:', {
-        status: logoutResponse.status,
-        statusText: logoutResponse.statusText,
-        body: errorBody,
+        message: logoutError.message,
+        status: logoutError.status,
         targetUserId,
       });
 
@@ -102,7 +92,7 @@ export async function POST(request: NextRequest) {
           targetUserId,
         });
         return NextResponse.json(
-          { success: false, error: `Gagal memaksa logout: ${logoutResponse.statusText}` },
+          { success: false, error: `Gagal memaksa logout: ${logoutError.message}` },
           { status: 500 }
         );
       }

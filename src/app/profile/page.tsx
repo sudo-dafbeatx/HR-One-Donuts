@@ -8,12 +8,17 @@ import {
   MapPinIcon, 
   ShoppingBagIcon,
   ArrowRightOnRectangleIcon,
-  CalendarDaysIcon
+  CalendarDaysIcon,
+  PencilSquareIcon,
+  EnvelopeIcon,
+  PhoneIcon,
+  CalendarIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useLoading } from '@/context/LoadingContext';
 import { uploadAvatar, setPredefinedAvatar } from '@/app/actions/avatar-actions';
 import { normalizePhoneToID } from '@/lib/phone';
+import UserDailyNotification from "@/components/UserDailyNotification";
 import Image from 'next/image';
 import { CameraIcon, PhotoIcon, SparklesIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 
@@ -75,7 +80,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (!user) {
         router.push('/login?next=/profile');
         return;
@@ -276,10 +281,12 @@ export default function ProfilePage() {
                 <span className="size-1.5 bg-cyan-300 rounded-full animate-ping"></span>
                 Pelanggan
               </div>
-              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-1 drop-shadow-sm truncate flex items-center gap-2">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-1 drop-shadow-sm truncate flex flex-wrap items-center gap-2">
                 <span className="truncate">{profile?.full_name || 'Teman Donat'}</span>
                 {profile?.is_verified && (
-                  <CheckBadgeIcon className="size-6 md:size-8 text-blue-400 drop-shadow-md shrink-0 mb-1" title="Akun Terverifikasi" />
+                  <div className="flex items-center justify-center bg-blue-500 rounded-full p-1 shadow-md shrink-0 mb-1 z-10" title="Akun Terverifikasi">
+                    <CheckBadgeIcon className="size-5 md:size-6 text-white" />
+                  </div>
                 )}
               </h1>
               <p className="text-blue-50/80 font-medium mb-0 opacity-90 text-sm md:text-base truncate">{profile?.email}</p>
@@ -587,6 +594,7 @@ export default function ProfilePage() {
 
         </div>
       </div>
+      <UserDailyNotification />
     </div>
   );
 }

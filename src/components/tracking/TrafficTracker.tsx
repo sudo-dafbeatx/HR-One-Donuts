@@ -3,22 +3,18 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { logTraffic } from '@/app/actions/traffic-actions';
-import { createClient } from '@/lib/supabase/client';
-
 export default function TrafficTracker() {
   const pathname = usePathname();
-  const supabase = createClient();
 
   useEffect(() => {
     const trackPageView = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        // Log the page view
+        // Log the page view anonymously to avoid auth refresh calls on public pages.
+        // If a user_id is strictly needed, it should be retrieved from a session-aware context
+        // only on guarded routes.
         await logTraffic({
           event_type: 'page_view',
           path: pathname,
-          user_id: user?.id,
           user_agent: navigator.userAgent,
           referrer: document.referrer,
         });
@@ -29,7 +25,7 @@ export default function TrafficTracker() {
     };
 
     trackPageView();
-  }, [pathname, supabase.auth]);
+  }, [pathname]);
 
   return null; // This component doesn't render anything
 }

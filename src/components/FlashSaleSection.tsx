@@ -12,8 +12,15 @@ import {
 import { useEffect, useState, useCallback } from 'react';
 import { getEventTiming } from '@/lib/date-utils';
 
+interface ProcessedPromoEvent extends PromoEvent {
+  serverIsActive?: boolean;
+  serverActiveDayName?: string;
+  timing?: any;
+  isJumat?: boolean;
+}
+
 interface FlashSaleSectionProps {
-  events: PromoEvent[];
+  events: ProcessedPromoEvent[];
   flashSales?: FlashSale[];
   copy?: Record<string, string>;
 }
@@ -197,12 +204,12 @@ export default function FlashSaleSection({ events, flashSales = [], copy }: Flas
 
           {/* Event-based Promos (from promo_events table) */}
           {categorizedEvents.map((event) => {
-            const timing = event.timing;
-            const statusLabel = timing.isActive 
+            const serverIsActive = event.serverIsActive;
+            const serverActiveDayName = event.serverActiveDayName;
+
+            const statusLabel = serverIsActive 
               ? 'Terbatas Hari Ini' 
-              : timing.isExpired
-                ? 'Sudah Berakhir'
-                : `Dimulai Hari ${timing.activeDayName}`;
+              : `Dimulai Hari ${serverActiveDayName}`;
             
             const IconComponent = event.isJumat ? GiftIcon : MegaphoneIcon;
 
@@ -229,12 +236,12 @@ export default function FlashSaleSection({ events, flashSales = [], copy }: Flas
                     </div>
                     
                     <div className="flex flex-col items-end gap-2 shrink-0">
-                      {event.discount_percent && timing.isActive && (
+                      {event.discount_percent && serverIsActive && (
                         <div className="px-3 py-1 bg-white text-slate-900 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest shadow-lg">
                           {event.discount_percent}% OFF
                         </div>
                       )}
-                      {!timing.isActive && (
+                      {!serverIsActive && (
                          <div className="px-3 py-1 bg-black/40 text-white backdrop-blur-sm rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-sm">
                           Tidak Aktif
                          </div>

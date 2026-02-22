@@ -6,7 +6,6 @@ import CartDrawer from "@/components/cart/CartDrawer";
 import TrafficTracker from "@/components/tracking/TrafficTracker";
 import BottomNav from "@/components/BottomNav";
 import ThemeProvider from "@/components/ThemeProvider";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SiteSettings } from "@/types/cms";
 import { getTheme, getCopy } from "@/lib/theme";
 import { EditModeProvider } from "@/context/EditModeContext";
@@ -15,8 +14,8 @@ import ThemePanel from "@/components/cms/ThemePanel";
 import ScrollToTop from "@/components/utils/ScrollToTop";
 import DelayedCardPopup from "@/components/DelayedCardPopup";
 import { sourGummy } from "@/lib/fonts";
-import UserDailyNotification from "@/components/UserDailyNotification";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import { createPublicServerSupabaseClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 // Font definition moved to lib/fonts.ts
@@ -34,7 +33,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createPublicServerSupabaseClient();
   const { data: settingsData } = await supabase
     .from('settings')
     .select('value')
@@ -83,7 +82,6 @@ export default async function RootLayout({
                 <BottomNav />
                 <EditModeToggle />
                 <ThemePanel />
-                <UserDailyNotification />
                 <ChatbotWidget />
                 
                 {/* Global Accessibility Fix for Google Identity Services (One Tap) */}

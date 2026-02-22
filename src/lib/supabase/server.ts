@@ -29,6 +29,23 @@ export async function createServerSupabaseClient() {
 }
 
 /**
+ * Public server client that doesn't use cookies and disables auth.
+ * Use for public data fetching (products, categories, etc.) on storefront.
+ */
+export function createPublicServerSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    }
+  );
+}
+
+/**
  * Create a Supabase client with the service role key.
  * ONLY use this on the server for admin operations.
  * This bypasses RLS — use with extreme caution.

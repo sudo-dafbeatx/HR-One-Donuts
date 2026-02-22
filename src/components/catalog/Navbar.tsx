@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { ShoppingBagIcon, ChatBubbleLeftIcon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { createClient } from "@/lib/supabase/client";
 import { usePathname } from "next/navigation";
 import { SiteSettings } from "@/types/cms";
 import LogoBrand from "@/components/ui/LogoBrand";
@@ -13,34 +12,12 @@ export default function CatalogNavbar({ siteSettings, copy }: { siteSettings?: S
   const pathname = usePathname();
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
-  const [profileLink, setProfileLink] = useState("/login");
-  const supabase = createClient();
+  const profileLink = "/login";
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
-    
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .maybeSingle();
-        
-        if (profile?.role === 'admin') {
-          setProfileLink('/admin');
-        } else {
-          setProfileLink('/profile');
-        }
-      } else {
-        setProfileLink('/login');
-      }
-    };
-
-    checkUser();
     return () => clearTimeout(timer);
-  }, [supabase]);
+  }, []);
 
   const navLinks = [
     { label: copy?.nav_home || "Beranda", href: "/" },
@@ -102,7 +79,7 @@ export default function CatalogNavbar({ siteSettings, copy }: { siteSettings?: S
             <Link
               href={profileLink}
               className="flex items-center justify-center p-2 rounded-xl bg-card-bg text-subheading border border-border hover:bg-primary/10 hover:text-primary transition-all shadow-sm"
-              title={profileLink === '/admin' ? 'Admin Dashboard' : (profileLink === '/profile' ? 'My Profile' : 'Login')}
+              title="Login"
             >
               <UserCircleIcon className="w-6 h-6" />
             </Link>
