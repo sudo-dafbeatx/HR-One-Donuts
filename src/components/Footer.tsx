@@ -9,16 +9,16 @@ interface FooterProps {
 
 export default function Footer({ siteSettings, copy }: FooterProps) {
   return (
-    <footer className="bg-slate-900 text-white pt-20 pb-10 overflow-hidden relative">
+    <footer className="bg-slate-900 text-white pt-12 md:pt-20 pb-8 md:pb-10 overflow-hidden relative">
       {/* Abstract Background Element */}
       <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       
       <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 md:gap-12 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 mb-12 md:mb-20">
           {/* Brand Section */}
-          <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-8">
+          <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-6 md:space-y-8">
             <Link href="/" className="inline-block transition-all hover:scale-105 active:scale-95 group">
-              <div className="bg-white p-3 rounded-4xl shadow-xl shadow-black/20 group-hover:rotate-3 transition-transform">
+              <div className="bg-white p-2.5 md:p-3 rounded-3xl md:rounded-4xl shadow-xl shadow-black/20 group-hover:rotate-3 transition-transform">
                 <LogoBrand 
                   logoUrl={siteSettings?.logo_url} 
                   storeName={siteSettings?.store_name} 
@@ -26,7 +26,7 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
                 />
               </div>
             </Link>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-xs font-medium">
+            <p className="text-slate-400 text-xs md:text-sm leading-relaxed max-w-xs font-medium">
               {siteSettings?.tagline || "Freshly baked donuts delivered straight to your door with love. Discover the magic in every bite."}
             </p>
             <div className="flex items-center gap-4">
@@ -39,10 +39,10 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
                   href={social.url} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className={`size-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 ${social.color} hover:text-white hover:border-transparent transition-all shadow-lg group`}
+                  className={`size-10 md:size-12 rounded-xl md:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 ${social.color} hover:text-white hover:border-transparent transition-all shadow-lg group`}
                   aria-label={social.label}
                 >
-                  <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">{social.icon}</span>
+                  <span className="material-symbols-outlined text-xl md:text-2xl group-hover:scale-110 transition-transform">{social.icon}</span>
                 </a>
               ))}
             </div>
@@ -51,14 +51,14 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
           {/* Navigasi & Bantuan */}
           <div className="grid grid-cols-2 lg:col-span-2 gap-8">
             <div>
-              <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-8 opacity-50">
+              <h4 className="text-white font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] mb-5 md:mb-8 opacity-50">
                 {copy?.footer_navigation || 'Navigasi'}
               </h4>
-              <ul className="space-y-4">
+              <ul className="space-y-3.5 md:space-y-4">
                 {[
                   { label: 'Beranda', path: '/' },
                   { label: 'Katalog', path: '/catalog' },
-                  { label: 'Berita', path: '/news' },
+                  { label: 'Event', path: '/news' },
                   { label: 'Promo', path: '/promo/birthday' }
                 ].map((item) => (
                   <li key={item.path}>
@@ -75,15 +75,15 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
             </div>
 
             <div>
-              <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-8 opacity-50">
+              <h4 className="text-white font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] mb-5 md:mb-8 opacity-50">
                 {copy?.footer_help || 'Bantuan'}
               </h4>
-              <ul className="space-y-4">
+              <ul className="space-y-3.5 md:space-y-4">
                 {[
                   { label: 'Cara Pesan', path: '/cara-pesan' },
-                  { label: 'FAQ', path: '#' },
-                  { label: 'Pengiriman', path: '#' },
-                  { label: 'Kontak', path: '#' }
+                  { label: 'FAQ', path: '/faq' },
+                  { label: 'Pengiriman', path: '/pengiriman' },
+                  { label: 'Kontak', path: '/kontak' }
                 ].map((item) => (
                   <li key={item.label}>
                     <Link 
@@ -100,42 +100,42 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-8">
-            <h4 className="text-white font-black text-[11px] uppercase tracking-[0.3em] mb-2 text-center md:text-left opacity-50">
+          <div className="space-y-6 md:space-y-8">
+            <h4 className="text-white font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] mb-2 text-center md:text-left opacity-50">
               {copy?.footer_contact || 'Hubungi Kami'}
             </h4>
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div className="flex items-start gap-4 group">
-                <div className="size-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all">
-                  <span className="material-symbols-outlined text-xl">location_on</span>
+                <div className="size-10 md:size-11 rounded-xl md:rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-all">
+                  <span className="material-symbols-outlined text-lg md:text-xl">location_on</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Lokasi Outlet</span>
-                  <span className="text-slate-300 text-sm font-bold leading-snug">
+                  <span className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5 md:mb-1">Lokasi Outlet</span>
+                  <span className="text-slate-300 text-xs md:text-sm font-bold leading-snug">
                     {siteSettings?.address || "Jakarta, Indonesia"}
                   </span>
                 </div>
               </div>
 
               <a href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} className="flex items-start gap-4 group" target="_blank" rel="noopener noreferrer">
-                <div className="size-11 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 group-hover:bg-green-500 group-hover:text-white transition-all">
-                  <span className="material-symbols-outlined text-xl">chat</span>
+                <div className="size-10 md:size-11 rounded-xl md:rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 group-hover:bg-green-500 group-hover:text-white transition-all">
+                  <span className="material-symbols-outlined text-lg md:text-xl">chat</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">WhatsApp</span>
-                  <span className="text-slate-300 text-sm font-black group-hover:text-green-500 transition-colors">
+                  <span className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5 md:mb-1">WhatsApp</span>
+                  <span className="text-slate-300 text-xs md:text-sm font-black group-hover:text-green-500 transition-colors">
                     {process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || "6285810658117"}
                   </span>
                 </div>
               </a>
 
               <a href={`mailto:${siteSettings?.email || 'hello@hrone-donuts.com'}`} className="flex items-start gap-4 group">
-                <div className="size-11 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:text-white transition-all">
-                  <span className="material-symbols-outlined text-xl">mail</span>
+                <div className="size-10 md:size-11 rounded-xl md:rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                  <span className="material-symbols-outlined text-lg md:text-xl">mail</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Email Support</span>
-                  <span className="text-slate-300 text-sm font-bold group-hover:text-blue-500 transition-colors">
+                  <span className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5 md:mb-1">Email Support</span>
+                  <span className="text-slate-300 text-xs md:text-sm font-bold group-hover:text-blue-500 transition-colors">
                     {siteSettings?.email || 'hello@hrone-donuts.com'}
                   </span>
                 </div>
@@ -145,11 +145,11 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/5 pt-10 flex flex-col md:flex-row justify-between items-center gap-8">
-          <p className="text-slate-500 text-[11px] font-bold order-2 md:order-1 tracking-wider uppercase">
+        <div className="border-t border-white/5 pt-6 md:pt-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8">
+          <p className="text-slate-500 text-[10px] md:text-[11px] font-bold order-2 md:order-1 tracking-wider uppercase">
             {copy?.footer_copyright || `© 2025 ${siteSettings?.store_name || "HR-One Donuts"}. Crafted with love`}
           </p>
-          <div className="flex flex-wrap justify-center gap-x-10 gap-y-4 order-1 md:order-2">
+          <div className="flex flex-wrap justify-center gap-x-6 md:gap-x-10 gap-y-3 md:gap-y-4 order-1 md:order-2">
             {[
               { label: 'Privasi', href: '/privacy' },
               { label: 'Syarat', href: '/terms' },
@@ -157,7 +157,7 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
             ].map((link) => (
               <Link 
                 key={link.href}
-                className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] hover:text-white transition-colors" 
+                className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] hover:text-white transition-colors" 
                 href={link.href}
               >
                 {link.label}

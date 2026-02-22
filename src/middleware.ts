@@ -84,6 +84,9 @@ export default async function proxy(request: NextRequest) {
   const isStorefrontRoute = pathname === '/' ||
                              pathname.startsWith('/catalog') ||
                              pathname.startsWith('/cara-pesan') ||
+                             pathname.startsWith('/faq') ||
+                             pathname.startsWith('/pengiriman') ||
+                             pathname.startsWith('/kontak') ||
                              pathname.startsWith('/news') ||
                              pathname.startsWith('/promo') ||
                              pathname.startsWith('/cookies') ||

@@ -22,7 +22,6 @@ export default function MarketplaceClient({
 }: MarketplaceClientProps) {
   const router = useRouter();
   const { addToCart } = useCart();
-  const { setIsLoading } = useLoading();
   // Derived state from props to ensure UI updates during client navigation
   const [activeCategory, setActiveCategory] = React.useState<string>(copy?.category_all || 'Semua');
   const [searchQuery, setSearchQuery] = React.useState<string>('');
@@ -82,7 +81,7 @@ export default function MarketplaceClient({
         {/* Mobile: Compact Badge (1 Star + Num) */}
         <div className="flex md:hidden items-center bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100 gap-1">
           <span 
-            className="material-symbols-outlined text-[10px] text-amber-500"
+            className="material-symbols-outlined text-[8px] text-amber-500"
             style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20" }}
           >
             star
