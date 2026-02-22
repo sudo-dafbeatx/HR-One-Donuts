@@ -10,12 +10,12 @@ import {
   BoltIcon,
 } from '@heroicons/react/24/outline';
 import { useEffect, useState, useCallback } from 'react';
-import { getEventTiming } from '@/lib/date-utils';
+import { getEventTiming, type EventTiming } from '@/lib/date-utils';
 
 interface ProcessedPromoEvent extends PromoEvent {
   serverIsActive?: boolean;
   serverActiveDayName?: string;
-  timing?: any;
+  timing?: EventTiming;
   isJumat?: boolean;
 }
 
