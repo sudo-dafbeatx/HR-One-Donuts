@@ -9,7 +9,8 @@ import {
   DevicePhoneMobileIcon,
   EnvelopeIcon,
   ClockIcon,
-  FingerPrintIcon
+  FingerPrintIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 
@@ -197,8 +198,8 @@ function EditableItem({ icon: Icon, label, value }: { icon: React.ElementType, l
           <p className="text-sm font-bold text-slate-700 truncate">{value}</p>
         </div>
       </div>
-      <div className="size-8 flex items-center justify-center text-primary group-hover:translate-x-1 transition-transform">
-        <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+      <div className="flex items-center justify-center text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all">
+        <ChevronRightIcon className="size-5" />
       </div>
     </div>
   );
