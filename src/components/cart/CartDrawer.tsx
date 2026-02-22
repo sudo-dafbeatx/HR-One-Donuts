@@ -40,7 +40,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       }
 
       // 2. Validate Profile Completeness
-      const isProfileComplete = profile.full_name && profile.phone && profile.address;
+      const address = (profile as any).address_detail || profile.address;
+      const isProfileComplete = profile.full_name && profile.phone && address;
       
       if (!isProfileComplete) {
         setIsLoading(false);
@@ -73,7 +74,15 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       message += `👤 *Data Pemesan:*\n`;
       message += `Nama: ${profile.full_name}\n`;
       message += `WhatsApp: ${profile.phone}\n`;
-      message += `Alamat: ${profile.address}\n\n`;
+      
+      // Complete address handling
+      const province = (profile as any).province_name || "";
+      const city = (profile as any).city_name || "";
+      const district = (profile as any).district_name || "";
+      const detail = (profile as any).address_detail || profile.address || "";
+      
+      const fullAddress = [detail, district, city, province].filter(Boolean).join(", ");
+      message += `Alamat: ${fullAddress}\n\n`;
       message += `🛒 *Detail Pesanan:*\n`;
       
       cart.forEach((item) => {

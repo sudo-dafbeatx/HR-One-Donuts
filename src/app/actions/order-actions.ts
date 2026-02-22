@@ -10,21 +10,27 @@ export async function getCurrentUserProfile() {
     
     if (!user) return null;
 
-    // 1. Try to fetch existing profile
-    const { data: profile, error: fetchError } = await supabase
+    // 1. Try to fetch existing profile (merge legacy and new detailed metadata)
+    const { data: legacyProfile } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .maybeSingle();
 
-    if (fetchError) {
-      console.error(' [getCurrentUserProfile] Fetch error:', fetchError);
+    const { data: detailProfile } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (legacyProfile || detailProfile) {
+      return {
+        ...legacyProfile,
+        ...detailProfile
+      };
     }
 
-    // 2. If profile exists, return it
-    if (profile) return profile;
-
-    // 3. Fallback: Auto-create profile if missing (safety net for failed triggers)
+    // 2. Fallback: Auto-create profile if missing (safety net for failed triggers)
     console.warn(` [getCurrentUserProfile] Profile missing for user ${user.id}, performing auto-create...`);
     
     const { data: newProfile, error: insertError } = await supabase
