@@ -49,6 +49,8 @@ export default function AddressPage() {
     phone: '+62'
   });
   const [profileAddress, setProfileAddress] = useState<ProfileAddress | null>(null);
+  const [showMap, setShowMap] = useState(false);
+  const [mapQuery, setMapQuery] = useState('');
   const supabase = createClient();
 
   useEffect(() => {
@@ -181,11 +183,59 @@ export default function AddressPage() {
               onChange={e => setFormData({...formData, additional_details: e.target.value})}
             />
 
-            {/* Map Placeholder */}
-            <div className="h-40 bg-slate-100 rounded-3xl flex flex-col items-center justify-center gap-2 border border-dashed border-slate-200">
-               <MapIcon className="size-8 text-slate-300" />
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-6 text-center">Visual Bantu Peta (OpenStreetMap)</p>
-               <button type="button" className="text-[10px] text-primary font-black underline uppercase tracking-widest">Tampilkan Lokasi di Peta</button>
+            {/* Map Placeholder / Functional Map */}
+            <div className="space-y-3">
+              <div className={`h-64 bg-slate-100 rounded-3xl overflow-hidden flex flex-col items-center justify-center gap-2 border border-dashed border-slate-200 relative`}>
+                {showMap && (mapQuery || (formData.latitude && formData.longitude)) ? (
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    frameBorder="0" 
+                    scrolling="no" 
+                    marginHeight={0} 
+                    marginWidth={0} 
+                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${(formData.longitude || 0) - 0.01}%2C${(formData.latitude || 0) - 0.01}%2C${(formData.longitude || 0) + 0.01}%2C${(formData.latitude || 0) + 0.01}&layer=mapnik&marker=${formData.latitude}%2C${formData.longitude}`}
+                    className="absolute inset-0"
+                  />
+                ) : showMap && mapQuery ? (
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                    className="absolute inset-0"
+                  />
+                ) : (
+                  <>
+                    <MapIcon className="size-8 text-slate-300" />
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-6 text-center">
+                      Visual Bantu Peta (OpenStreetMap)
+                    </p>
+                    {!showMap && (
+                      <p className="text-[9px] text-slate-400 font-medium px-8 text-center italic">
+                        Lengkapi alamat atau klik tombol di bawah untuk melihat lokasi
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+              <button 
+                type="button" 
+                onClick={() => {
+                  const query = [formData.street_name, formData.district, formData.city, formData.province]
+                    .filter(Boolean)
+                    .join(', ');
+                  if (query) {
+                    setMapQuery(query);
+                    setShowMap(true);
+                  } else {
+                    alert('Mohon isi alamat terlebih dahulu untuk melihat di peta.');
+                  }
+                }}
+                className="w-full py-2 text-[10px] text-primary font-black underline uppercase tracking-widest hover:text-primary/80 transition-colors"
+              >
+                {showMap ? 'Segarkan Lokasi di Peta' : 'Tampilkan Lokasi di Peta'}
+              </button>
             </div>
           </div>
 

@@ -7,23 +7,13 @@ import { CameraIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useLoading } from '@/context/LoadingContext';
 import Image from 'next/image';
 
-interface ProfileData {
-  id: string;
-  full_name: string | null;
-  username: string | null;
-  avatar_url: string | null;
-  social_links: {
-    facebook?: string;
-    instagram?: string;
-    tiktok?: string;
-  } | null;
-}
+// Removed unused interface
 
 export default function EditProfilePage() {
-  const router = useRouter();
-  const supabase = createClient();
   const { setIsLoading } = useLoading();
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const supabase = createClient();
+  const router = useRouter();
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -36,7 +26,7 @@ export default function EditProfilePage() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchProfileData = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data } = await supabase
@@ -59,21 +49,54 @@ export default function EditProfilePage() {
       }
       setLoading(false);
     };
-    fetchProfile();
+    fetchProfileData();
   }, [supabase]);
+
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = document.createElement('img');
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 400; // Smaller for mobile as requested
+          const scaleSize = MAX_WIDTH / img.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = img.height * scaleSize;
+          
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+          
+          canvas.toBlob((blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error('Canvas to Blob failed'));
+          }, 'image/webp', 0.82); // 0.82 quality target
+        };
+      };
+      reader.onerror = error => reject(error);
+    });
+  };
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true);
       if (!e.target.files || e.target.files.length === 0) return;
       const file = e.target.files[0];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${profile?.id}-${Math.random()}.${fileExt}`;
+      
+      setIsLoading(true, 'Mengoptimalkan foto...');
+      const compressedBlob = await compressImage(file);
+      
+      const fileName = `${profile?.id}-${Date.now()}.webp`;
       const filePath = `avatars/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('images')
-        .upload(filePath, file);
+        .upload(filePath, compressedBlob, {
+          contentType: 'image/webp',
+          upsert: true
+        });
 
       if (uploadError) throw uploadError;
 

@@ -6,9 +6,18 @@ import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { SiteSettings } from "@/types/cms";
 import { DEFAULT_COPY } from "@/lib/theme-defaults";
-import EditableText from "@/components/cms/EditableText";
 import { useEditMode } from "@/context/EditModeContext";
 import LogoBrand from "@/components/ui/LogoBrand";
+import { 
+  UserCircleIcon, 
+  ShoppingBagIcon, 
+  MapPinIcon, 
+  ChevronDownIcon,
+  ArrowRightOnRectangleIcon,
+  Cog6ToothIcon
+} from "@heroicons/react/24/outline";
+import { createClient } from "@/lib/supabase/client";
+import Image from "next/image";
 
 interface NavbarProps {
   siteSettings?: SiteSettings;
@@ -23,14 +32,51 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  // Default to /login to satisfy "no auth calls on public pages" requirement.
-  // Real session state is handled at /profile or middleware.
-  const profileLink = "/profile";
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [userData, setUserData] = useState<{
+    profile: {
+      avatar_url: string | null;
+      district_name: string | null;
+      city_name: string | null;
+      privacy_location: boolean;
+    } | null;
+    orders: Array<{
+      id: string;
+      total_amount: number;
+    }>;
+    totalSpent: number;
+    reviewCount: number;
+  } | null>(null);
+  
+  const supabase = createClient();
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
+    
+    async function fetchUserData() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const [profileRes, ordersRes, reviewsRes] = await Promise.all([
+        supabase.from('user_profiles').select('*').eq('id', user.id).maybeSingle(),
+        supabase.from('orders').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(3),
+        supabase.from('product_reviews').select('id', { count: 'exact' }).eq('user_id', user.id)
+      ]);
+
+      const allOrders = await supabase.from('orders').select('total_amount').eq('user_id', user.id);
+      const totalSpent = allOrders.data?.reduce((sum, order) => sum + order.total_amount, 0) || 0;
+
+      setUserData({
+        profile: profileRes.data,
+        orders: ordersRes.data || [],
+        totalSpent,
+        reviewCount: reviewsRes.count || 0
+      });
+    }
+
+    if (mounted) fetchUserData();
     return () => clearTimeout(timer);
-  }, []);
+  }, [mounted, supabase]);
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-white/70 backdrop-blur-md border-b border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.03)] supports-backdrop-filter:bg-white/60">
@@ -128,18 +174,99 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
           </button>
 
           {/* Account */}
-          <Link
-            href={profileLink}
-            className="flex items-center gap-3 p-1.5 md:pl-4 md:pr-1.5 rounded-2xl border border-slate-200/60 hover:border-primary/30 hover:shadow-md transition-all bg-white/50 backdrop-blur-sm group"
-            title="Login"
-          >
-            <span className="text-xs font-black text-slate-700 uppercase tracking-widest hidden lg:inline-block group-hover:text-primary transition-colors">
-              <EditableText copyKey="nav_account" />
-            </span>
-            <div className="size-8 md:size-10 rounded-xl bg-slate-100 group-hover:bg-primary/10 flex items-center justify-center transition-colors">
-              <span className="material-symbols-outlined text-slate-500 group-hover:text-primary text-xl">person</span>
-            </div>
-          </Link>
+          <div className="relative">
+            <button
+              onClick={() => setIsAccountOpen(!isAccountOpen)}
+              className="flex items-center gap-2 p-1.5 md:pl-4 md:pr-1.5 rounded-2xl border border-slate-200/60 hover:border-primary/30 hover:shadow-md transition-all bg-white/50 backdrop-blur-sm group"
+            >
+              <div className="size-8 md:size-10 rounded-xl bg-slate-100 group-hover:bg-primary/10 flex items-center justify-center transition-colors overflow-hidden relative">
+                {userData?.profile?.avatar_url ? (
+                  <Image src={userData.profile.avatar_url} alt="Avatar" fill className="object-cover" />
+                ) : (
+                  <UserCircleIcon className="size-6 text-slate-400" />
+                )}
+              </div>
+              <ChevronDownIcon className={`size-4 text-slate-400 group-hover:text-primary transition-transform ${isAccountOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Account Dropdown */}
+            {isAccountOpen && (
+              <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-3xl shadow-2xl border border-slate-100 p-2 animate-in fade-in slide-in-from-top-2 duration-300 z-50 overflow-hidden">
+                {userData ? (
+                  <div className="flex flex-col">
+                    {/* Header Summary */}
+                    <div className="p-4 bg-slate-50/50 rounded-2xl mb-2">
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Ringkasan Aktivitas</p>
+                       <div className="grid grid-cols-2 gap-2">
+                          <div className="bg-white p-3 rounded-xl border border-slate-100">
+                             <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">Pengeluaran</p>
+                             <p className="text-sm font-black text-slate-800">Rp {userData.totalSpent.toLocaleString('id-ID')}</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-xl border border-slate-100">
+                             <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">Ulasan</p>
+                             <p className="text-sm font-black text-slate-800">{userData.reviewCount} ulasan</p>
+                          </div>
+                       </div>
+                    </div>
+
+                    {/* Location Summary (Conditional) */}
+                    {userData.profile?.privacy_location && (userData.profile?.district_name || userData.profile?.city_name) && (
+                      <div className="px-4 py-3 flex items-center gap-3 text-slate-600">
+                        <MapPinIcon className="size-4 text-primary" />
+                        <span className="text-xs font-bold truncate">
+                          {userData.profile.district_name || userData.profile.city_name}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Recent Orders */}
+                    <div className="px-4 py-3 border-t border-slate-50">
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Pesanan Terbaru</p>
+                       <div className="space-y-2">
+                          {userData.orders.length > 0 ? userData.orders.map(order => (
+                            <div key={order.id} className="flex items-center justify-between text-[11px] font-semibold">
+                               <span className="text-slate-600">#{order.id.slice(0, 6).toUpperCase()}</span>
+                               <span className="text-slate-800">Rp {order.total_amount.toLocaleString('id-ID')}</span>
+                            </div>
+                          )) : (
+                            <p className="text-[11px] text-slate-400 italic">Belum ada pesanan</p>
+                          )}
+                       </div>
+                    </div>
+
+                    {/* Quick Menu */}
+                    <div className="grid grid-cols-2 gap-1 p-1 border-t border-slate-50 mt-2">
+                       <Link href="/profile" className="flex items-center gap-2 p-3 hover:bg-slate-50 rounded-xl transition-colors">
+                          <ShoppingBagIcon className="size-4 text-slate-400" />
+                          <span className="text-xs font-bold text-slate-700">Aktivitas</span>
+                       </Link>
+                       <Link href="/settings" className="flex items-center gap-2 p-3 hover:bg-slate-50 rounded-xl transition-colors">
+                          <Cog6ToothIcon className="size-4 text-slate-400" />
+                          <span className="text-xs font-bold text-slate-700">Setelan</span>
+                       </Link>
+                    </div>
+
+                    <button 
+                      onClick={async () => {
+                        await supabase.auth.signOut();
+                        window.location.href = '/';
+                      }}
+                      className="w-full mt-1 p-3 flex items-center justify-center gap-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors text-xs font-bold uppercase tracking-widest"
+                    >
+                       <ArrowRightOnRectangleIcon className="size-4" /> Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <div className="p-8 text-center space-y-4">
+                    <p className="text-sm font-bold text-slate-600">Opps! Kamu belum masuk.</p>
+                    <Link href="/login" className="block w-full py-3 bg-primary text-white font-black rounded-2xl text-xs uppercase tracking-widest">
+                       Login Sekarang
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
         </div>
       </div>

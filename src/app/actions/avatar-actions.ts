@@ -69,16 +69,17 @@ export async function uploadAvatar(formData: FormData) {
     
     console.log(`🔗 [uploadAvatar] Public URL: ${publicUrl}`);
     
-    // Update profile
-    const { error: updateError } = await supabase
+    // Update profiles table
+    await supabase
       .from('profiles')
       .update({ avatar_url: publicUrl })
       .eq('id', user.id);
     
-    if (updateError) {
-      console.error('❌ [uploadAvatar] Profile update error:', updateError);
-      throw updateError;
-    }
+    // Update user_profiles table (Settings Suite sync)
+    await supabase
+      .from('user_profiles')
+      .update({ avatar_url: publicUrl })
+      .eq('id', user.id);
     
     console.log('✅ [uploadAvatar] Successfully updated profile avatar');
     return {
@@ -102,15 +103,16 @@ export async function setPredefinedAvatar(url: string) {
     throw new Error('Unauthorized');
   }
   
-  const { error } = await supabase
+  await supabase
     .from('profiles')
     .update({ avatar_url: url })
     .eq('id', user.id);
     
-  if (error) {
-    console.error('❌ [setPredefinedAvatar] Database update error:', error);
-    throw error;
-  }
+  // Sync to user_profiles
+  await supabase
+    .from('user_profiles')
+    .update({ avatar_url: url })
+    .eq('id', user.id);
   
   console.log('✅ [setPredefinedAvatar] Avatar updated successfully');
   return { success: true };

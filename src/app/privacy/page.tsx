@@ -34,8 +34,13 @@ export default async function PrivacyPage() {
                 Informasi yang Kami Kumpulkan
               </h2>
               <p className="pl-11">
-                Kami mengumpulkan informasi yang Anda berikan langsung kepada kami saat melakukan pemesanan, seperti nama, nomor WhatsApp, dan alamat pengiriman. Kami juga dapat mengumpulkan informasi teknis secara otomatis saat Anda mengunjungi website kami.
+                Kami mengumpulkan informasi yang Anda berikan langsung kepada kami saat melakukan pemesanan dan pendaftaran akun, termasuk namun tidak terbatas pada:
               </p>
+              <ul className="list-disc pl-16 mt-4 space-y-2">
+                <li><strong>Data Identitas:</strong> Nama lengkap dan username.</li>
+                <li><strong>Kontak:</strong> Nomor WhatsApp dan alamat email.</li>
+                <li><strong>Lokasi:</strong> Alamat pengiriman lengkap, koordinat geografis (jika izin diberikan), serta detail wilayah (provinsi, kota, kecamatan).</li>
+              </ul>
             </section>
 
             {/* Section 2 */}

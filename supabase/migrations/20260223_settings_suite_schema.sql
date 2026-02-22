@@ -7,7 +7,10 @@ ADD COLUMN IF NOT EXISTS username TEXT UNIQUE,
 ADD COLUMN IF NOT EXISTS phone_number TEXT,
 ADD COLUMN IF NOT EXISTS avatar_url TEXT,
 ADD COLUMN IF NOT EXISTS social_links JSONB DEFAULT '{"facebook": "", "instagram": "", "tiktok": ""}',
-ADD COLUMN IF NOT EXISTS chatbot_disabled BOOLEAN DEFAULT false;
+ADD COLUMN IF NOT EXISTS chatbot_disabled BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS privacy_location BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS privacy_notifications BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS privacy_profile BOOLEAN DEFAULT true;
 
 -- 2. Create user_addresses table
 CREATE TABLE IF NOT EXISTS public.user_addresses (
