@@ -7,13 +7,23 @@ import { CameraIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useLoading } from '@/context/LoadingContext';
 import Image from 'next/image';
 
-// Removed unused interface
+interface UserProfile {
+  id: string;
+  full_name: string | null;
+  username: string | null;
+  avatar_url: string | null;
+  social_links: {
+    facebook?: string;
+    instagram?: string;
+    tiktok?: string;
+  } | null;
+}
 
 export default function EditProfilePage() {
   const { setIsLoading } = useLoading();
   const supabase = createClient();
   const router = useRouter();
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     fullName: '',
