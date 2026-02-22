@@ -131,7 +131,7 @@ function LoginContent() {
         } else {
           document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
           const target = redirectTo.startsWith('http') ? new URL(redirectTo).pathname : redirectTo;
-          router.push(target || '/');
+          router.push(target || '/profile');
           setTimeout(() => router.refresh(), 100);
         }
       } catch (err) {

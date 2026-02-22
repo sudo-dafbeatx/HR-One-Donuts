@@ -21,7 +21,7 @@ import { useCart } from "@/context/CartContext";
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const profileLink = "/login";
+  const profileLink = "/profile";
   const { totalItems, setIsCartOpen } = useCart();
 
   useEffect(() => {

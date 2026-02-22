@@ -25,7 +25,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
   const [searchQuery, setSearchQuery] = useState("");
   // Default to /login to satisfy "no auth calls on public pages" requirement.
   // Real session state is handled at /profile or middleware.
-  const profileLink = "/login";
+  const profileLink = "/profile";
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
