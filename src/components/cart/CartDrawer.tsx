@@ -11,6 +11,17 @@ import { getCurrentUserProfile, createOrder } from "@/app/actions/order-actions"
 import { useRouter } from "next/navigation";
 import CheckoutAnimation from "./CheckoutAnimation";
 
+interface CartProfile {
+  id: string;
+  full_name: string | null;
+  phone: string | null;
+  address: string | null;
+  address_detail?: string | null;
+  district_name?: string | null;
+  city_name?: string | null;
+  province_name?: string | null;
+}
+
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart } = useCart();
   const { setIsLoading } = useLoading();
@@ -30,7 +41,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     
     try {
       // 1. Check Auth & Get Profile (auto-creates if missing)
-      const profile = await getCurrentUserProfile();
+      const profile = await getCurrentUserProfile() as CartProfile | null;
       
       if (!profile) {
         setIsLoading(false);
@@ -40,7 +51,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       }
 
       // 2. Validate Profile Completeness
-      const address = (profile as any).address_detail || profile.address;
+      const address = profile.address_detail || profile.address;
       const isProfileComplete = profile.full_name && profile.phone && address;
       
       if (!isProfileComplete) {
@@ -76,10 +87,10 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       message += `WhatsApp: ${profile.phone}\n`;
       
       // Complete address handling
-      const province = (profile as any).province_name || "";
-      const city = (profile as any).city_name || "";
-      const district = (profile as any).district_name || "";
-      const detail = (profile as any).address_detail || profile.address || "";
+      const province = profile.province_name || "";
+      const city = profile.city_name || "";
+      const district = profile.district_name || "";
+      const detail = profile.address_detail || profile.address || "";
       
       const fullAddress = [detail, district, city, province].filter(Boolean).join(", ");
       message += `Alamat: ${fullAddress}\n\n`;
