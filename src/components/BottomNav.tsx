@@ -83,7 +83,7 @@ export default function BottomNav() {
               <div className="relative">
                 <Icon className="size-6" />
                 {item.isCart && totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-scale-in">
+                  <span key={totalItems} className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-cart-bounce">
                     {totalItems}
                   </span>
                 )}

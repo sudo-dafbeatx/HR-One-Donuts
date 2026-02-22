@@ -117,13 +117,14 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
             aria-label="View shopping cart"
           >
             <span className="material-symbols-outlined group-hover:scale-110 transition-transform">shopping_bag</span>
-            <span
-              className={`absolute top-1.5 right-1.5 size-4 bg-primary text-white text-[9px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm transition-all duration-300 ${
-                !mounted || totalItems === 0 ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
-              }`}
-            >
-              {mounted ? totalItems : 0}
-            </span>
+            {mounted && totalItems > 0 && (
+              <span
+                key={totalItems}
+                className="absolute top-1.5 right-1.5 size-4 bg-red-500 text-white text-[9px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm animate-cart-bounce"
+              >
+                {totalItems}
+              </span>
+            )}
           </button>
 
           {/* Account */}
