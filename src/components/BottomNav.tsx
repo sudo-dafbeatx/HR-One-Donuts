@@ -7,14 +7,16 @@ import {
   ShoppingBagIcon, 
   ShoppingCartIcon,
   QuestionMarkCircleIcon,
-  UserCircleIcon
+  UserCircleIcon,
+  Cog6ToothIcon
 } from "@heroicons/react/24/outline";
 import { 
   HomeIcon as HomeIconSolid, 
   ShoppingBagIcon as ShoppingBagIconSolid,
   ShoppingCartIcon as ShoppingCartIconSolid,
   QuestionMarkCircleIcon as QuestionMarkCircleIconSolid,
-  UserCircleIcon as UserCircleIconSolid
+  UserCircleIcon as UserCircleIconSolid,
+  Cog6ToothIcon as Cog6ToothIconSolid
 } from "@heroicons/react/24/solid";
 import { useEffect } from "react";
 import { useCart } from "@/context/CartContext";
@@ -61,6 +63,12 @@ export default function BottomNav() {
       icon: UserCircleIcon, 
       activeIcon: UserCircleIconSolid 
     },
+    { 
+      label: "Pengaturan", 
+      href: "/settings", 
+      icon: Cog6ToothIcon, 
+      activeIcon: Cog6ToothIconSolid 
+    },
   ];
 
   if (
@@ -73,7 +81,7 @@ export default function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/80 backdrop-blur-xl border-t border-slate-100 pb-safe-area-inset-bottom">
-      <div className="grid grid-cols-5 h-16">
+      <div className="grid grid-cols-6 h-16">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = isActive ? item.activeIcon : item.icon;

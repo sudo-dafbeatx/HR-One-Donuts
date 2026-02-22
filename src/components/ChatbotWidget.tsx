@@ -75,6 +75,7 @@ export default function ChatbotWidget() {
   const [position, setPosition] = useState({ x: 0, y: 0 }); 
   const [isDragging, setIsDragging] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [botDisabled, setBotDisabled] = useState(false);
   const dragStartPos = useRef({ x: 0, y: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -132,6 +133,15 @@ export default function ChatbotWidget() {
       }
     }
 
+    // Load bot preference
+    const checkBotPref = () => {
+      setBotDisabled(localStorage.getItem('chatbot_disabled') === 'true');
+    };
+    checkBotPref();
+
+    // Listen for preference changes from settings menu
+    window.addEventListener('chatbot_preference_change', checkBotPref);
+
     // First visit hint logic
     const hintSeen = localStorage.getItem("dona_hint_seen");
     if (!hintSeen) {
@@ -141,8 +151,11 @@ export default function ChatbotWidget() {
       return () => {
         clearTimeout(showTimer);
         clearTimeout(hideTimer);
+        window.removeEventListener('chatbot_preference_change', checkBotPref);
       };
     }
+
+    return () => window.removeEventListener('chatbot_preference_change', checkBotPref);
   }, []);
 
   useEffect(() => {
@@ -392,7 +405,7 @@ export default function ChatbotWidget() {
   };
 
   const hiddenRoutes = ['/admin', '/login', '/register', '/onboarding'];
-  if (pathname && hiddenRoutes.some(route => pathname.startsWith(route))) {
+  if (botDisabled || (pathname && hiddenRoutes.some(route => pathname.startsWith(route)))) {
     return null;
   }
 
