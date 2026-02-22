@@ -35,6 +35,7 @@ function LoginContent() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [phoneDuplicate, setPhoneDuplicate] = useState(false);
   const [phoneChecking, setPhoneChecking] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
   const phoneDebounceRef = useRef<NodeJS.Timeout | null>(null);
   
@@ -555,6 +556,18 @@ function LoginContent() {
             <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-xs text-primary font-medium">{showPassword ? 'Sembunyikan' : 'Lihat'}</button>
           </div>
           <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-primary focus:outline-none" required />
+        </div>
+        <div className="flex items-center">
+          <input
+            id="remember-me"
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+          />
+          <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 font-medium">
+            Ingat Saya
+          </label>
         </div>
         {TURNSTILE_SITE_KEY && (<div className="flex justify-center"><Turnstile ref={turnstileRef} siteKey={TURNSTILE_SITE_KEY} onSuccess={(token) => setCaptchaToken(token)} /></div>)}
         <button type="submit" disabled={loading} className="w-full rounded-md bg-primary px-6 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-50">{loading ? 'Sedang Masuk...' : 'Sign In'}</button>

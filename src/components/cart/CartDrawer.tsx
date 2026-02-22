@@ -24,6 +24,7 @@ interface CartProfile {
 
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart } = useCart();
+  const [historyPushed, setHistoryPushed] = useState(false);
   const { setIsLoading } = useLoading();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -37,6 +38,33 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
   }, []);
+
+  // Handle Back Button for Drawer (Mobile focus)
+  useEffect(() => {
+    if (!mounted) return;
+
+    const handlePopState = () => {
+      if (isCartOpen) {
+        setIsCartOpen(false);
+        setHistoryPushed(false);
+      }
+    };
+
+    if (isCartOpen && !historyPushed) {
+      window.history.pushState({ drawer: 'cart' }, '');
+      setHistoryPushed(true);
+      window.addEventListener('popstate', handlePopState);
+    } else if (!isCartOpen && historyPushed) {
+      // Manual close (X button or overlay) should remove the history entry
+      window.history.back();
+      setHistoryPushed(false);
+      window.removeEventListener('popstate', handlePopState);
+    }
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isCartOpen, historyPushed, setIsCartOpen, mounted]);
 
   if (!mounted) return null;
 

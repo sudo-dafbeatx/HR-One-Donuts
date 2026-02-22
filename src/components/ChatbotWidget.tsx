@@ -279,7 +279,8 @@ export default function ChatbotWidget() {
 
       if (matched) {
         setTimeout(() => {
-          addBotMessage(matched.answer);
+          const politeAnswer = `${matched.answer}\n\n_Mohon maaf bila jawaban kurang memuaskan, kami akan segera memperbaikinya_`;
+          addBotMessage(politeAnswer);
         }, 800);
         return;
       }
