@@ -3,13 +3,11 @@ import Footer from "@/components/Footer";
 import OrderSteps from "@/components/OrderSteps";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SiteSettings, OrderStep } from "@/types/cms";
-import { getCopy } from "@/lib/theme";
 import Link from "next/link";
 import { ShoppingBagIcon } from "@heroicons/react/24/solid";
 
 export default async function CaraPesanPage() {
   const supabase = await createServerSupabaseClient();
-  const copy = await getCopy();
   
   // 1. Fetch site info
   const { data: siteInfoData } = await supabase
@@ -55,8 +53,8 @@ export default async function CaraPesanPage() {
         <section className="w-full max-w-5xl px-6 pb-20 md:pb-32">
           <div className="bg-slate-900 rounded-[2.5rem] p-10 md:p-16 text-center relative overflow-hidden shadow-2xl border border-slate-800">
             {/* Background Grain/Blur */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[100px] -z-0" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] -z-0" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[100px] z-0" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[100px] z-0" />
             
             <div className="relative z-10 space-y-8">
               <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
