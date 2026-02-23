@@ -1,10 +1,10 @@
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import SiteSettingsEditor from '@/components/admin/CMS/SiteSettingsEditor';
-import OrderStepsEditor from '@/components/admin/CMS/OrderStepsEditor';
+import SiteSettingsEditor from '@/components/admin/CMS/SiteSettingsEditor';
 import CategoryManager from '@/components/admin/CMS/CategoryManager';
 import EventManager from '@/components/admin/CMS/EventManager';
 import FlashSaleManager from '@/components/admin/CMS/FlashSaleManager';
-import { SiteSettings, OrderStep, Category, FlashSale } from '@/types/cms';
+import { SiteSettings, Category, FlashSale } from '@/types/cms';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,10 +12,9 @@ export default async function ContentPage() {
   const supabase = createServiceRoleClient();
   
   try {
-    // Fetch site info, order steps, and categories in parallel
-    const [siteInfoRes, orderStepsRes, categoryRes, eventsRes, flashSalesRes] = await Promise.all([
+    // Fetch site info, events, and categories in parallel
+    const [siteInfoRes, categoryRes, eventsRes, flashSalesRes] = await Promise.all([
       supabase.from('settings').select('value').eq('key', 'site_info').maybeSingle(),
-      supabase.from('settings').select('value').eq('key', 'order_steps').maybeSingle(),
       supabase.from('categories').select('*').order('name', { ascending: true }),
       supabase.from('promo_events').select('*').order('created_at', { ascending: false }),
       supabase.from('flash_sales').select('*').order('created_at', { ascending: false }),
@@ -31,7 +30,6 @@ export default async function ContentPage() {
     }
 
     const siteSettings = siteInfoRes.data?.value as unknown as SiteSettings | undefined;
-    const orderSteps = (orderStepsRes.data?.value as unknown as { steps: OrderStep[] } | null)?.steps;
     const events = eventsRes.data || [];
     const flashSales = (flashSalesRes.data as FlashSale[]) || [];
 
@@ -60,11 +58,6 @@ export default async function ContentPage() {
         <section className="space-y-6">
           <h2 className="text-xl font-bold text-slate-800">3. Katalog & Kategori</h2>
           <CategoryManager initialCategories={categories} />
-        </section>
-
-        <section className="space-y-6">
-          <h2 className="text-xl font-bold text-slate-800">4. Alur Pemesanan</h2>
-          <OrderStepsEditor initialSteps={orderSteps || []} />
         </section>
       </div>
     );

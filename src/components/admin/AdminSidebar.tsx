@@ -14,7 +14,8 @@ import {
   XMarkIcon,
   UserGroupIcon,
   ChatBubbleLeftRightIcon,
-  Cog8ToothIcon
+  Cog8ToothIcon,
+  ShoppingBagIcon
 } from '@heroicons/react/24/outline';
 
 const navGroups = [
@@ -22,6 +23,7 @@ const navGroups = [
     title: 'MENU UTAMA',
     items: [
       { name: 'Dashboard', href: '/admin', icon: HomeIcon },
+      { name: 'Status Pesanan', href: '/admin/orders-status', icon: ShoppingBagIcon },
       { name: 'Menu Produk', href: '/admin/products', icon: ArchiveBoxIcon },
       { name: 'Manajemen Pengguna', href: '/admin/users', icon: UserGroupIcon },
     ]
