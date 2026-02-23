@@ -29,7 +29,7 @@ const dictionaries: Record<Language, Record<string, unknown>> = {
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>('id');
   const [isLoaded, setIsLoaded] = useState(false);
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
 
   // Initialize language
   useEffect(() => {

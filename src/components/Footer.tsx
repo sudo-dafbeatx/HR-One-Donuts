@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { SiteSettings } from "@/types/cms";
 import LogoBrand from "@/components/ui/LogoBrand";

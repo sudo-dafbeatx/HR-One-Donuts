@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import { SiteSettings } from "@/types/cms";
 import { useTranslation } from "@/context/LanguageContext";
