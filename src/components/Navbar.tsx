@@ -5,8 +5,6 @@ import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useState, useEffect } from "react";
 import { SiteSettings } from "@/types/cms";
-import { DEFAULT_COPY } from "@/lib/theme-defaults";
-import { useEditMode } from "@/context/EditModeContext";
 import LogoBrand from "@/components/ui/LogoBrand";
 import { 
   UserCircleIcon, 
@@ -18,6 +16,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
+import { useTranslation } from "@/context/LanguageContext";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 interface NavbarProps {
   siteSettings?: SiteSettings;
@@ -25,10 +25,9 @@ interface NavbarProps {
   hideLogo?: boolean;
 }
 
-export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarProps) {
+export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
   const pathname = usePathname();
-  const { copy: liveCopy } = useEditMode();
-  const copy = liveCopy || _copy || DEFAULT_COPY;
+  const { t } = useTranslation();
   const { totalItems, setIsCartOpen } = useCart();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -101,7 +100,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
                 </h1>
               )}
               <p className="text-[10px] md:text-xs text-slate-500 font-bold hidden md:block leading-none mt-1 uppercase tracking-wider">
-                {siteSettings?.tagline || "Freshly Baked Every Day"}
+                {siteSettings?.tagline || t('hero.subtitle')}
               </p>
             </div>
           </Link>
@@ -115,7 +114,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
               pathname === '/catalog' ? 'text-primary' : 'text-slate-600'
             }`}
           >
-            {copy.nav_menu}
+            {t('nav.catalog')}
           </Link>
           <Link 
             href="/cara-pesan" 
@@ -123,7 +122,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
               pathname === '/cara-pesan' ? 'text-primary' : 'text-slate-600'
             }`}
           >
-            {copy.nav_how_to_order}
+            {t('nav.how_to_order')}
           </Link>
         </nav>
 
@@ -136,7 +135,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
               </div>
               <input
                 className="w-full bg-slate-100/50 border border-transparent rounded-2xl py-2.5 pl-12 pr-4 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 placeholder:font-medium transition-all text-sm outline-none shadow-sm"
-                placeholder={copy.search_placeholder}
+                placeholder={t('search.placeholder')}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -149,6 +148,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
 
         {/* Utilities */}
         <div className="flex items-center gap-1.5 md:gap-4 shrink-0">
+          <LanguageSwitcher />
           {/* Mobile Search Icon (Hidden on Homepage) */}
           {(!pathname || pathname !== '/') && (
             <button className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 md:hidden transition-colors">
@@ -196,15 +196,15 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
                   <div className="flex flex-col">
                     {/* Header Summary */}
                     <div className="p-4 bg-slate-50/50 rounded-2xl mb-2">
-                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Ringkasan Aktivitas</p>
+                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">{t('account.summary')}</p>
                        <div className="grid grid-cols-2 gap-2">
                           <div className="bg-white p-3 rounded-xl border border-slate-100">
-                             <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">Pengeluaran</p>
+                             <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">{t('account.spending')}</p>
                              <p className="text-sm font-black text-slate-800">Rp {userData.totalSpent.toLocaleString('id-ID')}</p>
                           </div>
                           <div className="bg-white p-3 rounded-xl border border-slate-100">
-                             <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">Ulasan</p>
-                             <p className="text-sm font-black text-slate-800">{userData.reviewCount} ulasan</p>
+                             <p className="text-[9px] font-bold text-slate-400 uppercase mb-1">{t('account.reviews')}</p>
+                             <p className="text-sm font-black text-slate-800">{userData.reviewCount} {t('account.reviews').toLowerCase()}</p>
                           </div>
                        </div>
                     </div>
@@ -221,7 +221,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
 
                     {/* Recent Orders */}
                     <div className="px-4 py-3 border-t border-slate-50">
-                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Pesanan Terbaru</p>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">{t('account.recent_orders')}</p>
                        <div className="space-y-2">
                           {userData.orders.length > 0 ? userData.orders.map(order => (
                             <div key={order.id} className="flex items-center justify-between text-[11px] font-semibold">
@@ -229,7 +229,7 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
                                <span className="text-slate-800">Rp {order.total_amount.toLocaleString('id-ID')}</span>
                             </div>
                           )) : (
-                            <p className="text-[11px] text-slate-400 italic">Belum ada pesanan</p>
+                            <p className="text-[11px] text-slate-400 italic">{t('account.no_orders')}</p>
                           )}
                        </div>
                     </div>
@@ -238,11 +238,11 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
                     <div className="grid grid-cols-2 gap-1 p-1 border-t border-slate-50 mt-2">
                        <Link href="/profile" className="flex items-center gap-2 p-3 hover:bg-slate-50 rounded-xl transition-colors">
                           <ShoppingBagIcon className="size-4 text-slate-400" />
-                          <span className="text-xs font-bold text-slate-700">Aktivitas</span>
+                          <span className="text-xs font-bold text-slate-700">{t('account.activity')}</span>
                        </Link>
                        <Link href="/settings" className="flex items-center gap-2 p-3 hover:bg-slate-50 rounded-xl transition-colors">
                           <Cog6ToothIcon className="size-4 text-slate-400" />
-                          <span className="text-xs font-bold text-slate-700">Setelan</span>
+                          <span className="text-xs font-bold text-slate-700">{t('account.settings')}</span>
                        </Link>
                     </div>
 
@@ -253,14 +253,14 @@ export default function Navbar({ siteSettings, copy: _copy, hideLogo }: NavbarPr
                       }}
                       className="w-full mt-1 p-3 flex items-center justify-center gap-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors text-xs font-bold uppercase tracking-widest"
                     >
-                       <ArrowRightOnRectangleIcon className="size-4" /> Sign Out
+                       <ArrowRightOnRectangleIcon className="size-4" /> {t('account.sign_out')}
                     </button>
                   </div>
                 ) : (
                   <div className="p-8 text-center space-y-4">
                     <p className="text-sm font-bold text-slate-600">Opps! Kamu belum masuk.</p>
                     <Link href="/login" className="block w-full py-3 bg-primary text-white font-black rounded-2xl text-xs uppercase tracking-widest">
-                       Login Sekarang
+                       {t('account.login_now')}
                     </Link>
                   </div>
                 )}

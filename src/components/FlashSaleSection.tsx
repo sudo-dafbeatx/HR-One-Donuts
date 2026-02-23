@@ -1,5 +1,3 @@
-'use client';
-
 import { PromoEvent, FlashSale } from '@/types/cms';
 import Link from 'next/link';
 import { 
@@ -11,6 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useEffect, useState, useCallback } from 'react';
 import { getEventTiming, type EventTiming } from '@/lib/date-utils';
+import { useTranslation } from '@/context/LanguageContext';
 
 interface ProcessedPromoEvent extends PromoEvent {
   serverIsActive?: boolean;
@@ -26,6 +25,7 @@ interface FlashSaleSectionProps {
 }
 
 function FlashSaleCountdown({ endDate }: { endDate: string }) {
+  const { t } = useTranslation();
   const calcRemaining = useCallback(() => {
     const now = new Date().getTime();
     const end = new Date(endDate).getTime();
@@ -43,7 +43,7 @@ function FlashSaleCountdown({ endDate }: { endDate: string }) {
     return () => clearInterval(timer);
   }, [calcRemaining]);
 
-  if (remaining <= 0) return <span>Promo Berakhir</span>;
+  if (remaining <= 0) return <span>{t('promo.expired')}</span>;
 
   const days = Math.floor(remaining / 86400);
   const hours = Math.floor((remaining % 86400) / 3600);
@@ -51,23 +51,13 @@ function FlashSaleCountdown({ endDate }: { endDate: string }) {
   const secs = remaining % 60;
 
   if (days > 0) {
-    return <span>{days}h {hours}j {mins}m</span>;
+    return <span>{days}d {hours}h {mins}m</span>;
   }
   return (
     <span className="tabular-nums">
       {String(hours).padStart(2, '0')}:{String(mins).padStart(2, '0')}:{String(secs).padStart(2, '0')}
     </span>
   );
-}
-
-function getDiscountLabel(sale: FlashSale): string {
-  if (sale.discount_type === 'bogo') return 'Beli 1 Gratis 1';
-  return `Diskon ${sale.discount_value || 0}%`;
-}
-
-function getDiscountBadge(sale: FlashSale): string {
-  if (sale.discount_type === 'bogo') return 'BOGO';
-  return `${sale.discount_value || 0}% OFF`;
 }
 
 function isFlashSaleExpired(sale: FlashSale): boolean {
@@ -80,8 +70,19 @@ function isFlashSaleStarted(sale: FlashSale): boolean {
   return new Date(sale.start_date).getTime() <= new Date().getTime();
 }
 
-export default function FlashSaleSection({ events, flashSales = [], copy }: FlashSaleSectionProps) {
+export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleSectionProps) {
   const [mounted, setMounted] = useState(false);
+  const { t } = useTranslation();
+
+  const getDiscountLabel = useCallback((sale: FlashSale): string => {
+    if (sale.discount_type === 'bogo') return t('promo.bogo');
+    return t('promo.discount', { percent: sale.discount_value || 0 });
+  }, [t]);
+
+  const getDiscountBadge = useCallback((sale: FlashSale): string => {
+    if (sale.discount_type === 'bogo') return 'BOGO';
+    return `${sale.discount_value || 0}% OFF`;
+  }, []);
 
   useEffect(() => {
     requestAnimationFrame(() => setMounted(true));
@@ -112,10 +113,10 @@ export default function FlashSaleSection({ events, flashSales = [], copy }: Flas
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div className="flex flex-col gap-1">
             <h2 className="text-2xl md:text-3xl font-black tracking-tight" style={{ color: 'var(--color-primary, #1152d4)' }}>
-              Promo <span style={{ color: 'var(--color-text, #1e293b)' }}>Spesial</span>
+              {t('promo.title').split(' ')[0]} <span style={{ color: 'var(--color-text, #1e293b)' }}>{t('promo.title').split(' ').slice(1).join(' ')}</span>
             </h2>
             <p className="text-sm font-semibold" style={{ color: 'var(--color-muted, #94a3b8)' }}>
-              {copy?.section_flash_sale_subtitle || 'Penawaran terbatas untukmu hari ini'}
+              {t('promo.subtitle')}
             </p>
           </div>
           
@@ -124,7 +125,7 @@ export default function FlashSaleSection({ events, flashSales = [], copy }: Flas
             className="group flex items-center gap-1.5 text-sm font-bold transition-all sm:pb-1"
             style={{ color: 'var(--color-primary, #1152d4)' }}
           >
-            <span>{copy?.cta_view_all || 'Lihat Semua Promo'}</span>
+            <span>{t('promo.view_all')}</span>
             <ArrowRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -185,7 +186,7 @@ export default function FlashSaleSection({ events, flashSales = [], copy }: Flas
                         {sale.end_date ? (
                           <FlashSaleCountdown endDate={sale.end_date} />
                         ) : (
-                          'Berlaku Sekarang'
+                          t('promo.now')
                         )}
                       </span>
                     </div>
@@ -194,7 +195,7 @@ export default function FlashSaleSection({ events, flashSales = [], copy }: Flas
                       href="/catalog?filter=promo"
                       className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white text-white hover:text-slate-900 backdrop-blur-md text-[11px] sm:text-xs font-black transition-all shadow-sm flex items-center gap-2 active:scale-95"
                     >
-                      Belanja Sekarang
+                      {t('promo.shop_now')}
                     </Link>
                   </div>
                 </div>
@@ -208,8 +209,8 @@ export default function FlashSaleSection({ events, flashSales = [], copy }: Flas
             const serverActiveDayName = event.serverActiveDayName;
 
             const statusLabel = serverIsActive 
-              ? 'Terbatas Hari Ini' 
-              : `Dimulai Hari ${serverActiveDayName}`;
+              ? t('promo.limited_today') 
+              : t('promo.starts_at', { day: t(`days.${serverActiveDayName}`) });
             
             const IconComponent = event.isJumat ? GiftIcon : MegaphoneIcon;
 
@@ -243,7 +244,7 @@ export default function FlashSaleSection({ events, flashSales = [], copy }: Flas
                       )}
                       {!serverIsActive && (
                          <div className="px-3 py-1 bg-black/40 text-white backdrop-blur-sm rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-sm">
-                          Tidak Aktif
+                          {t('promo.not_active')}
                          </div>
                       )}
                     </div>
@@ -270,7 +271,7 @@ export default function FlashSaleSection({ events, flashSales = [], copy }: Flas
                       href={`/promo/${event.event_slug}`} 
                       className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white text-white hover:text-slate-900 backdrop-blur-md text-[11px] sm:text-xs font-black transition-all shadow-sm flex items-center gap-2 active:scale-95"
                     >
-                      Lihat Detail
+                      {t('promo.view_details')}
                     </Link>
                   </div>
                 </div>

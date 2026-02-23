@@ -1,0 +1,413 @@
+{
+  "nav": {
+    "home": "Tepas",
+    "catalog": "Katalog",
+    "how_to_order": "Tatanan Pesen",
+    "promo": "Promo",
+    "events": "Event",
+    "contact": "Kontak",
+    "faq": "FAQ",
+    "settings": "Setelan",
+    "profile": "Profil",
+    "login": "Lebet / Daptar"
+  },
+  "search": {
+    "placeholder": "Milari donat karesep anjeun...",
+    "cta": "Milari"
+  },
+  "hero": {
+    "title": "HR-One Donuts",
+    "subtitle": "Resep Tradisi, Rasa Internasional",
+    "desc": "Ngahadirkeun kabingah dina unggal gegel ku donat artisan didamel ku kulawarga anu hipu tur beunghar rasa."
+  },
+  "common": {
+    "view_all": "Tingal Sadayana",
+    "add_to_cart": "Ka Karanjang",
+    "buy_now": "Meser Ayeuna",
+    "loading": "Sakedap nya...",
+    "total": "Total",
+    "checkout": "Checkout",
+    "sold": "Pajeng",
+    "promo_badge": "PROMO",
+    "limited_badge": "LIMITED",
+    "bestseller_badge": "PAYU PISAN",
+    "category_all": "Sadayana",
+    "empty_products": "Teu acan aya produk anu aktip.",
+    "search_not_found": "Teu aya produk anu cocog sareng",
+    "back": "Mulang",
+    "save": "Simpen",
+    "cancel": "Teu Jadi"
+  },
+  "footer": {
+    "tagline": "Donat seger anu didamel unggal dinten kalayan deudeuh. Panggihan kaajaiban dina unggal gegel.",
+    "navigation": "Navigasi",
+    "help": "Bantos",
+    "contact_us": "Kontak Kami",
+    "location": "Lokasi Toko",
+    "copyright": "© 2025 HR-One Donuts. Didamel kalayan deudeuh.",
+    "privacy": "Privasi",
+    "terms": "Sarat",
+    "cookie": "Cookie"
+  },
+  "days": {
+    "Tuesday": "Salasa",
+    "Friday": "Jumaah"
+  },
+  "account": {
+    "activity": "Aktivitas",
+    "settings": "Setelan",
+    "sign_out": "Kaluar",
+    "summary": "Ringkesan Aktivitas",
+    "spending": "Pangeluaran",
+    "reviews": "Ulasan",
+    "recent_orders": "Pesanan Anyar",
+    "no_orders": "Teu acan aya pesanan",
+    "login_now": "Masuk Ayeuna"
+  },
+  "promo": {
+    "title": "Promo Spesial",
+    "subtitle": "Aya tawaran kawates keur anjeun dinten ieu",
+    "view_all": "Tempo Sadaya Promo",
+    "ends_at": "Réngsé dina",
+    "bogo": "Meuli 1 Gratis 1",
+    "discount": "Diskón {percent}%",
+    "starts_at": "Ngawitan Dinten {day}",
+    "limited_today": "Kawates Dinten Ieu",
+    "not_active": "Teu Aktip",
+    "shop_now": "Balanja Ayeuna",
+    "view_details": "Tempo Detil",
+    "expired": "Promo Réngsé",
+    "now": "Laku Ayeuna"
+  },
+  "cart": {
+    "title": "Pesanan Abdi",
+    "subtitle": "Bisnis Kulawarga - Dijieun kalayan Kasih Sayang",
+    "empty_title": "Karanjang masih kosong",
+    "empty_subtitle": "Hayu teangan donat favorit anjeun!",
+    "view_catalog": "Tempo Katalog",
+    "delivery_method_title": "Metode Panarimaan",
+    "delivery": "Anteur ka Bumi",
+    "pickup": "Candak di Toko",
+    "shipping_note": "*Ongkir otomatis ditambahkeun kana total pamayaran.",
+    "subtotal": "Subtotal",
+    "shipping_fee": "Biaya Ongkir",
+    "total_estimate": "Estimasi Total",
+    "whatsapp_cta": "Pesen via WhatsApp",
+    "whatsapp_note": "Kirim wincikan pesanan otomatis",
+    "service_area": "Layanan Candak & Anteur Area Bogor",
+    "alert_title": "Data Teu acan Lengkep",
+    "alert_subtitle": "Lengkepan heula data anjeun.",
+    "alert_cta": "Lengkepan Ayeuna",
+    "alert_back": "Balik deui ka Karanjang",
+    "processing": "Nuju diprosés...",
+    "error_generic": "Gagal mrosés pesanan. Mangga cobian deui.",
+    "whatsapp": {
+      "greeting": "Sampurasun {store_name}! 🍩",
+      "new_order": "*PESANAN ANYAR TINA WEBSITE*",
+      "customer_data": "👤 *Data Pemesen:*",
+      "name": "Nami: {name}",
+      "wa": "WhatsApp: {phone}",
+      "address": "Alamat: {address}",
+      "reception": "🚚 *Metode Panarimaan:*",
+      "delivery_method": "✅ Anteur ka Bumi",
+      "pickup_method": "✅ Candak Sorangan di Toko",
+      "detail": "🛒 *Wincikan Pesanan:*",
+      "item_line": "✅ *{name}*\n   {quantity}x @ Rp {price} = Rp {total}",
+      "subtotal": "Subtotal: Rp {amount}",
+      "shipping": "Ongkir: Rp {amount}",
+      "total_payment": "💰 *Total Pamayaran: Rp {amount}*",
+      "footer": "Mangga énggal diprosés. Hatur nuhun! 🙏"
+    }
+  },
+  "profile": {
+    "title": "Profil Abdi",
+    "customer": "Palanggan",
+    "default_name": "Babaturan Donat",
+    "verified": "Akun Terverifikasi",
+    "complete_data": "Data Lengkep",
+    "change_photo": "Ubah Foto",
+    "update_loading": "Nuju ngoméan profil...",
+    "avatar_setting": "Nyetél avatar...",
+    "avatar_uploading": "Nuju unggah & ngarobah ka WebP...",
+    "phone_taken": "Nomer HP ieu tos aya nu maké. Mangga nganggo nomer sanés.",
+    "update_fail": "Gagal ngoméan profil: {message}",
+    "upload_fail": "Gagal unggah: {message}",
+    "avatar_modal": {
+      "title": "Ubah Foto Profil",
+      "subtitle": "Pilih karakter donat atanapi foto nyalira",
+      "character_title": "Pilih Karakter Donat",
+      "upload_title": "Atanapi Mangga nganggo Foto HP",
+      "upload_cta": "Candak tina Galeri",
+      "upload_note": "Otomatis Convert ka WebP & Hémat Kuota",
+      "cancel": "Engké waé"
+    },
+    "info": {
+      "title": "Informasi Pribadi",
+      "subtitle": "Data anjeun aman & rusiah",
+      "edit": "Édit",
+      "cancel": "Batal",
+      "save": "Simpen Parobahan",
+      "identity_title": "Identitas",
+      "region_title": "Wilayah",
+      "address_detail_title": "Alamat Lengkep",
+      "labels": {
+        "name": "Nami Lengkep",
+        "phone": "Nomer Telepon",
+        "address": "Alamat Pangiriman"
+      },
+      "placeholders": {
+        "name": "Nami Lengkep",
+        "phone": "0812xxxx",
+        "address": "Alamat lengkep pangiriman"
+      },
+      "gender": {
+        "male": "Lalaki",
+        "female": "Awéwé"
+      },
+      "age_suffix": "{age} Taun",
+      "not_filled": "Teu acan dieusi",
+      "not_set": "Teu acan diatur"
+    },
+    "quotes": [
+      "Donat amis kanggo dinten anu amis!",
+      "Imut mangga, aya donat antosan anjeun.",
+      "Mimitian dinten kalayan sumanget sareng donat.",
+      "Satu kacapan donat, sajuta kabagjaan.",
+      "Donat buleud sampurna, sapertos dinten anjeun ayeuna.",
+      "Amisna donat teu samanis imut anjeun.",
+      "Ulah hilap bagja, sareng tuang donat."
+    ],
+    "sidebar": {
+      "cta_title": "Hayu, galeuh donat\nfavorit anjeun !",
+      "cta_sub": "Pesen Ayeuna"
+    }
+  },
+  "orders": {
+    "title": "Riwayat Pesanan",
+    "count": "{count} Transaksi",
+    "empty_title": "Teu acan aya pesanan",
+    "empty_subtitle": "Wah, dompétna masih ateul? Hayu pilih donat favorit anjeun ayeuna!",
+    "empty_cta": "Buka Katalog Menu",
+    "items_count": "{count} item",
+    "detail_cta": "Detil",
+    "reception": {
+      "pickup": "Candak di Toko",
+      "delivery": "Anteur ka Bumi"
+    },
+    "status": {
+      "pending": "Diprosés",
+      "shipping": "Dianteur",
+      "ready": "Tos Siap",
+      "completed": "Réngsé",
+      "cancelled": "Dibatalkeun"
+    },
+    "detail": {
+      "title": "Wincikan Pesanan",
+      "id_label": "ID PESANAN",
+      "items_title": "Daptar Produk",
+      "shipping_title": "Informasi Pangiriman",
+      "reception_method": "METODE",
+      "address_label": "ALAMAT TUJUAN",
+      "no_address": "Alamat teu kacatet.",
+      "payment_title": "Wincikan Pamayaran",
+      "subtotal_label": "Subtotal Produk",
+      "shipping_label": "Ongkir",
+      "total_label": "Total Pamayaran"
+    }
+  },
+  "activity": {
+    "spending": "Pangaluaran",
+    "reviews": "Riwayat Ulasan",
+    "reviews_count": "{count} Ulasan",
+    "location": "Lokasi Utama"
+  },
+  "settings": {
+    "title": "Pangaturan",
+    "sections": {
+      "account": "Akun",
+      "settings": "Pangaturan",
+      "help": "Bantuan"
+    },
+    "account": {
+      "tabs": {
+        "profile": "Akun",
+        "security": "Kaamanan"
+      },
+      "basic_info": {
+        "title": "Informasi Dasar",
+        "edit_cta": "Ubah",
+        "labels": {
+          "name": "Nami Lengkap",
+          "username": "Username",
+          "phone": "No. Handphone",
+          "email": "Email"
+        }
+      },
+      "social": "Akun Media Sosial",
+      "password": {
+        "title": "Ganti Password",
+        "subtitle": "Ganti kata sandi sacara rutin"
+      },
+      "security": {
+        "status_title": "Pariksa Aktivitas Akun",
+        "status_safe": "Akun anjeun aman pisan.",
+        "history_title": "Riwayat Login Anyar",
+        "empty_history": "Teu acan aya riwayat aktivitas."
+      }
+    },
+    "address": {
+      "title": "Alamat Abdi",
+      "add_cta": "Tambah Anyar",
+      "form": {
+        "title_add": "Atur Lokasi Anyar",
+        "cancel": "Batal",
+        "labels": {
+          "home": "Bumi",
+          "office": "Kantor",
+          "name": "Nami Lengkap",
+          "phone": "Nomor Telepon",
+          "province": "Provinsi",
+          "city": "Kota",
+          "district": "Kecamatan",
+          "postal_code": "Kode Pos",
+          "street": "Nami Jalan",
+          "building": "Gedung (Opsional)",
+          "house_no": "No. Bumi",
+          "details": "Wincikan Sanesna"
+        },
+        "placeholders": {
+          "name": "Contona: Budi Sudarsono",
+          "phone": "+62...",
+          "province": "Jawa Barat",
+          "city": "Bogor",
+          "district": "Babakan Madang",
+          "postal_code": "16810",
+          "street": "Jl. Raya Utama",
+          "details": "Wincikan Sanesna (Blok/Unit No., Patokan)"
+        },
+        "map": {
+          "title": "Bantuan Visual Peta",
+          "instruction": "Lengkepan alamat atanapi klik tombol di handap kanggo ningali lokasi",
+          "refresh": "Segerkeun Lokasi dina Peta",
+          "show": "Tembongkeun Lokasi dina Peta",
+          "error_empty": "Mangga eusi alamat sateuacanna kanggo ningali dina peta."
+        },
+        "submit": "Simpen Alamat"
+      },
+      "list": {
+        "delete_confirm": "Hapus alamat ieu?",
+        "default_badge": "Utama",
+        "set_default": "Utamakeun",
+        "edit": "Edit",
+        "empty_title": "Teu acan aya alamat",
+        "empty_desc": "Tambahkeun alamat pangiriman paporit anjeun ayeuna.",
+        "suggestion_title": "Saran ti Profil",
+        "use_suggestion": "Anggo Alamat Pandaptaran"
+      }
+    },
+    "preferences": {
+      "sections": {
+        "bot": "Bot & Chat",
+        "comm": "Komunikasi",
+        "privacy": "Izin & Privasi",
+        "regional": "Regional"
+      },
+      "items": {
+        "bot": {
+          "title": "Chat Bot",
+          "desc": "Bantuan otomatis urang."
+        },
+        "notif": {
+          "title": "Notifikasi",
+          "desc": "Update pesanan & promo."
+        },
+        "location": {
+          "title": "Lokasi",
+          "desc": "Pasihan aksés supados tiasa nangtukeun lokasi alamat anjeun"
+        },
+        "photos": {
+          "title": "Album Poto",
+          "desc": "Pasihan aksés supados tiasa ngunggah poto kanggo feed atanapi penilaian"
+        },
+        "camera": {
+          "title": "Kamera",
+          "desc": "Pasihan aksés supados tiasa nyandak poto"
+        },
+        "language": {
+          "title": "Basa"
+        }
+      }
+    },
+    "policies": {
+      "title": "Kabijakan",
+      "items": {
+        "terms": "Sarat Layanan",
+        "privacy": "Kabijakan Privasi HR-One Donuts",
+        "privacy_detail": "Kabijakan Privasi (Wincikan Pangumpulan Data)",
+        "terms_birthday": "Sarat Layanan Event Tepang Taun",
+        "terms_flash_sms": "Sarat Flash Sale: SMS",
+        "terms_flash_friday": "Sarat Flash Sale: Jumaah Berkah",
+        "terms_box": "Ketangtosan Donat Box",
+        "terms_retail": "Ketangtosan Donat Écéran"
+      },
+      "satisfaction": {
+        "title": "Naha anjeun puas ku artikelna?",
+        "desc": "Masukan anjeun hartos pisan pikeun kami.",
+        "thanks": "Hatur nuhun kana masukanana!",
+        "yes": "Puas",
+        "no": "Kirang Puas"
+      },
+      "contact": {
+        "title": "Hubungi Kami",
+        "chat": "Obrolan Sistem"
+      }
+    },
+    "help": {
+      "title": "Puseur Bantuan",
+      "subtitle": "Aya anu tiasa kami bantu dinten ieu?",
+      "faqs": [
+        {
+          "q": "Kumaha cara mesen donat?",
+          "a": "Anjeun tiasa ningali katalog kami dina menu 'Menu', pilih donat anu dipikahoyong, tambahkeun kana karanjang, teras klik 'Pesen via WhatsApp'."
+        },
+        {
+          "q": "Sabaraha lami waktos pangiriman?",
+          "a": "Pangiriman biasana dilakukeun antara jam 08:00 - 17:00. Estimasi dugi gumantung kana jarak sareng antrian."
+        },
+        {
+          "q": "Naha aya minimum pesenan?",
+          "a": "Teu aya minimum pesenan kanggo écéran, tapi kanggo paket box sayogi dina eusi 6 atanapi 12."
+        },
+        {
+          "q": "Aréa mana waé anu tiasa dihontal?",
+          "a": "Ayeuna kami fokus kana aréa Bogor sareng sakurilingna. Mangga parios wincikan pangiriman dina menu 'Pangiriman'."
+        },
+        {
+          "q": "Metode pamayaran naon waé anu sayogi?",
+          "a": "Kami nampi Transfer Bank (BCA, Mandiri) sareng E-Wallet (Gopay, Dana, OVO) anu dikonfirmasi via WhatsApp."
+        }
+      ],
+      "contact_cta": "Masih Perlu Bantuan?"
+    },
+    "info": {
+      "title": "Informasi Aplikasi",
+      "tagline": "\"Nyayogikeun kabagjaan dina unggal gegel ti dinten kahiji. Hatur nuhun parantos janten bagian tina kulawarga ageung HR-One Donuts.\"",
+      "fields": {
+        "vendor": "Vendor",
+        "database": "Database",
+        "framework": "Framework"
+      },
+      "footer": "Didamel kalayan ❤️ di Bogor"
+    },
+    "items": {
+      "account": "Kaamanan sareng Akun",
+      "address": "Alamat Abdi",
+      "preferences": "Preferensi & Privasi",
+      "help": "Puseur Bantuan (FAQ)",
+      "policies": "Kabijakan",
+      "info": "Informasi Aplikasi",
+      "delete": "Ajukan Pupus Akun"
+    },
+    "logout": "Log Out / Ganti Akun"
+  }
+}

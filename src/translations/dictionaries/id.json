@@ -1,0 +1,413 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "catalog": "Katalog",
+    "how_to_order": "Cara Pesan",
+    "promo": "Promo",
+    "events": "Event",
+    "contact": "Kontak",
+    "faq": "FAQ",
+    "settings": "Setelan",
+    "profile": "Profil",
+    "login": "Masuk / Daftar"
+  },
+  "search": {
+    "placeholder": "Cari donat favoritmu...",
+    "cta": "Cari"
+  },
+  "hero": {
+    "title": "HR-One Donuts",
+    "subtitle": "Resep Tradisional, Rasa Internasional",
+    "desc": "Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut dan kaya rasa."
+  },
+  "common": {
+    "view_all": "Lihat Semua",
+    "add_to_cart": "Tambah ke Keranjang",
+    "buy_now": "Beli Sekarang",
+    "loading": "Sabar ya...",
+    "total": "Total",
+    "checkout": "Checkout",
+    "sold": "Terjual",
+    "promo_badge": "PROMO",
+    "limited_badge": "LIMITED",
+    "bestseller_badge": "TERLARIS",
+    "category_all": "Semua",
+    "empty_products": "Belum ada produk aktif.",
+    "search_not_found": "Tidak ada produk yang cocok dengan",
+    "back": "Kembali",
+    "save": "Simpan",
+    "cancel": "Batal"
+  },
+  "footer": {
+    "tagline": "Donat segar yang dibuat setiap hari dengan cinta. Temukan keajaiban dalam setiap gigitan.",
+    "navigation": "Navigasi",
+    "help": "Bantuan",
+    "contact_us": "Hubungi Kami",
+    "location": "Lokasi Outlet",
+    "copyright": "© 2025 HR-One Donuts. Dibuat dengan cinta.",
+    "privacy": "Privasi",
+    "terms": "Syarat",
+    "cookie": "Cookie"
+  },
+  "days": {
+    "Tuesday": "Selasa",
+    "Friday": "Jumat"
+  },
+  "account": {
+    "activity": "Aktivitas",
+    "settings": "Setelan",
+    "sign_out": "Keluar",
+    "summary": "Ringkasan Aktivitas",
+    "spending": "Pengeluaran",
+    "reviews": "Ulasan",
+    "recent_orders": "Pesanan Terbaru",
+    "no_orders": "Belum ada pesanan",
+    "login_now": "Masuk Sekarang"
+  },
+  "promo": {
+    "title": "Promo Spesial",
+    "subtitle": "Penawaran terbatas untukmu hari ini",
+    "view_all": "Lihat Semua Promo",
+    "ends_at": "Berakhir dalam",
+    "bogo": "Beli 1 Gratis 1",
+    "discount": "Diskon {percent}%",
+    "starts_at": "Dimulai Hari {day}",
+    "limited_today": "Terbatas Hari Ini",
+    "not_active": "Tidak Aktif",
+    "shop_now": "Belanja Sekarang",
+    "view_details": "Lihat Detail",
+    "expired": "Promo Berakhir",
+    "now": "Berlaku Sekarang"
+  },
+  "cart": {
+    "title": "Pesanan Saya",
+    "subtitle": "Bisnis Keluarga - Dibuat dengan Kasih Sayang",
+    "empty_title": "Keranjang masih kosong",
+    "empty_subtitle": "Ayo cari donat favoritmu!",
+    "view_catalog": "Lihat Katalog",
+    "delivery_method_title": "Metode Penerimaan",
+    "delivery": "Antar ke Rumah",
+    "pickup": "Ambil di Toko",
+    "shipping_note": "*Ongkir otomatis ditambahkan ke total pembayaran.",
+    "subtotal": "Subtotal",
+    "shipping_fee": "Biaya Ongkir",
+    "total_estimate": "Total Estimasi",
+    "whatsapp_cta": "Pesan via WhatsApp",
+    "whatsapp_note": "Kirim rincian pesanan otomatis",
+    "service_area": "Layanan Pengambilan & Pengiriman Area Bogor",
+    "alert_title": "Data Belum Lengkap",
+    "alert_subtitle": "Lengkapi terlebih dahulu data kamu.",
+    "alert_cta": "Lengkapi Sekarang",
+    "alert_back": "Kembali ke Keranjang",
+    "processing": "Memproses pesanan...",
+    "error_generic": "Gagal memproses pesanan. Silakan coba lagi.",
+    "whatsapp": {
+      "greeting": "Halo {store_name}! 🍩",
+      "new_order": "*PESANAN BARU DARI WEBSITE*",
+      "customer_data": "👤 *Data Pemesan:*",
+      "name": "Nama: {name}",
+      "wa": "WhatsApp: {phone}",
+      "address": "Alamat: {address}",
+      "reception": "🚚 *Metode Penerimaan:*",
+      "delivery_method": "✅ Antar ke Rumah",
+      "pickup_method": "✅ Ambil Sendiri di Toko",
+      "detail": "🛒 *Detail Pesanan:*",
+      "item_line": "✅ *{name}*\n   {quantity}x @ Rp {price} = Rp {total}",
+      "subtotal": "Subtotal: Rp {amount}",
+      "shipping": "Ongkir: Rp {amount}",
+      "total_payment": "💰 *Total Pembayaran: Rp {amount}*",
+      "footer": "Mohon segera diproses ya. Terima kasih! 🙏"
+    }
+  },
+  "profile": {
+    "title": "Profil Saya",
+    "customer": "Pelanggan",
+    "default_name": "Teman Donat",
+    "verified": "Akun Terverifikasi",
+    "complete_data": "Data Lengkap",
+    "change_photo": "Ubah Foto",
+    "update_loading": "Memperbarui profil...",
+    "avatar_setting": "Menyetel avatar...",
+    "avatar_uploading": "Mengunggah & mengubah ke WebP...",
+    "phone_taken": "Nomor HP ini sudah terdaftar. Pakai nomor lain.",
+    "update_fail": "Gagal memperbarui profil: {message}",
+    "upload_fail": "Gagal upload: {message}",
+    "avatar_modal": {
+      "title": "Ubah Foto Profil",
+      "subtitle": "Pilih karakter donat atau foto sendiri",
+      "character_title": "Pilih Karakter Donat",
+      "upload_title": "Atau Gunakan Foto HP",
+      "upload_cta": "Ambil dari Galeri",
+      "upload_note": "Otomatis Convert ke WebP & Hemat Kuota",
+      "cancel": "Nanti saja"
+    },
+    "info": {
+      "title": "Informasi Pribadi",
+      "subtitle": "Data Anda tetap aman & rahasia",
+      "edit": "Edit",
+      "cancel": "Batal",
+      "save": "Simpan Perubahan",
+      "identity_title": "Identitas",
+      "region_title": "Wilayah",
+      "address_detail_title": "Alamat Lengkap",
+      "labels": {
+        "name": "Nama Lengkap",
+        "phone": "Nomor Telepon",
+        "address": "Alamat Pengiriman"
+      },
+      "placeholders": {
+        "name": "Nama Lengkap",
+        "phone": "0812xxxx",
+        "address": "Alamat lengkap pengiriman"
+      },
+      "gender": {
+        "male": "Laki-laki",
+        "female": "Perempuan"
+      },
+      "age_suffix": "{age} Tahun",
+      "not_filled": "Belum diisi",
+      "not_set": "Belum diatur"
+    },
+    "quotes": [
+      "Donat manis untuk hari yang manis!",
+      "Tersenyumlah, ada donat menunggumu.",
+      "Awali hari dengan semangat dan donat.",
+      "Satu gigitan donat, sejuta kebahagiaan.",
+      "Donat bulat sempurna, seperti harimu hari ini.",
+      "Manisnya donat tak semanis senyummu.",
+      "Jangan lupa bahagia, dan makan donat."
+    ],
+    "sidebar": {
+      "cta_title": "Yuk, beli donat\nkesukaanmu !",
+      "cta_sub": "Pesan Sekarang"
+    }
+  },
+  "orders": {
+    "title": "Riwayat Pesanan",
+    "count": "{count} Transaksi",
+    "empty_title": "Belum ada pesanan",
+    "empty_subtitle": "Wah, dompetnya masih gatal? Yuk pilih donat favoritmu sekarang!",
+    "empty_cta": "Buka Katalog Menu",
+    "items_count": "{count} item",
+    "detail_cta": "Detail",
+    "reception": {
+      "pickup": "Ambil di Toko",
+      "delivery": "Antar ke Rumah"
+    },
+    "status": {
+      "pending": "Diproses",
+      "shipping": "Diantar",
+      "ready": "Sudah Siap",
+      "completed": "Selesai",
+      "cancelled": "Dibatalkan"
+    },
+    "detail": {
+      "title": "Detail Pesanan",
+      "id_label": "ID PESANAN",
+      "items_title": "Daftar Produk",
+      "shipping_title": "Informasi Pengiriman",
+      "reception_method": "METODE",
+      "address_label": "ALAMAT TUJUAN",
+      "no_address": "Alamat tidak direkam.",
+      "payment_title": "Rincian Pembayaran",
+      "subtotal_label": "Subtotal Produk",
+      "shipping_label": "Ongkos Kirim",
+      "total_label": "Total Pembayaran"
+    }
+  },
+  "activity": {
+    "spending": "Pengeluaran",
+    "reviews": "Riwayat Ulasan",
+    "reviews_count": "{count} Ulasan",
+    "location": "Lokasi Utama"
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "sections": {
+      "account": "Akun",
+      "settings": "Pengaturan",
+      "help": "Bantuan"
+    },
+    "account": {
+      "tabs": {
+        "profile": "Akun",
+        "security": "Keamanan"
+      },
+      "basic_info": {
+        "title": "Informasi Dasar",
+        "edit_cta": "Ubah",
+        "labels": {
+          "name": "Nama Lengkap",
+          "username": "Username",
+          "phone": "No. Handphone",
+          "email": "Email"
+        }
+      },
+      "social": "Akun Media Sosial",
+      "password": {
+        "title": "Ganti Password",
+        "subtitle": "Ubah kata sandi secara berkala"
+      },
+      "security": {
+        "status_title": "Periksa Aktivitas Akun",
+        "status_safe": "Akun Anda terpantau aman.",
+        "history_title": "Riwayat Login Terbaru",
+        "empty_history": "Belum ada riwayat aktivitas."
+      }
+    },
+    "address": {
+      "title": "Alamat Saya",
+      "add_cta": "Tambah Baru",
+      "form": {
+        "title_add": "Atur Lokasi Baru",
+        "cancel": "Batal",
+        "labels": {
+          "home": "Rumah",
+          "office": "Kantor",
+          "name": "Nama Lengkap",
+          "phone": "Nomor Telepon",
+          "province": "Provinsi",
+          "city": "Kota",
+          "district": "Kecamatan",
+          "postal_code": "Kode Pos",
+          "street": "Nama Jalan",
+          "building": "Gedung (Opsional)",
+          "house_no": "No. Rumah",
+          "details": "Detail Lainnya"
+        },
+        "placeholders": {
+          "name": "Contoh: Budi Sudarsono",
+          "phone": "+62...",
+          "province": "Jawa Barat",
+          "city": "Bogor",
+          "district": "Babakan Madang",
+          "postal_code": "16810",
+          "street": "Jl. Raya Utama",
+          "details": "Detail Lainnya (Blok/Unit No., Patokan)"
+        },
+        "map": {
+          "title": "Visual Bantu Peta",
+          "instruction": "Lengkapi alamat atau klik tombol di bawah untuk melihat lokasi",
+          "refresh": "Segarkan Lokasi di Peta",
+          "show": "Tampilkan Lokasi di Peta",
+          "error_empty": "Mohon isi alamat terlebih dahulu untuk melihat di peta."
+        },
+        "submit": "Simpan Alamat"
+      },
+      "list": {
+        "delete_confirm": "Hapus alamat ini?",
+        "default_badge": "Utama",
+        "set_default": "Utamakan",
+        "edit": "Edit",
+        "empty_title": "Belum ada alamat",
+        "empty_desc": "Tambahkan alamat pengiriman favoritmu sekarang.",
+        "suggestion_title": "Saran dari Profil",
+        "use_suggestion": "Gunakan Alamat Pendaftaran"
+      }
+    },
+    "preferences": {
+      "sections": {
+        "bot": "Bot & Chat",
+        "comm": "Komunikasi",
+        "privacy": "Izin & Privasi",
+        "regional": "Regional"
+      },
+      "items": {
+        "bot": {
+          "title": "Chat Bot",
+          "desc": "Bantuan otomatis kami."
+        },
+        "notif": {
+          "title": "Notifikasi",
+          "desc": "Update pesanan & promo."
+        },
+        "location": {
+          "title": "Lokasi",
+          "desc": "Berikan akses agar dapat menentukan lokasi alamatmu"
+        },
+        "photos": {
+          "title": "Album Foto",
+          "desc": "Berikan akses agar dapat meng-upload foto untuk feed atau penilaian"
+        },
+        "camera": {
+          "title": "Kamera",
+          "desc": "Berikan akses agar dapat mengambil foto"
+        },
+        "language": {
+          "title": "Bahasa"
+        }
+      }
+    },
+    "policies": {
+      "title": "Kebijakan",
+      "items": {
+        "terms": "Syarat Layanan",
+        "privacy": "Kebijakan Privasi HR-One Donuts",
+        "privacy_detail": "Kebijakan Privasi (Detail Pengumpulan Data)",
+        "terms_birthday": "Persyaratan Layanan Event Ulang Tahun",
+        "terms_flash_sms": "Persyaratan Flash Sale: SMS",
+        "terms_flash_friday": "Persyaratan Flash Sale: Jum'at Berkah",
+        "terms_box": "Ketentuan Donat Box",
+        "terms_retail": "Ketentuan Donat Eceran"
+      },
+      "satisfaction": {
+        "title": "Apakah kamu puas dengan artikelnya?",
+        "desc": "Masukanmu sangat berarti bagi kami.",
+        "thanks": "Terima kasih atas masukannya!",
+        "yes": "Puas",
+        "no": "Kurang Puas"
+      },
+      "contact": {
+        "title": "Hubungi Kami",
+        "chat": "Chat Sistem"
+      }
+    },
+    "help": {
+      "title": "Pusat Bantuan",
+      "subtitle": "Ada yang bisa kami bantu hari ini?",
+      "faqs": [
+        {
+          "q": "Bagaimana cara memesan donat?",
+          "a": "Anda dapat melihat katalog kami di menu 'Menu', pilih donat yang Anda inginkan, tambahkan ke keranjang, lalu klik 'Pesan via WhatsApp'."
+        },
+        {
+          "q": "Berapa lama waktu pengantaran?",
+          "a": "Pengantaran biasanya dilakukan antara pukul 08:00 - 17:00. Estimasi sampai tergantung jarak tempuh dan antrean."
+        },
+        {
+          "q": "Apakah ada minimum pemesanan?",
+          "a": "Tidak ada minimum pemesanan untuk eceran, namun untuk paket box tersedia dalam isi 6 atau 12."
+        },
+        {
+          "q": "Area mana saja yang dijangkau?",
+          "a": "Saat ini kami fokus pada area Bogor dan sekitarnya. Silakan cek detail pengiriman di menu 'Pengiriman'."
+        },
+        {
+          "q": "Metode pembayaran apa saja yang tersedia?",
+          "a": "Kami menerima Transfer Bank (BCA, Mandiri) dan E-Wallet (Gopay, Dana, OVO) yang dikonfirmasi melalui WhatsApp."
+        }
+      ],
+      "contact_cta": "Masih Butuh Bantuan?"
+    },
+    "info": {
+      "title": "Informasi Aplikasi",
+      "tagline": "\"Menyajikan kebahagiaan di setiap gigitan sejak hari pertama. Terima kasih telah menjadi bagian dari keluarga besar HR-One Donuts.\"",
+      "fields": {
+        "vendor": "Vendor",
+        "database": "Database",
+        "framework": "Framework"
+      },
+      "footer": "Dibuat dengan ❤️ di Bogor"
+    },
+    "items": {
+      "account": "Keamanan dan Akun",
+      "address": "Alamat Saya",
+      "preferences": "Preferensi & Privasi",
+      "help": "Pusat Bantuan (FAQ)",
+      "policies": "Kebijakan",
+      "info": "Informasi Aplikasi",
+      "delete": "Ajukan Penghapusan Akun"
+    },
+    "logout": "Log Out / Ganti Akun"
+  }
+}

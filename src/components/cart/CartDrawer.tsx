@@ -1,5 +1,3 @@
-"use client";
-
 import { useCart } from "@/context/CartContext";
 import { useLoading } from "@/context/LoadingContext";
 import Image from "next/image";
@@ -10,6 +8,7 @@ import { SiteSettings } from "@/types/cms";
 import { getCurrentUserProfile, createOrder } from "@/app/actions/order-actions";
 import { useRouter } from "next/navigation";
 import CheckoutAnimation from "./CheckoutAnimation";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface CartProfile {
   id: string;
@@ -25,6 +24,7 @@ interface CartProfile {
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart } = useCart();
   const { setIsLoading } = useLoading();
+  const { t } = useTranslation();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [showCheckoutAnim, setShowCheckoutAnim] = useState(false);
@@ -67,7 +67,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   if (!mounted) return null;
 
   const handleWhatsAppOrder = async () => {
-    setIsLoading(true, 'Memproses pesanan...');
+    setIsLoading(true, t('cart.processing'));
     
     try {
       // 1. Check Auth & Get Profile (auto-creates if missing)
@@ -109,12 +109,12 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       const rawPhone = siteSettings?.whatsapp_number || process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "62895351251395";
       const phone = rawPhone.replace(/\D/g, ""); // Ensure digits only
       
-      let message = `Halo ${siteSettings?.store_name || "HR-One Donuts"}! 🍩\n\n`;
-      message += `*PESANAN BARU DARI WEBSITE*\n`;
+      let message = t('cart.whatsapp.greeting', { store_name: siteSettings?.store_name || "HR-One Donuts" }) + "\n\n";
+      message += t('cart.whatsapp.new_order') + "\n";
       message += `-------------------\n`;
-      message += `👤 *Data Pemesan:*\n`;
-      message += `Nama: ${profile.full_name}\n`;
-      message += `WhatsApp: ${profile.phone}\n`;
+      message += t('cart.whatsapp.customer_data') + "\n";
+      message += t('cart.whatsapp.name', { name: profile.full_name || "" }) + "\n";
+      message += t('cart.whatsapp.wa', { phone: profile.phone || "" }) + "\n";
       
       // Complete address handling
       const province = profile.province_name || "";
@@ -123,25 +123,30 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       const detail = profile.address_detail || profile.address || "";
       
       const fullAddress = [detail, district, city, province].filter(Boolean).join(", ");
-      message += `Alamat: ${fullAddress}\n\n`;
+      message += t('cart.whatsapp.address', { address: fullAddress }) + "\n\n";
 
-      message += `🚚 *Metode Penerimaan:*\n`;
-      message += deliveryMethod === 'delivery' ? `✅ Antar ke Rumah\n` : `✅ Ambil Sendiri di Toko\n`;
+      message += t('cart.whatsapp.reception') + "\n";
+      message += deliveryMethod === 'delivery' ? t('cart.whatsapp.delivery_method') + "\n" : t('cart.whatsapp.pickup_method') + "\n";
       message += `\n`;
 
-      message += `🛒 *Detail Pesanan:*\n`;
+      message += t('cart.whatsapp.detail') + "\n";
       
       cart.forEach((item) => {
-        message += `✅ *${item.name}*\n   ${item.quantity}x @ Rp ${item.price.toLocaleString("id-ID")} = Rp ${(item.price * item.quantity).toLocaleString("id-ID")}\n\n`;
+        message += t('cart.whatsapp.item_line', {
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price.toLocaleString("id-ID"),
+          total: (item.price * item.quantity).toLocaleString("id-ID")
+        }) + "\n\n";
       });
       
       message += `-------------------\n`;
-      message += `Subtotal: Rp ${totalPrice.toLocaleString("id-ID")}\n`;
+      message += t('cart.whatsapp.subtotal', { amount: totalPrice.toLocaleString("id-ID") }) + "\n";
       if (deliveryMethod === 'delivery') {
-        message += `Ongkir: Rp ${shippingFee.toLocaleString("id-ID")}\n`;
+        message += t('cart.whatsapp.shipping', { amount: shippingFee.toLocaleString("id-ID") }) + "\n";
       }
-      message += `💰 *Total Pembayaran: Rp ${finalTotal.toLocaleString("id-ID")}*\n\n`;
-      message += `Mohon segera diproses ya. Terima kasih! 🙏`;
+      message += t('cart.whatsapp.total_payment', { amount: finalTotal.toLocaleString("id-ID") }) + "\n\n";
+      message += t('cart.whatsapp.footer');
       
       const encodedMessage = encodeURIComponent(message);
       
@@ -170,7 +175,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     } catch (error: unknown) {
       console.error('Order error:', error);
       setIsLoading(false);
-      const errorMessage = error instanceof Error ? error.message : "Gagal memproses pesanan. Silakan coba lagi.";
+      const errorMessage = error instanceof Error ? error.message : t('cart.error_generic');
       alert(errorMessage);
     }
   };
@@ -203,9 +208,9 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   className="object-contain"
                 />
               </div>
-              Pesanan Saya
+              {t('cart.title')}
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Bisnis Keluarga - Dibuat dengan Kasih Sayang</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t('cart.subtitle')}</p>
           </div>
           <button 
             onClick={() => setIsCartOpen(false)}
@@ -223,14 +228,14 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 <ShoppingCartIcon className="w-10 h-10 text-slate-400" />
               </div>
               <div>
-                <p className="font-bold text-slate-800 dark:text-slate-200">Keranjang masih kosong</p>
-                <p className="text-sm text-slate-500 mt-1">Ayo cari donat favoritmu!</p>
+                <p className="font-bold text-slate-800 dark:text-slate-200">{t('cart.empty_title')}</p>
+                <p className="text-sm text-slate-500 mt-1">{t('cart.empty_subtitle')}</p>
               </div>
               <button 
                 onClick={() => setIsCartOpen(false)}
                 className="mt-2 bg-primary/10 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary hover:text-white transition-all"
               >
-                Lihat Katalog
+                {t('cart.view_catalog')}
               </button>
             </div>
           ) : (
@@ -284,7 +289,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           {/* Delivery Method Selection */}
           {cart.length > 0 && (
             <div className="pt-4 space-y-3">
-              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">Metode Penerimaan</h3>
+              <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">{t('cart.delivery_method_title')}</h3>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setDeliveryMethod('delivery')}
@@ -295,7 +300,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   }`}
                 >
                   <span className="material-symbols-outlined">local_shipping</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider">Antar ke Rumah</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider">{t('cart.delivery')}</span>
                 </button>
                 <button
                   onClick={() => setDeliveryMethod('pickup')}
@@ -306,12 +311,12 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   }`}
                 >
                   <span className="material-symbols-outlined">storefront</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider">Ambil di Toko</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider">{t('cart.pickup')}</span>
                 </button>
               </div>
               {deliveryMethod === 'delivery' && (
                 <p className="text-[10px] text-slate-400 italic text-center">
-                  *Ongkir otomatis ditambahkan ke total pembayaran.
+                  {t('cart.shipping_note')}
                 </p>
               )}
             </div>
@@ -323,17 +328,17 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           <div className="p-6 bg-background border-t border-slate-100 dark:border-white/10">
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                <span className="text-sm font-medium">Subtotal</span>
+                <span className="text-sm font-medium">{t('cart.subtotal')}</span>
                 <span className="text-sm font-bold">Rp {totalPrice.toLocaleString("id-ID")}</span>
               </div>
               {deliveryMethod === 'delivery' && (
                 <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                  <span className="text-sm font-medium">Biaya Ongkir</span>
+                  <span className="text-sm font-medium">{t('cart.shipping_fee')}</span>
                   <span className="text-sm font-bold">Rp {shippingFee.toLocaleString("id-ID")}</span>
                 </div>
               )}
               <div className="flex justify-between items-center pt-3 border-t border-slate-200 dark:border-slate-800">
-                <span className="text-lg font-bold text-primary dark:text-primary-light">Total Estimasi</span>
+                <span className="text-lg font-bold text-primary dark:text-primary-light">{t('cart.total_estimate')}</span>
                 <span className="text-2xl font-extrabold text-primary">Rp {finalTotal.toLocaleString("id-ID")}</span>
               </div>
             </div>
@@ -346,12 +351,12 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793 0-.852.448-1.271.607-1.445.159-.173.346-.217.462-.217h.332c.101 0 .23.036.332.274.116.273.39.954.423 1.025.033.072.054.156.007.251-.047.094-.072.156-.144.239-.072.083-.151.185-.216.249-.072.072-.147.151-.063.294.083.144.368.607.789.982.541.483 1.002.632 1.144.704.144.072.23.063.315-.033.085-.097.368-.427.466-.572.101-.144.202-.123.332-.076.13.047.823.39.966.462.144.072.239.108.274.17.036.062.036.357-.108.762zM12 1a10.89 10.89 0 00-11 11c0 2.187.625 4.22 1.707 5.956L1 23l5.241-1.374A10.84 10.84 0 0012 23c6.075 0 11-4.925 11-11S18.075 1 12 1z"/>
                 </svg>
-                Pesan via WhatsApp
+                {t('cart.whatsapp_cta')}
               </div>
-              <span className="text-[10px] tracking-wide opacity-90 font-medium">Kirim rincian pesanan otomatis</span>
+              <span className="text-[10px] tracking-wide opacity-90 font-medium">{t('cart.whatsapp_note')}</span>
             </button>
             <p className="mt-4 text-[10px] text-center text-slate-500 dark:text-slate-400 leading-relaxed">
-              Layanan Pengambilan & Pengiriman Area Bogor
+              {t('cart.service_area')}
             </p>
           </div>
         )}
@@ -374,9 +379,9 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">Data Belum Lengkap</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">{t('cart.alert_title')}</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                Lengkapi terlebih dahulu data kamu.
+                {t('cart.alert_subtitle')}
               </p>
             </div>
             
@@ -389,7 +394,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 }}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-primary/25 active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                <span>Lengkapi Sekarang</span>
+                <span>{t('cart.alert_cta')}</span>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
@@ -399,7 +404,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 onClick={() => setShowProfileAlert(false)}
                 className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-colors"
               >
-                Kembali ke Keranjang
+                {t('cart.alert_back')}
               </button>
             </div>
           </div>

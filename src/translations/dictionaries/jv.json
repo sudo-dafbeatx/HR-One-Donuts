@@ -1,0 +1,413 @@
+{
+  "nav": {
+    "home": "Ngajeng",
+    "catalog": "Katalog",
+    "how_to_order": "Caranipun Pesen",
+    "promo": "Promo",
+    "events": "Event",
+    "contact": "Kontak",
+    "faq": "FAQ",
+    "settings": "Setelan",
+    "profile": "Profil",
+    "login": "Mlebet / Daptar"
+  },
+  "search": {
+    "placeholder": "Padosi donat favorit panjenengan...",
+    "cta": "Padosi"
+  },
+  "hero": {
+    "title": "HR-One Donuts",
+    "subtitle": "Resep Tradisi, Rasa Internasional",
+    "desc": "Ngaturaken kabingahan ing saben gegeman kanthi donat artisan damelan kulawarga ingkang empuk lan sugih rasa."
+  },
+  "common": {
+    "view_all": "Tingal Sedaya",
+    "add_to_cart": "Ing Kranjang",
+    "buy_now": "Tumbas Sakniki",
+    "loading": "Sakedhap nggih...",
+    "total": "Total",
+    "checkout": "Checkout",
+    "sold": "Pajeng",
+    "promo_badge": "PROMO",
+    "limited_badge": "LIMITED",
+    "bestseller_badge": "PAJENG SANGET",
+    "category_all": "Sedaya",
+    "empty_products": "Dereng wonten produk ingkang aktip.",
+    "search_not_found": "Mboten wonten produk ingkang cocog kaliyan",
+    "back": "Wangsul",
+    "save": "Simpen",
+    "cancel": "Mboten Tulus"
+  },
+  "footer": {
+    "tagline": "Donat seger ingkang dipundamel saben dinten kanthi tresna. Panggihaken kaajaiban ing saben gegeman.",
+    "navigation": "Navigasi",
+    "help": "Pitulung",
+    "contact_us": "Hubungi Kita",
+    "location": "Lokasi Toko",
+    "copyright": "© 2025 HR-One Donuts. Didamel kanthi tresna.",
+    "privacy": "Privasi",
+    "terms": "Sarat",
+    "cookie": "Cookie"
+  },
+  "account": {
+    "activity": "Kegiyatan",
+    "settings": "Setelan",
+    "sign_out": "Medhal",
+    "summary": "Ringkesan Kegiyatan",
+    "spending": "Pangeceluaran",
+    "reviews": "Ulasan",
+    "recent_orders": "Pesanan Enggal",
+    "no_orders": "Dereng wonten pesanan",
+    "login_now": "Mlebet Sapuniki"
+  },
+  "days": {
+    "Tuesday": "Seloso",
+    "Friday": "Jemuwah"
+  },
+  "promo": {
+    "title": "Promo Spesial",
+    "subtitle": "Wonten tawaran winates kangge panjenengan dinten niki",
+    "view_all": "Mirsani Sedaya Promo",
+    "ends_at": "Rampung ing",
+    "bogo": "Tumbas 1 Gratis 1",
+    "discount": "Diskon {percent}%",
+    "starts_at": "Wiwit Dinten {day}",
+    "limited_today": "Winates Dinten Niki",
+    "not_active": "Mboten Aktip",
+    "shop_now": "Belonjo Sapuniki",
+    "view_details": "Mirsani Detil",
+    "expired": "Promo Rampung",
+    "now": "Laku Sapuniki"
+  },
+  "cart": {
+    "title": "Pesanan Kulo",
+    "subtitle": "Bisnis Kulawargo - Kadamel kanthi Katresnan",
+    "empty_title": "Kranjang taksih kothak",
+    "empty_subtitle": "Mangga pados donat favorit panjenengan!",
+    "view_catalog": "Mirsani Katalog",
+    "delivery_method_title": "Metode Panampi",
+    "delivery": "Anter dhateng Dalem",
+    "pickup": "Pendhet ing Toko",
+    "shipping_note": "*Ongkir otomatis dipuntambahaken dhateng total pembayaran.",
+    "subtotal": "Subtotal",
+    "shipping_fee": "Biaya Ongkir",
+    "total_estimate": "Estimasi Total",
+    "whatsapp_cta": "Pesen via WhatsApp",
+    "whatsapp_note": "Kirim rincian pesanan otomatis",
+    "service_area": "Layanan Pendhet & Anter Area Bogor",
+    "alert_title": "Data Dereng Jangkep",
+    "alert_subtitle": "Jangkepi rumiyin data panjenengan.",
+    "alert_cta": "Jangkepi Sapuniki",
+    "alert_back": "Wangsul dhateng Kranjang",
+    "processing": "Saweg dipunproses...",
+    "error_generic": "Gagal mroses pesanan. Mangga dipuncobi malih.",
+    "whatsapp": {
+      "greeting": "Sugeng enjang {store_name}! 🍩",
+      "new_order": "*PESANAN ENGGAL SAKING WEBSITE*",
+      "customer_data": "👤 *Data Pemesen:*",
+      "name": "Nami: {name}",
+      "wa": "WhatsApp: {phone}",
+      "address": "Alamat: {address}",
+      "reception": "🚚 *Metode Panampi:*",
+      "delivery_method": "✅ Anter dhateng Dalem",
+      "pickup_method": "✅ Pendhet Piyambak ing Toko",
+      "detail": "🛒 *Rincian Pesanan:*",
+      "item_line": "✅ *{name}*\n   {quantity}x @ Rp {price} = Rp {total}",
+      "subtotal": "Subtotal: Rp {amount}",
+      "shipping": "Ongkir: Rp {amount}",
+      "total_payment": "💰 *Total Pembayaran: Rp {amount}*",
+      "footer": "Mangga énggal dipunproses. Matur nuwun! 🙏"
+    }
+  },
+  "profile": {
+    "title": "Profil Kulo",
+    "customer": "Pelanggan",
+    "default_name": "Konco Donat",
+    "verified": "Akun Terverifikasi",
+    "complete_data": "Data Jangkep",
+    "change_photo": "Ubah Foto",
+    "update_loading": "Saweg nggantos profil...",
+    "avatar_setting": "Saweg masang avatar...",
+    "avatar_uploading": "Saweg unggah & nggantos dhateng WebP...",
+    "phone_taken": "Nomer HP puniki sampun kadhaftar. Mangga ngangge nomer sanes.",
+    "update_fail": "Gagal nggantos profil: {message}",
+    "upload_fail": "Gagal unggah: {message}",
+    "avatar_modal": {
+      "title": "Ubah Foto Profil",
+      "subtitle": "Pilih karakter donat utawi foto piyambak",
+      "character_title": "Pilih Karakter Donat",
+      "upload_title": "Utawi Mangga ngangge Foto HP",
+      "upload_cta": "Pendhet saking Galeri",
+      "upload_note": "Otomatis Convert dhateng WebP & Hemat Kuota",
+      "cancel": "Mangke kemawon"
+    },
+    "info": {
+      "title": "Informasi Pribadi",
+      "subtitle": "Data panjenengan tetep aman & rahasia",
+      "edit": "Edit",
+      "cancel": "Batal",
+      "save": "Simpen Owah-owahan",
+      "identity_title": "Identitas",
+      "region_title": "Wilayah",
+      "address_detail_title": "Alamat Jangkep",
+      "labels": {
+        "name": "Nami Jangkep",
+        "phone": "Nomer Telepon",
+        "address": "Alamat Pangiriman"
+      },
+      "placeholders": {
+        "name": "Nami Jangkep",
+        "phone": "0812xxxx",
+        "address": "Alamat jangkep pangiriman"
+      },
+      "gender": {
+        "male": "Jaler",
+        "female": "Estri"
+      },
+      "age_suffix": "{age} Tahun",
+      "not_filled": "Dereng dipunisi",
+      "not_set": "Dereng dipunatur"
+    },
+    "quotes": [
+      "Donat legi kagem dinten ingkang legi!",
+      "Mesem mangga, wonten donat nunggu panjenengan.",
+      "Miwiti dinten kanthi semangat lan donat.",
+      "Satu cakotan donat, sejuta kabagyan.",
+      "Donat bunder sampurna, kados dinten panjenengan dinten puniki.",
+      "Legine donat mboten selegi mesem panjenengan.",
+      "Ampun supe bungah, lan dhahar donat."
+    ],
+    "sidebar": {
+      "cta_title": "Mangga, tumbas donat\nfavorit panjenengan !",
+      "cta_sub": "Pesen Sapuniki"
+    }
+  },
+  "orders": {
+    "title": "Riwayat Pesanan",
+    "count": "{count} Transaksi",
+    "empty_title": "Dereng wonten pesanan",
+    "empty_subtitle": "Wah, dompete taksih gatel? Mangga pilih donat favorit panjenengan sapuniki!",
+    "empty_cta": "Mbikak Katalog Menu",
+    "items_count": "{count} item",
+    "detail_cta": "Rincian",
+    "reception": {
+      "pickup": "Pendhet ing Toko",
+      "delivery": "Anter dhateng Dalem"
+    },
+    "status": {
+      "pending": "Diproses",
+      "shipping": "Dipunanter",
+      "ready": "Sampun Siap",
+      "completed": "Sampun Rampung",
+      "cancelled": "Dipunbatalaken"
+    },
+    "detail": {
+      "title": "Rincian Pesanan",
+      "id_label": "ID PESANAN",
+      "items_title": "Daftar Produk",
+      "shipping_title": "Informasi Pangiriman",
+      "reception_method": "METODE",
+      "address_label": "ALAMAT TUJUAN",
+      "no_address": "Alamat mboten kacathet.",
+      "payment_title": "Rincian Pembayaran",
+      "subtotal_label": "Subtotal Produk",
+      "shipping_label": "Biaya Ongkir",
+      "total_label": "Total Pembayaran"
+    }
+  },
+  "activity": {
+    "spending": "Pengeluaran",
+    "reviews": "Riwayat Ulasan",
+    "reviews_count": "{count} Ulasan",
+    "location": "Lokasi Utama"
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "sections": {
+      "account": "Akun",
+      "settings": "Pengaturan",
+      "help": "Pitulung"
+    },
+    "account": {
+      "tabs": {
+        "profile": "Akun",
+        "security": "Keamanan"
+      },
+      "basic_info": {
+        "title": "Informasi Dasar",
+        "edit_cta": "Gantos",
+        "labels": {
+          "name": "Nami Jangkep",
+          "username": "Username",
+          "phone": "No. Handphone",
+          "email": "Email"
+        }
+      },
+      "social": "Akun Media Sosial",
+      "password": {
+        "title": "Gantos Password",
+        "subtitle": "Gantos tembung sandi kanthi rutin"
+      },
+      "security": {
+        "status_title": "Priksa Aktivitas Akun",
+        "status_safe": "Akun panjenengan aman sanget.",
+        "history_title": "Riwayat Login Enggal",
+        "empty_history": "Dereng wonten riwayat aktivitas."
+      }
+    },
+    "address": {
+      "title": "Alamat Kulo",
+      "add_cta": "Tambah Enggal",
+      "form": {
+        "title_add": "Atur Lokasi Enggal",
+        "cancel": "Batal",
+        "labels": {
+          "home": "Griya",
+          "office": "Kantor",
+          "name": "Nami Jangkep",
+          "phone": "Nomor Telepon",
+          "province": "Provinsi",
+          "city": "Kutha",
+          "district": "Kecamatan",
+          "postal_code": "Kode Pos",
+          "street": "Nami Dalan",
+          "building": "Gedung (Opsional)",
+          "house_no": "No. Griya",
+          "details": "Rincian Sanesipun"
+        },
+        "placeholders": {
+          "name": "Contonipun: Budi Sudarsono",
+          "phone": "+62...",
+          "province": "Jawa Barat",
+          "city": "Bogor",
+          "district": "Babakan Madang",
+          "postal_code": "16810",
+          "street": "Jl. Raya Utama",
+          "details": "Rincian Sanesipun (Blok/Unit No., Patokan)"
+        },
+        "map": {
+          "title": "Bantuan Visual Peta",
+          "instruction": "Jangkepi alamat utawa klik tombol ing ngandhap kangge mirsani lokasi",
+          "refresh": "Segeraken Lokasi ing Peta",
+          "show": "Tampilaken Lokasi ing Peta",
+          "error_empty": "Mangga isi alamat rumiyin kangge mirsani ing peta."
+        },
+        "submit": "Simpen Alamat"
+      },
+      "list": {
+        "delete_confirm": "Busak alamat niki?",
+        "default_badge": "Utama",
+        "set_default": "Utamakaken",
+        "edit": "Edit",
+        "empty_title": "Dereng wonten alamat",
+        "empty_desc": "Tambahaken alamat pangiriman favorit panjenengan sakmenika.",
+        "suggestion_title": "Saran saking Profil",
+        "use_suggestion": "Ngangge Alamat Pendaftaran"
+      }
+    },
+    "preferences": {
+      "sections": {
+        "bot": "Bot & Chat",
+        "comm": "Komunikasi",
+        "privacy": "Izin & Privasi",
+        "regional": "Regional"
+      },
+      "items": {
+        "bot": {
+          "title": "Chat Bot",
+          "desc": "Bantuan otomatis kulo."
+        },
+        "notif": {
+          "title": "Notifikasi",
+          "desc": "Update pesanan & promo."
+        },
+        "location": {
+          "title": "Lokasi",
+          "desc": "Paringi akses supados saged nemtokaken lokasi alamat panjenengan"
+        },
+        "photos": {
+          "title": "Album Foto",
+          "desc": "Paringi akses supados saged ngunggah foto kangge feed utawi ulasan"
+        },
+        "camera": {
+          "title": "Kamera",
+          "desc": "Paringi akses supados saged mendhet foto"
+        },
+        "language": {
+          "title": "Basa"
+        }
+      }
+    },
+    "policies": {
+      "title": "Kebijakan",
+      "items": {
+        "terms": "Sarat Layanan",
+        "privacy": "Kebijakan Privasi HR-One Donuts",
+        "privacy_detail": "Kebijakan Privasi (Rincian Pangumpulan Data)",
+        "terms_birthday": "Sarat Layanan Event Ambal Warsa",
+        "terms_flash_sms": "Sarat Flash Sale: SMS",
+        "terms_flash_friday": "Sarat Flash Sale: Jemuah Berkah",
+        "terms_box": "Pranatan Donat Box",
+        "terms_retail": "Pranatan Donat Eceran"
+      },
+      "satisfaction": {
+        "title": "Nopo panjenengan marem kaliyan artikelipun?",
+        "desc": "Masukan panjenengan maedahi sanget kangge kulo.",
+        "thanks": "Matur nuwun sanget masukanipun!",
+        "yes": "Marem",
+        "no": "Kirang Marem"
+      },
+      "contact": {
+        "title": "Hubungi Kulo",
+        "chat": "Obrolan Sistem"
+      }
+    },
+    "help": {
+      "title": "Pusat Pitulung",
+      "subtitle": "Wonten ingkang saged kulo bantu dinten niki?",
+      "faqs": [
+        {
+          "q": "Pripun caranipun ngrumpaka donat?",
+          "a": "Panjenengan saged mirsani katalog kulo ing menu 'Menu', pilih donat ingkang dipunkersaken, tambahaken ing kranjang, banjur klik 'Pesen liwat WhatsApp'."
+        },
+        {
+          "q": "Sinten dangu wekdal pangiriman?",
+          "a": "Pangiriman biasane dipunlampahi antarane jam 08:00 - 17:00. Estimasi dugi gumantung jarak lan antrean."
+        },
+        {
+          "q": "Nopo wonten minimal pesenan?",
+          "a": "Mboten wonten minimal pesenan kangge eceran, nanging kangge paket box kasedhiya ing isi 6 utawi 12."
+        },
+        {
+          "q": "Area pundhi mawon ingkang dipunjangkau?",
+          "a": "Sakmenika kulo fokus ing area Bogor lan sekitarnipun. Mangga priksa rincian pangiriman ing menu 'Pangiriman'."
+        },
+        {
+          "q": "Metode pembayaran nopo mawon ingkang kasedhiya?",
+          "a": "Kulo nampi Transfer Bank (BCA, Mandiri) lan E-Wallet (Gopay, Dana, OVO) ingkang dipunkonfirmasi liwat WhatsApp."
+        }
+      ],
+      "contact_cta": "Taksih Betah Pitulung?"
+    },
+    "info": {
+      "title": "Informasi Aplikasi",
+      "tagline": "\"Nyajikaken kabungahan ing saben cokotan wiwit dinten kapisan. Matur nuwun sampun dados bagian saking kulawarga ageng HR-One Donuts.\"",
+      "fields": {
+        "vendor": "Vendor",
+        "database": "Database",
+        "framework": "Framework"
+      },
+      "footer": "Dipundamel kanthi ❤️ ing Bogor"
+    },
+    "items": {
+      "account": "Keamanan lan Akun",
+      "address": "Alamat Kulo",
+      "preferences": "Preferensi & Privasi",
+      "help": "Pusat Pitulung (FAQ)",
+      "policies": "Kebijakan",
+      "info": "Informasi Aplikasi",
+      "delete": "Ajukan Busak Akun"
+    },
+    "logout": "Log Out / Ganti Akun"
+  }
+}

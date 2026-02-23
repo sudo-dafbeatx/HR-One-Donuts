@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   ChatBubbleLeftRightIcon,
   BellIcon, 
@@ -10,8 +10,10 @@ import {
   CameraIcon,
   ChevronRightIcon
 } from '@heroicons/react/24/outline';
+import { useTranslation, Language } from '@/context/LanguageContext';
 
 export default function PreferencesPage() {
+  const { t, language: currentLang, setLanguage } = useTranslation();
   const [botEnabled, setBotEnabled] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('chatbot_disabled') !== 'true';
@@ -31,10 +33,9 @@ export default function PreferencesPage() {
     photos: false,
     camera: false
   });
-  const [language, setLanguage] = useState('Bahasa Indonesia');
   const [showLangPicker, setShowLangPicker] = useState(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setMounted(true);
   }, []);
 
@@ -45,12 +46,11 @@ export default function PreferencesPage() {
     window.dispatchEvent(new Event('chatbot_preference_change'));
   };
 
-  const languages = [
-    "Bahasa Indonesia",
-    "English",
-    "Bahasa Jawa",
-    "Bahasa Sunda",
-    "Bahasa Daerah Lainnya..."
+  const languages: { code: Language; name: string }[] = [
+    { code: 'id', name: 'Bahasa Indonesia' },
+    { code: 'en', name: 'English' },
+    { code: 'su', name: 'Bahasa Sunda' },
+    { code: 'jv', name: 'Bahasa Jawa' }
   ];
 
   if (!mounted) return null;
@@ -59,15 +59,15 @@ export default function PreferencesPage() {
     <div className="space-y-6 px-4 py-8 pb-32">
       {/* Bot Setting */}
       <section className="space-y-3">
-        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Bot & Chat</h3>
+        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('settings.preferences.sections.bot')}</h3>
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center justify-between">
            <div className="flex items-center gap-4">
              <div className="p-3 bg-primary/5 text-primary rounded-2xl">
                <ChatBubbleLeftRightIcon className="size-6" />
              </div>
              <div>
-               <p className="text-sm font-bold text-slate-800">Chat Bot</p>
-               <p className="text-xs text-slate-500 font-medium">Bantuan otomatis kami.</p>
+               <p className="text-sm font-bold text-slate-800">{t('settings.preferences.items.bot.title')}</p>
+               <p className="text-xs text-slate-500 font-medium">{t('settings.preferences.items.bot.desc')}</p>
              </div>
            </div>
            <Toggle active={botEnabled} onToggle={toggleBot} />
@@ -76,15 +76,15 @@ export default function PreferencesPage() {
 
       {/* Notifications */}
       <section className="space-y-3">
-        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Komunikasi</h3>
+        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('settings.preferences.sections.comm')}</h3>
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center justify-between">
            <div className="flex items-center gap-4">
              <div className="p-3 bg-blue-50 text-blue-500 rounded-2xl">
                <BellIcon className="size-6" />
              </div>
              <div>
-               <p className="text-sm font-bold text-slate-800">Notifikasi</p>
-               <p className="text-xs text-slate-500 font-medium">Update pesanan & promo.</p>
+               <p className="text-sm font-bold text-slate-800">{t('settings.preferences.items.notif.title')}</p>
+               <p className="text-xs text-slate-500 font-medium">{t('settings.preferences.items.notif.desc')}</p>
              </div>
            </div>
            <Toggle 
@@ -100,26 +100,26 @@ export default function PreferencesPage() {
 
       {/* Privacy Permissions */}
       <section className="space-y-3">
-        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Izin & Privasi</h3>
+        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('settings.preferences.sections.privacy')}</h3>
         <div className="bg-white rounded-3xl shadow-sm border border-slate-100 divide-y divide-slate-50 overflow-hidden">
            <PermissionItem 
              icon={MapPinIcon} 
-             title="Lokasi" 
-             desc="Berikan akses agar dapat menentukan lokasi alamatmu" 
+             title={t('settings.preferences.items.location.title')} 
+             desc={t('settings.preferences.items.location.desc')} 
              active={privacy.location}
              onToggle={() => setPrivacy({...privacy, location: !privacy.location})}
            />
            <PermissionItem 
              icon={PhotoIcon} 
-             title="Album Foto" 
-             desc="Berikan akses agar dapat meng-upload foto untuk feed atau penilaian" 
+             title={t('settings.preferences.items.photos.title')} 
+             desc={t('settings.preferences.items.photos.desc')} 
              active={privacy.photos}
              onToggle={() => setPrivacy({...privacy, photos: !privacy.photos})}
            />
            <PermissionItem 
              icon={CameraIcon} 
-             title="Kamera" 
-             desc="Berikan akses agar dapat mengambil foto" 
+             title={t('settings.preferences.items.camera.title')} 
+             desc={t('settings.preferences.items.camera.desc')} 
              active={privacy.camera}
              onToggle={() => setPrivacy({...privacy, camera: !privacy.camera})}
            />
@@ -128,7 +128,7 @@ export default function PreferencesPage() {
 
       {/* Language Selection */}
       <section className="space-y-3">
-        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Regional</h3>
+        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('settings.preferences.sections.regional')}</h3>
         <div 
           onClick={() => setShowLangPicker(!showLangPicker)}
           className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all"
@@ -138,8 +138,8 @@ export default function PreferencesPage() {
                <LanguageIcon className="size-6" />
              </div>
              <div>
-               <p className="text-sm font-bold text-slate-800">Bahasa</p>
-               <p className="text-xs text-slate-500 font-medium">{language}</p>
+               <p className="text-sm font-bold text-slate-800">{t('settings.preferences.items.language.title')}</p>
+               <p className="text-xs text-slate-500 font-medium">{languages.find(l => l.code === currentLang)?.name}</p>
              </div>
            </div>
            <ChevronRightIcon className={`size-5 text-slate-300 transition-transform ${showLangPicker ? 'rotate-90' : 'rotate-0'}`} />
@@ -149,14 +149,14 @@ export default function PreferencesPage() {
           <div className="bg-white rounded-3xl overflow-hidden shadow-md border border-slate-100 divide-y divide-slate-50 animate-in slide-in-from-top-2 duration-200">
              {languages.map((lang) => (
                <button 
-                key={lang}
+                key={lang.code}
                 onClick={() => {
-                  setLanguage(lang);
+                  setLanguage(lang.code);
                   setShowLangPicker(false);
                 }}
-                className={`w-full text-left px-8 py-4 text-sm font-bold transition-colors ${language === lang ? 'text-primary' : 'text-slate-600 hover:bg-slate-50'}`}
+                className={`w-full text-left px-8 py-4 text-sm font-bold transition-colors ${currentLang === lang.code ? 'text-primary' : 'text-slate-600 hover:bg-slate-50'}`}
                >
-                 {lang}
+                 {lang.name}
                </button>
              ))}
           </div>

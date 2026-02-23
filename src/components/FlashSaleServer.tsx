@@ -2,11 +2,8 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import FlashSaleSection from "./FlashSaleSection";
 import { PromoEvent, FlashSale } from "@/types/cms";
 
-import { getCopy } from "@/lib/theme";
-
 export default async function FlashSaleServer() {
   const supabase = await createServerSupabaseClient();
-  const copy = await getCopy();
   
   const [eventsRes, flashSalesRes] = await Promise.all([
     supabase
@@ -49,10 +46,10 @@ export default async function FlashSaleServer() {
 
     if (evt.event_slug === 'selasa_mega_sale') {
       serverIsActive = isTuesday;
-      serverActiveDayName = 'Selasa';
+      serverActiveDayName = 'Tuesday';
     } else if (evt.event_slug === 'jumat_berkah') {
       serverIsActive = isFriday;
-      serverActiveDayName = 'Jumat';
+      serverActiveDayName = 'Friday';
     }
 
     return {
@@ -87,5 +84,5 @@ export default async function FlashSaleServer() {
   // Only pass these processed events if either promo has any value (to not break the UI if array is completely empty)
   if (processedEvents.length === 0 && flashSales.length === 0) return null;
 
-  return <FlashSaleSection events={processedEvents as unknown as PromoEvent[]} flashSales={flashSales} copy={copy} />;
+  return <FlashSaleSection events={processedEvents as unknown as PromoEvent[]} flashSales={flashSales} />;
 }

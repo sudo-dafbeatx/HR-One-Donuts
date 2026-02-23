@@ -10,6 +10,13 @@ import {
 } from '@heroicons/react/24/outline';
 import { getOrderStatus } from '@/lib/order-status';
 
+import idDict from '@/translations/dictionaries/id.json';
+import enDict from '@/translations/dictionaries/en.json';
+import suDict from '@/translations/dictionaries/su.json';
+import jvDict from '@/translations/dictionaries/jv.json';
+
+const dictionaries = { id: idDict, en: enDict, su: suDict, jv: jvDict };
+
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: orderId } = await params;
   const supabase = await createServerSupabaseClient();
@@ -20,20 +27,43 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     redirect('/login');
   }
 
-  // 2. Fetch Protected Order Data (Only user's own order)
-  const { data: order, error } = await supabase
-    .from('orders')
-    .select('*')
-    .eq('id', orderId)
-    .eq('user_id', authData.user.id)
-    .single();
+  // 2. Fetch User Language and Order Data
+  const [profileResult, orderResult] = await Promise.all([
+    supabase.from('user_profiles').select('language').eq('id', authData.user.id).single(),
+    supabase.from('orders').select('*').eq('id', orderId).eq('user_id', authData.user.id).single()
+  ]);
 
-  if (error || !order) {
+  if (orderResult.error || !orderResult.data) {
     notFound();
   }
 
+  const order = orderResult.data;
+  const lang = (profileResult.data?.language || 'id') as keyof typeof dictionaries;
+  const dict = dictionaries[lang] || dictionaries.id;
+
+  // Simple server-side translate helper
+  const t = (keyPath: string, variables?: Record<string, string | number>) => {
+    const keys = keyPath.split('.');
+    let result: unknown = dict;
+    for (const key of keys) {
+      if (result && typeof result === 'object' && key in (result as Record<string, unknown>)) {
+        result = (result as Record<string, unknown>)[key];
+      } else {
+        return keyPath;
+      }
+    }
+    let str = typeof result === 'string' ? result : keyPath;
+    if (variables) {
+      Object.entries(variables).forEach(([key, value]) => {
+        str = str.replace(`{${key}}`, String(value));
+      });
+    }
+    return str;
+  };
+
   const currentStatus = getOrderStatus(order.status);
   const StatusIcon = currentStatus.icon;
+  const locale = lang === 'en' ? 'en-US' : 'id-ID';
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
@@ -47,9 +77,9 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           <ArrowLeftIcon className="size-6" />
         </Link>
         <h1 className="text-base font-bold text-slate-800 absolute left-1/2 -translate-x-1/2">
-          Detail Pesanan
+          {t('orders.detail.title')}
         </h1>
-        <div className="w-10"></div> {/* Spacer for center alignment */}
+        <div className="w-10"></div>
       </div>
 
       <div className="max-w-md mx-auto px-4 mt-6 space-y-4">
@@ -57,10 +87,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         {/* 2. Order Header Card */}
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">ID PESANAN</p>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('orders.detail.id_label')}</p>
             <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-1.5 ${currentStatus.color}`}>
               <StatusIcon className="size-3.5" />
-              {currentStatus.userLabel}
+              {t(`orders.status.${order.status}`)}
             </span>
           </div>
           <p className="text-xl font-black text-slate-800 mb-2 font-mono">
@@ -68,7 +98,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           </p>
           <div className="flex items-center gap-1.5 text-sm font-medium text-slate-500">
              <CalendarDaysIcon className="size-4" />
-             {new Date(order.created_at).toLocaleString('id-ID', { 
+             {new Date(order.created_at).toLocaleString(locale, { 
                weekday: 'long', 
                day: 'numeric', 
                month: 'long', 
@@ -81,7 +111,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
         {/* 3. Items List */}
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-          <h2 className="text-sm font-bold text-slate-800 mb-4 pb-4 border-b border-slate-50">Daftar Produk</h2>
+          <h2 className="text-sm font-bold text-slate-800 mb-4 pb-4 border-b border-slate-50">{t('orders.detail.items_title')}</h2>
           
           <div className="space-y-4">
             {order.items?.map((item: { product_id: string, name: string, price: number, quantity: number, image: string }, index: number) => (
@@ -115,25 +145,25 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
         {/* 4. Shipping Info */}
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-           <h2 className="text-sm font-bold text-slate-800 mb-4 pb-4 border-b border-slate-50">Informasi Pengiriman</h2>
+           <h2 className="text-sm font-bold text-slate-800 mb-4 pb-4 border-b border-slate-50">{t('orders.detail.shipping_title')}</h2>
            
            <div className="space-y-4">
               <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">METODE</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('orders.detail.reception_method')}</p>
                 <p className="text-sm font-bold text-slate-800 flex items-center gap-2">
                   {order.delivery_method === 'pickup' ? (
-                     <><span className="material-symbols-outlined text-[18px]">storefront</span> Ambil di Toko</>
+                     <><span className="material-symbols-outlined text-[18px]">storefront</span> {t('orders.reception.pickup')}</>
                   ) : (
-                     <><span className="material-symbols-outlined text-[18px]">local_shipping</span> Antar ke Rumah</>
+                     <><span className="material-symbols-outlined text-[18px]">local_shipping</span> {t('orders.reception.delivery')}</>
                   )}
                 </p>
               </div>
 
               {order.delivery_method === 'delivery' && (
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">ALAMAT TUJUAN</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('orders.detail.address_label')}</p>
                   <p className="text-sm font-medium text-slate-600 leading-relaxed mb-2">
-                    {order.shipping_address || 'Alamat tidak direkam.'}
+                    {order.shipping_address || t('orders.detail.no_address')}
                   </p>
                   {order.shipping_address_notes && (
                     <div className="bg-amber-50 rounded-xl p-3 flex items-start gap-2 border border-amber-100/50">
@@ -150,25 +180,25 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
         {/* 5. Payment Summary */}
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-           <h2 className="text-sm font-bold text-slate-800 mb-4 pb-4 border-b border-slate-50">Rincian Pembayaran</h2>
+           <h2 className="text-sm font-bold text-slate-800 mb-4 pb-4 border-b border-slate-50">{t('orders.detail.payment_title')}</h2>
            
            <div className="space-y-3">
-             <div className="flex justify-between items-center text-sm">
-               <span className="text-slate-500 font-medium">Subtotal Produk</span>
-               <span className="text-slate-800 font-bold">Rp {(order.total_amount - (order.shipping_cost || 0)).toLocaleString('id-ID')}</span>
-             </div>
-             
-             {order.delivery_method === 'delivery' && (
-               <div className="flex justify-between items-center text-sm">
-                 <span className="text-slate-500 font-medium">Ongkos Kirim</span>
-                 <span className="text-slate-800 font-bold">Rp {(order.shipping_cost || 0).toLocaleString('id-ID')}</span>
-               </div>
-             )}
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-slate-500 font-medium">{t('orders.detail.subtotal_label')}</span>
+                <span className="text-slate-800 font-bold">Rp {(order.total_amount - (order.shipping_cost || 0)).toLocaleString('id-ID')}</span>
+              </div>
+              
+              {order.delivery_method === 'delivery' && (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-500 font-medium">{t('orders.detail.shipping_label')}</span>
+                  <span className="text-slate-800 font-bold">Rp {(order.shipping_cost || 0).toLocaleString('id-ID')}</span>
+                </div>
+              )}
 
-             <div className="pt-4 mt-2 border-t border-slate-100 flex justify-between items-center">
-               <span className="text-sm font-bold text-slate-800">Total Pembayaran</span>
-               <span className="text-lg md:text-xl font-black text-primary">Rp {order.total_amount.toLocaleString('id-ID')}</span>
-             </div>
+              <div className="pt-4 mt-2 border-t border-slate-100 flex justify-between items-center">
+                <span className="text-sm font-bold text-slate-800">{t('orders.detail.total_label')}</span>
+                <span className="text-lg md:text-xl font-black text-primary">Rp {order.total_amount.toLocaleString('id-ID')}</span>
+              </div>
            </div>
         </div>
 

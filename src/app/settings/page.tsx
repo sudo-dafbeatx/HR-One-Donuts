@@ -14,8 +14,10 @@ import {
 } from '@heroicons/react/24/outline';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/context/LanguageContext';
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const supabase = createClient();
 
@@ -28,25 +30,25 @@ export default function SettingsPage() {
 
   const sections = [
     {
-      title: "Akun",
+      title: t('settings.sections.account'),
       items: [
-        { label: "Keamanan dan Akun", href: "/settings/account", icon: UserIcon },
-        { label: "Alamat Saya", href: "/settings/address", icon: MapPinIcon },
+        { label: t('settings.items.account'), href: "/settings/account", icon: UserIcon },
+        { label: t('settings.items.address'), href: "/settings/address", icon: MapPinIcon },
       ]
     },
     {
-      title: "Pengaturan",
+      title: t('settings.sections.settings'),
       items: [
-        { label: "Preferensi & Privasi", href: "/settings/preferences", icon: BellIcon },
+        { label: t('settings.items.preferences'), href: "/settings/preferences", icon: BellIcon },
       ]
     },
     {
-      title: "Bantuan",
+      title: t('settings.sections.help'),
       items: [
-        { label: "Pusat Bantuan (FAQ)", href: "/settings/help", icon: QuestionMarkCircleIcon },
-        { label: "Kebijakan", href: "/settings/policies", icon: DocumentTextIcon },
-        { label: "Informasi Aplikasi", href: "/settings/info", icon: InformationCircleIcon },
-        { label: "Ajukan Penghapusan Akun", href: "/settings/delete-account", icon: TrashIcon, variant: "danger" },
+        { label: t('settings.items.help'), href: "/settings/help", icon: QuestionMarkCircleIcon },
+        { label: t('settings.items.policies'), href: "/settings/policies", icon: DocumentTextIcon },
+        { label: t('settings.items.info'), href: "/settings/info", icon: InformationCircleIcon },
+        { label: t('settings.items.delete'), href: "/settings/delete-account", icon: TrashIcon, variant: "danger" },
       ]
     }
   ];
@@ -87,7 +89,7 @@ export default function SettingsPage() {
           className="w-full flex items-center justify-center gap-3 py-4 bg-white border border-red-100 rounded-2xl text-red-500 font-bold text-sm shadow-sm active:scale-[0.98] transition-all hover:bg-red-50"
         >
           <ArrowRightOnRectangleIcon className="size-5" />
-          Log Out / Ganti Akun
+          {t('settings.logout')}
         </button>
       </div>
     </div>

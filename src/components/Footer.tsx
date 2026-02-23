@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { SiteSettings } from "@/types/cms";
 import LogoBrand from "@/components/ui/LogoBrand";
+import { useTranslation } from "@/context/LanguageContext";
 
 interface FooterProps {
   siteSettings?: SiteSettings;
-  copy?: Record<string, string>;
 }
 
-export default function Footer({ siteSettings, copy }: FooterProps) {
+export default function Footer({ siteSettings }: FooterProps) {
+  const { t } = useTranslation();
+  
   return (
     <footer className="bg-slate-900 text-white pt-12 md:pt-20 pb-8 md:pb-10 overflow-hidden relative">
       {/* Abstract Background Element */}
@@ -27,7 +29,7 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
               </div>
             </Link>
             <p className="text-slate-400 text-xs md:text-sm leading-relaxed max-w-xs font-medium">
-              {siteSettings?.tagline || "Freshly baked donuts delivered straight to your door with love. Discover the magic in every bite."}
+              {siteSettings?.tagline || t('footer.tagline')}
             </p>
             <div className="flex items-center gap-4">
               {[
@@ -52,14 +54,14 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
           <div className="grid grid-cols-2 lg:col-span-2 gap-8">
             <div>
               <h4 className="text-white font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] mb-5 md:mb-8 opacity-50">
-                {copy?.footer_navigation || 'Navigasi'}
+                {t('footer.navigation')}
               </h4>
               <ul className="space-y-3.5 md:space-y-4">
                 {[
-                  { label: 'Beranda', path: '/' },
-                  { label: 'Katalog', path: '/catalog' },
-                  { label: 'Event', path: '/news' },
-                  { label: 'Promo', path: '/promo/birthday' }
+                  { label: t('nav.home'), path: '/' },
+                  { label: t('nav.catalog'), path: '/catalog' },
+                  { label: t('nav.events'), path: '/news' },
+                  { label: t('nav.promo'), path: '/promo/birthday' }
                 ].map((item) => (
                   <li key={item.path}>
                     <Link 
@@ -76,14 +78,14 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
 
             <div>
               <h4 className="text-white font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] mb-5 md:mb-8 opacity-50">
-                {copy?.footer_help || 'Bantuan'}
+                {t('footer.help')}
               </h4>
               <ul className="space-y-3.5 md:space-y-4">
                 {[
-                  { label: 'Cara Pesan', path: '/cara-pesan' },
-                  { label: 'FAQ', path: '/faq' },
+                  { label: t('nav.how_to_order'), path: '/cara-pesan' },
+                  { label: t('nav.faq'), path: '/faq' },
                   { label: 'Pengiriman', path: '/pengiriman' },
-                  { label: 'Kontak', path: '/kontak' }
+                  { label: t('nav.contact'), path: '/kontak' }
                 ].map((item) => (
                   <li key={item.label}>
                     <Link 
@@ -102,7 +104,7 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
           {/* Contact Information */}
           <div className="space-y-6 md:space-y-8">
             <h4 className="text-white font-black text-[10px] md:text-[11px] uppercase tracking-[0.3em] mb-2 text-center md:text-left opacity-50">
-              {copy?.footer_contact || 'Hubungi Kami'}
+              {t('footer.contact_us')}
             </h4>
             <div className="space-y-4 md:space-y-6">
               <div className="flex items-start gap-4 group">
@@ -110,7 +112,7 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
                   <span className="material-symbols-outlined text-lg md:text-xl">location_on</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5 md:mb-1">Lokasi Outlet</span>
+                  <span className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5 md:mb-1">{t('footer.location')}</span>
                   <span className="text-slate-300 text-xs md:text-sm font-bold leading-snug">
                     {siteSettings?.address || "Jakarta, Indonesia"}
                   </span>
@@ -147,13 +149,13 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
         {/* Bottom Bar */}
         <div className="border-t border-white/5 pt-6 md:pt-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8">
           <p className="text-slate-500 text-[10px] md:text-[11px] font-bold order-2 md:order-1 tracking-wider uppercase">
-            {copy?.footer_copyright || `© 2025 ${siteSettings?.store_name || "HR-One Donuts"}. Crafted with love`}
+            {t('footer.copyright')}
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 md:gap-x-10 gap-y-3 md:gap-y-4 order-1 md:order-2">
             {[
-              { label: 'Privasi', href: '/privacy' },
-              { label: 'Syarat', href: '/terms' },
-              { label: 'Cookie', href: '/cookies' }
+              { label: t('footer.privacy'), href: '/privacy' },
+              { label: t('footer.terms'), href: '/terms' },
+              { label: t('footer.cookie'), href: '/cookies' }
             ].map((link) => (
               <Link 
                 key={link.href}
@@ -167,6 +169,7 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
         </div>
       </div>
     </footer>
+
 
   );
 }

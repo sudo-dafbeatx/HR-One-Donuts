@@ -2,8 +2,10 @@
 
 import { RocketLaunchIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
+import { useTranslation } from '@/context/LanguageContext';
 
 export default function AppInfoPage() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-8 px-4 py-12 pb-32 text-center">
       <div className="relative size-32 mx-auto mb-6 group">
@@ -29,25 +31,25 @@ export default function AppInfoPage() {
       </div>
 
       <p className="text-sm text-slate-500 font-medium leading-relaxed max-w-xs mx-auto italic">
-      &quot;Menyajikan kebahagiaan di setiap gigitan sejak hari pertama. Terima kasih telah menjadi bagian dari keluarga besar HR-One Donuts.&quot;
+      {t('settings.info.tagline')}
       </p>
 
       <div className="pt-12">
         <div className="bg-white border border-slate-100 rounded-3xl p-6 divide-y divide-slate-50 shadow-sm">
            <div className="flex justify-between py-3">
-              <span className="text-xs font-bold text-slate-400 uppercase">Vendor</span>
+              <span className="text-xs font-bold text-slate-400 uppercase">{t('settings.info.fields.vendor')}</span>
               <span className="text-xs font-black text-slate-800">Google Antigravity & DAFBEATX</span>
            </div>
            <div className="flex justify-between py-3">
-              <span className="text-xs font-bold text-slate-400 uppercase">Database</span>
+              <span className="text-xs font-bold text-slate-400 uppercase">{t('settings.info.fields.database')}</span>
               <span className="text-xs font-black text-slate-800">Supabase</span>
            </div>
            <div className="flex justify-between py-3">
-              <span className="text-xs font-bold text-slate-400 uppercase">Framework</span>
+              <span className="text-xs font-bold text-slate-400 uppercase">{t('settings.info.fields.framework')}</span>
               <span className="text-xs font-black text-slate-800">Next.js 14</span>
            </div>
         </div>
-        <p className="mt-8 text-[10px] text-slate-400 font-medium uppercase tracking-widest">Dibuat dengan ❤️ di Bogor</p>
+        <p className="mt-8 text-[10px] text-slate-400 font-medium uppercase tracking-widest">{t('settings.info.footer')}</p>
       </div>
     </div>
   );

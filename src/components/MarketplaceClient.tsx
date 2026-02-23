@@ -1,11 +1,9 @@
-'use client';
-
 import React from 'react';
 import Image from 'next/image';
 import { Product, ReviewStats } from '@/types/cms';
 import { useCart } from '@/context/CartContext';
-
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/context/LanguageContext';
 
 interface MarketplaceClientProps {
   initialProducts: Product[];
@@ -17,13 +15,16 @@ interface MarketplaceClientProps {
 export default function MarketplaceClient({ 
   initialProducts, 
   categories = [], 
-  copy,
   reviewStats = [] 
 }: MarketplaceClientProps) {
   const router = useRouter();
   const { addToCart } = useCart();
+  const { t } = useTranslation();
+  
+  const ALL_CATEGORY = 'ALL';
+  
   // Derived state from props to ensure UI updates during client navigation
-  const [activeCategory, setActiveCategory] = React.useState<string>(copy?.category_all || 'Semua');
+  const [activeCategory, setActiveCategory] = React.useState<string>(ALL_CATEGORY);
   const [searchQuery, setSearchQuery] = React.useState<string>('');
 
   const sortedProducts = [...initialProducts].sort((a, b) => {
@@ -34,7 +35,7 @@ export default function MarketplaceClient({
   });
 
   const filteredProducts = sortedProducts.filter(p => {
-    const matchesCategory = activeCategory === (copy?.category_all || 'Semua') || p.category === activeCategory;
+    const matchesCategory = activeCategory === ALL_CATEGORY || p.category === activeCategory;
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
@@ -108,7 +109,7 @@ export default function MarketplaceClient({
           <input 
             type="text" 
             className="w-full bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-28 focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 font-medium transition-all text-sm outline-none shadow-sm" 
-            placeholder={copy?.search_placeholder || "Cari donat..."} 
+            placeholder={t('search.placeholder')} 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -116,7 +117,7 @@ export default function MarketplaceClient({
             className="absolute right-1.5 top-1.5 bottom-1.5 px-5 bg-primary text-white text-xs font-black uppercase tracking-wider rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/20"
             onClick={() => {/* search is handled by state filter */}}
           >
-            {copy?.cta_search || "Search"}
+            {t('search.cta')}
           </button>
         </div>
       </div>
@@ -124,14 +125,14 @@ export default function MarketplaceClient({
       {/* Categories */}
       <div className="flex items-center gap-2 overflow-x-auto pb-6 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
         <button
-          onClick={() => setActiveCategory(copy?.category_all || 'Semua')}
+          onClick={() => setActiveCategory(ALL_CATEGORY)}
           className={`shrink-0 px-5 py-2 rounded-full text-[10px] md:text-[11px] font-black uppercase tracking-wider transition-all ${
-            activeCategory === (copy?.category_all || 'Semua')
+            activeCategory === ALL_CATEGORY
               ? 'bg-primary text-white shadow-lg shadow-primary/25'
               : 'bg-slate-50 text-slate-500 hover:bg-slate-100 border border-slate-200'
           }`}
         >
-          {copy?.category_all || 'Semua'}
+          {t('common.category_all')}
         </button>
         {categories.map(cat => (
           <button
@@ -152,7 +153,7 @@ export default function MarketplaceClient({
       {filteredProducts.length === 0 ? (
         <div className="text-center py-20 bg-slate-50 rounded-3xl border border-slate-200">
            <p className="text-slate-400 font-bold text-sm">
-             {searchQuery ? `Tidak ada produk yang cocok dengan "${searchQuery}"` : (copy?.empty_products || "Tidak ada produk di kategori ini.")}
+             {searchQuery ? `${t('common.search_not_found')} "${searchQuery}"` : t('common.empty_products')}
            </p>
         </div>
       ) : (
@@ -170,7 +171,7 @@ export default function MarketplaceClient({
                 {/* Badge */}
                 {hasDiscount && (
                   <div className="absolute top-2 left-2 z-20 bg-primary text-white text-[8px] md:text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg">
-                    {copy?.badge_promo || 'PROMO'}
+                    {t('common.promo_badge')}
                   </div>
                 )}
                 
@@ -212,7 +213,7 @@ export default function MarketplaceClient({
                     <div className="flex items-center justify-between gap-1 flex-wrap">
                       {renderRating(stats)}
                       <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase tracking-tight">
-                        {product.sold_count || 0}+ {copy?.sold_label || 'Terjual'}
+                        {product.sold_count || 0}+ {t('common.sold')}
                       </span>
                     </div>
                   </div>

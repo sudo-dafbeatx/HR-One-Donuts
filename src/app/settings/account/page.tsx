@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { useTranslation } from '@/context/LanguageContext';
 
 interface AuthLog {
   id: string;
@@ -37,6 +38,7 @@ interface UserProfile {
 }
 
 export default function AccountSettingsPage() {
+  const { t, language } = useTranslation();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
@@ -85,13 +87,13 @@ export default function AccountSettingsPage() {
           onClick={() => setActiveTab('profile')}
           className={`flex-1 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === 'profile' ? 'border-primary text-primary' : 'border-transparent text-slate-400'}`}
         >
-          Akun
+          {t('settings.account.tabs.profile')}
         </button>
         <button
           onClick={() => setActiveTab('security')}
           className={`flex-1 py-4 text-sm font-bold transition-all border-b-2 ${activeTab === 'security' ? 'border-primary text-primary' : 'border-transparent text-slate-400'}`}
         >
-          Keamanan
+          {t('settings.account.tabs.security')}
         </button>
       </div>
 
@@ -109,30 +111,30 @@ export default function AccountSettingsPage() {
                 </div>
               )}
             </div>
-            <h3 className="text-xl font-bold text-slate-800">{profile?.full_name || 'Teman Donat'}</h3>
+            <h3 className="text-xl font-bold text-slate-800">{profile?.full_name || t('profile.default_name')}</h3>
             <p className="text-sm text-slate-500 font-medium">@{profile?.username || 'user' + profile?.id?.slice(0,5)}</p>
           </section>
 
           {/* Details Section */}
           <div className="space-y-4"> {/* Added a wrapper div for the new structure */}
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Informasi Dasar</h3>
+              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('settings.account.basic_info.title')}</h3>
               <Link
                 href="/settings/account/edit"
                 className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline"
               >
-                Ubah
+                {t('settings.account.basic_info.edit_cta')}
               </Link>
             </div>
             <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 divide-y divide-slate-50">
-              <EditableItem icon={UserCircleIcon} label="Nama Lengkap" value={profile?.full_name || '-'} />
-              <EditableItem icon={FingerPrintIcon} label="Username" value={profile?.username || '-'} />
-              <EditableItem icon={DevicePhoneMobileIcon} label="No. Handphone" value={profile?.phone_number || '-'} />
-              <EditableItem icon={EnvelopeIcon} label="Email" value={profile?.email || '-'} />
+              <EditableItem icon={UserCircleIcon} label={t('settings.account.basic_info.labels.name')} value={profile?.full_name || '-'} />
+              <EditableItem icon={FingerPrintIcon} label={t('settings.account.basic_info.labels.username')} value={profile?.username || '-'} />
+              <EditableItem icon={DevicePhoneMobileIcon} label={t('settings.account.basic_info.labels.phone')} value={profile?.phone_number || '-'} />
+              <EditableItem icon={EnvelopeIcon} label={t('settings.account.basic_info.labels.email')} value={profile?.email || '-'} />
             </div>
           </div>
 
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Akun Media Sosial</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">{t('settings.account.social')}</p>
           <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100">
               <div className="px-6 py-4 grid grid-cols-2 gap-3">
                 <SocialLink icon={CheckBadgeIcon} label="Facebook" href={profile?.social_links?.facebook} />
@@ -153,8 +155,8 @@ export default function AccountSettingsPage() {
                     <FingerPrintIcon className="size-5" />
                   </div>
                   <div className="flex flex-col text-left">
-                    <span className="text-sm font-bold text-slate-800">Ganti Password</span>
-                    <span className="text-[10px] text-slate-500 font-medium">Ubah kata sandi secara berkala</span>
+                    <span className="text-sm font-bold text-slate-800">{t('settings.account.password.title')}</span>
+                    <span className="text-[10px] text-slate-500 font-medium">{t('settings.account.password.subtitle')}</span>
                   </div>
                 </div>
                 <ChevronRightIcon className="size-4 text-slate-300" />
@@ -177,7 +179,7 @@ export default function AccountSettingsPage() {
             </div>
           </div>
 
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">Riwayat Login Terbaru</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">{t('settings.account.security.history_title')}</p>
           <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 divide-y divide-slate-50">
             {authLogs.length > 0 ? authLogs.map((log) => (
               <div key={log.id} className="flex items-center gap-4 px-6 py-4">
@@ -187,14 +189,14 @@ export default function AccountSettingsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
                     <p className="text-sm font-bold text-slate-700 truncate capitalize">{log.event_type.replace('_', ' ')}</p>
-                    <span className="text-[10px] text-slate-400 font-medium">{new Date(log.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="text-[10px] text-slate-400 font-medium">{new Date(log.created_at).toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                   <p className="text-[10px] text-slate-400 truncate font-medium">IP: {log.ip_address} • {log.user_agent.split(' ')[0]}</p>
                 </div>
               </div>
             )) : (
               <div className="p-10 text-center">
-                <p className="text-slate-400 text-sm italic font-medium">Belum ada riwayat aktivitas.</p>
+                <p className="text-slate-400 text-sm italic font-medium">{t('settings.account.security.empty_history')}</p>
               </div>
             )}
           </div>

@@ -9,30 +9,32 @@ import {
   EnvelopeIcon,
   PhoneIcon
 } from '@heroicons/react/24/outline';
+import { useTranslation } from '@/context/LanguageContext';
 
 export default function FAQPage() {
+  const { t } = useTranslation();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
     {
-      q: "Bagaimana cara memesan donat?",
-      a: "Anda dapat melihat katalog kami di menu 'Menu', pilih donat yang Anda inginkan, tambahkan ke keranjang, lalu klik 'Pesan via WhatsApp'."
+      q: t('settings.help.faqs.0.q'),
+      a: t('settings.help.faqs.0.a')
     },
     {
-      q: "Berapa lama waktu pengantaran?",
-      a: "Pengantaran biasanya dilakukan antara pukul 08:00 - 17:00. Estimasi sampai tergantung jarak tempuh dan antrean."
+      q: t('settings.help.faqs.1.q'),
+      a: t('settings.help.faqs.1.a')
     },
     {
-      q: "Apakah ada minimum pemesanan?",
-      a: "Tidak ada minimum pemesanan untuk eceran, namun untuk paket box tersedia dalam isi 6 atau 12."
+      q: t('settings.help.faqs.2.q'),
+      a: t('settings.help.faqs.2.a')
     },
     {
-      q: "Area mana saja yang dijangkau?",
-      a: "Saat ini kami fokus pada area Bogor dan sekitarnya. Silakan cek detail pengiriman di menu 'Pengiriman'."
+      q: t('settings.help.faqs.3.q'),
+      a: t('settings.help.faqs.3.a')
     },
     {
-      q: "Metode pembayaran apa saja yang tersedia?",
-      a: "Kami menerima Transfer Bank (BCA, Mandiri) dan E-Wallet (Gopay, Dana, OVO) yang dikonfirmasi melalui WhatsApp."
+      q: t('settings.help.faqs.4.q'),
+      a: t('settings.help.faqs.4.a')
     }
   ];
 
@@ -42,8 +44,8 @@ export default function FAQPage() {
         <div className="size-16 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
           <QuestionMarkCircleIcon className="size-8" />
         </div>
-        <h2 className="text-xl font-black text-slate-800">Pusat Bantuan</h2>
-        <p className="text-sm text-slate-500 font-medium">Ada yang bisa kami bantu hari ini?</p>
+        <h2 className="text-xl font-black text-slate-800">{t('settings.help.title')}</h2>
+        <p className="text-sm text-slate-500 font-medium">{t('settings.help.subtitle')}</p>
       </div>
 
       <div className="space-y-3">
@@ -69,9 +71,9 @@ export default function FAQPage() {
 
       {/* Contact Section */}
       <section className="mt-12 space-y-4">
-        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Masih Butuh Bantuan?</h3>
+        <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">{t('settings.help.contact_cta')}</h3>
         <div className="grid grid-cols-3 gap-3">
-           <ContactCard icon={ChatBubbleLeftEllipsisIcon} label="Chat" href="#" color="primary" />
+           <ContactCard icon={ChatBubbleLeftEllipsisIcon} label={t('settings.policies.contact.chat')} href="#" color="primary" />
            <ContactCard icon={EnvelopeIcon} label="Email" href="mailto:halo@hrone.com" color="blue" />
            <ContactCard icon={PhoneIcon} label="WA" href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '62895351251395'}`} color="green" />
         </div>

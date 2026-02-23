@@ -1,0 +1,413 @@
+{
+  "nav": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "how_to_order": "How to Order",
+    "promo": "Promo",
+    "events": "Events",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "settings": "Settings",
+    "profile": "Profile",
+    "login": "Login / Register"
+  },
+  "search": {
+    "placeholder": "Find your favorite donuts...",
+    "cta": "Search"
+  },
+  "hero": {
+    "title": "HR-One Donuts",
+    "subtitle": "Traditional Recipe, International Taste",
+    "desc": "Bring happiness with every bite with our soft and flavorful artisan donuts crafted with love by our family."
+  },
+  "common": {
+    "view_all": "View All",
+    "add_to_cart": "Add to Cart",
+    "buy_now": "Buy Now",
+    "loading": "Please wait...",
+    "total": "Total",
+    "checkout": "Checkout",
+    "sold": "Sold",
+    "promo_badge": "PROMO",
+    "limited_badge": "LIMITED",
+    "bestseller_badge": "BESTSELLER",
+    "category_all": "All",
+    "empty_products": "No active products yet.",
+    "search_not_found": "No products matching",
+    "back": "Back",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "footer": {
+    "tagline": "Freshly baked donuts made daily with love. Discover the magic in every bite.",
+    "navigation": "Navigation",
+    "help": "Help",
+    "contact_us": "Contact Us",
+    "location": "Outlet Location",
+    "copyright": "© 2025 HR-One Donuts. Crafted with love.",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookie": "Cookie"
+  },
+  "days": {
+    "Tuesday": "Tuesday",
+    "Friday": "Friday"
+  },
+  "account": {
+    "activity": "Activity",
+    "settings": "Settings",
+    "sign_out": "Sign Out",
+    "summary": "Activity Summary",
+    "spending": "Spending",
+    "reviews": "Reviews",
+    "recent_orders": "Recent Orders",
+    "no_orders": "No orders yet",
+    "login_now": "Login Now"
+  },
+  "promo": {
+    "title": "Special Promo",
+    "subtitle": "Limited offers for you today",
+    "view_all": "View All Promos",
+    "ends_at": "Ends in",
+    "bogo": "Buy 1 Get 1 Free",
+    "discount": "{percent}% OFF",
+    "starts_at": "Starts on {day}",
+    "limited_today": "Limited Today",
+    "not_active": "Not Active",
+    "shop_now": "Shop Now",
+    "view_details": "View Details",
+    "expired": "Promo Ended",
+    "now": "Valid Now"
+  },
+  "cart": {
+    "title": "My Order",
+    "subtitle": "Family Business - Crafted with Love",
+    "empty_title": "Your cart is empty",
+    "empty_subtitle": "Go find your favorite donuts!",
+    "view_catalog": "View Catalog",
+    "delivery_method_title": "Delivery Method",
+    "delivery": "Home Delivery",
+    "pickup": "Store Pickup",
+    "shipping_note": "*Shipping fee is automatically added to the total.",
+    "subtotal": "Subtotal",
+    "shipping_fee": "Shipping Fee",
+    "total_estimate": "Estimated Total",
+    "whatsapp_cta": "Order via WhatsApp",
+    "whatsapp_note": "Send order details automatically",
+    "service_area": "Pickup & Delivery Service Bogor Area",
+    "alert_title": "Incomplete Data",
+    "alert_subtitle": "Please complete your profile details first.",
+    "alert_cta": "Complete Now",
+    "alert_back": "Back to Cart",
+    "processing": "Processing order...",
+    "error_generic": "Failed to process order. Please try again.",
+    "whatsapp": {
+      "greeting": "Hello {store_name}! 🍩",
+      "new_order": "*NEW ORDER FROM WEBSITE*",
+      "customer_data": "👤 *Customer Data:*",
+      "name": "Name: {name}",
+      "wa": "WhatsApp: {phone}",
+      "address": "Address: {address}",
+      "reception": "🚚 *Reception Method:*",
+      "delivery_method": "✅ Home Delivery",
+      "pickup_method": "✅ In-Store Pickup",
+      "detail": "🛒 *Order Details:*",
+      "item_line": "✅ *{name}*\n   {quantity}x @ Rp {price} = Rp {total}",
+      "subtotal": "Subtotal: Rp {amount}",
+      "shipping": "Shipping: Rp {amount}",
+      "total_payment": "💰 *Total Payment: Rp {amount}*",
+      "footer": "Please process it immediately. Thank you! 🙏"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "customer": "Customer",
+    "default_name": "Donut Friend",
+    "verified": "Verified Account",
+    "complete_data": "Complete Data",
+    "change_photo": "Change Photo",
+    "update_loading": "Updating profile...",
+    "avatar_setting": "Setting avatar...",
+    "avatar_uploading": "Uploading & converting to WebP...",
+    "phone_taken": "This phone number is already registered. Use another number.",
+    "update_fail": "Failed to update profile: {message}",
+    "upload_fail": "Upload failed: {message}",
+    "avatar_modal": {
+      "title": "Change Profile Photo",
+      "subtitle": "Choose a donut character or use your own photo",
+      "character_title": "Choose Donut Character",
+      "upload_title": "Or Use Your Own Photo",
+      "upload_cta": "Take from Gallery",
+      "upload_note": "Automatically Convert to WebP & Save Quota",
+      "cancel": "Not now"
+    },
+    "info": {
+      "title": "Personal Information",
+      "subtitle": "Your data remains safe & confidential",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "save": "Save Changes",
+      "identity_title": "Identity",
+      "region_title": "Region",
+      "address_detail_title": "Full Address",
+      "labels": {
+        "name": "Full Name",
+        "phone": "Phone Number",
+        "address": "Shipping Address"
+      },
+      "placeholders": {
+        "name": "Full Name",
+        "phone": "08xxxx",
+        "address": "Shipping Address"
+      },
+      "gender": {
+        "male": "Male",
+        "female": "Female"
+      },
+      "age_suffix": "{age} Years Old",
+      "not_filled": "Not filled",
+      "not_set": "Not set"
+    },
+    "quotes": [
+      "Sweet donuts for a sweet day!",
+      "Smile, there's a donut waiting for you.",
+      "Start the day with enthusiasm and a donut.",
+      "One bite of a donut, a million happinesses.",
+      "A perfectly round donut, just like your day today.",
+      "The sweetness of the donut is not as sweet as your smile.",
+      "Don't forget to be happy, and eat a donut."
+    ],
+    "sidebar": {
+      "cta_title": "Come on, buy your\nfavorite donut !",
+      "cta_sub": "Order Now"
+    }
+  },
+  "orders": {
+    "title": "Order History",
+    "count": "{count} Transactions",
+    "empty_title": "No orders yet",
+    "empty_subtitle": "Is your wallet still itchy? Let's choose your favorite donut now!",
+    "empty_cta": "Open Catalog Menu",
+    "items_count": "{count} items",
+    "detail_cta": "Details",
+    "reception": {
+      "pickup": "Store Pickup",
+      "delivery": "Home Delivery"
+    },
+    "status": {
+      "pending": "Processing",
+      "shipping": "Shipping",
+      "ready": "Ready",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "detail": {
+      "title": "Order Details",
+      "id_label": "ORDER ID",
+      "items_title": "Product List",
+      "shipping_title": "Shipping Information",
+      "reception_method": "METHOD",
+      "address_label": "DESTINATION ADDRESS",
+      "no_address": "Address not recorded.",
+      "payment_title": "Payment Details",
+      "subtotal_label": "Product Subtotal",
+      "shipping_label": "Shipping Fee",
+      "total_label": "Total Payment"
+    }
+  },
+  "activity": {
+    "spending": "Spending",
+    "reviews": "Review History",
+    "reviews_count": "{count} Reviews",
+    "location": "Main Location"
+  },
+  "settings": {
+    "title": "Settings",
+    "sections": {
+      "account": "Account",
+      "settings": "Settings",
+      "help": "Help"
+    },
+    "account": {
+      "tabs": {
+        "profile": "Account",
+        "security": "Security"
+      },
+      "basic_info": {
+        "title": "Basic Information",
+        "edit_cta": "Change",
+        "labels": {
+          "name": "Full Name",
+          "username": "Username",
+          "phone": "Phone Number",
+          "email": "Email"
+        }
+      },
+      "social": "Social Media Accounts",
+      "password": {
+        "title": "Change Password",
+        "subtitle": "Change your password periodically"
+      },
+      "security": {
+        "status_title": "Check Account Activity",
+        "status_safe": "Your account is monitored safely.",
+        "history_title": "Recent Login History",
+        "empty_history": "No activity history yet."
+      }
+    },
+    "address": {
+      "title": "My Addresses",
+      "add_cta": "Add New",
+      "form": {
+        "title_add": "Set New Location",
+        "cancel": "Cancel",
+        "labels": {
+          "home": "Home",
+          "office": "Office",
+          "name": "Full Name",
+          "phone": "Phone Number",
+          "province": "Province",
+          "city": "City",
+          "district": "District",
+          "postal_code": "Postal Code",
+          "street": "Street Name",
+          "building": "Building (Optional)",
+          "house_no": "House No.",
+          "details": "Other Details"
+        },
+        "placeholders": {
+          "name": "Example: Budi Sudarsono",
+          "phone": "+62...",
+          "province": "West Java",
+          "city": "Bogor",
+          "district": "Babakan Madang",
+          "postal_code": "16810",
+          "street": "Main Street",
+          "details": "Other Details (Block/Unit No., Landmark)"
+        },
+        "map": {
+          "title": "Visual Map Aid",
+          "instruction": "Complete the address or click the button below to see location",
+          "refresh": "Refresh Location on Map",
+          "show": "Show Location on Map",
+          "error_empty": "Please fill in the address first to view on map."
+        },
+        "submit": "Save Address"
+      },
+      "list": {
+        "delete_confirm": "Delete this address?",
+        "default_badge": "Primary",
+        "set_default": "Set as Primary",
+        "edit": "Edit",
+        "empty_title": "No addresses yet",
+        "empty_desc": "Add your favorite shipping addresses now.",
+        "suggestion_title": "Suggestion from Profile",
+        "use_suggestion": "Use Registration Address"
+      }
+    },
+    "preferences": {
+      "sections": {
+        "bot": "Bot & Chat",
+        "comm": "Communication",
+        "privacy": "Permissions & Privacy",
+        "regional": "Regional"
+      },
+      "items": {
+        "bot": {
+          "title": "Chat Bot",
+          "desc": "Our automated assistance."
+        },
+        "notif": {
+          "title": "Notifications",
+          "desc": "Order updates & promos."
+        },
+        "location": {
+          "title": "Location",
+          "desc": "Give access to determine your address location"
+        },
+        "photos": {
+          "title": "Photo Album",
+          "desc": "Give access to upload photos for feed or reviews"
+        },
+        "camera": {
+          "title": "Camera",
+          "desc": "Give access to take photos"
+        },
+        "language": {
+          "title": "Language"
+        }
+      }
+    },
+    "policies": {
+      "title": "Policies",
+      "items": {
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy HR-One Donuts",
+        "privacy_detail": "Privacy Policy (Data Collection Detail)",
+        "terms_birthday": "Birthday Event Terms of Service",
+        "terms_flash_sms": "Flash Sale Terms: SMS",
+        "terms_flash_friday": "Flash Sale Terms: Blessed Friday",
+        "terms_box": "Donut Box Terms",
+        "terms_retail": "Retail Donut Terms"
+      },
+      "satisfaction": {
+        "title": "Are you satisfied with the article?",
+        "desc": "Your feedback means a lot to us.",
+        "thanks": "Thank you for your feedback!",
+        "yes": "Satisfied",
+        "no": "Unsatisfied"
+      },
+      "contact": {
+        "title": "Contact Us",
+        "chat": "System Chat"
+      }
+    },
+    "help": {
+      "title": "Help Center",
+      "subtitle": "How can we help you today?",
+      "faqs": [
+        {
+          "q": "How to order donuts?",
+          "a": "You can view our catalog in the 'Menu' tab, select the donuts you want, add to cart, and then click 'Order via WhatsApp'."
+        },
+        {
+          "q": "How long does delivery take?",
+          "a": "Delivery is typically done between 08:00 - 17:00. Estimated arrival depends on distance and queue."
+        },
+        {
+          "q": "Is there a minimum order?",
+          "a": "There is no minimum order for retail, but box packages are available in sets of 6 or 12."
+        },
+        {
+          "q": "Which areas are covered?",
+          "a": "Currently we focus on Bogor and surrounding areas. Please check delivery details in the 'Shipping' menu."
+        },
+        {
+          "q": "What payment methods are available?",
+          "a": "We accept Bank Transfer (BCA, Mandiri) and E-Wallet (Gopay, Dana, OVO) confirmed via WhatsApp."
+        }
+      ],
+      "contact_cta": "Still Need Help?"
+    },
+    "info": {
+      "title": "App Info",
+      "tagline": "\"Serving happiness in every bite since day one. Thank you for being part of the HR-One Donuts family.\"",
+      "fields": {
+        "vendor": "Vendor",
+        "database": "Database",
+        "framework": "Framework"
+      },
+      "footer": "Made with ❤️ in Bogor"
+    },
+    "items": {
+      "account": "Security and Account",
+      "address": "My Addresses",
+      "preferences": "Preferences & Privacy",
+      "help": "Help Center (FAQ)",
+      "policies": "Policies",
+      "info": "App Info",
+      "delete": "Request Account Deletion"
+    },
+    "logout": "Log Out / Switch Account"
+  }
+}

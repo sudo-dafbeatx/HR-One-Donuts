@@ -10,6 +10,7 @@ import ThemeProvider from "@/components/ThemeProvider";
 import { SiteSettings } from "@/types/cms";
 import { getTheme, getCopy } from "@/lib/theme";
 import { EditModeProvider } from "@/context/EditModeContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import EditModeToggle from "@/components/cms/EditModeToggle";
 import ThemePanel from "@/components/cms/ThemePanel";
 import ScrollToTop from "@/components/utils/ScrollToTop";
@@ -72,9 +73,10 @@ export default async function RootLayout({
         <ScrollToTop />
         <DelayedCardPopup siteSettings={siteSettings} />
         <ThemeProvider theme={theme}>
-          <EditModeProvider initialCopy={copy} initialTheme={theme} isAdmin={isAdmin}>
-            <LoadingProvider>
-              <CartProvider>
+          <LanguageProvider>
+            <EditModeProvider initialCopy={copy} initialTheme={theme} isAdmin={isAdmin}>
+              <LoadingProvider>
+                <CartProvider>
                 <TrafficTracker />
                 <div id="main-content" className="min-h-screen">
                   {children}
@@ -121,6 +123,7 @@ export default async function RootLayout({
               </CartProvider>
             </LoadingProvider>
           </EditModeProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

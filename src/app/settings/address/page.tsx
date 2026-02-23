@@ -10,6 +10,7 @@ import {
   TrashIcon,
   MapIcon
 } from '@heroicons/react/24/outline';
+import { useTranslation } from '@/context/LanguageContext';
 
 interface Address {
   id: string;
@@ -41,6 +42,7 @@ interface ProfileAddress {
 }
 
 export default function AddressPage() {
+  const { t } = useTranslation();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -101,7 +103,7 @@ export default function AddressPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Hapus alamat ini?')) return;
+    if (!confirm(t('settings.address.list.delete_confirm'))) return;
     const { error } = await supabase
       .from('user_addresses')
       .delete()
@@ -121,21 +123,21 @@ export default function AddressPage() {
   return (
     <div className="space-y-6 px-4 py-6 pb-24">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-xl font-bold text-slate-800">Alamat Saya</h2>
+        <h2 className="text-xl font-bold text-slate-800">{t('settings.address.title')}</h2>
         <button 
           onClick={() => setIsAdding(true)}
           className="flex items-center gap-1 text-primary font-bold text-sm bg-primary/5 px-4 py-2 rounded-xl active:scale-95 transition-all"
         >
           <PlusIcon className="size-4" />
-          Tambah Baru
+          {t('settings.address.add_cta')}
         </button>
       </div>
 
       {isAdding ? (
         <form onSubmit={handleSave} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-5 animate-in slide-in-from-bottom-5 fade-in duration-300">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Atur Lokasi Baru</p>
-            <button type="button" onClick={() => setIsAdding(false)} className="text-xs text-slate-400 font-bold hover:text-slate-600">Batal</button>
+            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{t('settings.address.form.title_add')}</p>
+            <button type="button" onClick={() => setIsAdding(false)} className="text-xs text-slate-400 font-bold hover:text-slate-600">{t('settings.address.form.cancel')}</button>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -144,40 +146,40 @@ export default function AddressPage() {
                onClick={() => setFormData({...formData, label: 'Rumah'})}
                className={`flex items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all font-bold text-xs ${formData.label === 'Rumah' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-50 text-slate-400'}`}
              >
-               <HomeIcon className="size-4" /> Rumah
+               <HomeIcon className="size-4" /> {t('settings.address.form.labels.home')}
              </button>
              <button 
                type="button"
                onClick={() => setFormData({...formData, label: 'Kantor'})}
                className={`flex items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all font-bold text-xs ${formData.label === 'Kantor' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-50 text-slate-400'}`}
              >
-               <BriefcaseIcon className="size-4" /> Kantor
+               <BriefcaseIcon className="size-4" /> {t('settings.address.form.labels.office')}
              </button>
           </div>
 
           <div className="space-y-4">
-            <Input label="Nama Lengkap" value={formData.full_name} onChange={v => setFormData({...formData, full_name: v})} placeholder="Contoh: Budi Sudarsono" />
-            <Input label="Nomor Telepon" value={formData.phone} onChange={v => setFormData({...formData, phone: v})} placeholder="+62..." />
+            <Input label={t('settings.address.form.labels.name')} value={formData.full_name} onChange={v => setFormData({...formData, full_name: v})} placeholder={t('settings.address.form.placeholders.name')} />
+            <Input label={t('settings.address.form.labels.phone')} value={formData.phone} onChange={v => setFormData({...formData, phone: v})} placeholder={t('settings.address.form.placeholders.phone')} />
             
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Provinsi" value={formData.province} onChange={v => setFormData({...formData, province: v})} placeholder="Jawa Barat" />
-              <Input label="Kota" value={formData.city} onChange={v => setFormData({...formData, city: v})} placeholder="Bogor" />
+              <Input label={t('settings.address.form.labels.province')} value={formData.province} onChange={v => setFormData({...formData, province: v})} placeholder={t('settings.address.form.placeholders.province')} />
+              <Input label={t('settings.address.form.labels.city')} value={formData.city} onChange={v => setFormData({...formData, city: v})} placeholder={t('settings.address.form.placeholders.city')} />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Kecamatan" value={formData.district} onChange={v => setFormData({...formData, district: v})} placeholder="Babakan Madang" />
-              <Input label="Kode Pos" value={formData.postal_code} onChange={v => setFormData({...formData, postal_code: v})} placeholder="16810" />
+              <Input label={t('settings.address.form.labels.district')} value={formData.district} onChange={v => setFormData({...formData, district: v})} placeholder={t('settings.address.form.placeholders.district')} />
+              <Input label={t('settings.address.form.labels.postal_code')} value={formData.postal_code} onChange={v => setFormData({...formData, postal_code: v})} placeholder={t('settings.address.form.placeholders.postal_code')} />
             </div>
 
-            <Input label="Nama Jalan" value={formData.street_name} onChange={v => setFormData({...formData, street_name: v})} placeholder="Jl. Raya Utama" />
+            <Input label={t('settings.address.form.labels.street')} value={formData.street_name} onChange={v => setFormData({...formData, street_name: v})} placeholder={t('settings.address.form.placeholders.street')} />
             
             <div className="grid grid-cols-2 gap-4">
-              <Input label="Gedung (Opsional)" value={formData.building_name} onChange={v => setFormData({...formData, building_name: v})} />
-              <Input label="No. Rumah" value={formData.house_no} onChange={v => setFormData({...formData, house_no: v})} />
+              <Input label={t('settings.address.form.labels.building')} value={formData.building_name} onChange={v => setFormData({...formData, building_name: v})} />
+              <Input label={t('settings.address.form.labels.house_no')} value={formData.house_no} onChange={v => setFormData({...formData, house_no: v})} />
             </div>
 
             <textarea 
-              placeholder="Detail Lainnya (Blok/Unit No., Patokan)"
+              placeholder={t('settings.address.form.placeholders.details')}
               className="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-medium focus:ring-2 focus:ring-primary/20 transition-all outline-none min-h-[100px] resize-none"
               value={formData.additional_details}
               onChange={e => setFormData({...formData, additional_details: e.target.value})}
@@ -224,25 +226,25 @@ export default function AddressPage() {
                     setMapQuery(query);
                     setShowMap(true);
                   } else {
-                    alert('Mohon isi alamat terlebih dahulu untuk melihat di peta.');
+                    alert(t('settings.address.form.map.error_empty'));
                   }
                 }}
                 className="w-full py-2 text-[10px] text-primary font-black underline uppercase tracking-widest hover:text-primary/80 transition-colors"
               >
-                {showMap ? 'Segarkan Lokasi di Peta' : 'Tampilkan Lokasi di Peta'}
+                {showMap ? t('settings.address.form.map.refresh') : t('settings.address.form.map.show')}
               </button>
             </div>
           </div>
 
           <button type="submit" className="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">
-            Simpan Alamat
+            {t('settings.address.form.submit')}
           </button>
         </form>
       ) : (
         <div className="space-y-4">
           {addresses.length > 0 ? addresses.map((addr) => (
             <div key={addr.id} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative group overflow-hidden">
-               {addr.is_default && <div className="absolute top-0 right-0 bg-primary text-white text-[8px] font-black uppercase px-3 py-1 rounded-bl-xl tracking-widest">Utama</div>}
+               {addr.is_default && <div className="absolute top-0 right-0 bg-primary text-white text-[8px] font-black uppercase px-3 py-1 rounded-bl-xl tracking-widest">{t('settings.address.list.default_badge')}</div>}
                
                <div className="flex items-start gap-4 mb-4">
                  <div className="p-3 bg-slate-50 text-slate-400 rounded-2xl">
@@ -269,9 +271,9 @@ export default function AddressPage() {
 
                <div className="flex gap-2">
                  {!addr.is_default && (
-                   <button className="flex-1 h-10 border border-slate-100 text-slate-400 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors">Utamakan</button>
+                   <button className="flex-1 h-10 border border-slate-100 text-slate-400 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors">{t('settings.address.list.set_default')}</button>
                  )}
-                 <button className="flex-1 h-10 border border-slate-100 text-slate-400 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors">Edit</button>
+                 <button className="flex-1 h-10 border border-slate-100 text-slate-400 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors">{t('settings.address.list.edit')}</button>
                  <button 
                    onClick={() => handleDelete(addr.id)}
                    className="size-10 flex items-center justify-center text-red-100 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
@@ -285,12 +287,12 @@ export default function AddressPage() {
               <div className="size-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
                 <MapPinIcon className="size-8" />
               </div>
-              <h3 className="text-lg font-bold text-slate-800 mb-2">Belum ada alamat</h3>
-              <p className="text-slate-500 text-sm font-medium mb-8">Tambahkan alamat pengiriman favoritmu sekarang.</p>
+              <h3 className="text-lg font-bold text-slate-800 mb-2">{t('settings.address.list.empty_title')}</h3>
+              <p className="text-slate-500 text-sm font-medium mb-8">{t('settings.address.list.empty_desc')}</p>
               
               {profileAddress && (
                 <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 text-left animate-in slide-in-from-top-4 duration-500">
-                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3">Saran dari Profil</p>
+                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3">{t('settings.address.list.suggestion_title')}</p>
                   <p className="text-sm font-bold text-slate-800 mb-1">{profileAddress.full_name}</p>
                   <p className="text-xs text-slate-500 mb-4 whitespace-pre-line">
                     {profileAddress.district_name}, {profileAddress.city_name}, {profileAddress.province_name}
@@ -312,7 +314,7 @@ export default function AddressPage() {
                     }}
                     className="w-full py-3 bg-primary text-white font-bold rounded-xl text-xs uppercase tracking-widest shadow-md active:scale-95 transition-all"
                   >
-                    Gunakan Alamat Pendaftaran
+                    {t('settings.address.list.use_suggestion')}
                   </button>
                 </div>
               )}
