@@ -1,4 +1,5 @@
 import '@/lib/env-check';
+export const dynamic = 'force-dynamic';
 import type { Metadata } from "next";
 import { CartProvider } from "@/context/CartContext";
 import { LoadingProvider } from "@/context/LoadingContext";

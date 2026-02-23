@@ -1,5 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+
+export const dynamic = 'force-dynamic';
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SiteSettings } from "@/types/cms";
 import { getCopy } from "@/lib/theme";

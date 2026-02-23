@@ -6,6 +6,8 @@ import EventManager from '@/components/admin/CMS/EventManager';
 import FlashSaleManager from '@/components/admin/CMS/FlashSaleManager';
 import { SiteSettings, OrderStep, Category, FlashSale } from '@/types/cms';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ContentPage() {
   const supabase = createServiceRoleClient();
   
