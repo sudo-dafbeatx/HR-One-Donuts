@@ -29,6 +29,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [showCheckoutAnim, setShowCheckoutAnim] = useState(false);
+  const [showProfileAlert, setShowProfileAlert] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery');
 
   const shippingFee = deliveryMethod === 'delivery' ? (siteSettings?.shipping_fee || 0) : 0;
@@ -88,9 +89,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       
       if (!isProfileComplete) {
         setIsLoading(false);
-        // Redirect to profile page with a nicer flow
-        router.push("/profile");
-        alert("Silakan lengkapi nama, nomor WhatsApp, dan alamat pengiriman Anda terlebih dahulu.");
+        setShowProfileAlert(true);
         return;
       }
 
@@ -365,6 +364,48 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       {showCheckoutAnim && (
         <div className="fixed inset-0 z-100 flex items-center justify-center bg-white/95 backdrop-blur-sm animate-fade-in">
           <CheckoutAnimation />
+        </div>
+      )}
+
+      {/* Profile Completeness Alert Overlay */}
+      {showProfileAlert && (
+        <div className="fixed inset-0 z-110 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-background rounded-[24px] shadow-2xl w-full max-w-sm overflow-hidden flex flex-col scale-in-95 animate-in zoom-in-95 duration-200">
+            <div className="bg-amber-500/10 p-6 flex flex-col items-center justify-center text-center">
+              <div className="size-16 bg-amber-500/20 text-amber-600 dark:text-amber-500 rounded-full flex items-center justify-center mb-4">
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">Data Belum Lengkap</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Lengkapi terlebih dahulu data kamu.
+              </p>
+            </div>
+            
+            <div className="p-6 space-y-3 bg-card">
+              <button
+                onClick={() => {
+                  setShowProfileAlert(false);
+                  setIsCartOpen(false);
+                  router.push('/profile');
+                }}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-primary/25 active:scale-[0.98] flex items-center justify-center gap-2"
+              >
+                <span>Lengkapi Sekarang</span>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
+              
+              <button
+                onClick={() => setShowProfileAlert(false)}
+                className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-colors"
+              >
+                Kembali ke Keranjang
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>
