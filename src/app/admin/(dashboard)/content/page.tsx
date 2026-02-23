@@ -1,6 +1,5 @@
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import SiteSettingsEditor from '@/components/admin/CMS/SiteSettingsEditor';
-import SiteSettingsEditor from '@/components/admin/CMS/SiteSettingsEditor';
 import CategoryManager from '@/components/admin/CMS/CategoryManager';
 import EventManager from '@/components/admin/CMS/EventManager';
 import FlashSaleManager from '@/components/admin/CMS/FlashSaleManager';
