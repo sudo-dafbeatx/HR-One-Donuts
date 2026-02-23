@@ -567,8 +567,46 @@ export async function getBotTrainingData() {
 }
 export async function updateOrderStatus(orderId: string, status: string) {
   const supabase = await checkAdmin();
+
+  // 1. Fetch current order to validate transition
+  const { data: order, error: fetchError } = await supabase
+    .from('orders')
+    .select('status, delivery_method')
+    .eq('id', orderId)
+    .single();
+
+  if (fetchError || !order) {
+    console.error('Fetch order for update failed:', fetchError);
+    throw new Error('Pesanan tidak ditemukan atau akses ditolak.');
+  }
+
+  // 2. Map configuration (Internal validation)
+  const STATUS_FLOWS: Record<string, string[]> = {
+    delivery: ['pending', 'shipping', 'completed'],
+    pickup: ['pending', 'ready', 'completed']
+  };
+
+  const method = (order.delivery_method === 'pickup' ? 'pickup' : 'delivery');
+  const flow = STATUS_FLOWS[method];
+  const currentIndex = flow.indexOf(order.status);
+  const nextIndex = flow.indexOf(status);
+
+  // 3. Prevent jumping or invalid transitions
+  if (nextIndex === -1) {
+    throw new Error(`Status ${status} tidak valid untuk metode ${method}`);
+  }
+
+  if (nextIndex <= currentIndex) {
+    // allow overwriting the same status (idempotency) but not going backwards
+    if (nextIndex < currentIndex) {
+       throw new Error(`Tidak bisa kembali ke status sebelumnya (${order.status} -> ${status})`);
+    }
+  } else if (nextIndex > currentIndex + 1) {
+    throw new Error(`Tidak bisa melompati urutan status. Urutan berikutnya harus: ${flow[currentIndex + 1]}`);
+  }
   
-  const { error } = await supabase
+  // 4. Perform update
+  const { error: updateError } = await supabase
     .from('orders')
     .update({ 
       status, 
@@ -576,13 +614,15 @@ export async function updateOrderStatus(orderId: string, status: string) {
     })
     .eq('id', orderId);
 
-  if (error) {
-    console.error('Update order status error:', error);
-    throw new Error(`Gagal memperbarui status: ${error.message}`);
+  if (updateError) {
+    console.error('Update order status error:', updateError);
+    throw new Error(`Gagal memperbarui status di database: ${updateError.message}`);
   }
   
+  // 5. Broad revalidation
   revalidatePath('/admin/orders-status');
   revalidatePath('/profile');
   revalidatePath(`/profile/orders/${orderId}`);
+  
   return { success: true };
 }
