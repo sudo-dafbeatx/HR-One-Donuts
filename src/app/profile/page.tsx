@@ -522,14 +522,15 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Order History */}
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-slate-800 mb-2 flex items-center gap-3">
-                      Riwayat Pesanan Terbaru
-                      <span className="px-2.5 py-0.5 bg-primary/10 text-primary text-[10px] font-extrabold rounded-full border border-primary/10">
-                        {orders.length}
-                      </span>
+                <div className="space-y-4 pt-6 md:pt-8 mt-6 md:mt-8 border-t border-slate-100">
+                  <div className="flex items-center justify-between px-1">
+                    <h2 className="text-[11px] md:text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <ShoppingBagIcon className="size-4 md:size-5" />
+                      Riwayat Pesanan
                     </h2>
+                    <span className="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] md:text-xs font-extrabold rounded-full">
+                      {orders.length} Transaksi
+                    </span>
                   </div>
 
                   {orders.length === 0 ? (
