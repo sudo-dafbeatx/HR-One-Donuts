@@ -187,22 +187,17 @@ export default function AddressPage() {
             <div className="space-y-3">
               <div className={`h-64 bg-slate-100 rounded-3xl overflow-hidden flex flex-col items-center justify-center gap-2 border border-dashed border-slate-200 relative`}>
                 {showMap && (mapQuery || (formData.latitude && formData.longitude)) ? (
-                  <iframe 
-                    width="100%" 
-                    height="100%" 
-                    frameBorder="0" 
-                    scrolling="no" 
-                    marginHeight={0} 
-                    marginWidth={0} 
-                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${(formData.longitude || 0) - 0.01}%2C${(formData.latitude || 0) - 0.01}%2C${(formData.longitude || 0) + 0.01}%2C${(formData.latitude || 0) + 0.01}&layer=mapnik&marker=${formData.latitude}%2C${formData.longitude}`}
-                    className="absolute inset-0"
-                  />
-                ) : showMap && mapQuery ? (
                   <iframe
                     width="100%"
                     height="100%"
                     frameBorder="0"
-                    src={`https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    allowFullScreen
+                    src={formData.latitude && formData.longitude 
+                      ? `https://maps.google.com/maps?q=${formData.latitude},${formData.longitude}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+                      : `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+                    }
                     className="absolute inset-0"
                   />
                 ) : (

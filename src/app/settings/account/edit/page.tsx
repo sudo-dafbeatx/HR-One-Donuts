@@ -191,10 +191,16 @@ export default function EditProfilePage() {
                 </div>
               )}
             </div>
-            <label className="absolute bottom-0 right-0 p-2 bg-primary text-white rounded-full shadow-lg cursor-pointer hover:scale-110 active:scale-95 transition-all">
-              <CameraIcon className="size-5" />
-              <input type="file" className="hidden" accept="image/*" onChange={handleAvatarUpload} disabled={uploading} />
-            </label>
+            <div className="absolute bottom-0 right-0 size-10 bg-primary text-white rounded-full shadow-lg flex items-center justify-center overflow-hidden hover:scale-110 active:scale-95 transition-all">
+              <CameraIcon className="size-5 pointer-events-none" />
+              <input 
+                type="file" 
+                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" 
+                accept="image/*" 
+                onChange={handleAvatarUpload} 
+                disabled={uploading} 
+              />
+            </div>
           </div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">
              Ketuk ikon kamera untuk ubah foto

@@ -34,62 +34,34 @@ export default async function PrivacyPage() {
                 Informasi yang Kami Kumpulkan
               </h2>
               <p className="pl-11">
-                Kami mengumpulkan informasi yang Anda berikan langsung kepada kami saat melakukan pemesanan dan pendaftaran akun, termasuk namun tidak terbatas pada:
+                Website ini mengumpulkan data dasar seperti profil pengguna, email, dan alamat pengiriman semata-mata untuk mempermudah proses pemesanan dan pengantaran donat. Kami tidak menyimpan detail kartu kredit karena sistem kami menggunakan Payment Gateway bersertifikasi dari pihak ketiga.
               </p>
-              <ul className="list-disc pl-16 mt-4 space-y-2">
-                <li><strong>Data Identitas:</strong> Nama lengkap dan username.</li>
-                <li><strong>Kontak:</strong> Nomor WhatsApp dan alamat email.</li>
-                <li><strong>Lokasi:</strong> Alamat pengiriman lengkap, koordinat geografis (jika izin diberikan), serta detail wilayah (provinsi, kota, kecamatan).</li>
-              </ul>
             </section>
 
             {/* Section 2 */}
             <section id="pengelolaan-data">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">2</span>
-                Penggunaan Informasi
+                Penggunaan Data Anda
               </h2>
               <p className="pl-11 mb-4">
-                Informasi Anda digunakan secara eksklusif untuk:
+                Data Anda digunakan untuk memproses pesanan, mengirimkan notifikasi diskon (jika diaktifkan pada Pengaturan), dan mempermudah perhitungan ongkos kirim ke lokasi Anda. Kami menjamin bahwa:
               </p>
               <ul className="list-disc pl-16 space-y-2">
-                <li>Memproses dan mengirimkan pesanan donat Anda.</li>
-                <li>Menghubungi Anda melalui WhatsApp untuk konfirmasi pesanan atau status pengiriman.</li>
-                <li>Meningkatkan layanan dan pengalaman belanja Anda di website kami.</li>
-                <li>Kepentingan keamanan dan pencegahan penipuan.</li>
+                <li>Data tidak diperjualbelikan kepada entitas luar manapun.</li>
+                <li>Hanya admin pengiriman dan dapur HR-One yang memiliki akses ke detail alamat Anda.</li>
+                <li>Anda bebas meminta penghapusan akun beserta semua history pesanannya kapan saja melalui menu Pengaturan &gt; Hapus Akun.</li>
               </ul>
             </section>
 
-            {/* Section 3 */}
+             {/* Section 3 */}
             <section>
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
                 <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">3</span>
-                Perlindungan Data
+                Kebijakan Cookies
               </h2>
               <p className="pl-11">
-                Kami berkomitmen untuk menjaga keamanan data Anda. Kami menggunakan langkah-langkah teknis dan organisasi yang sesuai untuk melindungi informasi pribadi Anda dari akses yang tidak sah, perubahan, atau penghancuran.
-              </p>
-            </section>
-
-            {/* Section 4 */}
-            <section>
-              <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">4</span>
-                Berbagi dengan Pihak Ketiga
-              </h2>
-              <p className="pl-11">
-                Kami tidak akan menjual, menyewakan, atau memberikan informasi pribadi Anda kepada pihak ketiga untuk tujuan pemasaran tanpa izin Anda. Kami hanya berbagi informasi dengan mitra logistik kami untuk memfasilitasi pengiriman pesanan Anda.
-              </p>
-            </section>
-
-            {/* Section 5 */}
-            <section>
-              <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-3">
-                <span className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm">5</span>
-                Hak Anda
-              </h2>
-              <p className="pl-11">
-                Anda memiliki hak untuk meminta akses ke informasi pribadi yang kami simpan tentang Anda, serta meminta koreksi atau penghapusan data tersebut jika diperlukan melalui kontak resmi kami.
+                Kami menggunakan _sessions_ (cookies) yang diamankan untuk mencegah pengguna tidak sah masuk ke akun Anda. Cookies ini otomatis musnah ketika Anda melakukan Logout secara rutin dari perangkat publik.
               </p>
             </section>
           </div>

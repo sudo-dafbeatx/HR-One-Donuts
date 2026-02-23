@@ -10,7 +10,9 @@ import {
   MapPinIcon, 
   ShoppingBagIcon,
   ArrowRightOnRectangleIcon,
-  CalendarDaysIcon
+  CalendarDaysIcon,
+  CurrencyDollarIcon,
+  StarIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useLoading } from '@/context/LoadingContext';
@@ -24,8 +26,9 @@ import Pattern from "@/components/Pattern";
 
 interface Profile {
   id: string;
-  email: string;
+  email: string | null;
   full_name: string | null;
+  username?: string;
   phone: string | null;
   address: string | null;
   avatar_url: string | null;
@@ -284,8 +287,13 @@ export default function ProfilePage() {
                   <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-1 drop-shadow-sm truncate flex flex-wrap items-center gap-2">
                     <span className="truncate">{profile?.full_name || 'Teman Donat'}</span>
                     {profile?.is_verified && (
-                      <div className="flex items-center justify-center bg-blue-500 rounded-full p-1 shadow-md shrink-0 mb-1 z-10" title="Akun Terverifikasi">
+                      <div className="hidden md:flex items-center justify-center bg-blue-500 rounded-full p-1 shadow-md shrink-0 mb-1 z-10" title="Akun Terverifikasi">
                         <CheckBadgeIcon className="size-5 md:size-6 text-white" />
+                      </div>
+                    )}
+                    {profile?.full_name && profile?.username && profile?.address_detail && (
+                      <div className="md:hidden flex items-center justify-center rounded-full shadow-md shrink-0 mb-1 z-10" title="Data Lengkap">
+                        <CheckBadgeIcon className="size-6 text-white" />
                       </div>
                     )}
                   </h1>
@@ -401,7 +409,8 @@ export default function ProfilePage() {
               
               {/* Main Content Info */}
               <div className="lg:col-span-8 space-y-6">
-                <div className="bg-white rounded-4xl shadow-xl shadow-slate-200/50 p-8 border border-white">
+                {/* Desktop "Informasi Pribadi" is HIDDEN on Mobile */}
+                <div className="hidden md:block bg-white rounded-4xl shadow-xl shadow-slate-200/50 p-8 border border-white">
                   <div className="flex items-center justify-between mb-8">
                     <div>
                       <h2 className="text-xl md:text-2xl font-bold text-slate-800">Informasi Pribadi</h2>
@@ -581,14 +590,58 @@ export default function ProfilePage() {
                           </div>
                           
                           <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-center gap-1 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-50">
-                            <p className="font-black text-slate-900 text-base md:text-lg">Rp {order.total_amount.toLocaleString('id-ID')}</p>
-                            <button className="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1">Detail 👉</button>
+                             <p className="font-black text-slate-900 text-base md:text-lg">Rp {order.total_amount.toLocaleString('id-ID')}</p>
+                             <Link href={`/profile`} className="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1 flex items-center gap-1 active:scale-95 transition-transform">
+                               Detail <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                             </Link>
                           </div>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
+
+                {/* Mobile-Only Activity Overview */}
+                <div className="md:hidden grid grid-cols-2 gap-4 mt-6">
+                  {/* Total Spending */}
+                  <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex flex-col justify-center">
+                    <div className="size-8 bg-emerald-50 text-emerald-500 rounded-xl flex items-center justify-center mb-3">
+                      <CurrencyDollarIcon className="size-5" />
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 mt-auto">Pengeluaran</p>
+                    <p className="font-black text-slate-800 text-sm truncate">
+                      Rp {orders.reduce((sum, order) => sum + order.total_amount, 0).toLocaleString('id-ID')}
+                    </p>
+                  </div>
+                  
+                  {/* Reviews Summary */}
+                  <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex flex-col justify-center">
+                    <div className="size-8 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center mb-3">
+                      <StarIcon className="size-5" />
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 mt-auto">Riwayat Ulasan</p>
+                    <p className="font-black text-slate-800 text-sm truncate">
+                      0 Ulasan
+                    </p>
+                  </div>
+
+                  {/* Location Info */}
+                  <div className="col-span-2 bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex items-center gap-4">
+                    <div className="size-10 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center shrink-0">
+                      <MapPinIcon className="size-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Lokasi Utama</p>
+                      <p className="font-bold text-slate-800 text-sm truncate">
+                        {profile?.district_name && profile?.city_name ? `${profile.district_name}, ${profile.city_name}` : 'Belum diisi'}
+                      </p>
+                    </div>
+                    <Link href="/settings/address" className="shrink-0 p-2 text-primary hover:bg-primary/5 rounded-xl transition-colors">
+                       <ArrowRightOnRectangleIcon className="size-5 rotate-180" />
+                    </Link>
+                  </div>
+                </div>
+
               </div>
 
               {/* Sidebar Area */}
