@@ -591,7 +591,7 @@ export default function ProfilePage() {
                           
                           <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-center gap-1 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-50">
                              <p className="font-black text-slate-900 text-base md:text-lg">Rp {order.total_amount.toLocaleString('id-ID')}</p>
-                             <Link href={`/profile`} className="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1 flex items-center gap-1 active:scale-95 transition-transform">
+                             <Link href={`/profile/orders/${order.id}`} className="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1 flex items-center gap-1 active:scale-95 transition-transform">
                                Detail <span className="material-symbols-outlined text-[12px]">open_in_new</span>
                              </Link>
                           </div>
