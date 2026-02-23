@@ -110,31 +110,36 @@ export default function AdminOrdersStatusClient({ initialOrders }: { initialOrde
                 const currentIndex = flow.indexOf(order.status);
                 const stepIndex = flow.indexOf(statusKey);
                 
-                // Only allow click if it's the IMMEDIATELY NEXT step
                 const isNext = stepIndex === currentIndex + 1;
                 const canClick = isNext && !isProcessing;
                 const isDone = stepIndex <= currentIndex;
+
+                // Class logic cleanup
+                let buttonStyle = '';
+                if (isCurrent) {
+                  buttonStyle = `${stepConfig.bgColor} ${stepConfig.textColor} border-current shadow-sm scale-100 ring-1 ring-current`;
+                } else if (canClick) {
+                  buttonStyle = 'bg-white text-slate-600 border-primary/30 hover:border-primary hover:bg-primary/5 cursor-pointer ring-2 ring-primary/10 shadow-sm pointer-events-auto';
+                } else if (isDone) {
+                  buttonStyle = 'bg-slate-50 text-slate-400 border-slate-100 opacity-60 pointer-events-none cursor-default';
+                } else {
+                  buttonStyle = 'bg-white text-slate-300 border-slate-100 opacity-40 grayscale pointer-events-none cursor-not-allowed';
+                }
 
                 return (
                   <button
                     key={statusKey}
                     onClick={() => canClick && handleStatusUpdate(order.id, statusKey)}
                     disabled={!canClick && !isCurrent}
-                    className={`relative py-2 px-1 rounded-xl text-[10px] font-bold transition-all flex flex-col items-center justify-center gap-1 border ${
-                      isCurrent 
-                        ? `${stepConfig.bgColor} ${stepConfig.textColor} border-current shadow-sm` 
-                        : isDone
-                          ? 'bg-slate-50 text-slate-400 border-slate-100 opacity-60'
-                          : 'bg-white text-slate-300 border-slate-100 opacity-40 grayscale pointer-events-none'
-                    } ${canClick ? 'opacity-100 grayscale-0 border-primary/20 hover:border-primary hover:bg-primary/5 cursor-pointer ring-2 ring-primary/5' : ''}`}
+                    className={`relative py-2.5 px-1 rounded-xl text-[10px] font-bold transition-all duration-200 flex flex-col items-center justify-center gap-1 border ${buttonStyle}`}
                   >
                     {isProcessing && isNext && (
                       <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl z-10">
-                        <div className="size-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <div className="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                       </div>
                     )}
-                    <stepConfig.icon className={`size-4 ${isCurrent ? 'scale-110' : ''}`} />
-                    <span className="truncate w-full text-center">{stepConfig.label}</span>
+                    <stepConfig.icon className={`size-5 ${isCurrent ? 'scale-110 drop-shadow-sm' : ''} ${canClick ? 'text-primary' : ''}`} />
+                    <span className="truncate w-full text-center leading-tight">{stepConfig.label}</span>
                   </button>
                 );
               })}
