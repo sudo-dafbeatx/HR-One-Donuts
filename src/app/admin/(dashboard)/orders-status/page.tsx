@@ -1,10 +1,10 @@
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 import AdminOrdersStatusClient from '@/components/admin/AdminOrdersStatusClient';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminOrdersStatusPage() {
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServiceRoleClient();
   
   const { data: orders, error } = await supabase
     .from('orders')
