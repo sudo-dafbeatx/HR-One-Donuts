@@ -109,22 +109,26 @@ export default function UserDailyNotification() {
            const sevenDaysAgo = new Date();
            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
            
-           const { data: newProduct } = await supabase
-             .from('products')
-             .select('name, created_at')
-             .eq('status', 'active')
-             .gte('created_at', sevenDaysAgo.toISOString())
-             .order('created_at', { ascending: false })
-             .limit(1)
-             .maybeSingle();
-             
-           if (newProduct) {
-             notifToTrigger = {
-               type: 'FLASHSALE', // Reuse type for icon rendering context
-               title: '🆕 Rasa Baru Telah Hadir!',
-               message: `Cobain donat varian baru: ${newProduct.name}. Pesan sekarang sebelum kehabisan!`,
-               link: '/catalog',
-             };
+           try {
+             const { data: newProduct } = await supabase
+               .from('products')
+               .select('name, created_at')
+               .eq('is_active', true)
+               .gte('created_at', sevenDaysAgo.toISOString())
+               .order('created_at', { ascending: false })
+               .limit(1)
+               .maybeSingle();
+
+             if (newProduct) {
+               notifToTrigger = {
+                 type: 'FLASHSALE',
+                 title: '🆕 Rasa Baru Telah Hadir!',
+                 message: `Cobain donat varian baru: ${newProduct.name}. Pesan sekarang sebelum kehabisan!`,
+                 link: '/catalog',
+               };
+             }
+           } catch (e) {
+             console.warn('Silent skip: Failed checking new products for daily notif', e);
            }
         }
       }
