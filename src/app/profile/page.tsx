@@ -570,7 +570,7 @@ export default function ProfilePage() {
                                   return (
                                     <span className={`text-[8px] md:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 ${status.bgColor} ${status.textColor} rounded-md flex items-center gap-1`}>
                                       <status.icon className="size-2.5 md:size-3" />
-                                      {status.label}
+                                      {status.userLabel}
                                     </span>
                                   );
                                 })()}

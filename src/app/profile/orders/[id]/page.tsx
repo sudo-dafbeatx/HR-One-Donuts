@@ -60,7 +60,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">ID PESANAN</p>
             <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide flex items-center gap-1.5 ${currentStatus.color}`}>
               <StatusIcon className="size-3.5" />
-              {currentStatus.label}
+              {currentStatus.userLabel}
             </span>
           </div>
           <p className="text-xl font-black text-slate-800 mb-2 font-mono">

@@ -565,3 +565,24 @@ export async function getBotTrainingData() {
     questionLogs: logs || []
   };
 }
+export async function updateOrderStatus(orderId: string, status: string) {
+  const supabase = await checkAdmin();
+  
+  const { error } = await supabase
+    .from('orders')
+    .update({ 
+      status, 
+      updated_at: new Date().toISOString() 
+    })
+    .eq('id', orderId);
+
+  if (error) {
+    console.error('Update order status error:', error);
+    throw new Error(`Gagal memperbarui status: ${error.message}`);
+  }
+  
+  revalidatePath('/admin/orders-status');
+  revalidatePath('/profile');
+  revalidatePath(`/profile/orders/${orderId}`);
+  return { success: true };
+}
