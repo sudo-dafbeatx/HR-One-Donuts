@@ -46,7 +46,7 @@ export default async function CatalogPage() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
-      <CatalogNavbar siteSettings={siteSettings} copy={copy} />
+      <CatalogNavbar siteSettings={siteSettings} />
       <main className="flex-1 max-w-[1280px] mx-auto w-full px-6 md:px-10 lg:px-40 py-10 transition-colors duration-300">
         <div className="mb-10">
           <h1 className="text-4xl font-bold text-heading mb-2">
@@ -56,9 +56,9 @@ export default async function CatalogPage() {
             {copy?.section_catalog_desc || "Pilih donat favoritmu dari koleksi terbaik kami."}
           </p>
         </div>
-        <MarketplaceClient initialProducts={productsToDisplay} categories={categories || []} copy={copy} />
+        <MarketplaceClient initialProducts={productsToDisplay} categories={categories || []} />
       </main>
-      <Footer siteSettings={siteSettings} copy={copy} />
+      <Footer siteSettings={siteSettings} />
     </div>
   );
 }

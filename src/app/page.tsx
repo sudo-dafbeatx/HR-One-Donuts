@@ -74,12 +74,12 @@ export default async function Home() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark uiverse-bg overflow-hidden">
-      <Navbar siteSettings={siteSettings} copy={copy} />
+      <Navbar siteSettings={siteSettings} />
       
       <main className="flex-1 w-full flex flex-col items-center">
         {/* Hero Section - Full width but content constrained */}
         <section className="w-full">
-          <Hero siteSettings={siteSettings} copy={copy} />
+          <Hero siteSettings={siteSettings} />
         </section>
 
         {/* Constrained Content Container */}
@@ -94,14 +94,14 @@ export default async function Home() {
             <MarketplaceClient 
               initialProducts={products as Product[]} 
               categories={categories || []} 
-              copy={copy} 
+              
               reviewStats={reviewStats || []}
             />
           </section>
         </div>
       </main>
       
-      <Footer siteSettings={siteSettings} copy={copy} />
+      <Footer siteSettings={siteSettings} />
     </div>
   );
 }

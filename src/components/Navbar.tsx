@@ -21,7 +21,6 @@ import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 interface NavbarProps {
   siteSettings?: SiteSettings;
-  copy?: Record<string, string>;
   hideLogo?: boolean;
 }
 

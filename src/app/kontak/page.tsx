@@ -22,7 +22,7 @@ export default async function KontakPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navbar siteSettings={siteSettings} copy={copy} />
+      <Navbar siteSettings={siteSettings} />
       
       <main className="max-w-4xl mx-auto px-4 md:px-6 py-12 md:py-20">
         <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-100">

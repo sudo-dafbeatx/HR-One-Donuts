@@ -4,7 +4,6 @@ import { useTranslation } from "@/context/LanguageContext";
 
 interface HeroProps {
   siteSettings?: SiteSettings;
-  copy?: Record<string, string>;
   imageUrl?: string;
 }
 

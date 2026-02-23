@@ -31,7 +31,7 @@ export default async function CaraPesanPage() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-white dark:bg-background-dark uiverse-bg overflow-hidden">
-      <Navbar siteSettings={siteSettings} copy={copy} />
+      <Navbar siteSettings={siteSettings} />
       
       <main className="flex-1 w-full flex flex-col items-center">
         {/* Header Section */}
@@ -78,9 +78,7 @@ export default async function CaraPesanPage() {
           </div>
         </section>
       </main>
-      
-      <Footer siteSettings={siteSettings} copy={copy} />
-      
+      <Footer siteSettings={siteSettings} />
       {/* Mobile Safe Area Padding Wrapper */}
       <div className="md:hidden h-[env(safe-area-inset-bottom)] bg-white" />
     </div>

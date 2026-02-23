@@ -1,3 +1,5 @@
+'use client';
+
 import { PromoEvent, FlashSale } from '@/types/cms';
 import Link from 'next/link';
 import { 
