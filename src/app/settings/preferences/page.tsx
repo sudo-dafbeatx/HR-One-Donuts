@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { 
   ChatBubbleLeftRightIcon,
   BellIcon, 
@@ -12,9 +12,20 @@ import {
 } from '@heroicons/react/24/outline';
 
 export default function PreferencesPage() {
-  const [botEnabled, setBotEnabled] = useState(true);
+  const [botEnabled, setBotEnabled] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('chatbot_disabled') !== 'true';
+    }
+    return true;
+  });
   const [mounted, setMounted] = useState(false);
-  const [notifications, setNotifications] = useState(true);
+  const [notifications, setNotifications] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('notifications_disabled') !== 'true';
+    }
+    return true;
+  });
+
   const [privacy, setPrivacy] = useState({
     location: true,
     photos: false,
@@ -23,11 +34,7 @@ export default function PreferencesPage() {
   const [language, setLanguage] = useState('Bahasa Indonesia');
   const [showLangPicker, setShowLangPicker] = useState(false);
 
-  useEffect(() => {
-    const savedBotPref = localStorage.getItem('chatbot_disabled');
-    if (savedBotPref === 'true') {
-      setBotEnabled(false);
-    }
+  useLayoutEffect(() => {
     setMounted(true);
   }, []);
 
@@ -80,7 +87,14 @@ export default function PreferencesPage() {
                <p className="text-xs text-slate-500 font-medium">Update pesanan & promo.</p>
              </div>
            </div>
-           <Toggle active={notifications} onToggle={() => setNotifications(!notifications)} />
+           <Toggle 
+             active={notifications} 
+             onToggle={() => {
+               const newState = !notifications;
+               setNotifications(newState);
+               localStorage.setItem('notifications_disabled', newState ? 'false' : 'true');
+             }} 
+           />
         </div>
       </section>
 

@@ -46,9 +46,9 @@ export default async function OnboardingProfilePage() {
     .eq('key', 'site_info')
     .maybeSingle();
   
-  const adminNumber = process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117';
+  const contactNumber = process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '62895351251395';
   const waMessage = "Halo Admin HR-One Donuts, mohon bantuannya. Saya mengalami kendala saat mengisi form pendaftaran di website HR-One Donuts. Terima kasih.";
-  const waUrl = `https://wa.me/${adminNumber}?text=${encodeURIComponent(waMessage)}`;
+  const waUrl = `https://wa.me/${contactNumber}?text=${encodeURIComponent(waMessage)}`;
 
   return (
     <div 

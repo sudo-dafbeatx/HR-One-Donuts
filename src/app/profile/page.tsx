@@ -217,11 +217,6 @@ export default function ProfilePage() {
     fileInputRef.current?.click();
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push('/');
-    router.refresh();
-  };
 
   if (loading) {
     return (
@@ -279,7 +274,7 @@ export default function ProfilePage() {
                   </button>
                 </div>
                 
-                <div className="flex-1 text-center md:text-left text-white min-w-0">
+                <div className={`flex-1 min-w-0 ${!profile?.is_verified ? 'text-center' : 'text-center md:text-left'} text-white`}>
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 border border-white/10">
                     <span className="size-1.5 bg-cyan-300 rounded-full animate-ping"></span>
                     Pelanggan
@@ -292,17 +287,18 @@ export default function ProfilePage() {
                       </div>
                     )}
                   </h1>
-                  <p className="text-blue-50/80 font-medium mb-0 opacity-90 text-sm md:text-base truncate">{profile?.email}</p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <button 
-                    onClick={handleSignOut}
-                    className="px-6 h-12 bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold rounded-2xl hover:bg-white/20 transition-all flex items-center gap-2 active:scale-95"
-                  >
-                    <ArrowRightOnRectangleIcon className="size-5" />
-                    Logout
-                  </button>
+                  <p className="text-blue-50/80 font-medium mb-1 opacity-90 text-sm md:text-base truncate">{profile?.email}</p>
+                  <p className="text-[10px] md:text-xs text-blue-100/70 italic opacity-80 mt-1">&quot;{
+                    [
+                      "Donat manis untuk hari yang manis!",
+                      "Tersenyumlah, ada donat menunggumu.",
+                      "Awali hari dengan semangat dan donat.",
+                      "Satu gigitan donat, sejuta kebahagiaan.",
+                      "Donat bulat sempurna, seperti harimu hari ini.",
+                      "Manisnya donat tak semanis senyummu.",
+                      "Jangan lupa bahagia, dan makan donat."
+                    ][new Date().getDay()]
+                  }&quot;</p>
                 </div>
               </div>
             </div>
@@ -601,7 +597,7 @@ export default function ProfilePage() {
                     <div className="size-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 border border-white/20">
                       <ShoppingBagIcon className="size-6 text-white" />
                     </div>
-                    <h3 className="text-2xl font-black mb-2 leading-tight">Lapar melanda?<br/>Donat solusinya!</h3>
+                    <h3 className="text-2xl font-black mb-2 leading-tight">Yuk, beli donat<br/>kesukaanmu !</h3>
                     <p className="text-blue-50/70 font-bold text-sm flex items-center gap-2 group-hover:translate-x-2 transition-transform">
                       Pesan Sekarang <ArrowRightOnRectangleIcon className="size-4 rotate-180" />
                     </p>

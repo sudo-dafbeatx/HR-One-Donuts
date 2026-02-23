@@ -47,12 +47,12 @@ export default async function KontakPage() {
                 <div className="pl-9">
                   <p className="mb-2">Admin kami siap membantu Anda:</p>
                   <a 
-                    href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} 
+                    href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '62895351251395'}`} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-lg font-black text-slate-900 hover:text-primary transition-colors"
                   >
-                    {process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || "+62 858-1065-8117"}
+                    {process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "+62 895-3512-51395"}
                   </a>
                 </div>
               </section>
@@ -80,7 +80,7 @@ export default async function KontakPage() {
                 Kami sangat menghargai feedback Anda untuk terus meningkatkan kualitas produk dan layanan kami.
               </p>
               <Link 
-                href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}?text=Halo%20saya%20ingin%20memberikan%20saran`}
+                href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '62895351251395'}?text=Halo%20saya%20ingin%20memberikan%20saran`}
                 target="_blank"
                 className="w-full py-4 bg-white border-2 border-primary/20 text-primary font-black rounded-2xl hover:bg-primary hover:text-white hover:border-transparent transition-all"
               >

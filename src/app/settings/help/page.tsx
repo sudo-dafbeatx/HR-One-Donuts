@@ -72,7 +72,7 @@ export default function FAQPage() {
         <div className="grid grid-cols-3 gap-3">
            <ContactCard icon={ChatBubbleLeftEllipsisIcon} label="Chat" href="#" color="primary" />
            <ContactCard icon={EnvelopeIcon} label="Email" href="mailto:halo@hrone.com" color="blue" />
-           <ContactCard icon={PhoneIcon} label="WA" href="https://wa.me/6285810658117" color="green" />
+           <ContactCard icon={PhoneIcon} label="WA" href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '62895351251395'}`} color="green" />
         </div>
       </section>
     </div>

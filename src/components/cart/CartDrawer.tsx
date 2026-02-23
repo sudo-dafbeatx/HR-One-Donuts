@@ -24,7 +24,6 @@ interface CartProfile {
 
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart } = useCart();
-  const [historyPushed, setHistoryPushed] = useState(false);
   const { setIsLoading } = useLoading();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -40,32 +39,30 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     return () => clearTimeout(timer);
   }, []);
 
-  // Handle Back Button for Drawer (Mobile focus)
+  // Handle Back Button for Drawer (Mobile focus) without cascading state renders
   useEffect(() => {
     if (!mounted) return;
 
     const handlePopState = () => {
-      if (isCartOpen) {
+      // Direct DOM/state manipulation outside of React's render cycle
+      if (document.body.style.overflow === 'hidden') {
         setIsCartOpen(false);
-        setHistoryPushed(false);
       }
     };
 
-    if (isCartOpen && !historyPushed) {
+    if (isCartOpen) {
       window.history.pushState({ drawer: 'cart' }, '');
-      setHistoryPushed(true);
       window.addEventListener('popstate', handlePopState);
-    } else if (!isCartOpen && historyPushed) {
-      // Manual close (X button or overlay) should remove the history entry
-      window.history.back();
-      setHistoryPushed(false);
-      window.removeEventListener('popstate', handlePopState);
     }
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
+      // Fallback cleanup if unmounted while open
+      if (isCartOpen && window.history.state?.drawer === 'cart') {
+        window.history.back();
+      }
     };
-  }, [isCartOpen, historyPushed, setIsCartOpen, mounted]);
+  }, [isCartOpen, setIsCartOpen, mounted]);
 
   if (!mounted) return null;
 
@@ -109,7 +106,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       });
 
       // 4. Generate WhatsApp Message
-      const rawPhone = siteSettings?.whatsapp_number || "6285810658117";
+      const rawPhone = siteSettings?.whatsapp_number || process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "62895351251395";
       const phone = rawPhone.replace(/\D/g, ""); // Ensure digits only
       
       let message = `Halo ${siteSettings?.store_name || "HR-One Donuts"}! 🍩\n\n`;

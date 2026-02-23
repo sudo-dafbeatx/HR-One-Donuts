@@ -259,7 +259,7 @@ export default function ChatbotWidget() {
 
     if (input.includes("whatsapp") || input.includes("wa") || input.includes("hubungi") || input.includes("kontak")) {
       setTimeout(() => {
-        const phoneNumber = process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || "6285810658117";
+        const phoneNumber = process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "62895351251395";
         if (cart.length > 0) {
           const messageArr = ["Halo HR-One Donuts! 🍩 Saya ingin memesan:\n\n"];
           cart.forEach((item, index) => {

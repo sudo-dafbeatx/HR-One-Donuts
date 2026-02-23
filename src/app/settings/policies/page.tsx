@@ -95,7 +95,7 @@ export default function PoliciesPage() {
               window.dispatchEvent(new Event('open_dona_chat'));
             }} />
             <ContactLink label="Email: Heri.irawan.hr1@gmail.com" href="mailto:Heri.irawan.hr1@gmail.com" />
-            <ContactLink label="WhatsApp: +62 858-1065-8117" href="https://wa.me/6285810658117" />
+            <ContactLink label={`WhatsApp: +${process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '62895351251395'}`} href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '62895351251395'}`} />
          </div>
       </div>
     </div>

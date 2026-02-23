@@ -117,14 +117,14 @@ export default function Footer({ siteSettings, copy }: FooterProps) {
                 </div>
               </div>
 
-              <a href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} className="flex items-start gap-4 group" target="_blank" rel="noopener noreferrer">
+              <a href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '62895351251395'}`} className="flex items-start gap-4 group" target="_blank" rel="noopener noreferrer">
                 <div className="size-10 md:size-11 rounded-xl md:rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0 group-hover:bg-green-500 group-hover:text-white transition-all">
                   <span className="material-symbols-outlined text-lg md:text-xl">chat</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-0.5 md:mb-1">WhatsApp</span>
                   <span className="text-slate-300 text-xs md:text-sm font-black group-hover:text-green-500 transition-colors">
-                    {process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || "6285810658117"}
+                    {process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "62895351251395"}
                   </span>
                 </div>
               </a>

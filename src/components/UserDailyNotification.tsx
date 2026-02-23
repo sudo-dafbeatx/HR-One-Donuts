@@ -56,10 +56,14 @@ export default function UserDailyNotification() {
         .eq('id', user.id)
         .maybeSingle();
 
+      // 4. Check Global Push Preference First
+      const notificationsDisabled = localStorage.getItem('notifications_disabled') === 'true';
+      if (notificationsDisabled) return;
+
       const today = new Date();
       let notifToTrigger: NotifData | null = null;
 
-      // 4. Check Birthday Priority
+      // 5. Check Birthday Priority
       if (profile?.birth_date) {
         const birthDate = new Date(profile.birth_date);
         // Compare Month and Date (ignoring year)
@@ -77,20 +81,55 @@ export default function UserDailyNotification() {
         }
       }
 
-      // 5. Check Flash Sale (Tuesday=2, Friday=5) if no Birthday notif
+      // 6. Check Custom Events if no Birthday
       if (!notifToTrigger) {
         const dayOfWeek = today.getDay();
-        if (dayOfWeek === 2 || dayOfWeek === 5) {
-          notifToTrigger = {
-            type: 'FLASHSALE',
-            title: '⚡ Waktunya Flash Sale!',
-            message: 'Promo spesial diskon besar hari ini sedang berlangsung. Jangan sampai kehabisan!',
-            link: '/catalog?filter=promo',
-          };
+        
+        // Tuesday (Selasa Mega Sale)
+        if (dayOfWeek === 2) {
+           notifToTrigger = {
+             type: 'FLASHSALE',
+             title: '🍩 Event SMS (Selasa Mega Sale)!',
+             message: 'Promo spesial diskon besar hari ini sedang berlangsung. Jangan sampai kehabisan!',
+             link: '/catalog?filter=promo',
+           };
+        } 
+        // Friday (Jum'at Berkah)
+        else if (dayOfWeek === 5) {
+           notifToTrigger = {
+             type: 'FLASHSALE',
+             title: '✨ Jum\'at Berkah!',
+             message: 'Dapatkan promo spesial Jum\'at Berkah hari ini. Berbagi kebaikan dengan donat manis.',
+             link: '/catalog?filter=promo',
+           };
+        } 
+        // Any other day: Check for New Donut
+        else {
+           // Fetch the newest product created within the last 7 days
+           const sevenDaysAgo = new Date();
+           sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+           
+           const { data: newProduct } = await supabase
+             .from('products')
+             .select('name, created_at')
+             .eq('status', 'active')
+             .gte('created_at', sevenDaysAgo.toISOString())
+             .order('created_at', { ascending: false })
+             .limit(1)
+             .maybeSingle();
+             
+           if (newProduct) {
+             notifToTrigger = {
+               type: 'FLASHSALE', // Reuse type for icon rendering context
+               title: '🆕 Rasa Baru Telah Hadir!',
+               message: `Cobain donat varian baru: ${newProduct.name}. Pesan sekarang sebelum kehabisan!`,
+               link: '/catalog',
+             };
+           }
         }
       }
 
-      // 6. Trigger Notification if any
+      // 7. Trigger Notification if any
       if (notifToTrigger) {
         let hasPermission = false;
         
