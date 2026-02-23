@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Product, ReviewStats } from '@/types/cms';
 import { useCart } from '@/context/CartContext';
-import { useLoading } from '@/context/LoadingContext';
+
 import { useRouter } from 'next/navigation';
 
 interface MarketplaceClientProps {
@@ -182,6 +182,7 @@ export default function MarketplaceClient({
                       alt={product.name}
                       fill
                       sizes="(max-width: 768px) 50vw, 33vw, 25vw"
+                      unoptimized={true}
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                   ) : (

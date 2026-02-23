@@ -26,6 +26,7 @@ export default function Hero({
                  alt={siteSettings?.store_name || "Hero Banner"} 
                  fill 
                  priority
+                 unoptimized={true}
                  className="object-cover" 
                />
              ) : (
@@ -43,6 +44,7 @@ export default function Hero({
                   alt={siteSettings?.store_name || "Hero Banner"} 
                   fill 
                   priority
+                  unoptimized={true}
                   className="object-cover group-hover:scale-[1.01] transition-transform duration-700" 
                 />
               ) : (

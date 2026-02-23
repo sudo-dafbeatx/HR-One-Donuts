@@ -30,6 +30,7 @@ export default function PromoBanner({ events, copy }: { events: PromoEvent[], co
                   src={event.banner_image_url} 
                   alt={event.headline} 
                   fill 
+                  unoptimized={true}
                   className="object-cover opacity-80 group-hover:scale-105 transition-transform duration-700"
                 />
               ) : (

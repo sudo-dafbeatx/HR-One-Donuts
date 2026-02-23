@@ -1,6 +1,5 @@
 // Test script to verify sharp works correctly
 import sharp from 'sharp';
-import fs from 'fs';
 
 async function testSharp() {
   console.log('Testing sharp installation...\n');
