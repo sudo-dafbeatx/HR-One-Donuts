@@ -6,21 +6,9 @@ import {
   ArrowLeftIcon, 
   MapPinIcon, 
   CalendarDaysIcon,
-  ShoppingBagIcon,
-  CreditCardIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  TruckIcon
+  ShoppingBagIcon
 } from '@heroicons/react/24/outline';
-
-const statusConfig: Record<string, { label: string, color: string, icon: React.ElementType }> = {
-  pending: { label: 'Menunggu', color: 'bg-amber-100 text-amber-700', icon: ClockIcon },
-  paid: { label: 'Dibayar', color: 'bg-blue-100 text-blue-700', icon: CreditCardIcon },
-  processing: { label: 'Diproses', color: 'bg-indigo-100 text-indigo-700', icon: ShoppingBagIcon },
-  shipping: { label: 'Dikirim', color: 'bg-purple-100 text-purple-700', icon: TruckIcon },
-  completed: { label: 'Selesai', color: 'bg-green-100 text-green-700', icon: CheckCircleIcon },
-  cancelled: { label: 'Dibatalkan', color: 'bg-red-100 text-red-700', icon: ClockIcon }, // using clock as fallback for cancelled if no icon
-};
+import { getOrderStatus } from '@/lib/order-status';
 
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: orderId } = await params;
@@ -44,7 +32,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     notFound();
   }
 
-  const currentStatus = statusConfig[order.status] || statusConfig.pending;
+  const currentStatus = getOrderStatus(order.status);
   const StatusIcon = currentStatus.icon;
 
   return (

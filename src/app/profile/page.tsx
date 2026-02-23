@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { useLoading } from '@/context/LoadingContext';
 import { uploadAvatar, setPredefinedAvatar } from '@/app/actions/avatar-actions';
 import { normalizePhoneToID } from '@/lib/phone';
+import { getOrderStatus } from '@/lib/order-status';
 import UserDailyNotification from "@/components/UserDailyNotification";
 import Image from 'next/image';
 import { CameraIcon, PhotoIcon, SparklesIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
@@ -58,6 +59,7 @@ interface Order {
   items: OrderItem[];
   delivery_method?: string;
   shipping_fee?: number;
+  status: string;
 }
 
 export default function ProfilePage() {
@@ -563,7 +565,15 @@ export default function ProfilePage() {
                             <div className="min-w-0 flex-1">
                               <div className="flex items-center flex-wrap gap-2 mb-0.5">
                                 <p className="font-extrabold text-slate-800 truncate text-sm md:text-base">#{order.id.slice(0, 8).toUpperCase()}</p>
-                                <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 bg-green-500/10 text-green-600 rounded-md">Success</span>
+                                {(() => {
+                                  const status = getOrderStatus(order.status);
+                                  return (
+                                    <span className={`text-[8px] md:text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 ${status.bgColor} ${status.textColor} rounded-md flex items-center gap-1`}>
+                                      <status.icon className="size-2.5 md:size-3" />
+                                      {status.label}
+                                    </span>
+                                  );
+                                })()}
                               </div>
                               <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-[10px] md:text-xs font-semibold text-slate-400">
                                 <span className="flex items-center gap-1">
