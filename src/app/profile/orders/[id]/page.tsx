@@ -34,15 +34,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
   // 2. Fetch Protected Order Data (Only user's own order)
   const { data: order, error } = await supabase
     .from('orders')
-    .select(`
-      *,
-      order_items (
-        id,
-        quantity,
-        price_at_time,
-        product:products ( name, image_url )
-      )
-    `)
+    .select('*')
     .eq('id', params.id)
     .eq('user_id', authData.user.id)
     .single();
@@ -103,13 +95,13 @@ export default async function OrderDetailPage({ params }: { params: { id: string
           <h2 className="text-sm font-bold text-slate-800 mb-4 pb-4 border-b border-slate-50">Daftar Produk</h2>
           
           <div className="space-y-4">
-            {order.order_items?.map((item: { id: string, quantity: number, price_at_time: number, product: { name: string, image_url: string } }) => (
-              <div key={item.id} className="flex gap-4">
+            {order.items?.map((item: { product_id: string, name: string, price: number, quantity: number, image: string }, index: number) => (
+              <div key={item.product_id || index} className="flex gap-4">
                 <div className="relative size-16 bg-slate-100 rounded-2xl overflow-hidden shrink-0">
-                  {item.product?.image_url ? (
+                  {item.image ? (
                     <Image 
-                      src={item.product.image_url} 
-                      alt={item.product?.name || 'Produk'} 
+                      src={item.image} 
+                      alt={item.name || 'Produk'} 
                       fill
                       unoptimized={true}
                       className="object-cover"
@@ -121,10 +113,10 @@ export default async function OrderDetailPage({ params }: { params: { id: string
                   )}
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
-                  <h3 className="text-sm font-bold text-slate-800 truncate mb-1">{item.product?.name || 'Produk Nonaktif'}</h3>
+                  <h3 className="text-sm font-bold text-slate-800 truncate mb-1">{item.name || 'Produk Nonaktif'}</h3>
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-medium text-slate-500">{item.quantity} x Rp {item.price_at_time.toLocaleString('id-ID')}</p>
-                    <p className="text-sm font-black text-slate-800">Rp {(item.quantity * item.price_at_time).toLocaleString('id-ID')}</p>
+                    <p className="text-xs font-medium text-slate-500">{item.quantity} x Rp {item.price.toLocaleString('id-ID')}</p>
+                    <p className="text-sm font-black text-slate-800">Rp {(item.quantity * item.price).toLocaleString('id-ID')}</p>
                   </div>
                 </div>
               </div>
