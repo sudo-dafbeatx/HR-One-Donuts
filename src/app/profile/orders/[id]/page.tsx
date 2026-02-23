@@ -22,7 +22,8 @@ const statusConfig: Record<string, { label: string, color: string, icon: React.E
   cancelled: { label: 'Dibatalkan', color: 'bg-red-100 text-red-700', icon: ClockIcon }, // using clock as fallback for cancelled if no icon
 };
 
-export default async function OrderDetailPage({ params }: { params: { id: string } }) {
+export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: orderId } = await params;
   const supabase = await createServerSupabaseClient();
   
   // 1. Authenticate Request
@@ -35,7 +36,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
   const { data: order, error } = await supabase
     .from('orders')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', orderId)
     .eq('user_id', authData.user.id)
     .single();
 
