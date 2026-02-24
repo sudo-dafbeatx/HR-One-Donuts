@@ -9,7 +9,6 @@ import Link from "next/link";
 
 export default async function KontakPage() {
   const supabase = await createServerSupabaseClient();
-  const copy = await getCopy();
   
   // Fetch site info
   const { data: settingsData } = await supabase
@@ -66,10 +65,10 @@ export default async function KontakPage() {
                 </h2>
                 <div className="pl-9">
                   <a 
-                    href={`mailto:${siteSettings?.email || 'hello@hrone-donuts.com'}`}
-                    className="font-bold text-slate-900 hover:text-primary transition-colors"
+                    href={`mailto:${siteSettings?.email || 'heri.irawan.hr1@gmail.com'}`}
+                    className="flex-1 min-w-0"
                   >
-                    {siteSettings?.email || 'hello@hrone-donuts.com'}
+                    {siteSettings?.email || 'heri.irawan.hr1@gmail.com'}
                   </a>
                 </div>
               </section>

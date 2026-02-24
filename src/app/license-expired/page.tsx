@@ -62,7 +62,7 @@ export default function LicenseExpired() {
 
             {/* Email */}
             <a
-              href="mailto:dafbeatx@gmail.com?subject=Perpanjang Layanan Website HR-One Donuts"
+              href="mailto:heri.irawan.hr1@gmail.com?subject=Perpanjang Layanan Website HR-One Donuts"
               className="inline-flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -390,29 +390,50 @@ export async function saveUICopyBatch(entries: { key: string; value: string }[])
 export async function resetSalesData() {
   const supabase = await checkAdmin();
   
-  // Use the atomic RPC function for a safer reset
-  const { error } = await supabase.rpc('reset_all_sales_data');
-  
-  if (error) {
-    console.error(' [resetSalesData] RPC Error:', error);
+  try {
+    // We do a manual cascade deletion using the service role to bypass any RPC issues and ensure consistency.
+    // 1. Delete all order items (prevents foreign key constraint errors when deleting orders)
+    const { error: deleteOrderItemsError } = await supabase
+      .from('order_items')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000');
     
-    // Fallback if RPC is not yet applied to the database
+    if (deleteOrderItemsError) throw new Error('Failed to delete order items: ' + deleteOrderItemsError.message);
+
+    // 2. Delete all orders
     const { error: deleteOrdersError } = await supabase
       .from('orders')
       .delete()
       .neq('id', '00000000-0000-0000-0000-000000000000');
     
-    if (deleteOrdersError) throw new Error('Reset failed: ' + deleteOrdersError.message);
+    if (deleteOrdersError) throw new Error('Failed to delete orders: ' + deleteOrdersError.message);
 
-    await supabase
+    // 3. Reset all products' sold count
+    const { error: updateProductsError } = await supabase
       .from('products')
       .update({ sold_count: 0 })
       .neq('id', '00000000-0000-0000-0000-000000000000');
+    
+    if (updateProductsError) throw new Error('Failed to reset products sold_count: ' + updateProductsError.message);
+
+    // 4. Clean up any orphaned checkout sessions
+    const { error: deleteSessionsError } = await supabase
+      .from('checkout_sessions')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000');
+      
+    if (deleteSessionsError) console.error('Minor error: Failed to delete checkout_sessions', deleteSessionsError.message);
+
+    // Note: User profiles, auth, and admin logs remain completely intact.
+  } catch (err) {
+    console.error(' [resetSalesData] Error:', err);
+    return { success: false, error: err instanceof Error ? err.message : 'Unknown error during reset' };
   }
 
   // Revalidate dashboard to show new (empty) stats
   revalidatePath('/admin');
   revalidatePath('/');
+  revalidatePath('/profile'); // Ensure the user side updates instantly
   
   return { success: true };
 }

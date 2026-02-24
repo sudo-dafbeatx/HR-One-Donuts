@@ -5,6 +5,8 @@
 
 -- 1. Create Atomic Reset Sales Data Function
 -- =====================================================
+-- 1. Create Atomic Reset Sales Data Function
+-- =====================================================
 CREATE OR REPLACE FUNCTION public.reset_all_sales_data()
 RETURNS void
 LANGUAGE plpgsql
@@ -20,14 +22,17 @@ BEGIN
     RAISE EXCEPTION 'Forbidden: Hanya admin yang dapat mereset data penjualan.';
   END IF;
 
-  -- Delete all orders
+  -- 1. Delete all order items (to prevent foreign key constraint violations)
+  DELETE FROM public.order_items;
+
+  -- 2. Delete all orders
   DELETE FROM public.orders;
 
-  -- Reset sold count for all products
+  -- 3. Reset sold count for all products
   UPDATE public.products SET sold_count = 0;
 
-  -- Reset sold counts in tracking tables (if any, as fallback)
-  -- This ensures consistency across the DB.
+  -- 4. Delete all checkout sessions that might be pending/orphaned
+  DELETE FROM public.checkout_sessions;
 END;
 $$;
 

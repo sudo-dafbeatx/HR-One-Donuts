@@ -74,7 +74,7 @@ export default function FAQPage() {
         <h3 className="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">{t('settings.help.contact_cta')}</h3>
         <div className="grid grid-cols-3 gap-3">
            <ContactCard icon={ChatBubbleLeftEllipsisIcon} label="Chat Sistem" href="/settings/help/chat" color="primary" />
-           <ContactCard icon={EnvelopeIcon} label="Email" href="mailto:halo@hrone.com" color="blue" />
+           <ContactCard icon={EnvelopeIcon} label="Email" href="mailto:heri.irawan.hr1@gmail.com" color="blue" />
            <ContactCard icon={PhoneIcon} label="WA" href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '62895351251395'}`} color="green" />
         </div>
       </section>

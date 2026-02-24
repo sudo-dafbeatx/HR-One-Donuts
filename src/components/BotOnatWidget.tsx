@@ -151,7 +151,7 @@ export default function BotOnatWidget() {
       await supabase.from("bot_questions_log").insert([{ question: userInput }]);
       
       addBotMessage(
-        "Maaf, solusi untuk kendala sistem tersebut belum saya pahami. 😅\n\nTim IT kami sudah mencatat isu ini. Untuk bantuan darurat, silakan email ke halo@hrone.com atau kontak WhatsApp CS kami.",
+        "Maaf, solusi untuk kendala sistem tersebut belum saya pahami. 😅\n\nTim IT kami sudah mencatat isu ini. Untuk bantuan darurat, silakan email ke heri.irawan.hr1@gmail.com atau kontak WhatsApp CS kami.",
         ["Kontak WA Darurat", "Kembali"]
       );
     }, 800);
