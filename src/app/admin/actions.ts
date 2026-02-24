@@ -418,7 +418,7 @@ export async function resetSalesData() {
 }
 
 // --- Bot Knowledge Actions ---
-export async function saveBotKnowledge(data: { id?: string; question: string; answer: string; category?: string; tags?: string[] }) {
+export async function saveBotKnowledge(data: { id?: string; question: string; answer: string; category?: string; tags?: string[]; bot_type?: 'dona' | 'onat' }) {
   const supabase = await checkAdmin();
   
   const qaData = {
@@ -427,6 +427,7 @@ export async function saveBotKnowledge(data: { id?: string; question: string; an
     answer: data.answer.trim(),
     category: data.category || 'general',
     tags: data.tags || [],
+    bot_type: data.bot_type || 'dona',
     updated_at: new Date().toISOString()
   };
 
@@ -454,12 +455,13 @@ export async function deleteBotKnowledge(id: string) {
   return { success: true };
 }
 
-export async function exportBotKnowledge() {
+export async function exportBotKnowledge(botType: 'dona' | 'onat' = 'dona') {
   const supabase = await checkAdmin();
   
   const { data, error } = await supabase
     .from('knowledge_base')
-    .select('question, answer, tags, category')
+    .select('question, answer, category, tags')
+    .eq("bot_type", botType)
     .order('created_at', { ascending: false });
 
   if (error) throw new Error(error.message);
@@ -472,10 +474,11 @@ interface BotKnowledgeEntry {
   answer: string;
   category?: string;
   tags?: string[];
+  bot_type?: 'dona' | 'onat';
   updated_at?: string;
 }
 
-export async function importBotKnowledge(entries: BotKnowledgeEntry[]) {
+export async function importBotKnowledge(entries: BotKnowledgeEntry[], bot_type: 'dona' | 'onat' = 'dona') {
   const supabase = await checkAdmin();
 
   // Basic manual schema validation
@@ -509,6 +512,7 @@ export async function importBotKnowledge(entries: BotKnowledgeEntry[]) {
       answer: entry.answer.trim(),
       category: entry.category || 'general',
       tags: entry.tags || [],
+      bot_type: bot_type,
       updated_at: new Date().toISOString()
     });
   });
@@ -543,12 +547,13 @@ export async function toggleUserBan(userId: string, currentStatus: boolean) {
   return { success: true };
 }
 
-export async function getBotTrainingData() {
+export async function getBotTrainingData(botType: 'dona' | 'onat' = 'dona') {
   const supabase = await checkAdmin();
   
   const { data: qa, error: qaErr } = await supabase
     .from("knowledge_base")
     .select("*")
+    .eq("bot_type", botType)
     .order("created_at", { ascending: false });
 
   const { data: logs, error: logsErr } = await supabase
