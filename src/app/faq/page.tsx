@@ -4,12 +4,10 @@ import Footer from "@/components/Footer";
 export const revalidate = 3600; // Cache for 1 hour
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SiteSettings } from "@/types/cms";
-import { getCopy } from "@/lib/theme";
 import Link from "next/link";
 
 export default async function FAQPage() {
   const supabase = await createServerSupabaseClient();
-  const copy = await getCopy();
   
   // Fetch site info
   const { data: settingsData } = await supabase
@@ -27,7 +25,7 @@ export default async function FAQPage() {
     },
     {
       q: "Apakah donat ready stock setiap hari?",
-      a: "Kami selalu berusaha menyediakan stok segar setiap hari. Namun, untuk memastikan varian favorit Anda tersedia, kami menyarankan untuk memesan di pagi hari atau melakukan pre-order H-1."
+      a: "Senin - Sabtu. Minggu libur. Kami selalu berusaha menyediakan stok segar setiap harinya. Namun, untuk memastikan varian favorit Anda tersedia, kami menyarankan untuk memesan di pagi hari atau melakukan pre-order H-1."
     },
     {
       q: "Apakah ada minimal pemesanan?",

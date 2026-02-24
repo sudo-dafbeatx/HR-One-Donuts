@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { logAuthEvent } from '@/app/actions/auth-log-action';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -12,6 +13,9 @@ export async function GET(request: Request) {
     const { error, data: authData } = await supabase.auth.exchangeCodeForSession(code);
     
     if (!error && authData.user) {
+      // Log Google Login (or other OAuth) event asynchronously
+      logAuthEvent(authData.user.id, 'google_login').catch(console.error);
+
       // Check if profile is complete
       const { data: profile } = await supabase
         .from('user_profiles')

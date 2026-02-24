@@ -4,12 +4,10 @@ import Footer from "@/components/Footer";
 export const revalidate = 3600; // Cache for 1 hour
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SiteSettings } from "@/types/cms";
-import { getCopy } from "@/lib/theme";
 import Link from "next/link";
 
 export default async function CookiesPage() {
   const supabase = await createServerSupabaseClient();
-  const copy = await getCopy();
   
   // Fetch site info
   const { data: settingsData } = await supabase

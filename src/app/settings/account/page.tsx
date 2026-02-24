@@ -66,8 +66,19 @@ export default function AccountSettingsPage() {
         .order('created_at', { ascending: false })
         .limit(10);
 
+      let finalLogs = logsData || [];
+      if (finalLogs.length === 0 && user.last_sign_in_at) {
+        finalLogs = [{
+          id: 'fallback_initial_login',
+          event_type: user.app_metadata?.provider === 'google' ? 'google_login' : 'login',
+          ip_address: 'unknown',
+          user_agent: 'Local Session',
+          created_at: user.last_sign_in_at
+        }];
+      }
+
       setProfile(profileData || { email: user.email });
-      setAuthLogs(logsData || []);
+      setAuthLogs(finalLogs);
       setLoading(false);
     }
     fetchUser(); // Called fetchUser

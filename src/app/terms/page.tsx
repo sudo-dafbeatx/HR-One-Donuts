@@ -2,12 +2,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SiteSettings } from "@/types/cms";
-import { getCopy } from "@/lib/theme";
 import Link from "next/link";
 
 export default async function TermsPage() {
   const supabase = await createServerSupabaseClient();
-  const copy = await getCopy();
   
   // Fetch site info
   const { data: settingsData } = await supabase

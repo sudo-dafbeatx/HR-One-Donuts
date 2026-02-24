@@ -75,7 +75,7 @@ export default function SiteSettingsEditor({ initialData }: { initialData?: Site
             />
             <AdminInput 
               label="Jam Operasional" 
-              placeholder="Senin - Minggu: 08:00 - 20:00"
+              placeholder="Senin - Sabtu: 08.00 - 17.00"
               value={settings.opening_hours} 
               onChange={e => setSettings({...settings, opening_hours: e.target.value})}
             />

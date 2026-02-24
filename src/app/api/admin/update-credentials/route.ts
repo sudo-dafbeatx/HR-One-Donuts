@@ -100,11 +100,11 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message: 'Kredensial berhasil diperbarui.' });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[UpdateCredentials] Error:', error);
     
     // Check if it's our session error
-    if (error.message?.includes('Forbidden')) {
+    if (error instanceof Error && error.message?.includes('Forbidden')) {
       return NextResponse.json(
         { error: 'Sesi tidak valid. Silakan login kembali.' },
         { status: 401 }

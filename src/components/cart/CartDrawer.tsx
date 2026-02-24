@@ -148,6 +148,22 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         message += t('cart.whatsapp.shipping', { amount: shippingFee.toLocaleString("id-ID") }) + "\n";
       }
       message += t('cart.whatsapp.total_payment', { amount: finalTotal.toLocaleString("id-ID") }) + "\n\n";
+      
+      // Add OFF-HOURS NOTE if outside of Senin-Sabtu, 08:00-17:00 WIB
+      const wibOptions = { timeZone: 'Asia/Jakarta' };
+      const now = new Date();
+      
+      const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc. locally. We assume local time aligns with WIB roughly, or use accurate WIB check:
+      const wibHourString = now.toLocaleTimeString('en-US', { ...wibOptions, hour12: false, hour: '2-digit' });
+      const currentHour = parseInt(wibHourString.split(':')[0], 10);
+      
+      // if Sunday (0) or before 8 or after 17
+      const isOffHours = currentDay === 0 || currentHour < 8 || currentHour >= 17;
+      
+      if (isOffHours) {
+        message += "*Catatan:* Pesanan diterima di luar jam operasional. Kami akan memproses pesanan Anda pada jam kerja berikutnya (Senin - Sabtu, 08.00 - 17.00 WIB).\n\n";
+      }
+
       message += t('cart.whatsapp.footer');
       
       const encodedMessage = encodeURIComponent(message);
