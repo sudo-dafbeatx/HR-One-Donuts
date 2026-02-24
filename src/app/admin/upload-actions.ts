@@ -16,7 +16,7 @@ export async function uploadImage(formData: FormData) {
   const file = formData.get('file') as File;
   if (!file) {
     console.error('❌ [uploadImage] No file in FormData');
-    throw new Error('No file provided');
+    return { success: false, error: 'No file provided' };
   }
   
   console.log('📁 [uploadImage] File info:', {
@@ -61,7 +61,7 @@ export async function uploadImage(formData: FormData) {
     
     if (error) {
       console.error('❌ [uploadImage] Supabase upload error:', error);
-      throw error;
+      return { success: false, error: error.message };
     }
     
     console.log('✅ [uploadImage] Upload successful');
@@ -84,15 +84,15 @@ export async function uploadImage(formData: FormData) {
     // Better error messages
     if (error instanceof Error) {
       if (error.message.includes('Bucket not found')) {
-        throw new Error('Storage bucket "images" belum dibuat. Silakan buat bucket di Supabase Dashboard terlebih dahulu.');
+        return { success: false, error: 'Storage bucket "images" belum dibuat. Silakan buat bucket di Supabase Dashboard terlebih dahulu.' };
       }
       if (error.message.includes('new row violates row-level security')) {
-        throw new Error('Akses ditolak. Pastikan RLS policies sudah di-set dengan benar.');
+        return { success: false, error: 'Akses ditolak. Pastikan RLS policies sudah di-set dengan benar.' };
       }
-      throw new Error(error.message);
+      return { success: false, error: error.message };
     }
     
-    throw new Error('Gagal upload gambar. Cek console untuk detail error.');
+    return { success: false, error: 'Gagal upload gambar. Cek console untuk detail error.' };
   }
 }
 

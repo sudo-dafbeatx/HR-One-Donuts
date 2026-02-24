@@ -104,7 +104,10 @@ export default function ImageUploader({
       formData.append('file', compressedFile);
       
       const result = await uploadImage(formData);
-      onImageUploaded(result.url, result.path);
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+      onImageUploaded(result.url as string, result.path as string);
       setIsSuccess(true);
       setTimeout(() => setIsSuccess(false), 3000);
     } catch (err: unknown) {

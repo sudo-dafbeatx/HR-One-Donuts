@@ -56,6 +56,8 @@ export default function ProductManager({ initialProducts, categories }: { initia
           setEditingProduct(null);
           setSuccessStatus(null);
         }, 1500);
+      } else {
+        setErrorStatus(result.error || 'Gagal menyimpan produk');
       }
     } catch (err: unknown) {
       setErrorStatus(err instanceof Error ? err.message : 'Error saving product');

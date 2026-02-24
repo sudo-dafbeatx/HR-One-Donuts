@@ -21,11 +21,11 @@ export async function saveProduct(data: Partial<Product>) {
   
   // Basic validation for mandatory fields
   if (!data.name?.trim() || data.price === undefined || data.price < 0) {
-    throw new Error('Nama produk dan harga yang valid wajib diisi');
+    return { success: false, error: 'Nama produk dan harga yang valid wajib diisi' };
   }
 
   if (!data.category || data.category === '') {
-    throw new Error('Kategori wajib dipilih');
+    return { success: false, error: 'Kategori wajib dipilih' };
   }
 
   // Ensure and sanitize product data
@@ -70,7 +70,7 @@ export async function saveProduct(data: Partial<Product>) {
 
     if (error) {
       console.error('Supabase Upsert Error:', error);
-      throw new Error(`Gagal menyimpan produk: ${error.message}`);
+      return { success: false, error: `Gagal menyimpan produk: ${error.message}` };
     }
     
     revalidatePath('/');
@@ -79,7 +79,7 @@ export async function saveProduct(data: Partial<Product>) {
     return { success: true, data: savedData as Product };
   } catch (err: unknown) {
     console.error('SaveProduct Crash:', err);
-    throw err instanceof Error ? err : new Error('An unexpected error occurred during saveProduct');
+    return { success: false, error: err instanceof Error ? err.message : 'An unexpected error occurred during saveProduct' };
   }
 }
 
