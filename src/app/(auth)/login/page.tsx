@@ -105,7 +105,7 @@ function LoginContent() {
     phoneDebounceRef.current = setTimeout(() => checkPhoneDuplicate(value), 500);
   }, [checkPhoneDuplicate]);
 
-  const handleRedirection = useCallback(async (userId: string) => {
+  const handleRedirection = useCallback(async (userId: string, isAutoOnMount = false) => {
     if (redirecting) return;
     setRedirecting(true);
     const attemptFetchAndRedirect = async (count: number): Promise<void> => {
@@ -128,6 +128,12 @@ function LoginContent() {
         }
 
         if (!userProfile?.is_profile_complete) {
+          // If this is an auto-check when mounting the login page, don't force redirect.
+          // This allows users to stay on the login page to switch accounts even if incomplete.
+          if (isAutoOnMount) {
+            setRedirecting(false); 
+            return;
+          }
           router.push('/onboarding/profile');
         } else {
           document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
@@ -150,7 +156,8 @@ function LoginContent() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         if (isSyncing) setIsLoading(true, 'Menyinkronkan akun...');
-        handleRedirection(user.id);
+        // Pass true to indicate this is an auto-check on mount
+        handleRedirection(user.id, true);
       } else {
         logTraffic({
           event_type: 'login_view',
@@ -262,7 +269,8 @@ function LoginContent() {
         }),
         logAuthEvent(authData.user.id, 'login'),
       ]);
-      handleRedirection(authData.user.id);
+      // Explicit login, pass false
+      handleRedirection(authData.user.id, false);
     }
   };
 
@@ -354,7 +362,8 @@ function LoginContent() {
       }),
       logAuthEvent(userId, 'otp_login'),
     ]);
-    handleRedirection(userId);
+    // Explicit login, pass false
+    handleRedirection(userId, false);
   };
 
   const handleResendOtp = async () => {

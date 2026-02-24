@@ -115,7 +115,14 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
     if (!allAgreed) newErrors.agreements = 'Semua persetujuan wajib dicentang';
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    
+    const isValid = Object.keys(newErrors).length === 0;
+    if (!isValid) {
+      // Find the first error and alert it, so mobile users know what's wrong if it's off-screen
+      const firstErrorKey = Object.keys(newErrors)[0];
+      alert(`Pendaftaran gagal: ${newErrors[firstErrorKey]}`);
+    }
+    return isValid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -200,12 +207,9 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
       document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
       setSuccess(true);
       setIsLoading(false); // Stop general loading to show success UI
-
-      // Fast redirect after success UI is shown
-      setTimeout(() => {
-        router.push('/');
-        // Do refresh in background or later to avoid blocking
-      }, 600);
+      
+      // Removed the automatic hidden setTimeout redirect.
+      // The user will explicitly click "Mulai Berbelanja" the success screen.
       
     } catch (err: unknown) {
       clearTimeout(timeoutMsg);
@@ -226,7 +230,18 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
           </svg>
         </div>
         <h2 className="text-2xl font-black text-slate-900 mb-2">Pendaftaran Berhasil! 👋</h2>
-        <p className="text-slate-500 font-medium">Selamat datang di HR-One Donuts. Kamu sedang diarahkan ke beranda...</p>
+        <p className="text-slate-500 font-medium mb-8">Selamat datang di HR-One Donuts. Profil kamu sudah lengkap.</p>
+        
+        <button 
+          onClick={() => {
+            router.push('/');
+            setTimeout(() => router.refresh(), 100);
+          }}
+          className="w-full max-w-sm h-14 rounded-2xl bg-primary text-white font-black text-lg shadow-lg shadow-primary/25 hover:bg-blue-600 hover:shadow-primary/35 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+        >
+          <span>Mulai Berbelanja</span>
+          <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+        </button>
       </div>
     );
   }
@@ -419,8 +434,8 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
             </>
           ) : (
             <>
-              <span>Selesai & Mulai Belanja</span>
-              <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+              <span>Selesai</span>
+              <span className="material-symbols-outlined text-[20px]">check_circle</span>
             </>
           )}
         </button>
