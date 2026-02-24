@@ -411,7 +411,7 @@ export default function ChatbotWidget() {
     handleBotResponse(reply);
   };
 
-  const hiddenRoutes = ['/admin', '/login', '/register', '/onboarding'];
+  const hiddenRoutes = ['/admin', '/login', '/register', '/onboarding', '/settings/help'];
   if (botDisabled || (pathname && hiddenRoutes.some(route => pathname.startsWith(route)))) {
     return null;
   }
