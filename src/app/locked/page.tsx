@@ -1,38 +1,37 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function LockedPage() {
-  const router = useRouter();
+  const [isChecking, setIsChecking] = useState(false);
 
+  // Still do one single optimistic check on mount just in case
+  // But NEVER poll in the background forever.
   useEffect(() => {
-    let active = true;
-
-    const checkLock = async () => {
+    const checkLockOptimistically = async () => {
       try {
         const res = await fetch(`/api/site-lock?t=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
-          if (!data.locked && active) {
-            router.replace('/');
+          if (!data.locked) {
+            // If they happen to mount the component while it's unlocked, hard refresh.
+            // But we don't repeat this check.
+            window.location.href = '/';
           }
         }
       } catch {
-        // Silently retry on next interval
+        // Ignore silent errors
       }
     };
+    checkLockOptimistically();
+  }, []);
 
-    // Check immediately on mount
-    checkLock();
-    // Then poll every 5 seconds
-    const interval = setInterval(checkLock, 5000);
-
-    return () => {
-      active = false;
-      clearInterval(interval);
-    };
-  }, [router]);
+  const handleRetry = () => {
+    setIsChecking(true);
+    // Hard refresh clears all Next.js router cache state and forces middleware to rerun
+    // completely afresh.
+    window.location.href = '/';
+  };
 
   return (
     <div className="fixed inset-0 z-99999 bg-linear-to-br from-red-950 via-red-900 to-black flex items-center justify-center p-6">
@@ -63,6 +62,24 @@ export default function LockedPage() {
           <div className="w-12 h-px bg-red-500/30" />
           <div className="w-2 h-2 bg-red-500/50 rounded-full" />
           <div className="w-12 h-px bg-red-500/30" />
+        </div>
+
+        {/* Action Button */}
+        <div className="pt-4">
+          <button 
+            onClick={handleRetry}
+            disabled={isChecking}
+            className={`px-8 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-full tracking-wider transition-all shadow-lg shadow-red-500/20 active:scale-95 flex items-center justify-center gap-2 mx-auto ${isChecking ? 'opacity-70 cursor-wait' : ''}`}
+          >
+            {isChecking ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            )}
+            COBA LAGI
+          </button>
         </div>
 
         {/* Footer */}

@@ -98,26 +98,19 @@ export default async function proxy(request: NextRequest) {
           } 
           // Rule C (implicit): If setting exists but no manual_lock property -> Fallback to date (isThe25th)
         }
+      } else {
+        // FAIL-OPEN: If DB returns non-200, assume unlocked to prevent false lockouts
+        siteLocked = false;
       }
     } catch {
-      // Rule D: If network fails, fail Open if already safely assumed unlocked by Date, else lock.
-      // E.g., if it's not the 25th, stay open. If it is the 25th, stay locked.
-      // This is the safest fallback without introducing a redirect loop for active users.
+      // Rule D (FAIL-OPEN): If network fails completely, ALWAYS fail open to avoid mass lockouts
+      siteLocked = false;
     }
 
-    // 3. Routing Decisions based on the single truth
-    if (siteLocked) {
-      // If site is locked, and user is NOT on the locked page -> Redirect to /locked
-      if (!isLockedPage) {
-        return NextResponse.redirect(new URL('/locked', request.url));
-      }
-      // If user is already on /locked, do nothing (let them stay)
-    } else {
-      // If site is unlocked, and user IS on the locked page -> Redirect to /
-      if (isLockedPage) {
-        return NextResponse.redirect(new URL('/', request.url));
-      }
-      // If user is on any other page, do nothing (let them browse)
+    // 3. SINGLE AUTHORITY ROUTING DECISION
+    // Middleware ONLY redirects TO /locked. It NEVER redirects AWAY from /locked.
+    if (siteLocked && !isLockedPage) {
+      return NextResponse.redirect(new URL('/locked', request.url));
     }
   }
 
