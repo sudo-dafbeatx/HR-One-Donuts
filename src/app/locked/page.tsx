@@ -11,7 +11,7 @@ export default function LockedPage() {
 
     const checkLock = async () => {
       try {
-        const res = await fetch('/api/site-lock', { cache: 'no-store' });
+        const res = await fetch(`/api/site-lock?t=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           if (!data.locked && active) {
