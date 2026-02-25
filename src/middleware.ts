@@ -124,29 +124,45 @@ export default async function proxy(request: NextRequest) {
 
   // If user is on /locked but site is NOT locked, redirect to home
   if (isLockedPage && !isStaticAsset) {
-    // Quick date check — if not 25th, likely not locked (fast path)
-    const now = new Date();
-    const wibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
-    const isThe25th = wibTime.getUTCDate() === 25;
-    if (!isThe25th) {
-      // Double-check manual lock
-      try {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-        const res = await fetch(
-          `${supabaseUrl}/rest/v1/settings?key=eq.site_lock&select=value`,
-          { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }, cache: 'no-store' }
-        );
-        if (res.ok) {
-          const rows = await res.json();
-          const isManualLock = rows.length > 0 && rows[0].value?.manual_lock === true;
-          if (!isManualLock) {
-            return NextResponse.redirect(new URL('/', request.url));
+    try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+      const res = await fetch(
+        `${supabaseUrl}/rest/v1/settings?key=eq.site_lock&select=value`,
+        { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }, cache: 'no-store' }
+      );
+      if (res.ok) {
+        const rows = await res.json();
+        const now = new Date();
+        const wibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+        const isThe25th = wibTime.getUTCDate() === 25;
+
+        let shouldStayLocked = false;
+
+        if (rows.length > 0) {
+          const lockSetting = rows[0].value;
+          if (lockSetting?.manual_lock === true) {
+            shouldStayLocked = true;
+          } else if (lockSetting?.manual_lock === false && lockSetting?.updated_at) {
+            const updatedDate = new Date(lockSetting.updated_at);
+            const updatedWib = new Date(updatedDate.getTime() + 7 * 60 * 60 * 1000);
+            const isSameDay = updatedWib.getUTCDate() === wibTime.getUTCDate() &&
+                              updatedWib.getUTCMonth() === wibTime.getUTCMonth() &&
+                              updatedWib.getUTCFullYear() === wibTime.getUTCFullYear();
+            shouldStayLocked = isSameDay ? false : isThe25th;
+          } else {
+            shouldStayLocked = isThe25th;
           }
+        } else {
+          shouldStayLocked = isThe25th;
         }
-      } catch {
-        // If can't check, let them stay on locked page
+
+        if (!shouldStayLocked) {
+          return NextResponse.redirect(new URL('/', request.url));
+        }
       }
+    } catch {
+      // If can't check, let them stay on locked page
     }
     return NextResponse.next();
   }

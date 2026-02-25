@@ -7,7 +7,13 @@ import { createPublicServerSupabaseClient } from '@/lib/supabase/server';
  */
 export async function GET() {
   const locked = await isSiteLocked();
-  return NextResponse.json(locked);
+  return NextResponse.json(locked, {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+    },
+  });
 }
 
 /**
@@ -41,7 +47,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true, locked: !!locked });
+  return NextResponse.json({ success: true, locked: !!locked }, {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+    },
+  });
 }
 
 /**

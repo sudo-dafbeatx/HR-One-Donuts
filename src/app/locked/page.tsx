@@ -1,6 +1,39 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
 export default function LockedPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    let active = true;
+
+    const checkLock = async () => {
+      try {
+        const res = await fetch('/api/site-lock', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (!data.locked && active) {
+            router.replace('/');
+          }
+        }
+      } catch {
+        // Silently retry on next interval
+      }
+    };
+
+    // Check immediately on mount
+    checkLock();
+    // Then poll every 5 seconds
+    const interval = setInterval(checkLock, 5000);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [router]);
+
   return (
     <div className="fixed inset-0 z-99999 bg-linear-to-br from-red-950 via-red-900 to-black flex items-center justify-center p-6">
       {/* Background noise */}
