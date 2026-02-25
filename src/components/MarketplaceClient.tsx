@@ -77,7 +77,7 @@ export default function MarketplaceClient({
             </span>
           ))}
           <span className="text-[9px] text-slate-400 font-bold ml-0.5">
-            ({total})
+            ({total} ulasan)
           </span>
         </div>
 
@@ -92,8 +92,8 @@ export default function MarketplaceClient({
           <span className="text-[8px] text-amber-900 font-bold">
             {rating > 0 ? rating.toFixed(1) : 'new'}
           </span>
-          <span className="text-[7px] text-amber-700/60 font-medium">
-            ({total})
+          <span className="text-[7px] text-amber-700/60 font-medium ml-0.5">
+            ({total} ulasan)
           </span>
         </div>
       </div>

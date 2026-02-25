@@ -9,7 +9,7 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outl
 
 import { SiteSettings } from "@/types/cms";
 import { getCurrentUserProfile, createOrder, getUserActiveAddress } from "@/app/actions/order-actions";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import CheckoutAnimation from "./CheckoutAnimation";
 import { useTranslation } from "@/context/LanguageContext";
 
@@ -30,6 +30,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const { showError } = useErrorPopup();
   const { t } = useTranslation();
   const router = useRouter();
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [showCheckoutAnim, setShowCheckoutAnim] = useState(false);
   const [showProfileAlert, setShowProfileAlert] = useState(false);
@@ -227,6 +228,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       showError('Checkout Gagal', errorMessage);
     }
   };
+
+  if (['/terms', '/privacy', '/cookies'].includes(pathname || '')) return null;
 
   return (
     <>
