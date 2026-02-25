@@ -29,6 +29,26 @@ export const metadata: Metadata = {
   icons: {
     icon: "/images/favicons.ico",
   },
+  openGraph: {
+    title: "HR-One Donuts",
+    description: "Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut dan kaya rasa.",
+    type: "website",
+    url: "https://hr-one-donuts.vercel.app", // Fallback URL
+    images: [
+      {
+        url: "/images/OGMEDIA.webp",
+        width: 1200,
+        height: 630,
+        alt: "HR-One Donuts Banner",
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HR-One Donuts",
+    description: "Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut dan kaya rasa.",
+    images: ["/images/OGMEDIA.webp"],
+  },
 };
 
 export default async function RootLayout({
