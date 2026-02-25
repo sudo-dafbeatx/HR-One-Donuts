@@ -9,6 +9,7 @@ import {
   ShoppingBagIcon
 } from '@heroicons/react/24/outline';
 import { getOrderStatus } from '@/lib/order-status';
+import OrderReviewModal from '@/components/detail/OrderReviewModal';
 
 import idDict from '@/translations/dictionaries/id.json';
 import enDict from '@/translations/dictionaries/en.json';
@@ -216,6 +217,14 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         </div>
 
       </div>
+
+      {/* 6. Review Modal Enforcement */}
+      {order.status === 'completed' && order.items?.some((i: { is_reviewed?: boolean }) => !i.is_reviewed) && (
+        <OrderReviewModal 
+          orderId={order.id} 
+          items={order.items.filter((i: { is_reviewed?: boolean }) => !i.is_reviewed)} 
+        />
+      )}
     </div>
   );
 }

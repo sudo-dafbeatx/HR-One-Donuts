@@ -45,6 +45,7 @@ interface Profile {
   address_detail?: string;
   is_verified?: boolean;
   birth_place?: string;
+  points?: number;
 }
 
 interface OrderItem {
@@ -305,9 +306,20 @@ export default function ProfilePage() {
                     )}
                   </h1>
                   <p className="text-blue-50/80 font-medium mb-1 opacity-90 text-sm md:text-base truncate">{profile?.email}</p>
-                  <p className="text-[10px] md:text-xs text-blue-100/70 italic opacity-80 mt-1">&quot;{
+                  <p className="text-[10px] md:text-xs text-blue-100/70 italic opacity-80 mt-1 mb-3">&quot;{
                     t(`profile.quotes.${new Date().getDay()}`)
                   }&quot;</p>
+                  
+                  {/* Reward Points Badge */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 md:backdrop-blur-md rounded-xl border border-amber-300/30 shadow-inner">
+                    <span className="bg-amber-400 text-amber-900 rounded-full size-5 flex items-center justify-center text-xs shadow-sm">
+                      <StarIcon className="size-3.5" />
+                    </span>
+                    <span className="text-xs md:text-sm font-black text-amber-100 uppercase tracking-widest drop-shadow-sm flex items-center gap-1.5">
+                      {profile?.points || 0} <span className="text-[10px] text-amber-200/80">Poin Reward</span>
+                    </span>
+                  </div>
+
                 </div>
               </div>
             </div>

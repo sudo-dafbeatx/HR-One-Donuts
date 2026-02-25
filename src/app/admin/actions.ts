@@ -591,10 +591,10 @@ export async function updateOrderStatus(orderId: string, status: string) {
   try {
     const supabase = await checkAdmin();
 
-    // 1. Fetch current order to validate transition
+    // 1. Fetch current order to validate transition and get user_id for notifications
     const { data: order, error: fetchError } = await supabase
       .from('orders')
-      .select('status, delivery_method')
+      .select('status, delivery_method, user_id')
       .eq('id', orderId)
       .single();
 
@@ -642,7 +642,38 @@ export async function updateOrderStatus(orderId: string, status: string) {
       return { success: false, error: `Gagal memperbarui status di database: ${updateError.message}` };
     }
     
-    // 5. Broad revalidation
+    // 5. Insert Notification for the user
+    try {
+      const titles: Record<string, string> = {
+        confirmed: 'Pesanan Dikonfirmasi',
+        processing: 'Pesanan Diproses',
+        shipping: 'Pesanan Sedang Dikirim',
+        ready: 'Pesanan Siap Diambil',
+        completed: 'Pesanan Selesai'
+      };
+      
+      const messages: Record<string, string> = {
+        confirmed: 'Pesanan Anda telah kami terima dan sedang menunggu proses.',
+        processing: 'Donat Anda sedang dibuat dengan cinta.',
+        shipping: 'Kurir kami sedang dalam perjalanan mengantar pesanan Anda.',
+        ready: 'Pesanan Anda sudah siap diambil di outlet kami.',
+        completed: 'Pesanan selesai. Jangan lupa berikan ulasan Anda!'
+      };
+
+      if (titles[status] && order.user_id) {
+        await supabase.from('notifications').insert({
+          user_id: order.user_id,
+          title: titles[status],
+          message: messages[status],
+          type: 'order_update',
+          related_record_id: orderId
+        });
+      }
+    } catch (notifErr) {
+      console.error('Gagal mengirim notifikasi:', notifErr);
+    }
+    
+    // 6. Broad revalidation
     try {
       revalidatePath('/admin/orders-status');
       revalidatePath('/profile');
@@ -652,11 +683,11 @@ export async function updateOrderStatus(orderId: string, status: string) {
     }
     
     return { success: true };
-  } catch (err: any) {
+  } catch (err) {
     console.error('CRITICAL: updateOrderStatus crashed:', err);
     return { 
       success: false, 
-      error: err?.message || 'Terjadi kesalahan sistem yang tidak terduga.' 
+      error: (err as Error)?.message || 'Terjadi kesalahan sistem yang tidak terduga.' 
     };
   }
 }

@@ -18,7 +18,7 @@ import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import { useTranslation } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
-
+import NotificationBell from "@/components/NotificationBell";
 interface NavbarProps {
   siteSettings?: SiteSettings;
   hideLogo?: boolean;
@@ -153,12 +153,15 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
         {/* Utilities */}
         <div className="flex items-center gap-1.5 md:gap-4 shrink-0">
           <LanguageSwitcher />
-          {/* Mobile Search Icon (Hidden on Homepage) */}
+          {/* Search Mobile */}
           {(!pathname || pathname !== '/') && (
             <button className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 md:hidden transition-colors">
               <span className="material-symbols-outlined">search</span>
             </button>
           )}
+
+          {/* Notifications */}
+          <NotificationBell />
 
           {/* Cart */}
           <button
