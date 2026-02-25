@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 import { SiteSettings } from "@/types/cms";
-import { getCurrentUserProfile, createOrder } from "@/app/actions/order-actions";
+import { getCurrentUserProfile, createOrder, getUserActiveAddress } from "@/app/actions/order-actions";
 import { useRouter } from "next/navigation";
 import CheckoutAnimation from "./CheckoutAnimation";
 import { useTranslation } from "@/context/LanguageContext";
@@ -84,33 +84,43 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         return;
       }
 
-      // Pre-calculate full address
+      // Pre-calculate full address from profile as legacy/backup
       const province = profile.province_name || "";
       const city = profile.city_name || "";
       const district = profile.district_name || "";
       const detail = profile.address_detail || profile.address || "";
-      const fullAddress = [detail, district, city, province].filter(Boolean).join(", ");
+      const profileAddressStr = [detail, district, city, province].filter(Boolean).join(", ");
 
-      // 2. Validate Profile Completeness
-      // For delivery, a full address is strictly required. For pickup, just name and phone.
-      const hasBasicInfo = !!(profile.full_name && profile.phone);
-      const isProfileComplete = deliveryMethod === 'delivery' 
-        ? (hasBasicInfo && fullAddress.length > 0)
-        : hasBasicInfo;
-      
-      if (!isProfileComplete) {
-        setIsLoading(false);
-        setShowProfileAlert(true);
-        return;
+      // 2. Strict Address Validation for Delivery
+      let finalShippingAddress = undefined;
+
+      if (deliveryMethod === 'delivery') {
+        const activeAddress = await getUserActiveAddress();
+        
+        if (!activeAddress) {
+          setIsLoading(false);
+          setShowProfileAlert(true);
+          return;
+        }
+
+        // Construct full address from user_addresses table structure
+        finalShippingAddress = [
+          activeAddress.building_name,
+          activeAddress.street_name + (activeAddress.house_no ? ` No. ${activeAddress.house_no}` : ""),
+          activeAddress.district,
+          activeAddress.city,
+          activeAddress.province,
+          activeAddress.postal_code
+        ].filter(Boolean).join(", ");
       }
 
-      // 3. Save Order to Database (this also tracks sales volume internally)
+      // 3. Save Order to Database
       await createOrder({
         total_amount: finalTotal,
         total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
         delivery_method: deliveryMethod,
         shipping_fee: shippingFee,
-        shipping_address: deliveryMethod === 'delivery' ? fullAddress : undefined,
+        shipping_address: finalShippingAddress,
         items: cart.map(item => ({
           product_id: item.id,
           name: item.name,
@@ -119,6 +129,9 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           image: item.image
         }))
       });
+
+      // Update fullAddress for WA message
+      const fullAddressForWA = finalShippingAddress || profileAddressStr;
 
       // 4. Generate WhatsApp Message
       const rawPhone = siteSettings?.whatsapp_number || process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "62895351251395";
@@ -132,7 +145,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       message += t('cart.whatsapp.wa', { phone: profile.phone || "" }) + "\n";
       
       if (deliveryMethod === 'delivery') {
-        message += t('cart.whatsapp.address', { address: fullAddress }) + "\n\n";
+        message += t('cart.whatsapp.address', { address: fullAddressForWA }) + "\n\n";
       } else {
         message += "\n";
       }
@@ -407,9 +420,9 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">{t('cart.alert_title')}</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">Alamat Pengiriman Belum Lengkap</h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">
-                {t('cart.alert_subtitle')}
+                Untuk mengirim pesanan ke rumah, kamu perlu melengkapi alamat pengiriman terlebih dahulu di menu pengaturan akun.
               </p>
             </div>
             
@@ -422,7 +435,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 }}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-primary/25 active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                <span>{t('cart.alert_cta')}</span>
+                <span>Lengkapi Alamat Sekarang</span>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
@@ -432,7 +445,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 onClick={() => setShowProfileAlert(false)}
                 className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-colors"
               >
-                {t('cart.alert_back')}
+                Batal
               </button>
             </div>
           </div>

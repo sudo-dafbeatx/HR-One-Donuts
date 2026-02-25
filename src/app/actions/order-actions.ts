@@ -56,6 +56,32 @@ export async function getCurrentUserProfile() {
   }
 }
 
+export async function getUserActiveAddress() {
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) return null;
+
+    const { data: address, error } = await supabase
+      .from('user_addresses')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('is_default', true)
+      .maybeSingle();
+
+    if (error) {
+      console.error(' [getUserActiveAddress] Supabase error:', error);
+      return null;
+    }
+
+    return address;
+  } catch (err) {
+    console.error(' [getUserActiveAddress] Unexpected crash:', err);
+    return null;
+  }
+}
+
 export async function createOrder(data: {
   total_amount: number;
   total_items: number;
