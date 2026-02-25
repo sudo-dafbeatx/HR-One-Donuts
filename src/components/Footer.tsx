@@ -156,9 +156,10 @@ export default function Footer({ siteSettings }: FooterProps) {
 
         {/* Bottom Bar */}
         <div className="border-t border-white/5 pt-6 md:pt-10 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-8">
-          <p className="text-slate-500 text-[10px] md:text-[11px] font-bold order-2 md:order-1 tracking-wider uppercase">
-            {t('footer.copyright')}
-          </p>
+          <div className="text-slate-500 text-[10px] md:text-[11px] font-bold order-2 md:order-1 tracking-wider uppercase text-center md:text-left">
+            <span className="block">{t('footer.copyright')}</span>
+            <span className="block mt-1 font-medium capitalize opacity-70">A Website by DFBX</span>
+          </div>
           <div className="flex flex-wrap justify-center gap-x-6 md:gap-x-10 gap-y-3 md:gap-y-4 order-1 md:order-2">
             {[
               { label: t('footer.privacy'), href: '/privacy' },
