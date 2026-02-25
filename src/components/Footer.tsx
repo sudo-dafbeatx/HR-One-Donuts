@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { SiteSettings } from "@/types/cms";
 import LogoBrand from "@/components/ui/LogoBrand";
 import { useTranslation } from "@/context/LanguageContext";
@@ -11,6 +12,11 @@ interface FooterProps {
 
 export default function Footer({ siteSettings }: FooterProps) {
   const { t } = useTranslation();
+  const pathname = usePathname();
+
+  if (pathname && (pathname.startsWith('/terms') || pathname.startsWith('/privacy') || pathname.startsWith('/cookies'))) {
+    return null;
+  }
   
   return (
     <footer className="bg-slate-900 text-white pt-12 md:pt-20 pb-8 md:pb-10 overflow-hidden relative">

@@ -229,7 +229,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     }
   };
 
-  if (['/terms', '/privacy', '/cookies'].includes(pathname || '')) return null;
+  if (pathname && (pathname.startsWith('/terms') || pathname.startsWith('/privacy') || pathname.startsWith('/cookies'))) return null;
 
   return (
     <>

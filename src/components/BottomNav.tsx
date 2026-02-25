@@ -31,7 +31,7 @@ export default function BottomNav() {
     // Real session state is handled at /profile or middleware.
   }, []);
 
-  if (['/terms', '/privacy', '/cookies'].includes(pathname || '')) return null;
+  if (pathname && (pathname.startsWith('/terms') || pathname.startsWith('/privacy') || pathname.startsWith('/cookies'))) return null;
 
 
 

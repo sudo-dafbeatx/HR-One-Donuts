@@ -78,8 +78,8 @@ export default function DelayedCardPopup({ siteSettings }: { siteSettings?: Site
     }, 400);
   };
 
-  // Skip showing on admin/login pages or if disabled
-  const hidePaths = ['/onboarding', '/auth', '/login', '/admin'];
+  // Skip showing on admin/login/legal pages or if disabled
+  const hidePaths = ['/onboarding', '/auth', '/login', '/admin', '/terms', '/privacy', '/cookies'];
   const shouldHide = hidePaths.some(path => pathname?.startsWith(path)) || siteSettings?.is_popup_enabled === false;
 
   if (shouldHide || hasClosed || !render) return null;

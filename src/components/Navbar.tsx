@@ -28,6 +28,7 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
   const pathname = usePathname();
   const { t } = useTranslation();
   const { totalItems, setIsCartOpen } = useCart();
+  
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -75,6 +76,10 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
     if (mounted) fetchUserData();
     return () => clearTimeout(timer);
   }, [mounted, supabase]);
+
+  if (pathname && (pathname.startsWith('/terms') || pathname.startsWith('/privacy') || pathname.startsWith('/cookies'))) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-white/70 backdrop-blur-md border-b border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.03)] supports-backdrop-filter:bg-white/60">
