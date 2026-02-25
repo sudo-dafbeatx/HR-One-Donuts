@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import GeoDropdown from './GeoDropdown';
 import { useLoading } from '@/context/LoadingContext';
+import { useErrorPopup } from '@/context/ErrorPopupContext';
 import { useRouter } from 'next/navigation';
 import { normalizePhoneToID } from '@/lib/phone';
 
@@ -45,6 +46,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
     notifikasi: false,
   });
   const { setIsLoading } = useLoading();
+  const { showError } = useErrorPopup();
   const router = useRouter();
   const supabase = createClient();
 
@@ -120,7 +122,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
     if (!isValid) {
       // Find the first error and alert it, so mobile users know what's wrong if it's off-screen
       const firstErrorKey = Object.keys(newErrors)[0];
-      alert(`Pendaftaran gagal: ${newErrors[firstErrorKey]}`);
+      showError('Pendaftaran Gagal', newErrors[firstErrorKey]);
     }
     return isValid;
   };
@@ -215,7 +217,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
       clearTimeout(timeoutMsg);
       const message = err instanceof Error ? err.message : 'Terjadi kesalahan';
       console.error('[Onboarding] Error:', message, err);
-      alert('Gagal menyimpan data. Coba lagi.');
+      showError('Gagal Menyimpan', 'Terjadi kesalahan saat menyimpan data. Coba lagi.');
       setSubmitting(false);
       setIsLoading(false);
     }
@@ -341,6 +343,20 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
             className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthDate ? 'border-red-300' : 'border-slate-200'}`}
           />
           {errors.birthDate && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.birthDate}</p>}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+        <div>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Tempat Lahir</label>
+          <input
+            type="text"
+            value={formData.birthPlace}
+            onChange={(e) => setFormData({ ...formData, birthPlace: e.target.value })}
+            placeholder="Contoh: Jakarta"
+            className={`block w-full rounded-2xl border px-4 py-3 md:px-5 md:py-3.5 text-[14px] md:text-base text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none bg-slate-50 ${errors.birthPlace ? 'border-red-300' : 'border-slate-200'}`}
+          />
+          {errors.birthPlace && <p className="mt-1.5 ml-1 text-[10px] font-bold text-red-500 uppercase tracking-wider">{errors.birthPlace}</p>}
         </div>
       </div>
       

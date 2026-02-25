@@ -11,6 +11,7 @@ import {
   MapIcon
 } from '@heroicons/react/24/outline';
 import { useTranslation } from '@/context/LanguageContext';
+import { useErrorPopup } from '@/context/ErrorPopupContext';
 
 interface Address {
   id: string;
@@ -43,6 +44,7 @@ interface ProfileAddress {
 
 export default function AddressPage() {
   const { t } = useTranslation();
+  const { showError } = useErrorPopup();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -226,7 +228,7 @@ export default function AddressPage() {
                     setMapQuery(query);
                     setShowMap(true);
                   } else {
-                    alert(t('settings.address.form.map.error_empty'));
+                    showError('Alamat Kosong', t('settings.address.form.map.error_empty'));
                   }
                 }}
                 className="w-full py-2 text-[10px] text-primary font-black underline uppercase tracking-widest hover:text-primary/80 transition-colors"

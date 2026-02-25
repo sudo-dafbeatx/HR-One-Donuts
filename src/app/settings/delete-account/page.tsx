@@ -3,10 +3,12 @@
 import { useState } from 'react';
 import { TrashIcon, ExclamationTriangleIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
+import { useErrorPopup } from '@/context/ErrorPopupContext';
 
 export default function DeleteAccountPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const router = useRouter();
+  const { showError } = useErrorPopup();
 
   return (
     <div className="space-y-12 px-4 py-12 pb-32">
@@ -53,7 +55,7 @@ export default function DeleteAccountPage() {
                  </button>
                  <button 
                    onClick={() => {
-                     alert('Fitur penghapusan akun akan diproses secara manual oleh admin dalam 3x24 jam.');
+                      showError('Permintaan Dikirim', 'Fitur penghapusan akun akan diproses secara manual oleh admin dalam 3x24 jam.');
                      router.push('/');
                    }}
                    className="py-4 bg-red-600 text-white font-bold rounded-2xl hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all"

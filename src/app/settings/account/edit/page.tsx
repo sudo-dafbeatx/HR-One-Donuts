@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { CameraIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useLoading } from '@/context/LoadingContext';
+import { useErrorPopup } from '@/context/ErrorPopupContext';
 import Image from 'next/image';
 
 interface UserProfile {
@@ -21,6 +22,7 @@ interface UserProfile {
 
 export default function EditProfilePage() {
   const { setIsLoading } = useLoading();
+  const { showError } = useErrorPopup();
   const supabase = createClient();
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -28,6 +30,7 @@ export default function EditProfilePage() {
   const [formData, setFormData] = useState({
     fullName: '',
     username: '',
+    birthPlace: '',
     fb: '',
     ig: '',
     tt: ''
@@ -50,6 +53,7 @@ export default function EditProfilePage() {
           setFormData({
             fullName: data.full_name || '',
             username: data.username || '',
+            birthPlace: data.birth_place || '',
             fb: data.social_links?.facebook || '',
             ig: data.social_links?.instagram || '',
             tt: data.social_links?.tiktok || ''
@@ -124,7 +128,7 @@ export default function EditProfilePage() {
 
     } catch (error) {
       console.error('Avatar upload error:', error);
-      alert('Gagal mengunggah foto');
+      showError('Gagal Upload', 'Gagal mengunggah foto. Coba lagi.');
     } finally {
       setUploading(false);
     }
@@ -140,6 +144,7 @@ export default function EditProfilePage() {
         .update({
           full_name: formData.fullName,
           username: formData.username.toLowerCase(),
+          birth_place: formData.birthPlace,
           social_links: {
             facebook: formData.fb,
             instagram: formData.ig,
@@ -155,7 +160,7 @@ export default function EditProfilePage() {
       router.refresh();
     } catch (error) {
       console.error('Save profile error:', error);
-      alert('Gagal menyimpan perubahan');
+      showError('Gagal Simpan', 'Gagal menyimpan perubahan. Coba lagi.');
     } finally {
       setIsLoading(false);
     }
@@ -230,6 +235,17 @@ export default function EditProfilePage() {
               className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
               placeholder="username_unik"
               required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tempat Lahir</label>
+            <input 
+              type="text"
+              value={formData.birthPlace}
+              onChange={(e) => setFormData({...formData, birthPlace: e.target.value})}
+              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              placeholder="Contoh: Jakarta"
             />
           </div>
 

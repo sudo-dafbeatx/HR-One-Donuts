@@ -30,6 +30,7 @@ interface UserProfile {
   phone_number: string | null;
   email: string; // Assuming email is always present after initial fetch
   is_verified: boolean;
+  birth_place?: string | null;
   social_links: {
     facebook?: string;
     instagram?: string;
@@ -142,6 +143,7 @@ export default function AccountSettingsPage() {
               <EditableItem icon={FingerPrintIcon} label={t('settings.account.basic_info.labels.username')} value={profile?.username || '-'} />
               <EditableItem icon={DevicePhoneMobileIcon} label={t('settings.account.basic_info.labels.phone')} value={profile?.phone_number || '-'} />
               <EditableItem icon={EnvelopeIcon} label={t('settings.account.basic_info.labels.email')} value={profile?.email || '-'} />
+              {profile?.birth_place && <EditableItem icon={ClockIcon} label="Tempat Lahir" value={profile.birth_place} />}
             </div>
           </div>
 

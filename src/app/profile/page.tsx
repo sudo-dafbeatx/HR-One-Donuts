@@ -25,6 +25,7 @@ import { CameraIcon, PhotoIcon, SparklesIcon, CheckBadgeIcon } from '@heroicons/
 import styled from "styled-components";
 import Pattern from "@/components/Pattern";
 import { useTranslation } from '@/context/LanguageContext';
+import { useErrorPopup } from '@/context/ErrorPopupContext';
 
 interface Profile {
   id: string;
@@ -43,6 +44,7 @@ interface Profile {
   district_name?: string;
   address_detail?: string;
   is_verified?: boolean;
+  birth_place?: string;
 }
 
 interface OrderItem {
@@ -75,6 +77,7 @@ export default function ProfilePage() {
   
   const { setIsLoading } = useLoading();
   const { t } = useTranslation();
+  const { showError } = useErrorPopup();
   const router = useRouter();
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -177,7 +180,7 @@ export default function ProfilePage() {
       await new Promise(r => setTimeout(r, 600));
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : t('common.error_generic');
-      alert(t('profile.update_fail', { message }));
+      showError('Gagal Update', message);
     } finally {
       setIsLoading(false);
     }
@@ -192,7 +195,7 @@ export default function ProfilePage() {
       setShowAvatarSelector(false);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : t('common.error_generic');
-      alert(`Gagal: ${message}`);
+      showError('Gagal', message);
     } finally {
       setIsLoading(false);
     }
@@ -214,7 +217,7 @@ export default function ProfilePage() {
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : t('profile.upload_fail', { message: '' });
-      alert(t('profile.upload_fail', { message }));
+      showError('Gagal Upload', message);
     } finally {
       setIsLoading(false);
       // Reset input value so same file can be selected again
@@ -489,6 +492,18 @@ export default function ProfilePage() {
                           </p>
                         </div>
                       </div>
+
+                      {profile?.birth_place && (
+                        <div className="flex items-start gap-4 p-4 bg-slate-50/50 rounded-2xl border border-slate-50">
+                          <div className="size-10 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0 text-primary">
+                            <span className="material-symbols-outlined text-[20px]">cake</span>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Tempat Lahir</p>
+                            <p className="font-bold text-slate-700 leading-snug">{profile.birth_place}</p>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="flex items-start gap-4 p-4 bg-slate-50/50 rounded-2xl border border-slate-50">
                         <div className="size-10 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0 text-primary">

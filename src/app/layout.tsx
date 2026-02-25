@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import type { Metadata } from "next";
 import { CartProvider } from "@/context/CartContext";
 import { LoadingProvider } from "@/context/LoadingContext";
+import { ErrorPopupProvider } from "@/context/ErrorPopupContext";
 import CartDrawer from "@/components/cart/CartDrawer";
 import TrafficTracker from "@/components/tracking/TrafficTracker";
 import BottomNav from "@/components/BottomNav";
@@ -76,6 +77,7 @@ export default async function RootLayout({
           <LanguageProvider>
             <EditModeProvider initialCopy={copy} initialTheme={theme} isAdmin={isAdmin}>
               <LoadingProvider>
+                <ErrorPopupProvider>
                 <CartProvider>
                 <TrafficTracker />
                 <div id="main-content" className="min-h-screen">
@@ -121,6 +123,7 @@ export default async function RootLayout({
                   }}
                 />
               </CartProvider>
+              </ErrorPopupProvider>
             </LoadingProvider>
           </EditModeProvider>
           </LanguageProvider>

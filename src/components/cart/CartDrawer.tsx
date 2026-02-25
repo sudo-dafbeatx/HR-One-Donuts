@@ -2,6 +2,7 @@
 
 import { useCart } from "@/context/CartContext";
 import { useLoading } from "@/context/LoadingContext";
+import { useErrorPopup } from "@/context/ErrorPopupContext";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -26,6 +27,7 @@ interface CartProfile {
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
   const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart } = useCart();
   const { setIsLoading } = useLoading();
+  const { showError } = useErrorPopup();
   const { t } = useTranslation();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -194,7 +196,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       console.error('Order error:', error);
       setIsLoading(false);
       const errorMessage = error instanceof Error ? error.message : t('cart.error_generic');
-      alert(errorMessage);
+      showError('Checkout Gagal', errorMessage);
     }
   };
 
