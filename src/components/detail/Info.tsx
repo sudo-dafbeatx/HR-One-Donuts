@@ -39,7 +39,7 @@ export default function ProductInfo({
   const router = useRouter();
   const supabase = createClient();
 
-  const hasDiscount = discount_percent && discount_percent > 0;
+  const hasDiscount = !!(discount_percent && discount_percent > 0);
   const basePriceWithVariant = price + (selectedVariant?.price_adjustment || 0);
   const currentPrice = hasDiscount 
     ? basePriceWithVariant * (1 - (discount_percent || 0) / 100)
