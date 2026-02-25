@@ -12,6 +12,7 @@ interface UserProfile {
   id: string;
   full_name: string | null;
   username: string | null;
+  phone_number: string | null;
   avatar_url: string | null;
   social_links: {
     facebook?: string;
@@ -30,6 +31,7 @@ export default function EditProfilePage() {
   const [formData, setFormData] = useState({
     fullName: '',
     username: '',
+    phoneNumber: '',
     birthPlace: '',
     fb: '',
     ig: '',
@@ -53,6 +55,7 @@ export default function EditProfilePage() {
           setFormData({
             fullName: data.full_name || '',
             username: data.username || '',
+            phoneNumber: data.phone_number || '',
             birthPlace: data.birth_place || '',
             fb: data.social_links?.facebook || '',
             ig: data.social_links?.instagram || '',
@@ -144,6 +147,7 @@ export default function EditProfilePage() {
         .update({
           full_name: formData.fullName,
           username: formData.username.toLowerCase(),
+          phone_number: formData.phoneNumber,
           birth_place: formData.birthPlace,
           social_links: {
             facebook: formData.fb,
@@ -235,6 +239,17 @@ export default function EditProfilePage() {
               className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
               placeholder="username_unik"
               required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Nomor Handphone</label>
+            <input 
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={(e) => setFormData({...formData, phoneNumber: e.target.value.replace(/\D/g, '')})}
+              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              placeholder="08123456789"
             />
           </div>
 

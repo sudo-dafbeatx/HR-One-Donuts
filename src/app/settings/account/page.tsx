@@ -13,6 +13,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useTranslation } from '@/context/LanguageContext';
 
 interface AuthLog {
@@ -36,6 +37,7 @@ interface UserProfile {
     instagram?: string;
     tiktok?: string;
   } | null;
+  avatar_url?: string | null;
 }
 
 export default function AccountSettingsPage() {
@@ -114,8 +116,12 @@ export default function AccountSettingsPage() {
           {/* Profile Basic */}
           <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col items-center text-center">
             <div className="relative size-24 mb-4">
-              <div className="size-full bg-slate-100 rounded-full flex items-center justify-center border-4 border-white shadow-md overflow-hidden">
-                <UserCircleIcon className="size-full text-slate-300" />
+              <div className="size-full bg-slate-100 rounded-full flex items-center justify-center border-4 border-white shadow-md overflow-hidden relative">
+                {profile?.avatar_url ? (
+                  <Image src={profile.avatar_url} alt="Profile" fill className="object-cover" />
+                ) : (
+                  <UserCircleIcon className="size-full text-slate-300" />
+                )}
               </div>
               {profile?.is_verified && (
                 <div className="absolute bottom-0 right-0 bg-white rounded-full border-2 border-primary">
