@@ -16,10 +16,6 @@ export async function GET() {
   });
 }
 
-/**
- * POST /api/site-lock — Toggle site lock status (admin only).
- * Body: { locked: boolean }
- */
 export async function POST(request: NextRequest) {
   // Verify admin session via cookie
   const adminSession = request.cookies.get('admin_session');
@@ -30,21 +26,55 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const { locked } = body;
 
-  const supabase = createPublicServerSupabaseClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  // Prefer service role key for write operations (bypasses RLS)
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-  // Upsert the site_lock setting
-  const { error } = await supabase
-    .from('settings')
-    .upsert(
+  const newValue = { manual_lock: !!locked, updated_at: new Date().toISOString() };
+
+  try {
+    // First try to update existing row
+    const updateRes = await fetch(
+      `${supabaseUrl}/rest/v1/settings?key=eq.site_lock`,
       {
-        key: 'site_lock',
-        value: { manual_lock: !!locked, updated_at: new Date().toISOString() },
-      },
-      { onConflict: 'key' }
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify({ value: newValue }),
+        cache: 'no-store',
+      }
     );
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!updateRes.ok) {
+      // If update fails, try insert
+      const insertRes = await fetch(
+        `${supabaseUrl}/rest/v1/settings`,
+        {
+          method: 'POST',
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates,return=minimal',
+          },
+          body: JSON.stringify({ key: 'site_lock', value: newValue }),
+          cache: 'no-store',
+        }
+      );
+
+      if (!insertRes.ok) {
+        const errText = await insertRes.text();
+        console.error('[site-lock] Insert failed:', insertRes.status, errText);
+        return NextResponse.json({ error: `DB write failed: ${errText}` }, { status: 500 });
+      }
+    }
+  } catch (err) {
+    console.error('[site-lock] Network error:', err);
+    return NextResponse.json({ error: 'Network error writing to DB' }, { status: 500 });
   }
 
   return NextResponse.json({ success: true, locked: !!locked }, {
