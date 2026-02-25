@@ -10,6 +10,7 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outl
 import { SiteSettings } from "@/types/cms";
 import { getCurrentUserProfile, createOrder, getUserActiveAddress } from "@/app/actions/order-actions";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import CheckoutAnimation from "./CheckoutAnimation";
 import { useTranslation } from "@/context/LanguageContext";
 
@@ -91,8 +92,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       const detail = profile.address_detail || profile.address || "";
       const profileAddressStr = [detail, district, city, province].filter(Boolean).join(", ");
 
-      // 2. Strict Address Validation for Delivery
       let finalShippingAddress = undefined;
+      let finalShippingNotes = undefined;
 
       if (deliveryMethod === 'delivery') {
         const activeAddress = await getUserActiveAddress();
@@ -102,6 +103,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           setShowProfileAlert(true);
           return;
         }
+
+        finalShippingNotes = activeAddress.additional_details;
 
         // Construct full address from user_addresses table structure - detailed version
         finalShippingAddress = [
@@ -121,7 +124,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         delivery_method: deliveryMethod,
         shipping_fee: shippingFee,
         shipping_address: finalShippingAddress,
-        shipping_address_notes: deliveryMethod === 'delivery' ? (await getUserActiveAddress())?.additional_details : undefined,
+        shipping_address_notes: finalShippingNotes,
         items: cart.map(item => ({
           product_id: item.id,
           name: item.name,
@@ -146,7 +149,11 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       message += t('cart.whatsapp.wa', { phone: profile.phone || "" }) + "\n";
       
       if (deliveryMethod === 'delivery') {
-        message += t('cart.whatsapp.address', { address: fullAddressForWA }) + "\n\n";
+        message += t('cart.whatsapp.address', { address: fullAddressForWA }) + "\n";
+        if (finalShippingNotes) {
+          message += `Catatan Alamat: ${finalShippingNotes}\n`;
+        }
+        message += "\n";
       } else {
         message += "\n";
       }
@@ -428,23 +435,19 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
             </div>
             
             <div className="p-6 space-y-3 bg-card">
-              <button
+              <Link
+                href="/settings/address"
                 onClick={() => {
-                  // Use hard navigation for maximum reliability on mobile
-                  // Call navigation first as per requirement
-                  window.location.assign('/settings/address');
-                  
-                  // Optional: clean up states although hard navigation will reload
                   setShowProfileAlert(false);
                   setIsCartOpen(false);
                 }}
-                className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-red-500/30 active:scale-[0.98] flex items-center justify-center gap-2"
+                className="w-full bg-[#E11D48] hover:bg-[#BE123C] text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-rose-500/30 active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <span>Lengkapi Alamat Sekarang</span>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
-              </button>
+              </Link>
               
               <button
                 onClick={() => setShowProfileAlert(false)}
