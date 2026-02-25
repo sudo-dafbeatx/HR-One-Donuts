@@ -36,44 +36,26 @@ export async function POST(request: NextRequest) {
   const newValue = { manual_lock: !!locked, updated_at: new Date().toISOString() };
 
   try {
-    // First try to update existing row
-    const updateRes = await fetch(
-      `${supabaseUrl}/rest/v1/settings?key=eq.site_lock`,
+    // Atomic Upsert (Insert or Update if exists) via PostgREST
+    const upsertRes = await fetch(
+      `${supabaseUrl}/rest/v1/settings?on_conflict=key`,
       {
-        method: 'PATCH',
+        method: 'POST',
         headers: {
           'apikey': supabaseKey,
           'Authorization': `Bearer ${supabaseKey}`,
           'Content-Type': 'application/json',
-          'Prefer': 'return=minimal',
+          'Prefer': 'resolution=merge-duplicates,return=minimal',
         },
-        body: JSON.stringify({ value: newValue }),
+        body: JSON.stringify({ key: 'site_lock', value: newValue }),
         cache: 'no-store',
       }
     );
 
-    if (!updateRes.ok) {
-      // If update fails, try insert
-      const insertRes = await fetch(
-        `${supabaseUrl}/rest/v1/settings`,
-        {
-          method: 'POST',
-          headers: {
-            'apikey': supabaseKey,
-            'Authorization': `Bearer ${supabaseKey}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'resolution=merge-duplicates,return=minimal',
-          },
-          body: JSON.stringify({ key: 'site_lock', value: newValue }),
-          cache: 'no-store',
-        }
-      );
-
-      if (!insertRes.ok) {
-        const errText = await insertRes.text();
-        console.error('[site-lock] Insert failed:', insertRes.status, errText);
-        return NextResponse.json({ error: `DB write failed: ${errText}` }, { status: 500 });
-      }
+    if (!upsertRes.ok) {
+      const errText = await upsertRes.text();
+      console.error('[site-lock] Upsert failed:', upsertRes.status, errText);
+      return NextResponse.json({ error: `DB write failed: ${errText}` }, { status: 500 });
     }
   } catch (err) {
     console.error('[site-lock] Network error:', err);
