@@ -61,7 +61,7 @@ export default function Hero({
                 <h2 className="text-white text-3xl md:text-6xl font-black tracking-tight drop-shadow-2xl">
                     {t('hero.title') || siteSettings?.store_name}
                 </h2>
-                <p className="text-white/90 text-sm md:text-xl font-bold mt-2 md:mt-4 drop-shadow-lg max-w-lg leading-snug">
+                <p className="text-slate-200 text-sm md:text-xl font-bold mt-1 md:mt-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] max-w-lg leading-snug">
                     {t('hero.subtitle') || siteSettings?.tagline}
                 </p>
             </div>
