@@ -286,7 +286,7 @@ export default function ProfilePage() {
                   </button>
                 </div>
                 
-                <div className={`flex-1 min-w-0 ${!profile?.is_verified ? 'text-center' : 'text-center md:text-left'} text-white`}>
+                <div className={`flex-1 min-w-0 flex flex-col items-center md:items-start w-full ${!profile?.is_verified ? 'text-center' : 'text-center md:text-left'} text-white`}>
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 border border-white/10">
                     <span className="size-1.5 bg-cyan-300 rounded-full animate-ping"></span>
                     {t('profile.customer')}

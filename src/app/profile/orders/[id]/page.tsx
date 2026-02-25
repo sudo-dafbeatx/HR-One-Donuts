@@ -29,7 +29,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
   // 2. Fetch User Language and Order Data
   const [profileResult, orderResult] = await Promise.all([
-    supabase.from('user_profiles').select('language').eq('id', authData.user.id).single(),
+    supabase.from('user_profiles').select('language, full_name, phone, province_name, city_name, district_name, address_detail').eq('id', authData.user.id).single(),
     supabase.from('orders').select('*').eq('id', orderId).eq('user_id', authData.user.id).single()
   ]);
 
@@ -64,6 +64,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const currentStatus = getOrderStatus(order.status);
   const StatusIcon = currentStatus.icon;
   const locale = lang === 'en' ? 'en-US' : 'id-ID';
+
+  const profile = profileResult.data;
+  const registeredAddress = profile ? `${profile.address_detail || ''}, ${profile.district_name || ''}, ${profile.city_name || ''}, ${profile.province_name || ''}`.replace(/^[\s,]+|[\s,]+$/g, '').replace(/,\s*,/g, ',').trim() : '';
+  const displayAddress = order.shipping_address || registeredAddress || t('orders.detail.no_address');
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
@@ -163,7 +167,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 <div>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('orders.detail.address_label')}</p>
                   <p className="text-sm font-medium text-slate-600 leading-relaxed mb-2">
-                    {order.shipping_address || t('orders.detail.no_address')}
+                    {displayAddress}
                   </p>
                   {order.shipping_address_notes && (
                     <div className="bg-amber-50 rounded-xl p-3 flex items-start gap-2 border border-amber-100/50">

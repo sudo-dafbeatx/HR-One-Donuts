@@ -11,7 +11,7 @@ export default function GlobalLoading({ isVisible, message = 'Please wait ...' }
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md transition-all duration-300">
+    <div className="fixed top-0 left-0 w-full h-dvh z-9999 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md transition-all duration-300">
       <div className="flex flex-col items-center justify-center gap-8 animate-fade-in">
         {/* New SVG Loader */}
         <div>
