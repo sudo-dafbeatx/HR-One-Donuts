@@ -29,7 +29,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
   // 2. Fetch User Language and Order Data
   const [profileResult, orderResult] = await Promise.all([
-    supabase.from('user_profiles').select('language, full_name, phone, province_name, city_name, district_name, address_detail').eq('id', authData.user.id).single(),
+    supabase.from('user_profiles').select('language, full_name, phone, address, province_name, city_name, district_name, address_detail').eq('id', authData.user.id).single(),
     supabase.from('orders').select('*').eq('id', orderId).eq('user_id', authData.user.id).single()
   ]);
 
@@ -66,7 +66,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const locale = lang === 'en' ? 'en-US' : 'id-ID';
 
   const profile = profileResult.data;
-  const registeredAddress = profile ? `${profile.address_detail || ''}, ${profile.district_name || ''}, ${profile.city_name || ''}, ${profile.province_name || ''}`.replace(/^[\s,]+|[\s,]+$/g, '').replace(/,\s*,/g, ',').trim() : '';
+  const registeredAddress = profile ? `${profile.address_detail || profile.address || ''}, ${profile.district_name || ''}, ${profile.city_name || ''}, ${profile.province_name || ''}`.replace(/^[\s,]+|[\s,]+$/g, '').replace(/,\s*,/g, ',').trim() : '';
   const displayAddress = order.shipping_address || registeredAddress || t('orders.detail.no_address');
 
   return (

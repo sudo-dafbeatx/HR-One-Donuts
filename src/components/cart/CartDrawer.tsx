@@ -84,9 +84,19 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         return;
       }
 
+      // Pre-calculate full address
+      const province = profile.province_name || "";
+      const city = profile.city_name || "";
+      const district = profile.district_name || "";
+      const detail = profile.address_detail || profile.address || "";
+      const fullAddress = [detail, district, city, province].filter(Boolean).join(", ");
+
       // 2. Validate Profile Completeness
-      const address = profile.address_detail || profile.address;
-      const isProfileComplete = profile.full_name && profile.phone && address;
+      // For delivery, a full address is strictly required. For pickup, just name and phone.
+      const hasBasicInfo = !!(profile.full_name && profile.phone);
+      const isProfileComplete = deliveryMethod === 'delivery' 
+        ? (hasBasicInfo && fullAddress.length > 0)
+        : hasBasicInfo;
       
       if (!isProfileComplete) {
         setIsLoading(false);
@@ -100,6 +110,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
         delivery_method: deliveryMethod,
         shipping_fee: shippingFee,
+        shipping_address: deliveryMethod === 'delivery' ? fullAddress : undefined,
         items: cart.map(item => ({
           product_id: item.id,
           name: item.name,
@@ -120,14 +131,11 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       message += t('cart.whatsapp.name', { name: profile.full_name || "" }) + "\n";
       message += t('cart.whatsapp.wa', { phone: profile.phone || "" }) + "\n";
       
-      // Complete address handling
-      const province = profile.province_name || "";
-      const city = profile.city_name || "";
-      const district = profile.district_name || "";
-      const detail = profile.address_detail || profile.address || "";
-      
-      const fullAddress = [detail, district, city, province].filter(Boolean).join(", ");
-      message += t('cart.whatsapp.address', { address: fullAddress }) + "\n\n";
+      if (deliveryMethod === 'delivery') {
+        message += t('cart.whatsapp.address', { address: fullAddress }) + "\n\n";
+      } else {
+        message += "\n";
+      }
 
       message += t('cart.whatsapp.reception') + "\n";
       message += deliveryMethod === 'delivery' ? t('cart.whatsapp.delivery_method') + "\n" : t('cart.whatsapp.pickup_method') + "\n";
@@ -410,7 +418,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 onClick={() => {
                   setShowProfileAlert(false);
                   setIsCartOpen(false);
-                  router.push('/profile');
+                  router.push('/settings/address');
                 }}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-primary/25 active:scale-[0.98] flex items-center justify-center gap-2"
               >
