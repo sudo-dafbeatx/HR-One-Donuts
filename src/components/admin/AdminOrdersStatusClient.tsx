@@ -37,10 +37,12 @@ export default function AdminOrdersStatusClient({ initialOrders }: { initialOrde
       const result = await updateOrderStatus(orderId, newStatus);
       if (result.success) {
         setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+      } else {
+        alert(result.error || 'Gagal memperbarui status. Terjadi kesalahan pada server.');
       }
     } catch (err) {
       console.error(err);
-      alert('Gagal memperbarui status. Silakan coba lagi.');
+      alert('Gagal memperbarui status. Periksa koneksi internet Anda atau coba lagi.');
     } finally {
       setUpdating(null);
     }
