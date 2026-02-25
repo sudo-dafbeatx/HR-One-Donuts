@@ -232,7 +232,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="fixed inset-0 z-60 flex h-dvh items-center justify-center bg-white">
         <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
@@ -245,15 +245,15 @@ export default function ProfilePage() {
         <div className="min-h-screen pb-32 overflow-x-hidden">
           {/* Premium Header with Gradient */}
           <div className="relative bg-linear-to-br from-primary via-blue-600 to-cyan-500">
-            {/* Abstract shapes for premium feel */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 anim-pulse pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
+            {/* Abstract shapes for premium feel (Hidden on mobile to optimize scroll performance) */}
+            <div className="hidden md:block absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 anim-pulse pointer-events-none"></div>
+            <div className="hidden md:block absolute bottom-0 left-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
             
             <div className="max-w-5xl mx-auto px-4 md:px-6 pt-10 md:pt-12 pb-20 md:pb-24 relative z-10">
               <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-10">
                 {/* Profile Avatar with premium border */}
                 <div className="relative group shrink-0">
-                  <div className="size-24 md:size-32 bg-white/20 backdrop-blur-md rounded-2xl md:rounded-3xl border-2 border-white/30 flex items-center justify-center text-white shadow-2xl transition-all duration-500 overflow-hidden relative">
+                  <div className="size-24 md:size-32 bg-white/20 md:backdrop-blur-md rounded-2xl md:rounded-3xl border-2 border-white/30 flex items-center justify-center text-white shadow-xl md:shadow-2xl transition-all duration-500 overflow-hidden relative">
                     {profile?.avatar_url ? (
                       <Image 
                         src={profile.avatar_url} 
@@ -287,7 +287,7 @@ export default function ProfilePage() {
                 </div>
                 
                 <div className={`flex-1 min-w-0 flex flex-col items-center md:items-start w-full ${!profile?.is_verified ? 'text-center' : 'text-center md:text-left'} text-white`}>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 border border-white/10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 md:backdrop-blur-sm rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 border border-white/10">
                     <span className="size-1.5 bg-cyan-300 rounded-full animate-ping"></span>
                     {t('profile.customer')}
                   </div>
@@ -667,9 +667,9 @@ export default function ProfilePage() {
               {/* Sidebar Area */}
               <div className="lg:col-span-4 space-y-6">
                 <Link href="/catalog" className="relative block h-full min-h-[220px] bg-primary rounded-4xl shadow-xl shadow-primary/30 overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-700"></div>
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 group-hover:scale-125 transition-transform duration-700 pointer-events-none hidden md:block"></div>
                   <div className="absolute inset-0 p-8 flex flex-col justify-end text-white">
-                    <div className="size-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 border border-white/20">
+                    <div className="size-12 bg-white/20 md:backdrop-blur-md rounded-2xl flex items-center justify-center mb-6 border border-white/20">
                       <ShoppingBagIcon className="size-6 text-white" />
                     </div>
                     <h3 className="text-2xl font-black mb-2 leading-tight">
