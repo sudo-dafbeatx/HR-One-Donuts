@@ -91,15 +91,9 @@ export default async function proxy(request: NextRequest) {
           if (lockSetting?.manual_lock === true) {
             // Admin manually locked → always locked
             siteLocked = true;
-          } else if (lockSetting?.manual_lock === false && lockSetting?.updated_at) {
-            // Admin manually unlocked → check if it was today
-            const updatedDate = new Date(lockSetting.updated_at);
-            const updatedWib = new Date(updatedDate.getTime() + 7 * 60 * 60 * 1000);
-            const isSameDay = updatedWib.getUTCDate() === wibTime.getUTCDate() &&
-                              updatedWib.getUTCMonth() === wibTime.getUTCMonth() &&
-                              updatedWib.getUTCFullYear() === wibTime.getUTCFullYear();
-            // If unlocked today, override auto-lock
-            siteLocked = isSameDay ? false : isThe25th;
+          } else if (lockSetting?.manual_lock === false) {
+            // Admin explicitly unlocked → always unlocked (overrides auto-lock)
+            siteLocked = false;
           } else {
             // No explicit manual setting → auto-lock on 25th
             siteLocked = isThe25th;
@@ -143,13 +137,9 @@ export default async function proxy(request: NextRequest) {
           const lockSetting = rows[0].value;
           if (lockSetting?.manual_lock === true) {
             shouldStayLocked = true;
-          } else if (lockSetting?.manual_lock === false && lockSetting?.updated_at) {
-            const updatedDate = new Date(lockSetting.updated_at);
-            const updatedWib = new Date(updatedDate.getTime() + 7 * 60 * 60 * 1000);
-            const isSameDay = updatedWib.getUTCDate() === wibTime.getUTCDate() &&
-                              updatedWib.getUTCMonth() === wibTime.getUTCMonth() &&
-                              updatedWib.getUTCFullYear() === wibTime.getUTCFullYear();
-            shouldStayLocked = isSameDay ? false : isThe25th;
+          } else if (lockSetting?.manual_lock === false) {
+            // Admin explicitly unlocked → always unlocked
+            shouldStayLocked = false;
           } else {
             shouldStayLocked = isThe25th;
           }

@@ -85,20 +85,9 @@ export async function isSiteLocked(): Promise<{ locked: boolean; reason: string 
     if (lockSetting.manual_lock === true) {
       return { locked: true, reason: 'manual' };
     }
-    // Manual lock = false → admin explicitly unlocked, override auto-lock
+    // Manual lock = false → admin explicitly unlocked, always override auto-lock
     if (lockSetting.manual_lock === false) {
-      // Check if the override was set today (same day in WIB)
-      if (lockSetting.updated_at) {
-        const updatedDate = new Date(lockSetting.updated_at);
-        const updatedWib = new Date(updatedDate.getTime() + wibOffset * 60 * 1000);
-        const isSameDay = updatedWib.getUTCDate() === wibDate.getUTCDate() &&
-                          updatedWib.getUTCMonth() === wibDate.getUTCMonth() &&
-                          updatedWib.getUTCFullYear() === wibDate.getUTCFullYear();
-        if (isSameDay) {
-          // Admin unlocked today → NOT locked even on the 25th
-          return { locked: false, reason: 'admin_override' };
-        }
-      }
+      return { locked: false, reason: 'admin_override' };
     }
   }
 
