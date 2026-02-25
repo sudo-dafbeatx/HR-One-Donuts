@@ -386,14 +386,16 @@ export async function saveUICopyBatch(entries: { key: string; value: string }[])
   return { success: true };
 }
 
-// --- Development Actions ---
 export async function resetSalesData() {
-  const supabase = await checkAdmin();
+  const { createServiceRoleClient } = await import('@/lib/supabase/server');
+  // Authorize User First (Ensure they actually have the admin session)
+  await checkAdmin();
+  const supabaseAdmin = createServiceRoleClient();
   
   try {
     // We do a manual cascade deletion using the service role to bypass any RPC issues and ensure consistency.
     // 1. Delete all order items (prevents foreign key constraint errors when deleting orders)
-    const { error: deleteOrderItemsError } = await supabase
+    const { error: deleteOrderItemsError } = await supabaseAdmin
       .from('order_items')
       .delete()
       .neq('id', '00000000-0000-0000-0000-000000000000');
@@ -401,7 +403,7 @@ export async function resetSalesData() {
     if (deleteOrderItemsError) throw new Error('Failed to delete order items: ' + deleteOrderItemsError.message);
 
     // 2. Delete all orders
-    const { error: deleteOrdersError } = await supabase
+    const { error: deleteOrdersError } = await supabaseAdmin
       .from('orders')
       .delete()
       .neq('id', '00000000-0000-0000-0000-000000000000');
@@ -409,7 +411,7 @@ export async function resetSalesData() {
     if (deleteOrdersError) throw new Error('Failed to delete orders: ' + deleteOrdersError.message);
 
     // 3. Reset all products' sold count
-    const { error: updateProductsError } = await supabase
+    const { error: updateProductsError } = await supabaseAdmin
       .from('products')
       .update({ sold_count: 0 })
       .neq('id', '00000000-0000-0000-0000-000000000000');
@@ -417,7 +419,7 @@ export async function resetSalesData() {
     if (updateProductsError) throw new Error('Failed to reset products sold_count: ' + updateProductsError.message);
 
     // 4. Clean up any orphaned checkout sessions
-    const { error: deleteSessionsError } = await supabase
+    const { error: deleteSessionsError } = await supabaseAdmin
       .from('checkout_sessions')
       .delete()
       .neq('id', '00000000-0000-0000-0000-000000000000');
