@@ -18,6 +18,7 @@ import SystemHealthWidget from '@/components/admin/dashboard/SystemHealthWidget'
 import ToDoAdminWidget from '@/components/admin/dashboard/ToDoAdminWidget';
 import AutomatedInsightsWidget from '@/components/admin/dashboard/AutomatedInsightsWidget';
 import AdminActivityLogsWidget from '@/components/admin/dashboard/AdminActivityLogsWidget';
+import SiteLockToggle from '@/components/admin/dashboard/SiteLockToggle';
 
 interface OrderItem {
   product_id: string;
@@ -402,6 +403,9 @@ export default async function AdminDashboard() {
 
         {/* SIDE WIDGETS COLUMN */}
         <div className="space-y-6 lg:col-span-1">
+          
+          {/* Site Lock Control */}
+          <SiteLockToggle />
           
           {/* Smart Insights (AI) */}
           <AutomatedInsightsWidget stats={{

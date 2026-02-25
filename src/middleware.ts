@@ -52,9 +52,108 @@ export default async function proxy(request: NextRequest) {
   }
 
   // =====================================================
-  // AUTH PROTECTION - Redirect to login if not logged in
+  // SITE LOCK SYSTEM - Auto-lock on 25th & manual lock
+  // Admin always bypasses. Uses WIB (UTC+7) timezone.
   // =====================================================
   const pathname = request.nextUrl.pathname;
+  const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin');
+  const isLockedPage = pathname === '/locked';
+  const isStaticAsset = pathname.startsWith('/_next') || pathname.startsWith('/images') || !!pathname.match(/\.(svg|png|jpg|jpeg|gif|webp|ico|css|js)$/);
+  const hasAdminSession = !!request.cookies.get('admin_session')?.value;
+
+  if (!isAdminRoute && !isLockedPage && !isStaticAsset && !hasAdminSession) {
+    // Check if today is the 25th in WIB (UTC+7)
+    const now = new Date();
+    const wibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+    const isThe25th = wibTime.getUTCDate() === 25;
+
+    let siteLocked = false;
+
+    try {
+      // Fetch manual lock setting from Supabase settings table
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+      const res = await fetch(
+        `${supabaseUrl}/rest/v1/settings?key=eq.site_lock&select=value`,
+        {
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+          },
+          cache: 'no-store',
+        }
+      );
+
+      if (res.ok) {
+        const rows = await res.json();
+        if (rows.length > 0) {
+          const lockSetting = rows[0].value;
+          if (lockSetting?.manual_lock === true) {
+            // Admin manually locked → always locked
+            siteLocked = true;
+          } else if (lockSetting?.manual_lock === false && lockSetting?.updated_at) {
+            // Admin manually unlocked → check if it was today
+            const updatedDate = new Date(lockSetting.updated_at);
+            const updatedWib = new Date(updatedDate.getTime() + 7 * 60 * 60 * 1000);
+            const isSameDay = updatedWib.getUTCDate() === wibTime.getUTCDate() &&
+                              updatedWib.getUTCMonth() === wibTime.getUTCMonth() &&
+                              updatedWib.getUTCFullYear() === wibTime.getUTCFullYear();
+            // If unlocked today, override auto-lock
+            siteLocked = isSameDay ? false : isThe25th;
+          } else {
+            // No explicit manual setting → auto-lock on 25th
+            siteLocked = isThe25th;
+          }
+        } else {
+          // No site_lock row exists → auto-lock on 25th
+          siteLocked = isThe25th;
+        }
+      } else {
+        // DB fetch failed → fall back to date check only
+        siteLocked = isThe25th;
+      }
+    } catch {
+      // Network error → fall back to date check only
+      siteLocked = isThe25th;
+    }
+
+    if (siteLocked) {
+      return NextResponse.redirect(new URL('/locked', request.url));
+    }
+  }
+
+  // If user is on /locked but site is NOT locked, redirect to home
+  if (isLockedPage && !isStaticAsset) {
+    // Quick date check — if not 25th, likely not locked (fast path)
+    const now = new Date();
+    const wibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+    const isThe25th = wibTime.getUTCDate() === 25;
+    if (!isThe25th) {
+      // Double-check manual lock
+      try {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+        const res = await fetch(
+          `${supabaseUrl}/rest/v1/settings?key=eq.site_lock&select=value`,
+          { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` }, cache: 'no-store' }
+        );
+        if (res.ok) {
+          const rows = await res.json();
+          const isManualLock = rows.length > 0 && rows[0].value?.manual_lock === true;
+          if (!isManualLock) {
+            return NextResponse.redirect(new URL('/', request.url));
+          }
+        }
+      } catch {
+        // If can't check, let them stay on locked page
+      }
+    }
+    return NextResponse.next();
+  }
+
+  // =====================================================
+  // AUTH PROTECTION - Redirect to login if not logged in
+  // =====================================================
   
   // =====================================================
   // RATE LIMITING - Protect login endpoints
