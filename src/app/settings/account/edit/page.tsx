@@ -164,7 +164,7 @@ export default function EditProfilePage() {
       router.refresh();
     } catch (error) {
       console.error('Save profile error:', error);
-      showError('Gagal Simpan', 'Gagal menyimpan perubahan. Coba lagi.');
+      showError('Gagal Simpan', (error as Error)?.message || 'Gagal menyimpan perubahan. Coba lagi.');
     } finally {
       setIsLoading(false);
     }

@@ -88,19 +88,29 @@ export default function AddressPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.full_name || !formData.phone || !formData.province || !formData.city || !formData.district || !formData.postal_code || !formData.street_name) {
+      showError('Data Tidak Lengkap', 'Harap isi semua kolom alamat yang wajib.');
+      return;
+    }
+
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
+    const payload = { ...formData, user_id: user.id };
+    // Remove id from payload if it's undefined to allow Postgres to auto-generate
+    if (!payload.id) delete payload.id;
+
     const { error } = await supabase
       .from('user_addresses')
-      .upsert({
-        ...formData,
-        user_id: user.id
-      });
+      .upsert(payload);
 
     if (!error) {
       setIsAdding(false);
       window.location.reload(); // Refresh to show new list
+    } else {
+      console.error('Address save error:', error);
+      showError('Gagal Simpan', error.message || 'Terjadi kesalahan saat menyimpan alamat.');
     }
   };
 

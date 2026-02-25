@@ -138,7 +138,7 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
                 <span className="material-symbols-outlined text-xl">search</span>
               </div>
               <input
-                className="w-full bg-slate-100/50 border border-transparent rounded-2xl py-2.5 pl-12 pr-4 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 placeholder:font-medium transition-all text-sm outline-none shadow-sm"
+                className="w-full bg-slate-100/50 border border-transparent rounded-2xl py-2.5 pl-12 pr-4 focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 placeholder:font-medium transition-all text-sm outline-none shadow-sm text-ellipsis overflow-hidden whitespace-nowrap"
                 placeholder={t('search.placeholder')}
                 type="text"
                 value={searchQuery}

@@ -110,7 +110,7 @@ export default function MarketplaceClient({
           </div>
           <input 
             type="text" 
-            className="w-full bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-28 focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 font-medium transition-all text-sm outline-none shadow-sm" 
+            className="w-full bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-28 focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 font-medium transition-all text-sm outline-none shadow-sm text-ellipsis overflow-hidden whitespace-nowrap" 
             placeholder={t('search.placeholder')} 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
