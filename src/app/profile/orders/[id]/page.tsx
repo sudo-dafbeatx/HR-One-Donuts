@@ -33,8 +33,17 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     supabase.from('orders').select('*').eq('id', orderId).eq('user_id', authData.user.id).single()
   ]);
 
-  if (orderResult.error || !orderResult.data) {
+  if (orderResult.error) {
+    console.error(' [Order Detail] Supabase Error fetching order:', orderResult.error.message);
+    throw new Error(`Gagal memuat detail pesanan: ${orderResult.error.message}`);
+  }
+
+  if (!orderResult.data) {
     notFound();
+  }
+
+  if (profileResult.error && profileResult.error.code !== 'PGRST116') {
+    console.error(' [Order Detail] Supabase Error fetching profile:', profileResult.error.message);
   }
 
   const order = orderResult.data;
@@ -189,13 +198,13 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
            <div className="space-y-3">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-slate-500 font-medium">{t('orders.detail.subtotal_label')}</span>
-                <span className="text-slate-800 font-bold">Rp {(order.total_amount - (order.shipping_cost || 0)).toLocaleString('id-ID')}</span>
+                <span className="text-slate-800 font-bold">Rp {(order.total_amount - (order.shipping_fee || 0)).toLocaleString('id-ID')}</span>
               </div>
               
               {order.delivery_method === 'delivery' && (
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-slate-500 font-medium">{t('orders.detail.shipping_label')}</span>
-                  <span className="text-slate-800 font-bold">Rp {(order.shipping_cost || 0).toLocaleString('id-ID')}</span>
+                  <span className="text-slate-800 font-bold">Rp {(order.shipping_fee || 0).toLocaleString('id-ID')}</span>
                 </div>
               )}
 
