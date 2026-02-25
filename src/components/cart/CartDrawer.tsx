@@ -10,7 +10,6 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outl
 import { SiteSettings } from "@/types/cms";
 import { getCurrentUserProfile, createOrder, getUserActiveAddress } from "@/app/actions/order-actions";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import CheckoutAnimation from "./CheckoutAnimation";
 import { useTranslation } from "@/context/LanguageContext";
 
@@ -281,7 +280,10 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 <p className="text-sm text-slate-500 mt-1">{t('cart.empty_subtitle')}</p>
               </div>
               <button 
-                onClick={() => setIsCartOpen(false)}
+                onClick={() => {
+                  setIsCartOpen(false);
+                  window.location.href = "/catalog";
+                }}
                 className="mt-2 bg-primary/10 text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary hover:text-white transition-all"
               >
                 {t('cart.view_catalog')}
