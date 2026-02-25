@@ -96,6 +96,7 @@ export async function createOrder(data: {
   delivery_method?: string;
   shipping_fee?: number;
   shipping_address?: string;
+  shipping_address_notes?: string;
 }) {
   try {
     const supabase = await createServerSupabaseClient();
@@ -117,6 +118,7 @@ export async function createOrder(data: {
         delivery_method: finalMethod,
         shipping_fee: finalFee,
         shipping_address: data.shipping_address || null,
+        shipping_address_notes: data.shipping_address_notes || null,
         status: 'pending'
       })
       .select()

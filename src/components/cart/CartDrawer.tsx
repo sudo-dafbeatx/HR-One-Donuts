@@ -103,7 +103,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           return;
         }
 
-        // Construct full address from user_addresses table structure
+        // Construct full address from user_addresses table structure - detailed version
         finalShippingAddress = [
           activeAddress.building_name,
           activeAddress.street_name + (activeAddress.house_no ? ` No. ${activeAddress.house_no}` : ""),
@@ -111,7 +111,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           activeAddress.city,
           activeAddress.province,
           activeAddress.postal_code
-        ].filter(Boolean).join(", ");
+        ].filter(Boolean).map(s => s.trim()).filter(s => s !== "" && s !== ",").join(", ");
       }
 
       // 3. Save Order to Database
@@ -121,6 +121,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         delivery_method: deliveryMethod,
         shipping_fee: shippingFee,
         shipping_address: finalShippingAddress,
+        shipping_address_notes: deliveryMethod === 'delivery' ? (await getUserActiveAddress())?.additional_details : undefined,
         items: cart.map(item => ({
           product_id: item.id,
           name: item.name,
@@ -431,17 +432,17 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 onClick={() => {
                   // Use hard navigation for maximum reliability on mobile
                   // Call navigation first as per requirement
-                  window.location.href = '/settings/address';
+                  window.location.assign('/settings/address');
                   
                   // Optional: clean up states although hard navigation will reload
                   setShowProfileAlert(false);
                   setIsCartOpen(false);
                 }}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-primary/25 active:scale-[0.98] flex items-center justify-center gap-2"
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-red-500/30 active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <span>Lengkapi Alamat Sekarang</span>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </button>
               
