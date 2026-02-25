@@ -24,6 +24,7 @@ import "./globals.css";
 // Font definition moved to lib/fonts.ts
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://hr-one-donuts.vercel.app"),
   title: "HR-One Donuts - Resep Tradisional, Rasa Internasional",
   description: "Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut dan kaya rasa.",
   icons: {
@@ -32,6 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "HR-One Donuts",
     description: "Hadirkan kebahagiaan di setiap gigitan dengan donat artisan buatan keluarga kami yang lembut dan kaya rasa.",
+    siteName: "HR-One Donuts",
     type: "website",
     url: "https://hr-one-donuts.vercel.app", // Fallback URL
     images: [
