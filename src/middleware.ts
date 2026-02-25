@@ -217,9 +217,9 @@ export default async function proxy(request: NextRequest) {
     // ONBOARDING PROTECTION - Customer Profile Check
     // =====================================================
     const isOnboardingPath = pathname.startsWith('/onboarding');
-    const isAdminPath = pathname.startsWith('/admin');
+    const isSettingsPath = pathname.startsWith('/settings');
 
-    if (!isOnboardingPath && !isAdminPath) {
+    if (!isOnboardingPath && !isAdminPath && !isSettingsPath) {
       const profileCompleteCookie = request.cookies.get('hr_profile_complete');
       
       if (!profileCompleteCookie || profileCompleteCookie.value !== 'true') {

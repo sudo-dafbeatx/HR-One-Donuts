@@ -435,11 +435,9 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
             </div>
             
             <div className="p-6 space-y-3 bg-card">
-              <Link
-                href="/settings/address"
+              <button
                 onClick={() => {
-                  setShowProfileAlert(false);
-                  setIsCartOpen(false);
+                  window.location.href = "/settings/address";
                 }}
                 className="w-full bg-[#E11D48] hover:bg-[#BE123C] text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-rose-500/30 active:scale-[0.98] flex items-center justify-center gap-2"
               >
@@ -447,7 +445,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
-              </Link>
+              </button>
               
               <button
                 onClick={() => setShowProfileAlert(false)}
