@@ -20,8 +20,8 @@ Pengaturan ini wajib dilakukan langsung dari Supabase Dashboard, karena merupaka
 3. Scroll ke bawah, cari bagian **Password requirements**.
 4. Aktifkan/Centang opsi berikut:
    - **Enforce minimum password length**: Set ke **8**.
-   - **Enforce password characters**: Centang untuk mewajibkan kombinasi huruf dan angka (alpha-numeric).
-   - **Enable leaked password protection**: Aktifkan (Toggle on).
+   - **Enforce password characters**: Pilih opsi kombinasi minimum 1 uppercase, 1 lowercase, 1 number, atau **"Alphanumeric"**.
+   - _(Catatan: Fitur **"Enable leaked password protection"** hanya tersedia untuk paket Pro. Karena Anda menggunakan paket Gratis, abaikan saja toggle ini)_.
 5. Klik **Save**.
 
 ## 3. Post-Deployment Validation Checklist
@@ -52,4 +52,4 @@ Setelah menjalankan SQL dan mengatur dashboard Auth, lakukan test berikut di web
 _Opsional tapi sangat disarankan. Bisa diuji via API/Postman:_
 
 - [ ] Pastikan user biasa TIDAK BISA memanggil API DELETE ke tabel `products`.
-- [ ] Pastikan saat mendaftar akun baru, password "123456" akan ditolak oleh sistem (Minimal 8 karakter).
+- [ ] Pastikan saat mendaftar akun baru, password "123456" atau tanpa kombinasi karakter yang disyaratkan akan ditolak oleh sistem (Minimal 8 karakter & Alfanumerik).
