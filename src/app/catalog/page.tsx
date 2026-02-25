@@ -36,6 +36,12 @@ export default async function CatalogPage() {
   const siteSettings = settingsData?.value as unknown as SiteSettings | undefined;
   const categories = categoryData?.map(c => c.name) || [];
 
+  // Fetch review stats
+  const { data: reviewData } = await supabase
+    .from('product_review_stats')
+    .select('*');
+  const reviewStats = reviewData || [];
+
   const { data: dbProducts } = await supabase
     .from('products')
     .select('*')
@@ -56,7 +62,11 @@ export default async function CatalogPage() {
             {copy?.section_catalog_desc || "Pilih donat favoritmu dari koleksi terbaik kami."}
           </p>
         </div>
-        <MarketplaceClient initialProducts={productsToDisplay} categories={categories || []} />
+        <MarketplaceClient 
+          initialProducts={productsToDisplay} 
+          categories={categories || []} 
+          reviewStats={reviewStats}
+        />
       </main>
       <Footer siteSettings={siteSettings} />
     </div>
