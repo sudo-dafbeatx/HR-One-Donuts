@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { resetSalesData } from '@/app/admin/actions';
+import { useErrorPopup } from '@/context/ErrorPopupContext';
 
 export default function ResetSalesButton() {
   const [loading, setLoading] = useState(false);
+  const { showError } = useErrorPopup();
 
   const handleReset = async () => {
     // Double confirmation
@@ -20,11 +22,12 @@ export default function ResetSalesButton() {
     setLoading(true);
     try {
       const result = await resetSalesData();
-      if (result.success) {
-        alert('✅ Data pendapatan telah berhasil direset.');
+      if (!result.success) {
+        throw new Error(result.error || 'Terjadi kesalahan tidak diketahui di server.');
       }
+      alert('✅ Data pendapatan telah berhasil direset.');
     } catch (error) {
-      alert('❌ Terjadi kesalahan: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      showError('Gagal Mereset Data', error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setLoading(false);
     }

@@ -394,15 +394,8 @@ export async function resetSalesData() {
   
   try {
     // We do a manual cascade deletion using the service role to bypass any RPC issues and ensure consistency.
-    // 1. Delete all order items (prevents foreign key constraint errors when deleting orders)
-    const { error: deleteOrderItemsError } = await supabaseAdmin
-      .from('order_items')
-      .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000');
-    
-    if (deleteOrderItemsError) throw new Error('Failed to delete order items: ' + deleteOrderItemsError.message);
 
-    // 2. Delete all orders
+    // 1. Delete all orders
     const { error: deleteOrdersError } = await supabaseAdmin
       .from('orders')
       .delete()
