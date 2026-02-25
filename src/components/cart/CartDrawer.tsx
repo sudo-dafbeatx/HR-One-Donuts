@@ -429,9 +429,13 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
             <div className="p-6 space-y-3 bg-card">
               <button
                 onClick={() => {
+                  // Use hard navigation for maximum reliability on mobile
+                  // Call navigation first as per requirement
+                  window.location.href = '/settings/address';
+                  
+                  // Optional: clean up states although hard navigation will reload
                   setShowProfileAlert(false);
                   setIsCartOpen(false);
-                  router.push('/settings/address');
                 }}
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-primary/25 active:scale-[0.98] flex items-center justify-center gap-2"
               >
