@@ -150,11 +150,11 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
       // Update basic profiles table for phone/name sync and unique constraint
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({
+        .upsert({
+          id: userId,
           full_name: formData.fullName,
           phone: normalizedPhone,
-        })
-        .eq('id', userId);
+        }, { onConflict: 'id' });
 
       if (profileError) {
         if (profileError.code === '23505' || profileError.message.toLowerCase().includes('unique')) {
@@ -188,22 +188,22 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
       if (error) throw error;
 
       // Also create an initial entry in user_addresses Table
-      await supabase
+      const { error: addressError } = await supabase
         .from('user_addresses')
         .insert({
           user_id: userId,
-          label: 'Alamat Pendaftaran',
-          receiver_name: formData.fullName,
-          phone_number: normalizedPhone,
-          province_id: formData.province.id,
-          province_name: formData.province.name,
-          city_id: formData.city.id,
-          city_name: formData.city.name,
-          district_id: formData.district.id,
-          district_name: formData.district.name,
-          detail_address: formData.addressDetail,
-          is_main: true
+          label: 'Rumah',
+          full_name: formData.fullName,
+          phone: normalizedPhone,
+          province: formData.province.name,
+          city: formData.city.name,
+          district: formData.district.name,
+          postal_code: '00000', // Required by schema, can be updated later by user
+          street_name: formData.addressDetail || 'Alamat Pendaftaran',
+          is_default: true
         });
+
+      if (addressError) throw addressError;
 
       // Optimistic UI: Sync cookie and state immediately
       document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
