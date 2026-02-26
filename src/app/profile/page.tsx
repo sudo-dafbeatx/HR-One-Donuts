@@ -139,10 +139,9 @@ export default function ProfilePage() {
         .order('created_at', { ascending: false });
 
       setOrders(ordersData || []);
-      setLoading(false);
     };
 
-    fetchData();
+    fetchData().finally(() => setLoading(false));
   }, [supabase, router]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -306,12 +305,12 @@ export default function ProfilePage() {
                     )}
                   </h1>
                   <p className="text-blue-50/80 font-medium mb-1 opacity-90 text-sm md:text-base truncate">{profile?.email}</p>
-                  <p className="text-[10px] md:text-xs text-blue-100/70 italic opacity-80 mt-1 mb-3">&quot;{
-                    t(`profile.quotes.${new Date().getDay()}`)
-                  }&quot;</p>
+                  <p className="text-[10px] md:text-xs text-blue-100/70 italic opacity-80 mt-1 mb-3">
+                    {!loading && `"${t(`profile.quotes.${new Date().getDay()}`)}"`}
+                  </p>
                   
                   {/* Reward Points Badge */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 md:backdrop-blur-md rounded-xl border border-amber-300/30 shadow-inner">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-amber-500/20 to-orange-500/20 md:backdrop-blur-md rounded-xl border border-amber-300/30 shadow-inner">
                     <span className="bg-amber-400 text-amber-900 rounded-full size-5 flex items-center justify-center text-xs shadow-sm">
                       <StarIcon className="size-3.5" />
                     </span>
@@ -599,7 +598,7 @@ export default function ProfilePage() {
                               <div className="flex items-center flex-wrap gap-x-3 gap-y-1 text-[10px] md:text-xs font-semibold text-slate-400">
                                 <span className="flex items-center gap-1">
                                   <CalendarDaysIcon className="size-3 md:size-3.5" />
-                                  {new Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}
+                                  {!loading && new Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}
                                 </span>
                                 <span className="hidden sm:inline size-1 bg-slate-200 rounded-full"></span>
                                 <span className="flex items-center gap-1">

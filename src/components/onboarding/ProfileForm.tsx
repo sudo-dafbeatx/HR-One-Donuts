@@ -147,6 +147,10 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
     try {
       const normalizedPhone = normalizePhoneToID(formData.phone);
 
+      if (!formData.email) {
+        throw new Error('Email akun tidak ditemukan. Mohon login ulang.');
+      }
+
       // Update basic profiles table for phone/name sync and unique constraint
       const { error: profileError } = await supabase
         .from('profiles')
@@ -154,6 +158,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
           id: userId,
           full_name: formData.fullName,
           phone: normalizedPhone,
+          email: formData.email,
         }, { onConflict: 'id' });
 
       if (profileError) {

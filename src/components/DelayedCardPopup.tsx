@@ -109,7 +109,6 @@ export default function DelayedCardPopup({ siteSettings }: { siteSettings?: Site
           height={535}
           className="w-full h-auto object-cover cursor-pointer" 
           onClick={handleNavigate}
-          priority
         />
       </div>
     </div>

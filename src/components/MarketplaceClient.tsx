@@ -249,16 +249,23 @@ export default function MarketplaceClient({
                         dot.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
                         document.body.appendChild(dot);
                         
-                        // Find destination (cart icon in navbar/bottomnav)
-                        // Looking for shopping_cart or shopping_bag icons
-                        const cartIcon = document.querySelector('.animate-cart-bounce') || 
-                                       document.querySelector('[aria-label*="cart"]') ||
-                                       document.querySelector('.material-symbols-outlined:contains("shopping_bag")');
-                        
-                        const destRect = cartIcon?.getBoundingClientRect() || { 
+                        // Find destination (cart icon in navbar/bottomnav) safely
+                        const destRect = { 
                           left: window.innerWidth - 60, 
                           top: window.innerHeight - 60 
                         };
+                        
+                        try {
+                          const cartIcon = document.querySelector('.animate-cart-bounce') || 
+                                         document.querySelector('[aria-label*="cart"]');
+                          if (cartIcon) {
+                            const iconRect = cartIcon.getBoundingClientRect();
+                            destRect.left = iconRect.left;
+                            destRect.top = iconRect.top;
+                          }
+                        } catch {
+                          console.warn('Animation target not found');
+                        }
                         
                         // Animate
                         requestAnimationFrame(() => {

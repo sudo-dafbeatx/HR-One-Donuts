@@ -68,7 +68,6 @@ export default async function OnboardingProfilePage() {
                 logoUrl="/images/logo-hr-one.webp" 
                 storeName="HR-One Donuts" 
                 size="lg"
-                priority
               />
             </div>
             <h1 className="text-xl md:text-3xl font-black text-slate-900 mb-1 md:mb-4 tracking-tight px-4">

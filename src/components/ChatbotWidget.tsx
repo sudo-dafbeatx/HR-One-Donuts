@@ -470,7 +470,6 @@ export default function ChatbotWidget() {
               height={48}
               className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover group-hover:scale-110 transition-transform bg-white border-2 border-white shadow-inner" 
               alt="Dona"
-              priority
             />
             
           </button>

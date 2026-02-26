@@ -62,7 +62,7 @@ export default function OrderReviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm"></div>
 
@@ -84,7 +84,7 @@ export default function OrderReviewModal({
 
           {items.map(item => (
             <div key={item.product_id} className="bg-white border text-center border-slate-100 rounded-2xl p-5 shadow-sm relative overflow-hidden">
-               <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-orange-400 to-amber-400"></div>
+               <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-orange-400 to-amber-400"></div>
                
                <div className="flex flex-col items-center gap-3">
                  <div className="size-16 relative rounded-xl overflow-hidden bg-slate-100 shadow-sm border border-slate-200">

@@ -1,6 +1,6 @@
 'use client';
 
-const PRIMARY_BASE_URL = 'https://emsifa.github.io/api-wilayah-indonesia/api';
+const PRIMARY_BASE_URL = '/api/wilayah';
 const SECONDARY_BASE_URL = 'https://www.emsifa.com/api-wilayah-indonesia/api';
 
 export interface Province {
