@@ -1,4 +1,4 @@
-import BotOnatWidget from "@/components/BotOnatWidget";
+import HROneSupportWidget from "@/components/HROneSupportWidget";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function SystemChatPage() {
   return (
     <div className="bg-slate-50 min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-80px)]">
-      <BotOnatWidget />
+      <HROneSupportWidget />
     </div>
   );
 }

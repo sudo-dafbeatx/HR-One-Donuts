@@ -213,7 +213,7 @@ export default function BotTrainingPage() {
     try {
       const res = await importBotKnowledge(importedData, activeBot);
       if (res.success) {
-        setStatus({ type: "success", msg: `${res.count} data berhasil diimpor ke Bot ${activeBot === 'dona' ? 'Dona' : 'Onat'}` });
+        setStatus({ type: "success", msg: `${res.count} data berhasil diimpor ke Bot ${activeBot === 'dona' ? 'Dona' : 'HR-One Support'}` });
         setIsPreviewModalOpen(false);
         setJsonPasteData(""); // clear text
         fetchData();
@@ -248,7 +248,6 @@ export default function BotTrainingPage() {
   
   useEffect(() => {
      if(status) clearStatus();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   return (
@@ -274,7 +273,7 @@ export default function BotTrainingPage() {
             : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50'
           }`}
         >
-          <span className="font-bold text-lg mb-1">Bot Onat</span>
+          <span className="font-bold text-lg mb-1">HR-One Support</span>
           <span className="text-xs">Sistem Akun, Login, Error Teknis, Keluhan</span>
         </button>
       </div>
@@ -282,7 +281,7 @@ export default function BotTrainingPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className={`text-2xl font-bold ${activeBot === 'dona' ? 'text-primary' : 'text-slate-800'}`}>
-            Training Bot {activeBot === 'dona' ? 'Dona' : 'Onat'}
+            Training Bot {activeBot === 'dona' ? 'Dona' : 'HR-One Support'}
           </h1>
           <p className="text-slate-500 text-sm">Kelola basis pengetahuan (Knowledge Base) mandiri untuk bot ini.</p>
         </div>
@@ -341,7 +340,7 @@ export default function BotTrainingPage() {
               ) : qaList.length === 0 ? (
                 <div className="p-12 text-center text-slate-400 flex flex-col items-center">
                   <DocumentTextIcon className="w-12 h-12 text-slate-200 mb-2" />
-                  <p>Belum ada data Q&A untuk Bot {activeBot === 'dona' ? 'Dona' : 'Onat'}.</p>
+                  <p>Belum ada data Q&A untuk Bot {activeBot === 'dona' ? 'Dona' : 'HR-One Support'}.</p>
                 </div>
               ) : (
                 qaList.map((qa) => (
@@ -436,7 +435,7 @@ export default function BotTrainingPage() {
               <h3 className="text-xl font-bold text-slate-800">
                 {editingQa ? "Edit Knowledge" : "Tambah Knowledge"}
                 <span className={`block mt-1 text-sm ${activeBot === 'dona' ? 'text-primary' : 'text-slate-600'}`}>
-                  Untuk Bot {activeBot === 'dona' ? 'Dona' : 'Onat'}
+                  Untuk Bot {activeBot === 'dona' ? 'Dona' : 'HR-One Support'}
                 </span>
               </h3>
             </div>
@@ -657,7 +656,7 @@ export default function BotTrainingPage() {
                     activeBot === 'dona' ? 'bg-primary hover:bg-blue-600 shadow-primary/20' : 'bg-slate-800 hover:bg-slate-700 shadow-slate-800/20'
                   } disabled:opacity-50 disabled:shadow-none`}
               >
-                Konfirmasi Impor ke Onat
+                Konfirmasi Impor ke HR-One Support
               </button>
             </div>
           </div>

@@ -65,7 +65,7 @@ const TypewriterText = ({
   );
 };
 
-export default function BotOnatWidget() {
+export default function HROneSupportWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -115,7 +115,7 @@ export default function BotOnatWidget() {
     if (messages.length === 0) {
       setTimeout(() => {
         addBotMessage(
-          "Halo! 👋 Saya Onat, Tim Teknis & CS Sistem HR-One.\n\nAda kendala login, akun, pengiriman, atau error teknis yang bisa saya bantu periksa?",
+          "Halo! 👋 Saya HR-One Support, Tim Teknis & CS Sistem HR-One.\n\nAda kendala login, akun, pengiriman, atau error teknis yang bisa saya bantu periksa?",
           ["Lupa Password", "Lacak Pesanan", "Ganti Akun", "Kendala Teknis"]
         );
       }, 500);
@@ -178,7 +178,7 @@ export default function BotOnatWidget() {
     if (inputValue === "Kembali") {
       addUserMessage(inputValue);
       setTimeout(() => {
-         addBotMessage("Ada kendala teknis lain yang bisa Onat bantu?", ["Lupa Password", "Kendala Teknis"]);
+         addBotMessage("Ada kendala teknis lain yang bisa saya bantu?", ["Lupa Password", "Kendala Teknis"]);
       }, 500);
       setInputValue("");
       return;
@@ -193,7 +193,7 @@ export default function BotOnatWidget() {
     setInputValue(reply);
     // Use timeout to allow state to update before triggering send
     setTimeout(() => {
-      const input = document.getElementById('onat-chat-input');
+      const input = document.getElementById('hr-one-chat-input');
       if (input) {
          input.focus();
          // Programmatically trigger send
@@ -222,11 +222,11 @@ export default function BotOnatWidget() {
               width={40}
               height={40}
               className="w-full h-full rounded-full object-cover bg-slate-800" 
-              alt="Onat"
+              alt="HR-One Support"
             />
           </div>
           <div>
-            <h3 className="font-bold text-lg leading-tight">Onat</h3>
+            <h3 className="font-bold text-lg leading-tight">HR-One Support</h3>
             <p className="text-xs text-white/70 font-medium">Sistem & Keluhan CS</p>
           </div>
         </div>
@@ -303,7 +303,7 @@ export default function BotOnatWidget() {
       <div className="p-4 md:p-6 bg-white border-t border-slate-200 shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.05)] sticky bottom-0 z-10 pb-sanitizer">
         <div className="flex gap-2 max-w-4xl mx-auto">
           <input
-            id="onat-chat-input"
+            id="hr-one-chat-input"
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
