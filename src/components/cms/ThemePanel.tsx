@@ -15,6 +15,9 @@ const FONT_OPTIONS = [
   "Lato",
   "Oswald",
   "Sour Gummy",
+  "DM Sans",
+  "Plus Jakarta Sans",
+  "Open Sans",
 ];
 
 interface ColorFieldConfig {

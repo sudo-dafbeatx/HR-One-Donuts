@@ -4,6 +4,13 @@ import { useEffect } from "react";
 import { UITheme } from "@/types/cms";
 import { DEFAULT_THEME } from "@/lib/theme-defaults";
 
+function hexToRgb(hex: string): string | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+    : null;
+}
+
 interface ThemeProviderProps {
   theme: UITheme;
   children: React.ReactNode;
@@ -15,6 +22,8 @@ export default function ThemeProvider({ theme, children }: ThemeProviderProps) {
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--theme-primary", t.primary_color);
+    const rgb = hexToRgb(t.primary_color);
+    if (rgb) root.style.setProperty("--theme-primary-rgb", rgb);
     root.style.setProperty("--theme-secondary", t.secondary_color);
     root.style.setProperty("--theme-bg", t.background_color);
     root.style.setProperty("--theme-text", t.text_color);
