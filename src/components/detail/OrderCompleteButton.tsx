@@ -15,6 +15,7 @@ interface OrderCompleteButtonProps {
 export default function OrderCompleteButton({ orderId, className, onSuccess }: OrderCompleteButtonProps) {
   const [loading, setLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const { showError } = useErrorPopup();
   const router = useRouter();
 
@@ -23,9 +24,14 @@ export default function OrderCompleteButton({ orderId, className, onSuccess }: O
     try {
       const res = await markOrderCompleted(orderId);
       if (res.success) {
-        setShowConfirm(false);
+        setIsSuccess(true);
         if (onSuccess) onSuccess();
-        router.refresh(); // Refresh the page to show review modal immediately
+        // Wait 3 seconds then close and refresh
+        setTimeout(() => {
+          setShowConfirm(false);
+          setIsSuccess(false);
+          router.refresh(); 
+        }, 3000);
       } else {
         showError('Gagal Menyelesaikan Pesanan', res.error || 'Terjadi kesalahan tidak terduga.');
         setShowConfirm(false);
@@ -57,41 +63,59 @@ export default function OrderCompleteButton({ orderId, className, onSuccess }: O
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
           <div 
             className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
-            onClick={() => !loading && setShowConfirm(false)}
+            onClick={() => !loading && !isSuccess && setShowConfirm(false)}
           />
           <div className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-6 md:p-8 animate-in fade-in zoom-in duration-300">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 mb-6">
-              <CheckCircleIcon className="h-10 w-10 text-emerald-600" aria-hidden="true" />
-            </div>
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-slate-800 mb-2">Konfirmasi Pesanan</h3>
-              <p className="text-sm text-slate-500 font-medium leading-relaxed mb-8">
-                Apakah pesanan Anda sudah diterima dengan baik? Aksi ini tidak dapat dibatalkan.
-              </p>
-            </div>
-            
-            <div className="flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={handleComplete}
-                disabled={loading}
-                className="w-full inline-flex justify-center items-center rounded-2xl bg-emerald-600 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-500 hover:-translate-y-0.5 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <span className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                ) : (
-                  'Ya, Pesanan Diterima'
-                )}
-              </button>
-              <button
-                type="button"
-                className="w-full inline-flex justify-center rounded-2xl bg-white px-4 py-3.5 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-200 hover:bg-slate-50 transition-all active:scale-[0.98] disabled:opacity-50"
-                onClick={() => setShowConfirm(false)}
-                disabled={loading}
-              >
-                Batal
-              </button>
-            </div>
+            {isSuccess ? (
+              <div className="text-center py-4">
+                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 mb-6 animate-bounce">
+                  <CheckCircleIcon className="h-12 w-12 text-emerald-600" aria-hidden="true" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-800 mb-3">Terima Kasih!</h3>
+                <p className="text-slate-500 font-medium leading-relaxed">
+                  Pesanan Anda telah diselesaikan. Selamat menikmati donat lezat kami! 🍩✨
+                </p>
+                <div className="mt-8">
+                  <div className="size-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-3">Sedang Memproses...</p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 mb-6">
+                  <CheckCircleIcon className="h-10 w-10 text-emerald-600" aria-hidden="true" />
+                </div>
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-slate-800 mb-2">Konfirmasi Pesanan</h3>
+                  <p className="text-sm text-slate-500 font-medium leading-relaxed mb-8">
+                    Apakah pesanan Anda sudah diterima dengan baik? Aksi ini tidak dapat dibatalkan.
+                  </p>
+                </div>
+                
+                <div className="flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={handleComplete}
+                    disabled={loading}
+                    className="w-full inline-flex justify-center items-center rounded-2xl bg-emerald-600 px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-500 hover:-translate-y-0.5 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <span className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    ) : (
+                      'Ya, Pesanan Diterima'
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="w-full inline-flex justify-center rounded-2xl bg-white px-4 py-3.5 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-inset ring-slate-200 hover:bg-slate-50 transition-all active:scale-[0.98] disabled:opacity-50"
+                    onClick={() => setShowConfirm(false)}
+                    disabled={loading}
+                  >
+                    Batal
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

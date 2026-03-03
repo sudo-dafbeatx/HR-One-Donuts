@@ -185,6 +185,7 @@ export async function markOrderCompleted(orderId: string) {
     revalidatePath('/profile');
     revalidatePath(`/profile/orders/${orderId}`);
     revalidatePath('/admin');
+    revalidatePath('/admin/orders-status');
     
     return { success: true };
   } catch (error: unknown) {

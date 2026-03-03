@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   getOrderStatus, 
   DeliveryMethod, 
@@ -8,6 +8,7 @@ import {
   ORDER_STATUS_CONFIG 
 } from '@/lib/order-status';
 import { updateOrderStatus } from '@/app/admin/actions';
+import { createClient } from '@/lib/supabase/client';
 import { 
   TruckIcon 
 } from '@heroicons/react/24/outline';
@@ -30,6 +31,35 @@ interface AdminOrder {
 export default function AdminOrdersStatusClient({ initialOrders }: { initialOrders: AdminOrder[] }) {
   const [orders, setOrders] = useState<AdminOrder[]>(initialOrders);
   const [updating, setUpdating] = useState<string | null>(null);
+
+  // Real-time synchronization
+  useEffect(() => {
+    const supabase = createClient();
+    
+    const channel = supabase
+      .channel('admin_orders_sync')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders'
+        },
+        (payload) => {
+          const updatedOrder = payload.new as { id: string; status: string };
+          setOrders(prev => prev.map(order => 
+            order.id === updatedOrder.id 
+              ? { ...order, status: updatedOrder.status } 
+              : order
+          ));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     setUpdating(orderId);
