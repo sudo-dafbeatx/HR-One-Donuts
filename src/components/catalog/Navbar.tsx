@@ -37,7 +37,7 @@ export default function CatalogNavbar({ siteSettings, copy }: { siteSettings?: S
               className="group-hover:scale-105 transition-transform"
             />
             {!siteSettings?.logo_url && (
-              <h1 className="font-display text-sm md:text-base font-black tracking-tight text-primary leading-none hidden xs:block">
+              <h1 className="font-display text-base md:text-base font-black tracking-tight text-primary leading-none hidden xs:block">
                 {siteSettings?.store_name || "HR-One Donuts"}
               </h1>
             )}

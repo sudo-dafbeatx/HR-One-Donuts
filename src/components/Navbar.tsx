@@ -98,7 +98,7 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
             </div>
             <div className="flex flex-col">
               {!siteSettings?.logo_url && (
-                <h1 className="font-display text-base md:text-xl font-black tracking-tight text-slate-900 leading-none">
+                <h1 className="font-display text-lg md:text-xl font-black tracking-tight text-slate-900 leading-none">
                   {siteSettings?.store_name || "HR-One"}
                   <span className="text-primary ml-1">Donuts</span>
                 </h1>
