@@ -122,7 +122,7 @@ export default function ReviewList({
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h5 className="font-bold text-slate-800">
-                      {review.reviewer_name || 'Anonymous User'}
+                      {review.reviewer_name || 'Pelanggan HR-One'}
                     </h5>
                     {isOwnReview && (
                       <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">

@@ -48,6 +48,11 @@ export default function NotificationBell() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Request browser notification permission
+      if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+
       const subscription = supabase
         .channel('public:notifications')
         .on(
@@ -62,6 +67,14 @@ export default function NotificationBell() {
             const newNotif = payload.new as Notification;
             setNotifications((prev) => [newNotif, ...prev]);
             setUnreadCount((prev) => prev + 1);
+
+            // Trigger browser notification
+            if ("Notification" in window && Notification.permission === "granted") {
+              new Notification(newNotif.title, {
+                body: newNotif.message,
+                icon: '/window.svg' // Placeholder icon
+              });
+            }
           }
         )
         .subscribe();

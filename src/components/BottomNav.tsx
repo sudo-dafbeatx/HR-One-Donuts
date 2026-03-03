@@ -18,22 +18,67 @@ import {
   UserCircleIcon as UserCircleIconSolid,
   Cog6ToothIcon as Cog6ToothIconSolid
 } from "@heroicons/react/24/solid";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { createClient } from "@/lib/supabase/client";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 export default function BottomNav() {
   const pathname = usePathname();
   const profileLink = "/profile";
   const { totalItems, setIsCartOpen } = useCart();
+  const [hasActiveOrders, setHasActiveOrders] = useState(false);
 
   useEffect(() => {
-    // Session state check removed to satisfy "no auth calls on public pages" requirement.
-    // Real session state is handled at /profile or middleware.
+    const supabase = createClient();
+    let channel: RealtimeChannel;
+
+    // 1. Initial Check
+    const checkActiveOrders = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { count } = await supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .in('status', ['pending', 'shipping', 'ready']);
+      
+      setHasActiveOrders(count ? count > 0 : false);
+    };
+
+    checkActiveOrders();
+
+    // 2. Realtime subscription
+    const setupSubscription = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      channel = supabase
+        .channel('active_orders_nav')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'orders',
+            filter: `user_id=eq.${user.id}`
+          },
+          () => {
+            checkActiveOrders();
+          }
+        )
+        .subscribe();
+    };
+
+    setupSubscription();
+
+    return () => {
+      if (channel) supabase.removeChannel(channel);
+    };
   }, []);
 
   if (pathname && (pathname.startsWith('/terms') || pathname.startsWith('/privacy') || pathname.startsWith('/cookies'))) return null;
-
-
 
   const navItems = [
     { 
@@ -65,7 +110,8 @@ export default function BottomNav() {
       label: "Akun", 
       href: profileLink, 
       icon: UserCircleIcon, 
-      activeIcon: UserCircleIconSolid 
+      activeIcon: UserCircleIconSolid,
+      isProfile: true
     },
     { 
       label: "Pengaturan", 
@@ -99,6 +145,9 @@ export default function BottomNav() {
                   <span key={totalItems} className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-cart-bounce">
                     {totalItems}
                   </span>
+                )}
+                {item.isProfile && hasActiveOrders && (
+                  <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-red-500 border-2 border-white animate-pulse" />
                 )}
               </div>
               <span className="text-[10px] font-medium text-center px-1 truncate w-full">

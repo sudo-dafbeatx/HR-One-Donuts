@@ -203,24 +203,32 @@ export async function getProductReviews(
       return { success: true, data: [] };
     }
 
-    // Enrich reviews with profile data (name, avatar)
+    // Enrich reviews with profile data (name, avatar) from both tables
     const userIds = [...new Set(reviews.map(r => r.user_id))];
     
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('id, full_name, avatar_url')
-      .in('id', userIds);
+    // Fetch from both profile tables
+    const [{ data: userProfiles }, { data: profiles }] = await Promise.all([
+      supabase
+        .from('user_profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', userIds),
+      supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', userIds)
+    ]);
 
-    const profileMap = new Map(
-      (profiles || []).map(p => [p.id, p])
-    );
+    const userProfileMap = new Map((userProfiles || []).map(p => [p.id, p]));
+    const profileMap = new Map((profiles || []).map(p => [p.id, p]));
 
     const enrichedReviews = reviews.map(review => {
-      const profile = profileMap.get(review.user_id);
+      const uProfile = userProfileMap.get(review.user_id);
+      const lProfile = profileMap.get(review.user_id);
+      
       return {
         ...review,
-        reviewer_name: profile?.full_name || null,
-        reviewer_avatar: profile?.avatar_url || null,
+        reviewer_name: uProfile?.full_name || lProfile?.full_name || 'Pelanggan HR-One',
+        reviewer_avatar: uProfile?.avatar_url || lProfile?.avatar_url || null,
       };
     });
 
