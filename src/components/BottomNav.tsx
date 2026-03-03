@@ -80,7 +80,8 @@ export default function BottomNav() {
     pathname?.startsWith('/login') || 
     pathname?.startsWith('/onboarding') || 
     pathname?.startsWith('/auth') ||
-    pathname?.startsWith('/promo')
+    pathname?.startsWith('/promo') ||
+    pathname === '/settings/help/chat'
   ) return null;
 
   return (

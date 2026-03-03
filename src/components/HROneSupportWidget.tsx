@@ -205,13 +205,13 @@ export default function HROneSupportWidget() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] bg-slate-50 max-w-3xl mx-auto border-x border-slate-200 shadow-sm relative z-40">
+    <div className="flex flex-col h-screen bg-slate-50 max-w-3xl mx-auto border-x border-slate-200 shadow-sm relative z-40">
       {/* Header */}
       <div className="bg-slate-900 text-white px-4 md:px-6 py-4 flex items-center justify-between shadow-xs z-10 sticky top-0">
         <div className="flex items-center gap-3">
           <button 
             onClick={() => router.back()} 
-            className="p-2 -ml-2 hover:bg-white/10 rounded-full transition-colors md:hidden"
+            className="p-2 -ml-2 hover:bg-white/10 rounded-full transition-colors"
             aria-label="Kembali"
           >
             <ArrowLeftIcon className="w-5 h-5" />
@@ -234,6 +234,9 @@ export default function HROneSupportWidget() {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-5 flex flex-col scroll-smooth">
+        {/* Spacer to push messages to bottom */}
+        <div className="flex-1" />
+        
         {messages.map((message) => (
           <div
             key={message.id}

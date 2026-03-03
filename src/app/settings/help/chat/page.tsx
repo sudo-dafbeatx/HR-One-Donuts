@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function SystemChatPage() {
   return (
-    <div className="bg-slate-50 min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-80px)]">
+    <div className="bg-slate-50 h-screen overflow-hidden">
       <HROneSupportWidget />
     </div>
   );
