@@ -30,7 +30,7 @@ function LoginContent() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
-  const [redirecting, setRedirecting] = useState(false);
+  const redirectingRef = useRef(false);
   const [showPassword, setShowPassword] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [phoneDuplicate, setPhoneDuplicate] = useState(false);
@@ -106,8 +106,8 @@ function LoginContent() {
   }, [checkPhoneDuplicate]);
 
   const handleRedirection = useCallback(async (userId: string, isAutoOnMount = false) => {
-    if (redirecting) return;
-    setRedirecting(true);
+    if (redirectingRef.current) return;
+    redirectingRef.current = true;
     const attemptFetchAndRedirect = async (count: number): Promise<void> => {
       try {
         // Do NOT check admin role here — admin panel is accessed via /admin/login only
@@ -131,7 +131,8 @@ function LoginContent() {
           // If this is an auto-check when mounting the login page, don't force redirect.
           // This allows users to stay on the login page to switch accounts even if incomplete.
           if (isAutoOnMount) {
-            setRedirecting(false); 
+            redirectingRef.current = false;
+            setIsLoading(false);
             return;
           }
           router.push('/onboarding/profile');
@@ -143,12 +144,13 @@ function LoginContent() {
         }
       } catch (err) {
         console.error('Critical Redirection error:', err);
+        redirectingRef.current = false;
         router.push('/');
       }
     };
 
     return attemptFetchAndRedirect(0);
-  }, [supabase, router, redirectTo, redirecting]);
+  }, [supabase, router, redirectTo, setIsLoading]);
 
   useEffect(() => {
     const checkUser = async () => {
