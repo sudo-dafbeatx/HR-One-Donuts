@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@heroicons/react": "^2.2.0",
     "@marsidev/react-turnstile": "^1.4.2",
     "@supabase/ssr": "^0.8.0",

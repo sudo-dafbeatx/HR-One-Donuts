@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import { Product } from "@/types/cms";
+import { askDonaAI } from "@/app/actions/gemini-actions";
 
 interface Message {
   id: string;
@@ -309,16 +310,34 @@ export default function ChatbotWidget() {
       }
     }
 
-    // 3. Fallback & Logging
+    // 3. Fallback to Gemini AI
     setTimeout(async () => {
-      // Log the unanswered question
-      await supabase.from("bot_questions_log").insert([{ question: userInput }]);
-      
-      addBotMessage(
-        "Maaf, saya belum mengerti pertanyaan Anda 😅\n\nTim kami sudah mencatat pertanyaan ini untuk dipelajari lebih lanjut. Apa ada yang lain?",
-        ["Lihat Menu", "Cara Pesan", "Hubungi WhatsApp", "Bestseller"]
-      );
-    }, 800);
+      // Log the unanswered question for fine-tuning/monitoring
+      try {
+        await supabase.from("bot_questions_log").insert([{ question: userInput }]);
+      } catch (err) {
+        console.warn("Failed to log question:", err);
+      }
+
+      // Convert current messages to Gemini history format
+      // Note: We only take the last 4-6 messages to keep it within context/free limits
+      const chatHistory = messages.slice(-6).map(msg => ({
+        role: msg.type === "user" ? "user" as const : "model" as const,
+        parts: [{ text: msg.content }]
+      }));
+
+      const aiResponse = await askDonaAI(userInput, chatHistory);
+
+      if (aiResponse.success) {
+        addBotMessage(aiResponse.message);
+      } else {
+        // Ultimate fallback if AI fails too
+        addBotMessage(
+          "Maaf, saya belum mengerti pertanyaan Anda 😅\n\nTim kami sudah mencatat pertanyaan ini untuk dipelajari lebih lanjut. Apa ada yang lain?",
+          ["Lihat Menu", "Cara Pesan", "Hubungi WhatsApp", "Bestseller"]
+        );
+      }
+    }, 500);
   };
 
   const handleSendMessage = () => {
