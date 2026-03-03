@@ -28,8 +28,16 @@ export default function BottomNav() {
   const profileLink = "/profile";
   const { totalItems, setIsCartOpen } = useCart();
   const [hasActiveOrders, setHasActiveOrders] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
+    // 0. Listen for chatbot state
+    const handleChatState = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setIsChatOpen(!!customEvent.detail?.isOpen);
+    };
+    window.addEventListener('chatbot_state_change', handleChatState);
+
     const supabase = createClient();
     let channel: RealtimeChannel;
 
@@ -75,6 +83,7 @@ export default function BottomNav() {
 
     return () => {
       if (channel) supabase.removeChannel(channel);
+      window.removeEventListener('chatbot_state_change', handleChatState);
     };
   }, []);
 
@@ -127,7 +136,8 @@ export default function BottomNav() {
     pathname?.startsWith('/onboarding') || 
     pathname?.startsWith('/auth') ||
     pathname?.startsWith('/promo') ||
-    pathname === '/settings/help/chat'
+    pathname === '/settings/help/chat' ||
+    isChatOpen
   ) return null;
 
   return (

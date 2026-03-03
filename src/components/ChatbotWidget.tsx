@@ -202,11 +202,14 @@ export default function ChatbotWidget() {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      window.dispatchEvent(new CustomEvent('chatbot_state_change', { detail: { isOpen: true } }));
     } else {
       document.body.style.overflow = 'unset';
+      window.dispatchEvent(new CustomEvent('chatbot_state_change', { detail: { isOpen: false } }));
     }
     return () => {
       document.body.style.overflow = 'unset';
+      window.dispatchEvent(new CustomEvent('chatbot_state_change', { detail: { isOpen: false } }));
     };
   }, [isOpen]);
 

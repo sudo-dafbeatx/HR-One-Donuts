@@ -332,14 +332,17 @@ export default function ProfilePage() {
                   </p>
                   
                   {/* Reward Points Badge */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-amber-500/20 to-orange-500/20 md:backdrop-blur-md rounded-xl border border-amber-300/30 shadow-inner">
-                    <span className="bg-amber-400 text-amber-900 rounded-full size-5 flex items-center justify-center text-xs shadow-sm">
+                  <button 
+                    onClick={() => showError('Poin Reward', 'Fitur tukar poin masih dalam tahap pengembangan. Terus kumpulkan poin Anda! 🍩')}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-amber-500/20 to-orange-500/20 md:backdrop-blur-md rounded-xl border border-amber-300/30 shadow-inner hover:from-amber-500/30 hover:to-orange-500/30 transition-all active:scale-95 group/points"
+                  >
+                    <span className="bg-amber-400 text-amber-900 rounded-full size-5 flex items-center justify-center text-xs shadow-sm group-hover/points:scale-110 transition-transform">
                       <StarIcon className="size-3.5" />
                     </span>
                     <span className="text-xs md:text-sm font-black text-amber-100 uppercase tracking-widest drop-shadow-sm flex items-center gap-1.5">
                       {profile?.points || 0} <span className="text-[10px] text-amber-200/80">Poin Reward</span>
                     </span>
-                  </div>
+                  </button>
 
                 </div>
               </div>
