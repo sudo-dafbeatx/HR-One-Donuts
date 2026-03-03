@@ -15,6 +15,7 @@ export default function ReviewForm({ productId, existingReview, onSuccess }: Rev
   const [rating, setRating] = useState(existingReview?.rating || 0);
   const [comment, setComment] = useState(existingReview?.comment || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isEditing = !!existingReview;
@@ -37,6 +38,8 @@ export default function ReviewForm({ productId, existingReview, onSuccess }: Rev
         : await createReview(productId, rating, comment);
 
       if (result.success) {
+        setIsSuccess(true);
+        
         // Reset form if creating new review
         if (!isEditing) {
           setRating(0);
@@ -47,6 +50,9 @@ export default function ReviewForm({ productId, existingReview, onSuccess }: Rev
         if (onSuccess) {
           onSuccess();
         }
+
+        // Hide success message after 3 seconds
+        setTimeout(() => setIsSuccess(false), 3000);
       } else {
         setError(result.error || 'Terjadi kesalahan');
       }
@@ -108,19 +114,27 @@ export default function ReviewForm({ productId, existingReview, onSuccess }: Rev
         </div>
       )}
 
+      {/* Success Message */}
+      {isSuccess && (
+        <div className="bg-emerald-50 border border-emerald-100 text-emerald-700 px-4 py-3 rounded-xl text-sm font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-1 duration-300">
+          <span className="material-symbols-outlined text-[18px]">verified</span>
+          Ulasan Anda berhasil disimpan!
+        </div>
+      )}
+
       {/* Submit Button */}
       <button
         type="submit"
-        disabled={isSubmitting || rating === 0}
+        disabled={isSubmitting || rating === 0 || isSuccess}
         className={`
           w-full py-3 px-6 rounded-xl font-bold text-sm transition-all
-          ${isSubmitting || rating === 0
+          ${isSubmitting || rating === 0 || isSuccess
             ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
             : 'bg-primary text-white hover:bg-primary/90 hover:-translate-y-0.5 shadow-lg shadow-primary/20 active:translate-y-0'
           }
         `}
       >
-        {isSubmitting ? 'Menyimpan...' : isEditing ? 'Update Ulasan' : 'Kirim Ulasan'}
+        {isSubmitting ? 'Menyimpan...' : isSuccess ? 'Terkirim!' : isEditing ? 'Update Ulasan' : 'Kirim Ulasan'}
       </button>
     </form>
   );

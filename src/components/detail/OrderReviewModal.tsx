@@ -25,6 +25,8 @@ export default function OrderReviewModal({
     items.reduce((acc, item) => ({ ...acc, [item.product_id]: { rating: 5, comment: '' } }), {})
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [earnedPoints, setEarnedPoints] = useState(0);
   const [error, setError] = useState('');
 
   const handleRating = (productId: string, rating: number) => {
@@ -49,8 +51,13 @@ export default function OrderReviewModal({
       const result = await submitReview(orderId, reviewPayload);
 
       if (result.success) {
-        // Force refresh to reload the server component state
-        router.refresh();
+        setIsSuccess(true);
+        setEarnedPoints(result.earnedPoints || 0);
+        
+        // Refresh after 3 seconds
+        setTimeout(() => {
+          router.refresh();
+        }, 3000);
       } else {
         setError(result.error || 'Gagal mengirim ulasan.');
       }
@@ -75,73 +82,101 @@ export default function OrderReviewModal({
           </p>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-8">
-          {error && (
-            <div className="p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100">
-              {error}
+        <div className="flex-1 overflow-y-auto p-6 space-y-8 min-h-[300px] flex flex-col items-center justify-center">
+          {isSuccess ? (
+            <div className="text-center animate-in fade-in zoom-in duration-500 py-10">
+              <div className="relative mb-6">
+                <div className="size-24 bg-emerald-50 rounded-full flex items-center justify-center mx-auto border-4 border-emerald-100 shadow-sm relative z-10">
+                  <span className="text-5xl animate-bounce">🍩</span>
+                </div>
+                <div className="absolute inset-0 bg-emerald-400/20 rounded-full blur-2xl animate-pulse"></div>
+              </div>
+              <h2 className="text-2xl font-black text-slate-800 mb-2 tracking-tight">Terima Kasih!</h2>
+              <p className="text-sm font-medium text-slate-500 max-w-[240px] mx-auto leading-relaxed mb-6">
+                Ulasan Anda sangat berarti bagi kami. Selamat menikmati bonus poin Anda!
+              </p>
+              
+              <div className="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-orange-400 to-amber-400 text-white rounded-2xl shadow-lg shadow-orange-200 border border-orange-300">
+                <span className="text-xl">⭐</span>
+                <span className="font-black tracking-widest">+{earnedPoints} POIN</span>
+              </div>
+              
+              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-12 animate-pulse">
+                Menyegarkan halaman...
+              </p>
             </div>
+          ) : (
+            <>
+              {error && (
+                <div className="p-3 bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-100">
+                  {error}
+                </div>
+              )}
+
+              {items.map(item => (
+                <div key={item.product_id} className="bg-white border text-center border-slate-100 rounded-2xl p-5 shadow-sm relative overflow-hidden w-full">
+                  <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-orange-400 to-amber-400"></div>
+                  
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="size-16 relative rounded-xl overflow-hidden bg-slate-100 shadow-sm border border-slate-200">
+                      {item.image ? (
+                        <Image src={item.image} alt={item.name} fill unoptimized className="object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-slate-300">🍩</div>
+                      )}
+                    </div>
+                    <h3 className="font-bold text-slate-800 mt-1 text-sm">{item.name}</h3>
+                  </div>
+
+                  {/* Star Rating */}
+                  <div className="flex items-center justify-center gap-2 mt-4">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <button
+                        key={star}
+                        onClick={() => handleRating(item.product_id, star)}
+                        className="transform active:scale-95 transition-transform"
+                      >
+                        {star <= reviews[item.product_id].rating ? (
+                          <StarIcon className="size-8 text-amber-400 drop-shadow-sm" />
+                        ) : (
+                          <StarOutline className="size-8 text-slate-200" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 mb-4">
+                    Beri Rating (1-5)
+                  </p>
+
+                  <textarea
+                    placeholder="Bagaimana rasanya? Ceritakan pengalamanmu..."
+                    value={reviews[item.product_id].comment}
+                    onChange={(e) => handleComment(item.product_id, e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"
+                    rows={3}
+                    maxLength={500}
+                  />
+                </div>
+              ))}
+            </>
           )}
-
-          {items.map(item => (
-            <div key={item.product_id} className="bg-white border text-center border-slate-100 rounded-2xl p-5 shadow-sm relative overflow-hidden">
-               <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-orange-400 to-amber-400"></div>
-               
-               <div className="flex flex-col items-center gap-3">
-                 <div className="size-16 relative rounded-xl overflow-hidden bg-slate-100 shadow-sm border border-slate-200">
-                   {item.image ? (
-                     <Image src={item.image} alt={item.name} fill unoptimized className="object-cover" />
-                   ) : (
-                     <div className="w-full h-full flex items-center justify-center text-slate-300">🍩</div>
-                   )}
-                 </div>
-                 <h3 className="font-bold text-slate-800 mt-1 text-sm">{item.name}</h3>
-               </div>
-
-               {/* Star Rating */}
-               <div className="flex items-center justify-center gap-2 mt-4">
-                 {[1, 2, 3, 4, 5].map(star => (
-                   <button
-                     key={star}
-                     onClick={() => handleRating(item.product_id, star)}
-                     className="transform active:scale-95 transition-transform"
-                   >
-                     {star <= reviews[item.product_id].rating ? (
-                       <StarIcon className="size-8 text-amber-400 drop-shadow-sm" />
-                     ) : (
-                       <StarOutline className="size-8 text-slate-200" />
-                     )}
-                   </button>
-                 ))}
-               </div>
-               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 mb-4">
-                 Beri Rating (1-5)
-               </p>
-
-               <textarea
-                 placeholder="Bagaimana rasanya? Ceritakan pengalamanmu..."
-                 value={reviews[item.product_id].comment}
-                 onChange={(e) => handleComment(item.product_id, e.target.value)}
-                 className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all resize-none"
-                 rows={3}
-                 maxLength={500}
-               />
-            </div>
-          ))}
         </div>
 
-        <div className="p-6 border-t border-slate-100 bg-white">
-          <button
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="w-full bg-primary text-white font-black py-4 rounded-xl shadow-lg shadow-primary/25 hover:bg-primary-dark active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
-          >
-            {isSubmitting ? (
-              <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <>Kirim Ulasan & Ambil Poin</>
-            )}
-          </button>
-        </div>
+        {!isSuccess && (
+          <div className="p-6 border-t border-slate-100 bg-white">
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="w-full bg-primary text-white font-black py-4 rounded-xl shadow-lg shadow-primary/25 hover:bg-primary-dark active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>Kirim Ulasan & Ambil Poin</>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
