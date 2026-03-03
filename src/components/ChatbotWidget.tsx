@@ -331,9 +331,9 @@ export default function ChatbotWidget() {
       if (aiResponse.success) {
         addBotMessage(aiResponse.message);
       } else {
-        // Ultimate fallback if AI fails too
+        // If it failed, show the specific error message from the action (e.g. "API KEY Kosong")
         addBotMessage(
-          "Maaf, saya belum mengerti pertanyaan Anda 😅\n\nTim kami sudah mencatat pertanyaan ini untuk dipelajari lebih lanjut. Apa ada yang lain?",
+          aiResponse.message || "Maaf, saya belum mengerti pertanyaan Anda 😅\n\nTim kami sudah mencatat pertanyaan ini untuk dipelajari lebih lanjut. Apa ada yang lain?",
           ["Lihat Menu", "Cara Pesan", "Hubungi WhatsApp", "Bestseller"]
         );
       }

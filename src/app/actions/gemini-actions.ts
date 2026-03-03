@@ -2,14 +2,16 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const API_KEY = process.env.GEMINI_API_KEY;
-
 export async function askDonaAI(userMessage: string, history: { role: 'user' | 'model', parts: { text: string }[] }[] = []) {
+  const API_KEY = process.env.GEMINI_API_KEY;
+  
+  console.log(" [Gemini] Attempting to ask AI:", userMessage);
+  
   if (!API_KEY) {
-    console.warn(" [Gemini] GEMINI_API_KEY is not defined in environment variables. Falling back to default message.");
+    console.error(" [Gemini] ERROR: GEMINI_API_KEY is missing!");
     return { 
       success: false, 
-      message: "Maaf, Dona sedang dalam perbaikan koneksi otak AI-nya. Boleh tanya hal lain atau coba lagi nanti? 🍩" 
+      message: "Dona sedang kehilangan koneksi otak (API KEY Kosong). Mohon cek .env.local 🍩" 
     };
   }
 
