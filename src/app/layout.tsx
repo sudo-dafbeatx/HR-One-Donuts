@@ -16,12 +16,13 @@ import EditModeToggle from "@/components/cms/EditModeToggle";
 import ThemePanel from "@/components/cms/ThemePanel";
 import ScrollToTop from "@/components/utils/ScrollToTop";
 import DelayedCardPopup from "@/components/DelayedCardPopup";
-import { sourGummy } from "@/lib/fonts";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import UserDailyNotification from "@/components/UserDailyNotification";
 import { createPublicServerSupabaseClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 // Font definition moved to lib/fonts.ts
+import { sourGummy } from '@/lib/fonts';
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hr-one-donuts.vercel.app"),
@@ -110,6 +111,7 @@ export default async function RootLayout({
                 <EditModeToggle />
                 <ThemePanel />
                 <ChatbotWidget />
+                <UserDailyNotification />
                 
                 {/* Global Accessibility Fix for Google Identity Services (One Tap) */}
                 <script

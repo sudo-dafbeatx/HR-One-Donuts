@@ -19,7 +19,6 @@ import { useLoading } from '@/context/LoadingContext';
 import { uploadAvatar, setPredefinedAvatar } from '@/app/actions/avatar-actions';
 import { normalizePhoneToID } from '@/lib/phone';
 import { getOrderStatus } from '@/lib/order-status';
-import UserDailyNotification from "@/components/UserDailyNotification";
 import Image from 'next/image';
 import { CameraIcon, PhotoIcon, SparklesIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 import styled from "styled-components";
@@ -737,7 +736,6 @@ export default function ProfilePage() {
 
             </div>
           </div>
-          <UserDailyNotification />
         </div>
       </Content>
     </Wrapper>
