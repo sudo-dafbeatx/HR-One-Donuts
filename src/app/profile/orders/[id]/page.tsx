@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { getOrderStatus } from '@/lib/order-status';
 import OrderReviewModal from '@/components/detail/OrderReviewModal';
+import OrderCompleteButton from '@/components/detail/OrderCompleteButton';
 
 import idDict from '@/translations/dictionaries/id.json';
 import enDict from '@/translations/dictionaries/en.json';
@@ -121,6 +122,11 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                minute: '2-digit'
              })}
           </div>
+          {(order.status === 'shipping' || order.status === 'ready') && (
+             <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+               <OrderCompleteButton orderId={order.id} />
+             </div>
+          )}
         </div>
 
         {/* 3. Items List */}

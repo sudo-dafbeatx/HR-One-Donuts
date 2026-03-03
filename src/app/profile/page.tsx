@@ -26,6 +26,7 @@ import styled from "styled-components";
 import Pattern from "@/components/Pattern";
 import { useTranslation } from '@/context/LanguageContext';
 import { useErrorPopup } from '@/context/ErrorPopupContext';
+import OrderCompleteButton from '@/components/detail/OrderCompleteButton';
 
 interface Profile {
   id: string;
@@ -622,9 +623,18 @@ export default function ProfilePage() {
                           
                           <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-center gap-1 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-50">
                              <p className="font-black text-slate-900 text-base md:text-lg">Rp {order.total_amount.toLocaleString('id-ID')}</p>
-                             <Link href={`/profile/orders/${order.id}`} className="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1 flex items-center gap-1 active:scale-95 transition-transform">
-                               {t('orders.detail_cta')} <span className="material-symbols-outlined text-[12px]">open_in_new</span>
-                             </Link>
+                             
+                             <div className="flex flex-col items-end gap-2">
+                               {(order.status === 'shipping' || order.status === 'ready') && (
+                                 <OrderCompleteButton 
+                                   orderId={order.id} 
+                                   className="py-1.5 px-3 md:py-2 md:px-4 text-[10px] md:text-xs" 
+                                 />
+                               )}
+                               <Link href={`/profile/orders/${order.id}`} className="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1 flex items-center gap-1 active:scale-95 transition-transform">
+                                 {t('orders.detail_cta')} <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                               </Link>
+                             </div>
                           </div>
                         </div>
                       ))}

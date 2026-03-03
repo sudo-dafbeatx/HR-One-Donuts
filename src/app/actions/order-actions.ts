@@ -148,3 +148,48 @@ export async function createOrder(data: {
     throw new Error(message);
   }
 }
+
+export async function markOrderCompleted(orderId: string) {
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return { success: false, error: 'Anda harus login' };
+    }
+
+    const { data: order, error: checkError } = await supabase
+      .from('orders')
+      .select('id, status, user_id')
+      .eq('id', orderId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (checkError) throw checkError;
+    if (!order) return { success: false, error: 'Pesanan tidak ditemukan' };
+    
+    // Check if the order status is eligible to be marked completed by the user
+    // Generally 'ready' (for pickup) or 'shipping'/'delivering' (for delivery)
+    if (order.status !== 'ready' && order.status !== 'shipping') {
+      return { success: false, error: `Pesanan belum siap atau sedang diantar (status: ${order.status})` };
+    }
+
+    const { error: updateError } = await supabase
+      .from('orders')
+      .update({ status: 'completed' })
+      .eq('id', orderId)
+      .eq('user_id', user.id);
+
+    if (updateError) throw updateError;
+
+    revalidatePath('/profile');
+    revalidatePath(`/profile/orders/${orderId}`);
+    revalidatePath('/admin');
+    
+    return { success: true };
+  } catch (error: unknown) {
+    console.error(' [markOrderCompleted] Database error:', error);
+    const message = error instanceof Error ? error.message : 'Gagal menyelesaikan pesanan';
+    return { success: false, error: message };
+  }
+}
