@@ -100,22 +100,17 @@ export default function ProfilePage() {
         return;
       }
 
-      // Fetch both profile tables to ensure we have avatar_url (which only exists in legacy profiles)
-      // and new detailed data (which exists in user_profiles)
-      const { data: legacyProfile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      const { data: profileData } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
+      // Fetch both profile tables
+      const [legacyRes, userProfileRes, ordersRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
+        supabase.from('user_profiles').select('*').eq('id', user.id).maybeSingle(),
+        supabase.from('orders').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+      ]);
+      
+      const legacyProfile = legacyRes.data;
+      const profileData = userProfileRes.data;
       
       if (profileData) {
-        // Merge them so we get `avatar_url` from legacy metadata but detailed info from new standard
         setProfile({
           ...legacyProfile,
           ...profileData
@@ -125,24 +120,50 @@ export default function ProfilePage() {
         setEditPhone(legacyProfile?.phone || ''); 
         setEditAddress(profileData.address_detail || legacyProfile?.address || '');
       } else if (legacyProfile) {
-        // Fallback to legacy profiles only
         setProfile(legacyProfile as unknown as Profile);
         setEditFullName(legacyProfile.full_name || '');
         setEditPhone(legacyProfile.phone || '');
         setEditAddress(legacyProfile.address || '');
       }
 
-      // Fetch Recent Orders
-      const { data: ordersData } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+      setOrders(ordersRes.data || []);
 
-      setOrders(ordersData || []);
+      // Realtime subscription for orders
+      const channel = supabase
+        .channel(`profile_orders_${user.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'orders',
+            filter: `user_id=eq.${user.id}`
+          },
+          (payload) => {
+            if (payload.eventType === 'INSERT') {
+              const newOrder = payload.new as Order;
+              setOrders(prev => [newOrder, ...prev]);
+            } else if (payload.eventType === 'UPDATE') {
+              const updatedOrder = payload.new as Order;
+              setOrders(prev => prev.map(o => o.id === updatedOrder.id ? { ...o, ...updatedOrder } : o));
+            } else if (payload.eventType === 'DELETE') {
+              setOrders(prev => prev.filter(o => o.id === payload.old.id));
+            }
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     };
 
-    fetchData().finally(() => setLoading(false));
+    const cleanupPromise = fetchData().then(cleanup => cleanup);
+    setLoading(false);
+
+    return () => {
+      cleanupPromise.then(cleanup => cleanup && cleanup());
+    };
   }, [supabase, router]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -630,6 +651,12 @@ export default function ProfilePage() {
                                    orderId={order.id} 
                                    className="py-1.5 px-3 md:py-2 md:px-4 text-[10px] md:text-xs" 
                                  />
+                               )}
+                               {order.status === 'completed' && (
+                                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100 shadow-xs scale-90 md:scale-100 origin-right">
+                                    <span className="material-symbols-outlined text-[16px]">verified</span>
+                                    <span className="text-[10px] md:text-xs font-black uppercase tracking-wider">Berhasil</span>
+                                 </div>
                                )}
                                <Link href={`/profile/orders/${order.id}`} className="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-widest hover:underline px-2 py-1 flex items-center gap-1 active:scale-95 transition-transform">
                                  {t('orders.detail_cta')} <span className="material-symbols-outlined text-[12px]">open_in_new</span>

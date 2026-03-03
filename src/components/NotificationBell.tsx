@@ -135,7 +135,7 @@ export default function NotificationBell() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-3 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+        <div className="fixed sm:absolute top-[60px] sm:top-full right-4 left-4 sm:left-auto sm:right-0 sm:mt-3 sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
           <div className="p-4 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
             <h3 className="font-black tracking-tight text-slate-800 flex items-center gap-2">
               <span className="material-symbols-outlined text-primary text-[20px]">mark_email_unread</span>
