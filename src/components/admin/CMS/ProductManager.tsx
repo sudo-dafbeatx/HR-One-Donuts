@@ -283,22 +283,24 @@ export default function ProductManager({ initialProducts, categories }: { initia
                       value={editingProduct.discount_percent ?? ''} 
                       onChange={e => setEditingProduct({...editingProduct, discount_percent: e.target.value ? Number(e.target.value) : null})}
                     />
-                    <div className="grid grid-cols-1 gap-3 mt-3">
-                      <AdminInput 
-                        label="Mulai Promo" 
-                        type="datetime-local"
-                        disabled={editingProduct.sale_type === 'normal'}
-                        value={editingProduct.promo_start ? editingProduct.promo_start.slice(0, 16) : ''} 
-                        onChange={e => setEditingProduct({...editingProduct, promo_start: e.target.value})}
-                      />
-                      <AdminInput 
-                        label="Berakhir Promo" 
-                        type="datetime-local"
-                        disabled={editingProduct.sale_type === 'normal'}
-                        value={editingProduct.promo_end ? editingProduct.promo_end.slice(0, 16) : ''} 
-                        onChange={e => setEditingProduct({...editingProduct, promo_end: e.target.value})}
-                      />
-                    </div>
+                    {editingProduct.sale_type !== 'selasa_mega_sale' && editingProduct.sale_type !== 'jumat_berkah' && (
+                      <div className="grid grid-cols-1 gap-3 mt-3">
+                        <AdminInput 
+                          label="Mulai Promo" 
+                          type="datetime-local"
+                          disabled={editingProduct.sale_type === 'normal'}
+                          value={editingProduct.promo_start ? editingProduct.promo_start.slice(0, 16) : ''} 
+                          onChange={e => setEditingProduct({...editingProduct, promo_start: e.target.value})}
+                        />
+                        <AdminInput 
+                          label="Berakhir Promo" 
+                          type="datetime-local"
+                          disabled={editingProduct.sale_type === 'normal'}
+                          value={editingProduct.promo_end ? editingProduct.promo_end.slice(0, 16) : ''} 
+                          onChange={e => setEditingProduct({...editingProduct, promo_end: e.target.value})}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="relative group/uploader">

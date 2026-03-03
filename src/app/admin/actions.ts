@@ -72,6 +72,74 @@ export async function saveProduct(data: Partial<Product>) {
       console.error('Supabase Upsert Error:', error);
       return { success: false, error: `Gagal menyimpan produk: ${error.message}` };
     }
+
+    // --- Auto-sync with Flash Sales ---
+    if (productData.sale_type === 'selasa_mega_sale' || productData.sale_type === 'jumat_berkah') {
+      const flashSaleTitle = productData.sale_type === 'selasa_mega_sale' ? 'Selasa Mega Sale' : 'Jumat Berkah';
+      // Find existing flash sale
+      let { data: flashSale } = await supabase.from('flash_sales').select('id').eq('title', flashSaleTitle).maybeSingle();
+      
+      if (!flashSale) {
+        // Create it if it doesn't exist
+        const { data: newFlashSale, error: fsError } = await supabase.from('flash_sales').insert({
+          title: flashSaleTitle,
+          description: `Promo otomatis ${flashSaleTitle} untuk diskon 24 jam setiap harinya waktu WIB`,
+          is_active: true,
+          discount_type: 'percentage',
+          discount_value: productData.discount_percent || 0
+        }).select('id').single();
+        
+        if (!fsError && newFlashSale) {
+           flashSale = newFlashSale;
+        } else {
+           console.error('Failed to auto-create flash sale:', fsError);
+        }
+      }
+
+      if (flashSale) {
+        // Upsert into flash_sale_items
+        const salePrice = Math.round(productData.price * (1 - (productData.discount_percent || 0) / 100));
+        
+        // Check if item already exists to update
+        const { data: existingItem } = await supabase
+          .from('flash_sale_items')
+          .select('id')
+          .eq('product_id', productData.id)
+          .eq('flash_sale_id', flashSale.id)
+          .maybeSingle();
+
+        const itemData = {
+          flash_sale_id: flashSale.id,
+          product_id: productData.id,
+          sale_price: salePrice > 0 ? salePrice : 0,
+          stock_limit: productData.stock || 100, // Default to product stock
+          remaining_stock: productData.stock || 100,
+          sold_count: 0
+        };
+
+        if (existingItem) {
+          await supabase.from('flash_sale_items').update(itemData).eq('id', existingItem.id);
+        } else {
+          await supabase.from('flash_sale_items').insert(itemData);
+        }
+      }
+    } else {
+      // If sale_type is normal or something else, remove from auto-flash sales to be clean
+      const { data: autoFlashSales } = await supabase
+        .from('flash_sales')
+        .select('id')
+        .in('title', ['Selasa Mega Sale', 'Jumat Berkah']);
+        
+      if (autoFlashSales && autoFlashSales.length > 0) {
+        const autoIds = autoFlashSales.map(fs => fs.id);
+        await supabase
+          .from('flash_sale_items')
+          .delete()
+          .eq('product_id', productData.id)
+          .in('flash_sale_id', autoIds);
+      }
+    }
+    // --- End Auto-sync ---
     
     revalidatePath('/');
     revalidatePath('/catalog');
