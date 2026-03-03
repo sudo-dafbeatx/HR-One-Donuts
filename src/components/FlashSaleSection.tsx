@@ -105,13 +105,13 @@ const FlashSaleCard = ({ item }: { item: FlashSaleItem }) => {
       )}
 
       {/* Area Gambar */}
-      <div className="relative aspect-square overflow-hidden bg-slate-50">
+      <div className="relative aspect-square overflow-hidden bg-slate-50 p-2 sm:p-4 transition-all duration-300 group-hover:bg-white group-hover:-translate-y-1">
         {product.image_url ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={product.image_url}
             alt={product.name}
-            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-full object-cover rounded-xl transform group-hover:scale-110 group-hover:drop-shadow-xl transition-all duration-500"
             onError={(e) => {
               (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=500&auto=format&fit=crop';
             }}
@@ -166,8 +166,8 @@ const FlashSaleCard = ({ item }: { item: FlashSaleItem }) => {
             </div>
           </div>
 
-          <Link href={`/product/${product.id}`} className="w-full bg-slate-900 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-red-600 active:scale-95 transition-all duration-200">
-            <ShoppingCartIcon className="w-[18px] h-[18px]" />
+          <Link href={`/product/${product.id}`} className="w-full bg-slate-900 group-hover:bg-red-600 text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all duration-300">
+            <ShoppingCartIcon className="w-[18px] h-[18px] transition-transform duration-300 group-hover:rotate-12 group-active:-rotate-12" />
             Beli Sekarang
           </Link>
         </div>
@@ -360,7 +360,7 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                   </div>
 
                   {/* Grid Produk */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
                     {sale.items.map(item => (
                       <FlashSaleCard key={item.id} item={item} />
                     ))}
