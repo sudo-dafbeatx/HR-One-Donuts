@@ -54,9 +54,9 @@ export default function OrderReviewModal({
         setIsSuccess(true);
         setEarnedPoints(result.earnedPoints || 0);
         
-        // Refresh after 3 seconds
+        // Redirect to profile after 3 seconds
         setTimeout(() => {
-          router.refresh();
+          router.push('/profile');
         }, 3000);
       } else {
         setError(result.error || 'Gagal mengirim ulasan.');
