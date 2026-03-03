@@ -1,15 +1,26 @@
 'use client';
 
 import { useState } from 'react';
-import { FlashSale } from '@/types/cms';
-import { AdminInput, AdminSelect, AdminButton, AdminCard } from './Shared';
-import { saveFlashSale, deleteFlashSale } from '@/app/admin/actions';
-import { TrashIcon, PencilIcon, PlusIcon, BoltIcon } from '@heroicons/react/24/outline';
+import { FlashSale, FlashSaleItem, Product } from '@/types/cms';
+import { AdminInput, AdminSelect, AdminButton, AdminCard, AdminCurrencyInput } from './Shared';
+import { saveFlashSale, deleteFlashSale, saveFlashSaleItem, deleteFlashSaleItem } from '@/app/admin/actions';
+import { TrashIcon, PencilIcon, PlusIcon, BoltIcon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
-export default function FlashSaleManager({ initialData }: { initialData: FlashSale[] }) {
+interface FlashSaleManagerProps {
+  initialData: FlashSale[];
+  products: Product[];
+}
+
+export default function FlashSaleManager({ initialData, products }: FlashSaleManagerProps) {
   const [sales, setSales] = useState<FlashSale[]>(initialData);
   const [editing, setEditing] = useState<Partial<FlashSale> | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Item management
+  const [managingItems, setManagingItems] = useState<FlashSale | null>(null);
+  const [editingItem, setEditingItem] = useState<Partial<FlashSaleItem> | null>(null);
+  const [itemLoading, setItemLoading] = useState(false);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,10 +38,43 @@ export default function FlashSaleManager({ initialData }: { initialData: FlashSa
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Hapus flash sale ini?')) return;
+    if (!confirm('Hapus flash sale ini? Semua item produk di dalamnya juga akan terhapus.')) return;
     try {
       await deleteFlashSale(id);
       setSales(sales.filter(s => s.id !== id));
+    } catch (error) {
+      alert('Error: ' + (error as Error).message);
+    }
+  };
+
+  const handleSaveItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem || !managingItems) return;
+
+    setItemLoading(true);
+    try {
+      await saveFlashSaleItem({
+        ...editingItem,
+        flash_sale_id: managingItems.id,
+      });
+      window.location.reload();
+    } catch (error) {
+      alert('Error: ' + (error as Error).message);
+    } finally {
+      setItemLoading(false);
+    }
+  };
+
+  const handleDeleteItem = async (itemId: string) => {
+    if (!confirm('Hapus produk ini dari flash sale?')) return;
+    try {
+      await deleteFlashSaleItem(itemId);
+      if (managingItems) {
+        setManagingItems({
+          ...managingItems,
+          items: (managingItems.items || []).filter(i => i.id !== itemId),
+        });
+      }
     } catch (error) {
       alert('Error: ' + (error as Error).message);
     }
@@ -51,6 +95,14 @@ export default function FlashSaleManager({ initialData }: { initialData: FlashSa
     const local = new Date(d.getTime() - offset * 60000);
     return local.toISOString().slice(0, 16);
   };
+
+  const formatCurrency = (val: number) => `Rp${val.toLocaleString('id-ID')}`;
+
+  // Get products not already in managing flash sale
+  const availableProducts = products.filter(p => {
+    if (!managingItems?.items) return true;
+    return !managingItems.items.some(item => item.product_id === p.id);
+  });
 
   return (
     <div className="space-y-6">
@@ -96,41 +148,79 @@ export default function FlashSaleManager({ initialData }: { initialData: FlashSa
               </div>
             </div>
 
-            <div className="p-5 flex justify-between items-center">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded">
-                    {sale.slug}
-                  </span>
-                  <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${
-                    sale.is_active
-                      ? 'text-emerald-600 bg-emerald-50'
-                      : 'text-slate-400 bg-slate-100'
-                  }`}>
-                    {sale.is_active ? 'Aktif' : 'Nonaktif'}
-                  </span>
+            <div className="p-5">
+              {/* Meta info */}
+              <div className="flex justify-between items-start mb-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded">
+                      {sale.slug}
+                    </span>
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded ${
+                      sale.is_active
+                        ? 'text-emerald-600 bg-emerald-50'
+                        : 'text-slate-400 bg-slate-100'
+                    }`}>
+                      {sale.is_active ? 'Aktif' : 'Nonaktif'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    {formatDate(sale.start_date)} — {formatDate(sale.end_date)}
+                  </p>
                 </div>
-                <p className="text-xs text-slate-500">
-                  {formatDate(sale.start_date)} — {formatDate(sale.end_date)}
-                </p>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setManagingItems(sale)}
+                    className="p-2 rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-100 transition-colors"
+                    title="Kelola Produk"
+                  >
+                    <ShoppingBagIcon className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditing(sale)}
+                    className="p-2 rounded-xl bg-slate-50 text-primary hover:bg-primary/10 transition-colors"
+                  >
+                    <PencilIcon className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(sale.id)}
+                    className="p-2 rounded-xl bg-slate-50 text-red-500 hover:bg-red-50 transition-colors"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setEditing(sale)}
-                  className="p-2 rounded-xl bg-slate-50 text-primary hover:bg-primary/10 transition-colors"
-                >
-                  <PencilIcon className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(sale.id)}
-                  className="p-2 rounded-xl bg-slate-50 text-red-500 hover:bg-red-50 transition-colors"
-                >
-                  <TrashIcon className="w-4 h-4" />
-                </button>
-              </div>
+              {/* Items preview */}
+              {sale.items && sale.items.length > 0 && (
+                <div className="border-t border-slate-100 pt-3">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
+                    {sale.items.length} Produk Flash Sale
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {sale.items.slice(0, 4).map((item) => (
+                      <div key={item.id} className="flex items-center gap-2 bg-slate-50 px-2 py-1 rounded-lg text-xs">
+                        {item.products?.image_url && (
+                          <div className="relative w-full h-full">
+                            <Image src={item.products.image_url} alt="" fill sizes="64px" className="rounded object-cover" />
+                          </div>
+                        )}
+                        <span className="font-bold text-slate-700 truncate max-w-[100px]">
+                          {item.products?.name || item.product_id}
+                        </span>
+                        <span className="text-red-600 font-black">{formatCurrency(item.sale_price)}</span>
+                      </div>
+                    ))}
+                    {(sale.items?.length || 0) > 4 && (
+                      <span className="text-xs text-slate-400 font-bold self-center">+{(sale.items?.length || 0) - 4} lagi</span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -143,7 +233,7 @@ export default function FlashSaleManager({ initialData }: { initialData: FlashSa
         )}
       </div>
 
-      {/* Edit/Create Modal */}
+      {/* ==================== Edit/Create Flash Sale Modal ==================== */}
       {editing && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
           <div className="my-auto w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden scale-in-center text-left">
@@ -241,6 +331,208 @@ export default function FlashSaleManager({ initialData }: { initialData: FlashSa
               <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
                 <AdminButton type="button" variant="secondary" onClick={() => setEditing(null)}>Batal</AdminButton>
                 <AdminButton type="submit" isLoading={loading}>Simpan</AdminButton>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== Manage Items Modal ==================== */}
+      {managingItems && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+          <div className="my-auto w-full max-w-3xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden text-left max-h-[90vh] flex flex-col">
+            {/* Header */}
+            <div className="px-5 sm:px-8 py-4 sm:py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+              <div>
+                <h3 className="text-lg sm:text-xl font-black text-heading">Produk Flash Sale</h3>
+                <p className="text-sm text-slate-500 font-medium">{managingItems.title}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setManagingItems(null); setEditingItem(null); }}
+                className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+              >
+                <XMarkIcon className="w-5 h-5 text-slate-400" />
+              </button>
+            </div>
+
+            {/* Content - scrollable */}
+            <div className="p-5 sm:p-8 space-y-6 overflow-y-auto flex-1">
+              {/* Add Item */}
+              <AdminButton onClick={() => setEditingItem({
+                flash_sale_id: managingItems.id,
+                product_id: '',
+                sale_price: 0,
+                stock_limit: 10,
+                sold_count: 0,
+              })}>
+                <PlusIcon className="w-5 h-5" />
+                Tambah Produk
+              </AdminButton>
+
+              {/* Items list */}
+              {managingItems.items && managingItems.items.length > 0 ? (
+                <div className="space-y-3">
+                  {managingItems.items.map((item) => {
+                    const product = item.products;
+                    const originalPrice = products.find(p => p.id === item.product_id)?.price || 0;
+                    const discountPercent = originalPrice > 0 ? Math.round((1 - item.sale_price / originalPrice) * 100) : 0;
+                    const stockPercent = item.stock_limit > 0 ? Math.round((item.sold_count / item.stock_limit) * 100) : 0;
+
+                    return (
+                      <div key={item.id} className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        {/* Product Image */}
+                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 shrink-0 relative">
+                          {product?.image_url ? (
+                            <Image src={product.image_url} alt={product.name} fill sizes="64px" className="object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-slate-300">
+                              <ShoppingBagIcon className="w-8 h-8" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-bold text-slate-800 text-sm truncate">{product?.name || item.product_id}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-red-600 font-black text-sm">{formatCurrency(item.sale_price)}</span>
+                            {originalPrice > 0 && (
+                              <span className="text-slate-400 text-xs line-through">{formatCurrency(originalPrice)}</span>
+                            )}
+                            {discountPercent > 0 && (
+                              <span className="bg-yellow-400 text-slate-900 text-[10px] font-black px-2 py-0.5 rounded-full">
+                                {discountPercent}% OFF
+                              </span>
+                            )}
+                          </div>
+                          {/* Stock Bar */}
+                          <div className="mt-2">
+                            <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
+                              <span>Terjual {item.sold_count} / {item.stock_limit}</span>
+                              <span>{stockPercent}%</span>
+                            </div>
+                            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full transition-all ${stockPercent > 80 ? 'bg-orange-500' : 'bg-red-500'}`}
+                                style={{ width: `${Math.min(stockPercent, 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => setEditingItem(item)}
+                            className="p-2 rounded-xl bg-slate-50 text-primary hover:bg-primary/10 transition-colors"
+                          >
+                            <PencilIcon className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteItem(item.id)}
+                            className="p-2 rounded-xl bg-slate-50 text-red-500 hover:bg-red-50 transition-colors"
+                          >
+                            <TrashIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="py-8 text-center border-2 border-dashed border-slate-200 rounded-2xl">
+                  <ShoppingBagIcon className="w-8 h-8 mx-auto text-slate-300 mb-2" />
+                  <p className="text-slate-400 text-sm font-medium italic">Belum ada produk. Tambahkan produk ke flash sale ini.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== Add/Edit Item Sub-Modal ==================== */}
+      {editingItem && (
+        <div className="fixed inset-0 z-70 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden text-left">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h4 className="text-base font-black text-heading">
+                {editingItem.id ? 'Edit Item' : 'Tambah Produk'}
+              </h4>
+              <button type="button" onClick={() => setEditingItem(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onSubmit={handleSaveItem} className="p-6 space-y-4">
+              {/* Product Picker */}
+              <div className="space-y-1.5">
+                <label className="block text-sm font-semibold text-slate-700">Pilih Produk *</label>
+                <select
+                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-800"
+                  value={editingItem.product_id || ''}
+                  onChange={e => {
+                    const selectedProduct = products.find(p => p.id === e.target.value);
+                    setEditingItem({
+                      ...editingItem,
+                      product_id: e.target.value,
+                      sale_price: editingItem.sale_price || Math.round((selectedProduct?.price || 0) * 0.5),
+                    });
+                  }}
+                  required
+                  disabled={!!editingItem.id}
+                >
+                  <option value="">— Pilih Produk —</option>
+                  {(editingItem.id ? products : availableProducts).map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} — {formatCurrency(p.price)}
+                    </option>
+                  ))}
+                </select>
+                {editingItem.product_id && (() => {
+                  const p = products.find(pr => pr.id === editingItem.product_id);
+                  return p ? (
+                    <div className="flex items-center gap-3 mt-2 p-3 bg-slate-50 rounded-xl">
+                      {p.image_url && (
+                        <div className="relative w-12 h-12 shrink-0">
+                          <Image src={p.image_url} alt="" fill sizes="48px" className="rounded-lg object-cover" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-bold text-sm text-slate-800">{p.name}</p>
+                        <p className="text-xs text-slate-500">Harga normal: {formatCurrency(p.price)}</p>
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
+              </div>
+
+              <AdminCurrencyInput
+                label="Harga Flash Sale *"
+                value={editingItem.sale_price || 0}
+                onChange={val => setEditingItem({ ...editingItem, sale_price: val })}
+              />
+
+              <AdminInput
+                label="Stok Flash Sale *"
+                type="number"
+                min={1}
+                value={editingItem.stock_limit ?? 10}
+                onChange={e => setEditingItem({ ...editingItem, stock_limit: Number(e.target.value) })}
+                required
+              />
+
+              <AdminInput
+                label="Sudah Terjual"
+                type="number"
+                min={0}
+                value={editingItem.sold_count ?? 0}
+                onChange={e => setEditingItem({ ...editingItem, sold_count: Number(e.target.value) })}
+              />
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <AdminButton type="button" variant="secondary" onClick={() => setEditingItem(null)}>Batal</AdminButton>
+                <AdminButton type="submit" isLoading={itemLoading}>Simpan</AdminButton>
               </div>
             </form>
           </div>

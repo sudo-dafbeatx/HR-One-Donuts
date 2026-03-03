@@ -48,6 +48,20 @@ export interface FlashSale {
   end_date?: string;
   created_at?: string;
   updated_at?: string;
+  items?: FlashSaleItem[];
+}
+
+export interface FlashSaleItem {
+  id: string;
+  flash_sale_id: string;
+  product_id: string;
+  sale_price: number;
+  stock_limit: number;
+  sold_count: number;
+  created_at?: string;
+  updated_at?: string;
+  // Joined from products table
+  products?: Pick<Product, 'id' | 'name' | 'price' | 'image_url' | 'category' | 'is_active'>;
 }
 
 export interface Category {

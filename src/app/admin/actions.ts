@@ -2,7 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { Product, PromoEvent, UITheme, FlashSale } from '@/types/cms';
+import { Product, PromoEvent, UITheme, FlashSale, FlashSaleItem } from '@/types/cms';
 import { extractStoragePath } from '@/lib/image-utils';
 import { deleteImage } from './upload-actions';
 
@@ -248,6 +248,52 @@ export async function deleteFlashSale(id: string) {
   revalidatePath('/admin/(dashboard)/content');
   return { success: true };
 }
+
+// --- Flash Sale Item Actions ---
+export async function saveFlashSaleItem(data: Partial<FlashSaleItem>) {
+  const supabase = await checkAdmin();
+
+  if (!data.flash_sale_id) throw new Error('flash_sale_id wajib diisi');
+  if (!data.product_id) throw new Error('product_id wajib diisi');
+  if (!data.sale_price || data.sale_price <= 0) throw new Error('Harga sale harus lebih dari 0');
+  if (!data.stock_limit || data.stock_limit <= 0) throw new Error('Stok limit harus lebih dari 0');
+
+  const itemData = {
+    id: data.id || crypto.randomUUID(),
+    flash_sale_id: data.flash_sale_id,
+    product_id: data.product_id,
+    sale_price: data.sale_price,
+    stock_limit: data.stock_limit,
+    sold_count: data.sold_count ?? 0,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from('flash_sale_items')
+    .upsert(itemData);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath('/');
+  revalidatePath('/admin/(dashboard)/content');
+  return { success: true };
+}
+
+export async function deleteFlashSaleItem(id: string) {
+  const supabase = await checkAdmin();
+
+  const { error } = await supabase
+    .from('flash_sale_items')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath('/');
+  revalidatePath('/admin/(dashboard)/content');
+  return { success: true };
+}
+
 // --- Sales Tracking ---
 export async function incrementSoldCount(productIds: string[]) {
   const supabase = await createServerSupabaseClient();
