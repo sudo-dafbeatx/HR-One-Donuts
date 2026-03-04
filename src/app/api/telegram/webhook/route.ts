@@ -395,16 +395,44 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: true });
       }
 
-      // --- /update <order_id> ---
+      // --- /update [order_id] ---
       if (command.startsWith('/update')) {
         const parts = text.split(' ');
-        if (parts.length < 2) {
-          await sendTelegramMessage(
-            chatId,
-            '📝 Gunakan format: /update &lt;kode_order&gt;\n\n' +
-            'Contoh: /update ABC123\n\n' +
-            'Sistem akan memunculkan tombol interaktif.'
-          );
+        
+        if (parts.length === 1) {
+          // Admin just typed /update
+          // Fetch active orders
+          try {
+            const supabase = createServiceRoleClient();
+            const { data: activeOrders } = await supabase
+              .from('orders')
+              .select('id, user_id, status, total_amount, created_at')
+              .neq('status', 'completed')
+              .order('created_at', { ascending: false })
+              .limit(5);
+
+            if (!activeOrders || activeOrders.length === 0) {
+              await sendTelegramMessage(chatId, '🎉 <b>Semua pesanan sudah selesai!</b>\nTidak ada pesanan aktif yang perlu diupdate.');
+              return NextResponse.json({ ok: true });
+            }
+
+            await sendTelegramMessage(chatId, `📦 <b>Menampilkan ${activeOrders.length} pesanan aktif terbaru:</b>`);
+
+            for (const order of activeOrders) {
+               await sendTelegramMessage(
+                chatId, 
+                `🍩 <b>Update Status Pesanan</b>\n\n` +
+                `🆔 #${order.id.slice(0, 8).toUpperCase()}\n` +
+                `💰 Total: Rp ${order.total_amount.toLocaleString('id-ID')}\n` +
+                `📊 Status Saat Ini: <b>${order.status.toUpperCase()}</b>`,
+                'HTML',
+                getOrderStatusKeyboard(order.id, order.status)
+              );
+            }
+          } catch (err) {
+            console.error('[Telegram Webhook] Admin fetch active orders error:', err);
+            await sendTelegramMessage(chatId, '⚠️ Gagal memuat daftar pesanan aktif.');
+          }
           return NextResponse.json({ ok: true });
         }
 
