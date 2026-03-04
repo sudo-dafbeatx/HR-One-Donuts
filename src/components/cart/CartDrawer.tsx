@@ -64,7 +64,7 @@ function QuantityInput({ initialValue, onUpdate }: { initialValue: number, onUpd
 }
 
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
-  const { cart, updateQuantity, setCartQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart, getEffectiveItemPrice, priceTiers } = useCart();
+  const { cart, updateQuantity, setCartQuantity, totalPrice, totalDonuts, isCartOpen, setIsCartOpen, removeFromCart, clearCart, getEffectiveItemPrice, priceTiers } = useCart();
   const { setIsLoading } = useLoading();
   const { showError } = useErrorPopup();
   const { t } = useTranslation();
@@ -78,7 +78,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const shippingFee = deliveryMethod === 'delivery' ? (siteSettings?.shipping_fee || 0) : 0;
   const finalTotal = totalPrice + shippingFee;
 
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  // We use totalDonuts from useCart for pricing logic and order records
+  // totalItems from useCart can be used for the physical item count if needed
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
@@ -161,7 +162,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       // 3. Save Order to Database
       await createOrder({
         total_amount: finalTotal,
-        total_items: totalItems,
+        total_items: totalDonuts,
         delivery_method: deliveryMethod,
         shipping_fee: shippingFee,
         shipping_address: finalShippingAddress,
@@ -404,7 +405,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
               </div>
               <div className="grid grid-cols-1 gap-2.5 text-xs font-bold font-mono">
                 {priceTiers.map((tier, idx) => {
-                  const isActive = totalItems >= tier.min && (!tier.max || totalItems <= tier.max);
+                  const isActive = totalDonuts >= tier.min && (!tier.max || totalDonuts <= tier.max);
                   return (
                     <div key={idx} className={`flex justify-between items-center px-4 py-3 rounded-xl transition-all duration-300 ${
                       isActive ? 'bg-primary text-[#111827] scale-[1.03] shadow-lg shadow-primary/40 ring-2 ring-white/20' : 'bg-white/5 text-slate-400'

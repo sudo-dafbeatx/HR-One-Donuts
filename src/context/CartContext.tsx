@@ -17,6 +17,7 @@ interface CartContextType {
   updateQuantity: (id: string, delta: number) => void;
   setCartQuantity: (id: string, quantity: number) => void;
   totalItems: number;
+  totalDonuts: number;
   totalPrice: number;
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
@@ -94,6 +95,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCart([]);
   };
 
+  const getItemUnits = (name: string) => {
+    // Robust check for "Isi X" or "Box X"
+    const match = name.match(/(?:isi|box)\s+(\d+)/i);
+    return match ? parseInt(match[1]) : 1;
+  };
+
+  const totalDonuts = cart.reduce((sum, item) => sum + item.quantity * getItemUnits(item.name), 0);
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   // New Tiered Pricing Logic:
@@ -107,13 +115,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   ];
 
   const getEffectiveItemPrice = (item: CartItem) => {
-    const tier = priceTiers.find(t => totalItems >= t.min && (!t.max || totalItems <= t.max));
-    return tier ? tier.price : item.price;
+    const units = getItemUnits(item.name);
+    // Determine the per-donut price based on total donuts in cart
+    const tier = priceTiers.find(t => totalDonuts >= t.min && (!t.max || totalDonuts <= t.max));
+    const perDonutPrice = tier ? tier.price : 2500; // Fallback to base price
+    
+    // Return the price for the whole item (e.g., Box price = 6 * perDonutPrice)
+    return perDonutPrice * units;
   };
 
   const totalPrice = cart.reduce((sum, item) => {
-    const effectivePrice = getEffectiveItemPrice(item);
-    return sum + effectivePrice * item.quantity;
+    return sum + getEffectiveItemPrice(item) * item.quantity;
   }, 0);
 
   return (
@@ -125,6 +137,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         updateQuantity,
         setCartQuantity,
         totalItems,
+        totalDonuts,
         totalPrice,
         isCartOpen,
         setIsCartOpen,
