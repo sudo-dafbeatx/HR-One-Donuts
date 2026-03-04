@@ -201,8 +201,11 @@ export async function POST(request: NextRequest) {
         await sendTelegramMessage(
           chatId,
           `👑 <b>Menu Admin HR-One Donuts</b>\n\n` +
-          `📊 /summary — Ringkasan penjualan hari ini\n` +
+          `📊 /summary — Ringkasan hari ini\n` +
+          `📈 /stats — Perbandingan hari ini vs kemarin\n` +
           `📦 /orders — 5 pesanan terbaru\n` +
+          `👥 /users — 5 user terbaru\n` +
+          `⭐ /reviews — 5 ulasan terbaru\n` +
           `⚙️ /help — Bantuan perintah umum`
         );
         return NextResponse.json({ ok: true });
@@ -267,6 +270,103 @@ export async function POST(request: NextRequest) {
         } catch (err) {
           console.error('[Telegram Webhook] Sales summary error:', err);
           await sendTelegramMessage(chatId, '⚠️ Gagal menghitung ringkasan penjualan.');
+        }
+        return NextResponse.json({ ok: true });
+      }
+
+      // --- /users ---
+      if (command === '/users') {
+        try {
+          const supabase = await createServerSupabaseClient();
+          const { data: users } = await supabase
+            .from('user_profiles')
+            .select('full_name, created_at')
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+          if (!users || users.length === 0) {
+            await sendTelegramMessage(chatId, '👥 Belum ada pengguna terdaftar.');
+            return NextResponse.json({ ok: true });
+          }
+
+          let usersText = '👥 <b>5 Pendaftar Terbaru</b>\n\n';
+          for (const user of users) {
+            const date = new Date(user.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            usersText += `• <b>${user.full_name || 'Tanpa Nama'}</b> — ${date}\n`;
+          }
+          await sendTelegramMessage(chatId, usersText);
+        } catch (err) {
+          console.error('[Telegram Webhook] Admin users error:', err);
+          await sendTelegramMessage(chatId, '⚠️ Gagal mengambil data pengguna.');
+        }
+        return NextResponse.json({ ok: true });
+      }
+
+      // --- /stats ---
+      if (command === '/stats') {
+        try {
+          const supabase = await createServerSupabaseClient();
+          
+          const todayStart = new Date();
+          todayStart.setHours(0, 0, 0, 0);
+          
+          const yesterdayStart = new Date();
+          yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+          yesterdayStart.setHours(0, 0, 0, 0);
+          
+          const yesterdayEnd = new Date(todayStart);
+
+          const [{ data: todayOrders }, { data: yesterdayOrders }] = await Promise.all([
+            supabase.from('orders').select('total_amount').gte('created_at', todayStart.toISOString()),
+            supabase.from('orders').select('total_amount').gte('created_at', yesterdayStart.toISOString()).lt('created_at', yesterdayEnd.toISOString())
+          ]);
+
+          const todayTotal = todayOrders?.reduce((sum, o) => sum + o.total_amount, 0) || 0;
+          const yesterdayTotal = yesterdayOrders?.reduce((sum, o) => sum + o.total_amount, 0) || 0;
+          
+          const diff = todayTotal - yesterdayTotal;
+          const diffEmoji = diff >= 0 ? '📈' : '📉';
+          const diffText = diff >= 0 ? 'Naik' : 'Turun';
+
+          await sendTelegramMessage(
+            chatId,
+            `📈 <b>Statistik Penjualan</b>\n\n` +
+            `📅 <b>Hari Ini:</b> Rp ${todayTotal.toLocaleString('id-ID')}\n` +
+            `📅 <b>Kemarin:</b> Rp ${yesterdayTotal.toLocaleString('id-ID')}\n\n` +
+            `${diffEmoji} <b>Trend:</b> ${diffText} Rp ${Math.abs(diff).toLocaleString('id-ID')} dibanding kemarin.`
+          );
+        } catch (err) {
+          console.error('[Telegram Webhook] Admin stats error:', err);
+          await sendTelegramMessage(chatId, '⚠️ Gagal mengambil statistik.');
+        }
+        return NextResponse.json({ ok: true });
+      }
+
+      // --- /reviews ---
+      if (command === '/reviews') {
+        try {
+          const supabase = await createServerSupabaseClient();
+          const { data: reviews } = await supabase
+            .from('product_reviews')
+            .select('rating, comment, products(name), created_at')
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+          if (!reviews || reviews.length === 0) {
+            await sendTelegramMessage(chatId, '⭐ Belum ada ulasan dari pelanggan.');
+            return NextResponse.json({ ok: true });
+          }
+
+          let reviewsText = '⭐ <b>5 Ulasan Terbaru</b>\n\n';
+          for (const review of reviews) {
+            const stars = '⭐'.repeat(review.rating);
+            const product = (review.products as any)?.name || 'Produk';
+            reviewsText += `• <b>${product}</b>\n  ${stars}\n  <i>"${review.comment || '(tanpa komentar)'}"</i>\n\n`;
+          }
+          await sendTelegramMessage(chatId, reviewsText);
+        } catch (err) {
+          console.error('[Telegram Webhook] Admin reviews error:', err);
+          await sendTelegramMessage(chatId, '⚠️ Gagal mengambil data ulasan.');
         }
         return NextResponse.json({ ok: true });
       }
