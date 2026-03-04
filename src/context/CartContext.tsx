@@ -124,9 +124,60 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return perDonutPrice * units;
   };
 
-  const totalPrice = cart.reduce((sum, item) => {
-    return sum + getEffectiveItemPrice(item) * item.quantity;
-  }, 0);
+  const totalPrice = (() => {
+    // Determine current day in Asia/Jakarta
+    const today = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Jakarta',
+      weekday: 'long',
+    }).format(new Date());
+
+    const baseTotal = cart.reduce((sum, item) => {
+      return sum + getEffectiveItemPrice(item) * item.quantity;
+    }, 0);
+
+    // 1. Selasa Mega Sale: Beli 4 Dus gratis 1 Dus
+    if (today === 'Tuesday') {
+      const boxItems = cart.filter(item => getItemUnits(item.name) > 1);
+      const totalBoxes = boxItems.reduce((sum, item) => sum + item.quantity, 0);
+      const freeCount = Math.floor(totalBoxes / 5);
+      
+      if (freeCount > 0) {
+        // Find cheapest box price to subtract (fair approach)
+        const sortedBoxes = [...boxItems].sort((a, b) => getEffectiveItemPrice(a) - getEffectiveItemPrice(b));
+        let subtracted = 0;
+        let remainingToFree = freeCount;
+        
+        for (const box of sortedBoxes) {
+          const count = Math.min(box.quantity, remainingToFree);
+          subtracted += count * getEffectiveItemPrice(box);
+          remainingToFree -= count;
+          if (remainingToFree <= 0) break;
+        }
+        return Math.max(0, baseTotal - subtracted);
+      }
+    }
+
+    // 2. Jumat Berkah: Beli 2 Dus (Isi 6) harga Rp 25.000
+    if (today === 'Friday') {
+      const box6Items = cart.filter(item => getItemUnits(item.name) === 6);
+      const totalBox6 = box6Items.reduce((sum, item) => sum + item.quantity, 0);
+      const pairs = Math.floor(totalBox6 / 2);
+      
+      if (pairs > 0) {
+        const currentBox6Price = getEffectiveItemPrice({ name: 'Isi 6', quantity: 1, id: 'temp-box', image: '', price: 0 } as CartItem);
+        const normalPriceFor2 = currentBox6Price * 2;
+        const promoPriceFor2 = 25000;
+        
+        // Only apply if promo price is actually cheaper than current tiered price
+        if (promoPriceFor2 < normalPriceFor2) {
+          const discountPerPair = normalPriceFor2 - promoPriceFor2;
+          return Math.max(0, baseTotal - (pairs * discountPerPair));
+        }
+      }
+    }
+
+    return baseTotal;
+  })();
 
   return (
     <CartContext.Provider

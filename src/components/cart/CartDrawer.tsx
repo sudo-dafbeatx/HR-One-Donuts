@@ -75,7 +75,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const [showProfileAlert, setShowProfileAlert] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery');
 
-  const shippingFee = deliveryMethod === 'delivery' ? (siteSettings?.shipping_fee || 0) : 0;
+  const shippingFee = (deliveryMethod === 'delivery' && totalDonuts <= 36) ? (siteSettings?.shipping_fee || 0) : 0;
   const finalTotal = totalPrice + shippingFee;
 
   // We use totalDonuts from useCart for pricing logic and order records
@@ -217,7 +217,17 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       });
       
       message += `-------------------\n`;
-      message += t('cart.whatsapp.subtotal', { amount: totalPrice.toLocaleString("id-ID") }) + "\n";
+      
+      const rawSubtotal = cart.reduce((sum, item) => sum + getEffectiveItemPrice(item) * item.quantity, 0);
+      const promoDiscount = rawSubtotal - totalPrice;
+
+      if (promoDiscount > 0) {
+        message += `Subtotal: Rp ${rawSubtotal.toLocaleString("id-ID")}\n`;
+        message += `Diskon Promo: -Rp ${promoDiscount.toLocaleString("id-ID")}\n`;
+        message += `Total Bersih: Rp ${totalPrice.toLocaleString("id-ID")}\n`;
+      } else {
+        message += t('cart.whatsapp.subtotal', { amount: totalPrice.toLocaleString("id-ID") }) + "\n";
+      }
       if (deliveryMethod === 'delivery') {
         message += t('cart.whatsapp.shipping', { amount: shippingFee.toLocaleString("id-ID") }) + "\n";
       }
