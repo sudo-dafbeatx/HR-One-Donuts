@@ -17,59 +17,62 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/context/LanguageContext';
 
 const StyledWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-
-  .Btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 54px;
-    border: none;
-    border-radius: 20px;
+  button {
+    font-size: 18px;
+    color: #475569; /* slate-600 */
+    font-family: inherit;
+    font-weight: 500;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 16px rgba(255, 65, 65, 0.25);
-    background-color: #ff4141;
-    gap: 12px;
-  }
+    border: none;
+    background: none;
 
-  .sign {
-    display: flex;
+    transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition-duration: 400ms;
+    transition-property: color;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    background: transparent; /* Ensure no accidental white background */
-    border: none; /* Ensure no accidental borders */
   }
 
-  .sign svg {
-    width: 22px; /* Slightly larger for better precision and clarity */
-    height: 22px;
+  button:focus,
+  button:hover {
+    color: #ef4444; /* red-500 for logout visibility */
   }
 
-  .sign svg path {
-    fill: white;
+  button:focus:after,
+  button:hover:after {
+    width: 100%;
+    right: 0;
+    left: auto; /* Ensure left is auto to override the initial value */
   }
 
-  .text {
-    color: white;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+  button:after {
+    content: "";
+    pointer-events: none;
+    bottom: -4px;
+    right: auto; /* Start from the right */
+    left: 0; /* Ensure left is auto to override the initial value */
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    background-color: #ef4444; /* matching the text hover */
+    transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition-duration: 500ms;
+    transition-property: width, right;
   }
 
-  .Btn:hover {
-    background-color: #f03232;
-    box-shadow: 0 6px 20px rgba(255, 65, 65, 0.35);
+  .svg-icon {
+    width: 0.9em;
+    height: 0.8em;
+    margin-left: 10px;
+    fill: #475569;
+    transform: rotate(-45deg);
+    transition: transform 0.5s ease-out, fill 0.4s;
   }
 
-  .Btn:active {
-    transform: scale(0.97);
+  button:hover .svg-icon {
+    transform: rotate(0deg);
+    fill: #ef4444;
   }
 `;
 
@@ -140,15 +143,15 @@ export default function SettingsPage() {
       ))}
 
       {/* Logout Button */}
-      <div className="pt-4 pb-12 px-6">
+      <div className="pt-4 pb-12 px-6 flex justify-center">
         <StyledWrapper>
-          <button className="Btn" onClick={handleLogout}>
-            <div className="sign">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+          <button onClick={handleLogout}>
+            <span>{t('settings.logout')}</span>
+            <span className="icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="svg-icon">
+                <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
               </svg>
-            </div>
-            <div className="text">{t('settings.logout')}</div>
+            </span>
           </button>
         </StyledWrapper>
       </div>
