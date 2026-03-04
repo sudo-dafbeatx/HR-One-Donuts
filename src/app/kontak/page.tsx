@@ -4,7 +4,6 @@ import Footer from "@/components/Footer";
 export const revalidate = 3600; // Cache for 1 hour
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SiteSettings } from "@/types/cms";
-import { getCopy } from "@/lib/theme";
 import Link from "next/link";
 
 export default async function KontakPage() {
@@ -53,7 +52,7 @@ export default async function KontakPage() {
                     rel="noopener noreferrer"
                     className="text-lg font-black text-slate-900 hover:text-primary transition-colors"
                   >
-                    {process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "+62 895-3512-51395"}
+                    {process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "6285810658117"}
                   </a>
                 </div>
               </section>
