@@ -21,9 +21,24 @@ export default function AudioPermissionToast() {
     // Check if we've already asked the user for audio permission
     const hasAsked = localStorage.getItem("audioAllowed");
     if (hasAsked === null) {
-      // Small delay to ensure smooth rendering after mount
-      const timer = setTimeout(() => setShowToast(true), 1500);
-      return () => clearTimeout(timer);
+      // Check if the Birthday popup is currently open
+      const isPopupOpen = document.body.classList.contains('popup-open');
+
+      const showToastDelayed = () => {
+        setTimeout(() => setShowToast(true), 1500);
+      };
+
+      if (isPopupOpen) {
+        // Wait for the popup to close
+        const handlePopupClosed = () => {
+          window.removeEventListener('popupClosed', handlePopupClosed);
+          showToastDelayed();
+        };
+        window.addEventListener('popupClosed', handlePopupClosed);
+      } else {
+        // No popup open, show toast right away
+        showToastDelayed();
+      }
     }
   }, [mounted]);
 

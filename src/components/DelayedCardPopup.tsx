@@ -63,7 +63,10 @@ export default function DelayedCardPopup({ siteSettings }: { siteSettings?: Site
     setHasClosed(true);
     sessionStorage.setItem('delayed_card_closed', 'true');
     document.body.classList.remove('popup-open');
-    setTimeout(() => setRender(false), 400);
+    setTimeout(() => {
+      setRender(false);
+      window.dispatchEvent(new Event('popupClosed'));
+    }, 400);
   };
 
   const handleNavigate = (e: React.MouseEvent) => {
@@ -74,6 +77,7 @@ export default function DelayedCardPopup({ siteSettings }: { siteSettings?: Site
     document.body.classList.remove('popup-open');
     setTimeout(() => {
       setRender(false);
+      window.dispatchEvent(new Event('popupClosed'));
       router.push('/promo/birthday');
     }, 400);
   };

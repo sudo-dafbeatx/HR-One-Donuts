@@ -74,17 +74,16 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
         reviewCount: reviewsRes.count || 0
       });
 
-      // Play welcome sound once per session for logged-in users
+      // Play welcome sound EVERY time the home page is visited (or refreshed)
       // ONLY if they have already granted audio permission!
-      if (!sessionStorage.getItem('welcomeSoundPlayed') && localStorage.getItem('audioAllowed') === 'true') {
-        sessionStorage.setItem('welcomeSoundPlayed', 'true');
+      if (pathname === '/' && localStorage.getItem('audioAllowed') === 'true') {
         playNotificationSound('/sounds/selamat-datang-full.mp3');
       }
     }
 
     if (mounted) fetchUserData();
     return () => clearTimeout(timer);
-  }, [mounted, supabase]);
+  }, [mounted, pathname, supabase]);
 
   if (pathname && (pathname.startsWith('/terms') || pathname.startsWith('/privacy') || pathname.startsWith('/cookies'))) {
     return null;
