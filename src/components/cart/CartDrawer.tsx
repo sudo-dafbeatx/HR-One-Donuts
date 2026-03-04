@@ -180,7 +180,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       const fullAddressForWA = finalShippingAddress || profileAddressStr;
 
       // 4. Generate WhatsApp Message
-      const rawPhone = siteSettings?.whatsapp_number || process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "62895351251395";
+      const rawPhone = siteSettings?.whatsapp_number || process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "6285810658117";
       const phone = rawPhone.replace(/\D/g, ""); // Ensure digits only
       
       let message = t('cart.whatsapp.greeting', { store_name: siteSettings?.store_name || "HR-One Donuts" }) + "\n\n";
@@ -456,8 +456,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 </button>
               </div>
               {deliveryMethod === 'delivery' && (
-                <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 italic text-center leading-relaxed">
+                <div className="bg-slate-800 dark:bg-slate-900 p-3 rounded-xl border border-slate-700">
+                  <p className="text-[10px] text-white italic text-center leading-relaxed">
                     {t('cart.shipping_note')}
                   </p>
                 </div>

@@ -164,7 +164,7 @@ export default function HROneSupportWidget() {
     if (inputValue === "Kontak WA Darurat") {
       addUserMessage(inputValue);
       setTimeout(() => {
-        const phoneNumber = process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "62895351251395";
+        const phoneNumber = process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "6285810658117";
         const message = encodeURIComponent("Halo Tim CS/Teknis HR-One Donut 👋 Saya ingin melaporkan kendala teknis/sistem.");
         window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
         addBotMessage("Mengarahkan Anda ke WhatsApp Customer Support...");
