@@ -20,73 +20,55 @@ const StyledWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 
   .Btn {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    width: 45px;
-    height: 45px;
+    justify-content: center;
+    width: 100%;
+    height: 54px;
     border: none;
-    border-radius: 50%;
+    border-radius: 20px; /* Matches the rounded-2xl look */
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    transition-duration: .3s;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
-    background-color: rgb(255, 65, 65);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(255, 65, 65, 0.25);
+    background-color: #ff4141;
+    gap: 12px;
   }
 
-  /* plus sign */
   .sign {
-    width: 100%;
-    transition-duration: .3s;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
   .sign svg {
-    width: 17px;
+    width: 20px;
   }
 
   .sign svg path {
     fill: white;
   }
-  /* text */
+
   .text {
-    position: absolute;
-    right: 0%;
-    width: 0%;
-    opacity: 0;
     color: white;
-    font-size: 1.2em;
-    font-weight: 600;
-    transition-duration: .3s;
-  }
-  /* hover effect on button width */
-  .Btn:hover {
-    width: 125px;
-    border-radius: 40px;
-    transition-duration: .3s;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
   }
 
-  .Btn:hover .sign {
-    width: 30%;
-    transition-duration: .3s;
-    padding-left: 20px;
+  .Btn:hover {
+    background-color: #f03232;
+    box-shadow: 0 6px 20px rgba(255, 65, 65, 0.35);
   }
-  /* hover effect button's text */
-  .Btn:hover .text {
-    opacity: 1;
-    width: 70%;
-    transition-duration: .3s;
-    padding-right: 10px;
-  }
-  /* button click effect*/
+
   .Btn:active {
-    transform: translate(2px ,2px);
-  }`;
+    transform: scale(0.97);
+  }
+`;
 
 export default function SettingsPage() {
   const { t } = useTranslation();
