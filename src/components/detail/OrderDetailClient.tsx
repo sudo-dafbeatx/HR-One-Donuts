@@ -37,11 +37,9 @@ interface Order {
 }
 
 export default function OrderDetailClient({ 
-  initialOrder, 
-  userId 
+  initialOrder
 }: { 
-  initialOrder: Order; 
-  userId: string;
+  initialOrder: Order;
 }) {
   const [order, setOrder] = useState<Order>(initialOrder);
   const supabase = createClient();

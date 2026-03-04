@@ -31,8 +31,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
   return (
     <OrderDetailClient 
-      initialOrder={order as any} 
-      userId={authData.user.id} 
+      initialOrder={order as unknown as Parameters<typeof OrderDetailClient>[0]['initialOrder']} 
     />
   );
 }
