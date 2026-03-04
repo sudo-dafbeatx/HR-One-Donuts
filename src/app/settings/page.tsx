@@ -114,28 +114,28 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="py-4 space-y-6">
+    <div className="py-8 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto space-y-10 min-h-screen bg-slate-50/50">
       {sections.map((section, sIndex) => (
-        <div key={sIndex} className="space-y-2">
-          <h2 className="px-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        <div key={sIndex} className="space-y-4">
+          <h2 className="px-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
             {section.title}
           </h2>
-          <div className="bg-white border-y border-slate-100 divide-y divide-slate-50">
+          <div className="space-y-3">
             {section.items.map((item, iIndex) => (
               <Link 
                 key={iIndex} 
                 href={item.href}
-                className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors group"
+                className="flex items-center justify-between p-4 bg-white rounded-2xl ring-1 ring-slate-100/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_-6px_rgba(0,0,0,0.08)] hover:ring-slate-200 transition-all duration-300 group"
               >
                 <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-xl ${item.variant === 'danger' ? 'bg-red-50 text-red-500' : 'bg-slate-100 text-slate-600'} group-hover:scale-110 transition-transform`}>
-                    <item.icon className="size-5" />
+                  <div className={`p-2.5 rounded-xl transition-colors duration-300 ${item.variant === 'danger' ? 'bg-red-50 text-red-500 group-hover:bg-red-100' : 'bg-slate-50/80 text-slate-500 group-hover:bg-slate-100 group-hover:text-slate-700'}`}>
+                    <item.icon className="size-5" strokeWidth={1.8} />
                   </div>
-                  <span className={`text-sm font-medium ${item.variant === 'danger' ? 'text-red-500' : 'text-slate-700'}`}>
+                  <span className={`text-[15px] font-medium tracking-wide ${item.variant === 'danger' ? 'text-red-500' : 'text-slate-700'}`}>
                     {item.label}
                   </span>
                 </div>
-                <ChevronRightIcon className="size-4 text-slate-300" />
+                <ChevronRightIcon className="size-4 text-slate-300 group-hover:text-slate-500 transition-colors" strokeWidth={2.5} />
               </Link>
             ))}
           </div>
@@ -143,12 +143,12 @@ export default function SettingsPage() {
       ))}
 
       {/* Logout Button */}
-      <div className="pt-4 pb-12 px-6 flex justify-center">
+      <div className="pt-8 pb-16 px-2 flex justify-center">
         <StyledWrapper>
-          <button onClick={handleLogout}>
-            <span>{t('settings.logout')}</span>
+          <button onClick={handleLogout} className="group">
+            <span className="group-hover:text-red-500 transition-colors duration-300">{t('settings.logout')}</span>
             <span className="icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="svg-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="svg-icon group-hover:fill-red-500">
                 <path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z" />
               </svg>
             </span>
