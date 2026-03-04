@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sendTelegramMessage, telegramBot } from '@/lib/telegram';
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { handleOrderCallbackQuery } from '@/lib/telegram/orderHandler';
+import { getOrderStatusKeyboard } from '@/lib/telegram/telegramButtons';
 
 
 
@@ -394,28 +395,20 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: true });
       }
 
-      // --- /update <order_id> <status> ---
+      // --- /update <order_id> ---
       if (command.startsWith('/update')) {
         const parts = text.split(' ');
-        if (parts.length < 3) {
+        if (parts.length < 2) {
           await sendTelegramMessage(
             chatId,
-            '📝 Gunakan format: /update &lt;kode_order&gt; &lt;status&gt;\n\n' +
-            'Contoh: /update ABC123 shipping\n\n' +
-            '<b>Status valid:</b>\n' +
-            'confirmed, processing, shipping, ready, completed'
+            '📝 Gunakan format: /update &lt;kode_order&gt;\n\n' +
+            'Contoh: /update ABC123\n\n' +
+            'Sistem akan memunculkan tombol interaktif.'
           );
           return NextResponse.json({ ok: true });
         }
 
         const rawOrderId = parts[1].trim();
-        const newStatus = parts[2].trim().toLowerCase();
-
-        const validStatuses = ['confirmed', 'processing', 'shipping', 'ready', 'completed'];
-        if (!validStatuses.includes(newStatus)) {
-          await sendTelegramMessage(chatId, `❌ Status "${newStatus}" tidak valid.`);
-          return NextResponse.json({ ok: true });
-        }
 
         try {
           const supabase = createServiceRoleClient();
@@ -423,7 +416,7 @@ export async function POST(request: NextRequest) {
           // Find matching order
           const { data: order } = await supabase
             .from('orders')
-            .select('id, user_id')
+            .select('id, user_id, status, total_amount')
             .ilike('id', `%${rawOrderId}%`)
             .limit(1)
             .maybeSingle();
@@ -435,53 +428,19 @@ export async function POST(request: NextRequest) {
 
           const orderId = order.id;
 
-          const { error: updateError } = await supabase
-            .from('orders')
-            .update({ status: newStatus, updated_at: new Date().toISOString() })
-            .eq('id', orderId);
-
-          if (updateError) throw updateError;
-
-          // Insert Notification for the user
-          try {
-            const titles: Record<string, string> = {
-              confirmed: 'Pesanan Dikonfirmasi',
-              processing: 'Pesanan Diproses',
-              shipping: 'Pesanan Sedang Dikirim',
-              ready: 'Pesanan Siap Diambil',
-              completed: 'Pesanan Selesai'
-            };
-            
-            const messages: Record<string, string> = {
-              confirmed: 'Pesanan Anda telah kami terima dan sedang menunggu proses.',
-              processing: 'Donat Anda sedang dibuat dengan cinta.',
-              shipping: 'Kurir kami sedang dalam perjalanan mengantar pesanan Anda.',
-              ready: 'Pesanan Anda sudah siap diambil di outlet kami.',
-              completed: 'Pesanan selesai. Jangan lupa berikan ulasan Anda!'
-            };
-
-            if (titles[newStatus] && order.user_id) {
-              await supabase.from('notifications').insert({
-                user_id: order.user_id,
-                title: titles[newStatus],
-                message: messages[newStatus],
-                type: 'order_update',
-                related_record_id: orderId
-              });
-            }
-          } catch (notifErr) {
-            console.error('[Telegram Webhook] Failed to send user notification:', notifErr);
-          }
-
           await sendTelegramMessage(
             chatId, 
-            `✅ <b>Status Terupdate!</b>\n\n` +
+            `🍩 <b>Update Status Pesanan</b>\n\n` +
             `🆔 #${orderId.slice(0, 8).toUpperCase()}\n` +
-            `📊 Status baru: <b>${newStatus.toUpperCase()}</b>`
+            `💰 Total: Rp ${order.total_amount.toLocaleString('id-ID')}\n` +
+            `📊 Status: <b>${order.status.toUpperCase()}</b>\n\n` +
+            `Pilih pembaruan di bawah ini:`,
+            'HTML',
+            getOrderStatusKeyboard(orderId, order.status)
           );
         } catch (err) {
           console.error('[Telegram Webhook] Admin update status error:', err);
-          await sendTelegramMessage(chatId, '⚠️ Gagal memperbarui status pesanan.');
+          await sendTelegramMessage(chatId, '⚠️ Gagal memuat menu update pesanan.');
         }
         return NextResponse.json({ ok: true });
       }
