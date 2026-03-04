@@ -75,8 +75,31 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
 
       // Play welcome sound once per session for logged-in users
       if (!sessionStorage.getItem('welcomeSoundPlayed')) {
-        sessionStorage.setItem('welcomeSoundPlayed', 'true');
-        playNotificationSound('/sounds/selamat-datang-full.mp3');
+        const playPromise = playNotificationSound('/sounds/selamat-datang-full.mp3');
+        if (playPromise) {
+          playPromise.then(() => {
+            sessionStorage.setItem('welcomeSoundPlayed', 'true');
+          }).catch(() => {
+            // Autoplay diblokir. Tunggu interaksi pertama kali.
+            const handleInteraction = () => {
+              // Hapus listener agar tidak berulang
+              document.removeEventListener('click', handleInteraction);
+              document.removeEventListener('keydown', handleInteraction);
+              document.removeEventListener('touchstart', handleInteraction);
+              
+              const retryPromise = playNotificationSound('/sounds/selamat-datang-full.mp3');
+              if (retryPromise) {
+                retryPromise.then(() => {
+                  sessionStorage.setItem('welcomeSoundPlayed', 'true');
+                });
+              }
+            };
+            
+            document.addEventListener('click', handleInteraction);
+            document.addEventListener('keydown', handleInteraction);
+            document.addEventListener('touchstart', handleInteraction);
+          });
+        }
       }
     }
 

@@ -3,9 +3,13 @@ export const playNotificationSound = (url: string = '/sounds/hr-one-donuts.mp3')
 
   try {
     const audio = new Audio(url);
-    audio.play().catch((error) => {
-      console.warn("Autoplay audio diblokir oleh browser. User perlu berinteraksi dengan halaman terlebih dahulu.", error);
-    });
+    const promise = audio.play();
+    if (promise !== undefined) {
+      promise.catch((error) => {
+        console.warn("Autoplay audio diblokir. Menunggu interaksi user...", error);
+      });
+      return promise;
+    }
   } catch (error) {
     console.error("Gagal memutar audio:", error);
   }
