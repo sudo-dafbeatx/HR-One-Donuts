@@ -20,6 +20,7 @@ import { useTranslation } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import NotificationBell from "@/components/NotificationBell";
 import { playNotificationSound } from "@/lib/audio-utils";
+import AudioPermissionToast from "@/components/ui/AudioPermissionToast";
 interface NavbarProps {
   siteSettings?: SiteSettings;
   hideLogo?: boolean;
@@ -74,32 +75,10 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
       });
 
       // Play welcome sound once per session for logged-in users
-      if (!sessionStorage.getItem('welcomeSoundPlayed')) {
-        const playPromise = playNotificationSound('/sounds/selamat-datang-full.mp3');
-        if (playPromise) {
-          playPromise.then(() => {
-            sessionStorage.setItem('welcomeSoundPlayed', 'true');
-          }).catch(() => {
-            // Autoplay diblokir. Tunggu interaksi pertama kali.
-            const handleInteraction = () => {
-              // Hapus listener agar tidak berulang
-              document.removeEventListener('click', handleInteraction);
-              document.removeEventListener('keydown', handleInteraction);
-              document.removeEventListener('touchstart', handleInteraction);
-              
-              const retryPromise = playNotificationSound('/sounds/selamat-datang-full.mp3');
-              if (retryPromise) {
-                retryPromise.then(() => {
-                  sessionStorage.setItem('welcomeSoundPlayed', 'true');
-                });
-              }
-            };
-            
-            document.addEventListener('click', handleInteraction);
-            document.addEventListener('keydown', handleInteraction);
-            document.addEventListener('touchstart', handleInteraction);
-          });
-        }
+      // ONLY if they have already granted audio permission!
+      if (!sessionStorage.getItem('welcomeSoundPlayed') && localStorage.getItem('audioAllowed') === 'true') {
+        sessionStorage.setItem('welcomeSoundPlayed', 'true');
+        playNotificationSound('/sounds/selamat-datang-full.mp3');
       }
     }
 
@@ -112,7 +91,9 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-white/70 backdrop-blur-md border-b border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.03)] supports-backdrop-filter:bg-white/60">
+    <>
+      <AudioPermissionToast />
+      <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-white/70 backdrop-blur-md border-b border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.03)] supports-backdrop-filter:bg-white/60">
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-20 flex items-center justify-between gap-4 md:gap-8">
         {/* Logo */}
         {!hideLogo && (
@@ -308,6 +289,6 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
         </div>
       </div>
     </header>
-
+  </>
   );
 }
