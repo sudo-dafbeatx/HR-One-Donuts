@@ -3,6 +3,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { sendAdminNotification } from '@/lib/telegram';
+import { getOrderStatusKeyboard } from '@/lib/telegram/telegramButtons';
 
 export async function getCurrentUserProfile() {
   try {
@@ -151,7 +152,8 @@ export async function createOrder(data: {
         `💰 Total: Rp ${data.total_amount.toLocaleString('id-ID')}\n` +
         `📦 ${data.total_items} item\n` +
         `🚗 ${finalMethod === 'pickup' ? 'Ambil di Toko' : 'Delivery'}\n\n` +
-        `<b>Item:</b>\n${itemsList}`
+        `<b>Item:</b>\n${itemsList}`,
+        getOrderStatusKeyboard(order!.id, 'pending')
       );
     } catch (tgErr) {
       console.warn('[Telegram] Failed to notify admin:', tgErr);

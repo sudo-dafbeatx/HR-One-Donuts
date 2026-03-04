@@ -1,9 +1,10 @@
-/**
- * Telegram Bot API utility for HR-One Donuts
- * Sends messages via the Telegram Bot API (100% free, no library needed)
- */
+import TelegramBot from 'node-telegram-bot-api';
 
-const TELEGRAM_API = 'https://api.telegram.org/bot';
+const token = process.env.TELEGRAM_BOT_TOKEN;
+const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
+
+// Initialize bot without polling since we use webhooks
+export const telegramBot = token ? new TelegramBot(token, { polling: false }) : null;
 
 interface TelegramSendResult {
   ok: boolean;
@@ -14,35 +15,25 @@ interface TelegramSendResult {
  * Send a message to a specific Telegram chat
  */
 export async function sendTelegramMessage(
-  chatId: string,
+  chatId: string | number,
   text: string,
-  parseMode: 'HTML' | 'Markdown' = 'HTML'
+  parseMode: 'HTML' | 'Markdown' = 'HTML',
+  replyMarkup?: TelegramBot.InlineKeyboardMarkup
 ): Promise<TelegramSendResult> {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-
-  if (!token) {
+  if (!telegramBot) {
     console.warn('[Telegram] TELEGRAM_BOT_TOKEN is not set. Skipping message.');
     return { ok: false, description: 'Bot token not configured' };
   }
 
   try {
-    const response = await fetch(`${TELEGRAM_API}${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text,
-        parse_mode: parseMode,
-      }),
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    const message = await telegramBot.sendMessage(chatId, text, {
+      parse_mode: parseMode,
+      reply_markup: replyMarkup
     });
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
-    const result = await response.json();
-
-    if (!result.ok) {
-      console.error('[Telegram] Failed to send message:', result.description);
-    }
-
-    return result;
+    return { ok: true, description: 'Message sent' };
   } catch (error) {
     console.error('[Telegram] Error sending message:', error);
     return { ok: false, description: (error as Error).message };
@@ -52,13 +43,14 @@ export async function sendTelegramMessage(
 /**
  * Send a notification to the admin chat
  */
-export async function sendAdminNotification(text: string): Promise<TelegramSendResult> {
-  const chatId = process.env.TELEGRAM_ADMIN_CHAT_ID;
-
+export async function sendAdminNotification(
+  text: string,
+  replyMarkup?: TelegramBot.InlineKeyboardMarkup
+): Promise<TelegramSendResult> {
   if (!chatId) {
     console.warn('[Telegram] TELEGRAM_ADMIN_CHAT_ID is not set. Skipping admin notification.');
     return { ok: false, description: 'Admin chat ID not configured' };
   }
 
-  return sendTelegramMessage(chatId, text);
+  return sendTelegramMessage(chatId, text, 'HTML', replyMarkup);
 }

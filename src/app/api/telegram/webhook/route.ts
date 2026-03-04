@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sendTelegramMessage } from '@/lib/telegram';
+import { sendTelegramMessage, telegramBot } from '@/lib/telegram';
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase/server';
+import { handleOrderCallbackQuery } from '@/lib/telegram/orderHandler';
 
-interface TelegramMessage {
-  message_id: number;
-  from: { id: number; first_name: string };
-  chat: { id: number; type: string };
-  text?: string;
-}
 
-interface TelegramUpdate {
-  update_id: number;
-  message?: TelegramMessage;
-}
+
+
 
 export async function POST(request: NextRequest) {
   try {
-    const body: TelegramUpdate = await request.json();
+    const body = await request.json();
+
+    // Check for callback queries first (Inline Keyboard button clicks)
+    if (body.callback_query && telegramBot) {
+      await handleOrderCallbackQuery(telegramBot, body.callback_query);
+      return NextResponse.json({ ok: true });
+    }
+
     const message = body.message;
 
     if (!message?.text) {

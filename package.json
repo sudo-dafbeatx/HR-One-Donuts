@@ -17,6 +17,7 @@
     "@types/bcryptjs": "^3.0.0",
     "bcryptjs": "^3.0.3",
     "next": "16.1.6",
+    "node-telegram-bot-api": "^0.67.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "recharts": "^3.7.0",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/node-telegram-bot-api": "^0.64.14",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
