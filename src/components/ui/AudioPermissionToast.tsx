@@ -8,7 +8,11 @@ export default function AudioPermissionToast() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    // Small delay before setting mounted to allow initial client-side render
+    const mountTimer = setTimeout(() => {
+      setMounted(true);
+    }, 10);
+    return () => clearTimeout(mountTimer);
   }, []);
 
   useEffect(() => {
@@ -44,7 +48,7 @@ export default function AudioPermissionToast() {
   if (!mounted || !showToast) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-md bg-white rounded-2xl shadow-2xl border border-primary/20 p-4 z-[9999] animate-in slide-in-from-bottom-5 fade-in duration-500">
+    <div className="fixed bottom-4 left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-md bg-white rounded-2xl shadow-2xl border border-primary/20 p-4 z-9999 animate-in slide-in-from-bottom-5 fade-in duration-500">
       <div className="flex items-start gap-3">
         <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
           <span className="material-symbols-outlined text-primary">volume_up</span>
