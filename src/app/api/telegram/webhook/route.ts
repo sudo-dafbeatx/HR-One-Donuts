@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendTelegramMessage } from '@/lib/telegram';
-import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase/server';
 
 interface TelegramMessage {
   message_id: number;
@@ -214,7 +214,7 @@ export async function POST(request: NextRequest) {
       // --- /orders ---
       if (command === '/orders') {
         try {
-          const supabase = await createServerSupabaseClient();
+          const supabase = createServiceRoleClient();
           const { data: orders } = await supabase
             .from('orders')
             .select('id, status, total_amount, created_at')
@@ -242,7 +242,7 @@ export async function POST(request: NextRequest) {
       // --- /summary ---
       if (command === '/summary') {
         try {
-          const supabase = await createServerSupabaseClient();
+          const supabase = createServiceRoleClient();
           const today = new Date();
           today.setHours(0, 0, 0, 0);
 
@@ -277,9 +277,9 @@ export async function POST(request: NextRequest) {
       // --- /users ---
       if (command === '/users') {
         try {
-          const supabase = await createServerSupabaseClient();
+          const supabase = createServiceRoleClient();
           const { data: users } = await supabase
-            .from('user_profiles')
+            .from('profiles')
             .select('full_name, created_at')
             .order('created_at', { ascending: false })
             .limit(5);
@@ -305,7 +305,7 @@ export async function POST(request: NextRequest) {
       // --- /stats ---
       if (command === '/stats') {
         try {
-          const supabase = await createServerSupabaseClient();
+          const supabase = createServiceRoleClient();
           
           const todayStart = new Date();
           todayStart.setHours(0, 0, 0, 0);
@@ -345,7 +345,7 @@ export async function POST(request: NextRequest) {
       // --- /reviews ---
       if (command === '/reviews') {
         try {
-          const supabase = await createServerSupabaseClient();
+          const supabase = createServiceRoleClient();
           const { data: reviews } = await supabase
             .from('product_reviews')
             .select('rating, comment, products(name), created_at')
