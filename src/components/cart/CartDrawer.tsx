@@ -462,6 +462,13 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   </p>
                 </div>
               )}
+              {deliveryMethod === 'pickup' && (
+                <div className="bg-slate-800 dark:bg-slate-900 p-3 rounded-xl border border-slate-700">
+                  <p className="text-[10px] text-white italic text-center leading-relaxed whitespace-pre-line">
+                    {t('cart.pickup_note')}
+                  </p>
+                </div>
+              )}
             </div>
           )}
           
