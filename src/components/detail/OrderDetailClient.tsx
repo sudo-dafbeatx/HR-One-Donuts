@@ -208,20 +208,20 @@ export default function OrderDetailClient({
            
            <div className="space-y-3">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-slate-500 font-medium">{t('orders.detail.subtotal_label')}</span>
-                <span className="text-slate-800 font-bold">Rp {(order.total_amount - (order.shipping_fee || 0)).toLocaleString('id-ID')}</span>
+                <span className="text-slate-600 font-medium">{t('orders.detail.subtotal_label')}</span>
+                <span className="text-[#111827] font-bold">Rp {(order.total_amount - (order.shipping_fee || 0)).toLocaleString('id-ID')}</span>
               </div>
               
               {order.delivery_method === 'delivery' && (
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500 font-medium">{t('orders.detail.shipping_label')}</span>
-                  <span className="text-slate-800 font-bold">Rp {(order.shipping_fee || 0).toLocaleString('id-ID')}</span>
+                  <span className="text-slate-600 font-medium">{t('orders.detail.shipping_label')}</span>
+                  <span className="text-[#111827] font-bold">Rp {(order.shipping_fee || 0).toLocaleString('id-ID')}</span>
                 </div>
               )}
 
               <div className="pt-4 mt-2 border-t border-slate-100 flex justify-between items-center">
-                <span className="text-sm font-bold text-slate-800">{t('orders.detail.total_label')}</span>
-                <span className="text-lg md:text-xl font-black text-primary">Rp {order.total_amount.toLocaleString('id-ID')}</span>
+                <span className="text-sm font-bold text-[#111827]">{t('orders.detail.total_label')}</span>
+                <span className="text-lg md:text-xl font-black text-[#111827]">Rp {order.total_amount.toLocaleString('id-ID')}</span>
               </div>
            </div>
         </div>

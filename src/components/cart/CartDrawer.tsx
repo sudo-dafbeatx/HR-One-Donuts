@@ -279,7 +279,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
       {/* Drawer */}
       <aside 
-        className={`fixed right-0 top-0 h-full w-full max-w-md bg-background text-foreground shadow-2xl z-70 flex flex-col transform transition-transform duration-300 ease-in-out ${
+        className={`fixed right-0 top-0 h-dvh w-full max-w-md bg-background text-foreground shadow-2xl z-70 flex flex-col transform transition-transform duration-300 ease-in-out ${
           isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -407,13 +407,13 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   const isActive = totalItems >= tier.min && (!tier.max || totalItems <= tier.max);
                   return (
                     <div key={idx} className={`flex justify-between items-center px-4 py-3 rounded-xl transition-all duration-300 ${
-                      isActive ? 'bg-primary text-white scale-[1.03] shadow-lg shadow-primary/40 ring-2 ring-white/20' : 'bg-white/5 text-slate-400'
+                      isActive ? 'bg-primary text-[#111827] scale-[1.03] shadow-lg shadow-primary/40 ring-2 ring-white/20' : 'bg-white/5 text-slate-400'
                     }`}>
                       <span className="flex items-center gap-2">
-                        {isActive && <span className="w-2 h-2 rounded-full bg-white animate-pulse" />}
+                        {isActive && <span className="w-2 h-2 rounded-full bg-[#111827] animate-pulse" />}
                         {tier.max ? `${tier.min} - ${tier.max} Pcs` : `> ${tier.min - 1} Pcs`}
                       </span>
-                      <span className={isActive ? 'text-amber-300 text-lg font-black' : 'text-amber-500/70'}>
+                      <span className={isActive ? 'text-[#111827] text-lg font-black' : 'text-amber-500/70'}>
                         Rp {tier.price.toLocaleString('id-ID')}
                       </span>
                     </div>
@@ -463,11 +463,14 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
               )}
             </div>
           )}
+          
+          {/* Bottom spacer to prevent content from being hidden by sticky footer */}
+          {cart.length > 0 && <div className="h-40 md:h-20" />}
         </div>
 
         {/* Compact Sticky Footer */}
         {cart.length > 0 && (
-          <div className="p-4 bg-background border-t border-slate-100 dark:border-white/10 shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.1)]">
+          <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-white/10 shadow-[0_-15px_30px_-10px_rgba(0,0,0,0.15)] mt-auto sticky bottom-0 z-30">
             <div className="space-y-1.5 mb-4">
               <div className="flex justify-between text-slate-500 dark:text-slate-400">
                 <span className="text-xs font-medium">{t('cart.subtotal')}</span>
@@ -487,15 +490,15 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
             <button 
               onClick={handleWhatsAppOrder}
-              className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl py-3.5 flex flex-col items-center justify-center gap-0.5 transition-all shadow-lg shadow-[#25D366]/20 active:scale-[0.97]"
+              className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-[#111827] rounded-xl py-3.5 flex flex-col items-center justify-center gap-0.5 transition-all shadow-lg shadow-[#25D366]/20 active:scale-[0.97]"
             >
-              <div className="flex items-center gap-2 font-black text-base uppercase tracking-tight">
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <div className="flex items-center gap-2 font-black text-base uppercase tracking-tight text-[#111827]">
+                <svg className="w-5 h-5 fill-[#111827]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793 0-.852.448-1.271.607-1.445.159-.173.346-.217.462-.217h.332c.101 0 .23.036.332.274.116.273.39.954.423 1.025.033.072.054.156.007.251-.047.094-.072.156-.144.239-.072.083-.151.185-.216.249-.072.072-.147.151-.063.294.083.144.368.607.789.982.541.483 1.002.632 1.144.704.144.072.23.063.315-.033.085-.097.368-.427.466-.572.101-.144.202-.123.332-.076.13.047.823.39.966.462.144.072.239.108.274.17.036.062.036.357-.108.762zM12 1a10.89 10.89 0 00-11 11c0 2.187.625 4.22 1.707 5.956L1 23l5.241-1.374A10.84 10.84 0 0012 23c6.075 0 11-4.925 11-11S18.075 1 12 1z"/>
                 </svg>
                 {t('cart.whatsapp_cta')}
               </div>
-              <span className="text-[9px] tracking-widest uppercase opacity-80 font-black">{t('cart.whatsapp_note')}</span>
+              <span className="text-[9px] tracking-widest uppercase opacity-90 font-black text-[#1F2937]">{t('cart.whatsapp_note')}</span>
             </button>
             <p className="mt-2 text-[9px] text-center text-slate-400 dark:text-slate-500 font-medium">
               {t('cart.service_area')}
