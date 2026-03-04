@@ -407,7 +407,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   }`}
                 >
                   <span className="material-symbols-outlined text-2xl">local_shipping</span>
-                  <span className="text-[10px] font-black uppercase tracking-[0.1em]">{t('cart.delivery')}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">{t('cart.delivery')}</span>
                 </button>
                 <button
                   onClick={() => setDeliveryMethod('pickup')}
@@ -418,7 +418,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   }`}
                 >
                   <span className="material-symbols-outlined text-2xl">storefront</span>
-                  <span className="text-[10px] font-black uppercase tracking-[0.1em]">{t('cart.pickup')}</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">{t('cart.pickup')}</span>
                 </button>
               </div>
               {deliveryMethod === 'delivery' && (
