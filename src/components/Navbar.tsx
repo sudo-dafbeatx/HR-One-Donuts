@@ -19,6 +19,7 @@ import Image from "next/image";
 import { useTranslation } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import NotificationBell from "@/components/NotificationBell";
+import { playNotificationSound } from "@/lib/audio-utils";
 interface NavbarProps {
   siteSettings?: SiteSettings;
   hideLogo?: boolean;
@@ -71,6 +72,12 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
         totalSpent,
         reviewCount: reviewsRes.count || 0
       });
+
+      // Play welcome sound once per session for logged-in users
+      if (!sessionStorage.getItem('welcomeSoundPlayed')) {
+        sessionStorage.setItem('welcomeSoundPlayed', 'true');
+        playNotificationSound('/sounds/selamat-datang-full.mp3');
+      }
     }
 
     if (mounted) fetchUserData();
