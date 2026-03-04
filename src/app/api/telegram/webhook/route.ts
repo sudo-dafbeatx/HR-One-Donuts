@@ -362,8 +362,9 @@ export async function POST(request: NextRequest) {
           let reviewsText = '⭐ <b>5 Ulasan Terbaru</b>\n\n';
           for (const review of reviews) {
             const stars = '⭐'.repeat(review.rating);
-            const product = (review.products as any)?.name || 'Produk';
-            reviewsText += `• <b>${product}</b>\n  ${stars}\n  <i>"${review.comment || '(tanpa komentar)'}"</i>\n\n`;
+            const productData = review.products as unknown as ({ name: string } | { name: string }[] | null);
+            const productName = Array.isArray(productData) ? productData[0]?.name : productData?.name;
+            reviewsText += `• <b>${productName || 'Produk'}</b>\n  ${stars}\n  <i>"${review.comment || '(tanpa komentar)'}"</i>\n\n`;
           }
           await sendTelegramMessage(chatId, reviewsText);
         } catch (err) {
