@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
     const chatId = message.chat.id.toString();
     const text = message.text.trim();
     const command = text.toLowerCase();
+    const isAdmin = chatId === process.env.TELEGRAM_ADMIN_CHAT_ID;
 
     // --- /start ---
     if (command === '/start') {
@@ -189,6 +190,86 @@ export async function POST(request: NextRequest) {
         await sendTelegramMessage(chatId, '⚠️ Gagal memuat promo. Coba lagi nanti!');
       }
       return NextResponse.json({ ok: true });
+    }
+
+    // ==========================================
+    // ADMIN ONLY COMMANDS
+    // ==========================================
+    if (isAdmin) {
+      // --- /admin ---
+      if (command === '/admin') {
+        await sendTelegramMessage(
+          chatId,
+          `👑 <b>Menu Admin HR-One Donuts</b>\n\n` +
+          `📊 /summary — Ringkasan penjualan hari ini\n` +
+          `📦 /orders — 5 pesanan terbaru\n` +
+          `⚙️ /help — Bantuan perintah umum`
+        );
+        return NextResponse.json({ ok: true });
+      }
+
+      // --- /orders ---
+      if (command === '/orders') {
+        try {
+          const supabase = await createServerSupabaseClient();
+          const { data: orders } = await supabase
+            .from('orders')
+            .select('id, status, total_amount, created_at')
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+          if (!orders || orders.length === 0) {
+            await sendTelegramMessage(chatId, '📭 Belum ada riwayat pesanan.');
+            return NextResponse.json({ ok: true });
+          }
+
+          let ordersText = '📦 <b>5 Pesanan Terbaru</b>\n\n';
+          for (const order of orders) {
+            const date = new Date(order.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            ordersText += `• <code>#${order.id.slice(0, 8).toUpperCase()}</code> — Rp ${order.total_amount.toLocaleString('id-ID')} (${order.status}) [${date}]\n`;
+          }
+          await sendTelegramMessage(chatId, ordersText);
+        } catch (err) {
+          console.error('[Telegram Webhook] Admin orders error:', err);
+          await sendTelegramMessage(chatId, '⚠️ Gagal mengambil data pesanan.');
+        }
+        return NextResponse.json({ ok: true });
+      }
+
+      // --- /summary ---
+      if (command === '/summary') {
+        try {
+          const supabase = await createServerSupabaseClient();
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          const { data: dailyOrders } = await supabase
+            .from('orders')
+            .select('total_amount, total_items')
+            .gte('created_at', today.toISOString());
+
+          if (!dailyOrders || dailyOrders.length === 0) {
+            await sendTelegramMessage(chatId, '📉 Belum ada penjualan hari ini. Tetap semangat! 💪');
+            return NextResponse.json({ ok: true });
+          }
+
+          const totalSales = dailyOrders.reduce((sum, o) => sum + o.total_amount, 0);
+          const totalItems = dailyOrders.reduce((sum, o) => sum + o.total_items, 0);
+
+          await sendTelegramMessage(
+            chatId,
+            `📊 <b>Ringkasan Penjualan Hari Ini</b>\n\n` +
+            `💰 Total Omzet: <b>Rp ${totalSales.toLocaleString('id-ID')}</b>\n` +
+            `📦 Total Item: <b>${totalItems} donat</b>\n` +
+            `🧾 Total Transaksi: <b>${dailyOrders.length}</b>\n\n` +
+            `📅 Per tanggal: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })}`
+          );
+        } catch (err) {
+          console.error('[Telegram Webhook] Sales summary error:', err);
+          await sendTelegramMessage(chatId, '⚠️ Gagal menghitung ringkasan penjualan.');
+        }
+        return NextResponse.json({ ok: true });
+      }
     }
 
     // --- Unknown command / free text ---
