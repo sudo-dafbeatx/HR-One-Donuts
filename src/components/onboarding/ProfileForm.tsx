@@ -446,7 +446,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
         <button
           type="submit"
           disabled={submitting || !allAgreed || phoneDuplicate}
-          className={`w-full h-14 rounded-2xl text-white font-black text-base md:text-lg shadow-lg focus:ring-4 focus:ring-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${allAgreed && !phoneDuplicate ? 'bg-primary shadow-primary/25 hover:bg-blue-600 hover:shadow-primary/35' : 'bg-slate-300 cursor-not-allowed'}`}
+          className={`w-full h-14 rounded-2xl font-black text-base md:text-lg shadow-lg focus:ring-4 focus:ring-primary/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${allAgreed && !phoneDuplicate ? 'bg-primary text-white shadow-primary/25 hover:bg-blue-600 hover:shadow-primary/35' : 'bg-slate-300 text-slate-500 cursor-not-allowed'}`}
         >
           {submitting ? (
             <>

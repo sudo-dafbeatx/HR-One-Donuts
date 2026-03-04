@@ -119,7 +119,7 @@ export default function ProductManager({ initialProducts, categories }: { initia
             {product.stock === 0 ? (
                <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-red-600 text-white text-[8px] font-black rounded uppercase tracking-widest shadow-lg">Habis</div>
             ) : product.stock < 10 ? (
-               <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-orange-500 text-white text-[8px] font-black rounded uppercase tracking-widest shadow-lg">Menipis</div>
+               <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-orange-500 text-slate-900 text-[8px] font-black rounded uppercase tracking-widest shadow-lg">Menipis</div>
             ) : null}
 
             <div className="aspect-square bg-slate-100 relative overflow-hidden">

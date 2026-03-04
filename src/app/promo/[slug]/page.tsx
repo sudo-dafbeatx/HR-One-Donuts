@@ -87,7 +87,7 @@ export default function PromoDetailPage() {
               Sedang Berlangsung! 🔥
             </div>
           ) : (
-            <div className="inline-block px-4 py-1 bg-slate-400 text-white rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
+            <div className="inline-block px-4 py-1 bg-slate-400 text-slate-900 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
               Tidak Aktif
             </div>
           )}
@@ -146,8 +146,8 @@ export default function PromoDetailPage() {
             </div>
 
             {/* Countdown Box */}
-            <div className={`rounded-3xl p-8 text-white text-center space-y-4 relative transition-colors ${timing.isActive ? 'bg-slate-900' : 'bg-slate-300'}`}>
-              <p className={`font-black text-xs uppercase tracking-widest ${timing.isActive ? 'text-primary' : 'text-white/60'}`}>
+            <div className={`rounded-3xl p-8 text-center space-y-4 relative transition-colors ${timing.isActive ? 'bg-slate-900 text-white' : 'bg-slate-300 text-slate-900'}`}>
+              <p className={`font-black text-xs uppercase tracking-widest ${timing.isActive ? 'text-primary' : 'text-slate-600'}`}>
                 {timing.isActive ? 'Berakhir Dalam:' : 'Status Countdown'}
               </p>
               
@@ -161,7 +161,7 @@ export default function PromoDetailPage() {
                 </div>
               )}
 
-              <p className="text-[10px] text-white/50 italic mt-4 border-t border-white/10 pt-4">
+              <p className={`text-[10px] italic mt-4 border-t pt-4 ${timing.isActive ? 'text-white/50 border-white/10' : 'text-slate-600 border-slate-400/20'}`}>
                 {timing.isActive 
                   ? '*Segera klaim sebelum waktu habis!' 
                   : `Cek kembali hari ${timing.activeDayName}.`}
