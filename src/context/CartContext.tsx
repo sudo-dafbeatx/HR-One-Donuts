@@ -15,15 +15,14 @@ interface CartContextType {
   addToCart: (item: Omit<CartItem, "quantity">, quantity: number) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, delta: number) => void;
+  setCartQuantity: (id: string, quantity: number) => void;
   totalItems: number;
   totalPrice: number;
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
   clearCart: () => void;
-  isBulkDiscount: boolean;
-  bulkDiscountPrice: number;
-  bulkDiscountThreshold: number;
   getEffectiveItemPrice: (item: CartItem) => number;
+  priceTiers: { min: number; max?: number; price: number }[];
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -81,20 +80,35 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const setCartQuantity = (id: string, quantity: number) => {
+    setCart((prevCart) =>
+      prevCart
+        .map((item) =>
+          item.id === id ? { ...item, quantity: Math.max(0, quantity) } : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
   const clearCart = () => {
     setCart([]);
   };
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Bulk discount: > 120 pcs → Rp 1.670 per donut
-  const BULK_DISCOUNT_THRESHOLD = 120;
-  const BULK_DISCOUNT_PRICE = 1670;
-  const isBulkDiscount = totalItems > BULK_DISCOUNT_THRESHOLD;
+  // New Tiered Pricing Logic:
+  // 1-48: Rp 2,500
+  // 49-60: Rp 2,000
+  // >60: Rp 1,670
+  const priceTiers = [
+    { min: 1, max: 48, price: 2500 },
+    { min: 49, max: 60, price: 2000 },
+    { min: 61, price: 1670 }
+  ];
 
   const getEffectiveItemPrice = (item: CartItem) => {
-    if (isBulkDiscount) return BULK_DISCOUNT_PRICE;
-    return item.price;
+    const tier = priceTiers.find(t => totalItems >= t.min && (!t.max || totalItems <= t.max));
+    return tier ? tier.price : item.price;
   };
 
   const totalPrice = cart.reduce((sum, item) => {
@@ -109,15 +123,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         addToCart,
         removeFromCart,
         updateQuantity,
+        setCartQuantity,
         totalItems,
         totalPrice,
         isCartOpen,
         setIsCartOpen,
         clearCart,
-        isBulkDiscount,
-        bulkDiscountPrice: BULK_DISCOUNT_PRICE,
-        bulkDiscountThreshold: BULK_DISCOUNT_THRESHOLD,
         getEffectiveItemPrice,
+        priceTiers,
       }}
     >
       {children}

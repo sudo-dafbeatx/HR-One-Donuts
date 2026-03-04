@@ -25,7 +25,7 @@ interface CartProfile {
 }
 
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
-  const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart, isBulkDiscount, bulkDiscountPrice, bulkDiscountThreshold, getEffectiveItemPrice } = useCart();
+  const { cart, updateQuantity, setCartQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart, getEffectiveItemPrice, priceTiers } = useCart();
   const { setIsLoading } = useLoading();
   const { showError } = useErrorPopup();
   const { t } = useTranslation();
@@ -38,6 +38,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
   const shippingFee = deliveryMethod === 'delivery' ? (siteSettings?.shipping_fee || 0) : 0;
   const finalTotal = totalPrice + shippingFee;
+
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 0);
@@ -120,7 +122,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       // 3. Save Order to Database
       await createOrder({
         total_amount: finalTotal,
-        total_items: cart.reduce((sum, item) => sum + item.quantity, 0),
+        total_items: totalItems,
         delivery_method: deliveryMethod,
         shipping_fee: shippingFee,
         shipping_address: finalShippingAddress,
@@ -185,11 +187,10 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       const wibOptions = { timeZone: 'Asia/Jakarta' };
       const now = new Date();
       
-      const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc. locally. We assume local time aligns with WIB roughly, or use accurate WIB check:
+      const currentDay = now.getDay(); 
       const wibHourString = now.toLocaleTimeString('en-US', { ...wibOptions, hour12: false, hour: '2-digit' });
       const currentHour = parseInt(wibHourString.split(':')[0], 10);
       
-      // if Sunday (0) or before 8 or after 17
       const isOffHours = currentDay === 0 || currentHour < 8 || currentHour >= 17;
       
       if (isOffHours) {
@@ -200,24 +201,19 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       
       const encodedMessage = encodeURIComponent(message);
       
-      // Brief delay for nice UX and Show Animation
-      setIsLoading(false); // Stop global loader
-      setShowCheckoutAnim(true); // Start local animation
+      setIsLoading(false); 
+      setShowCheckoutAnim(true); 
       
-      await new Promise(r => setTimeout(r, 2000)); // Show animation for enough time
+      await new Promise(r => setTimeout(r, 2000)); 
       
-      // Open WhatsApp - Mobile-first approach
       const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
       
       if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        // Direct redirection for mobile apps
         window.location.href = whatsappUrl;
       } else {
-        // Fallback for desktop
         window.open(whatsappUrl, "_blank");
       }
       
-      // Cleanup
       setShowCheckoutAnim(false);
       clearCart();
       setIsCartOpen(false);
@@ -294,162 +290,181 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
               </button>
             </div>
           ) : (
-            cart.map((item) => (
-              <div key={item.id} className="flex items-center gap-4 group">
-                <div className="relative w-20 h-20 rounded-lg border border-slate-100 dark:border-slate-800 shrink-0 overflow-hidden bg-slate-50 dark:bg-slate-900">
-                  <Image 
-                    src={item.image} 
-                    alt={item.name} 
-                    fill 
-                    sizes="80px"
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start gap-2">
-                    <p className="font-bold text-foreground wrap-break-word leading-tight">{item.name}</p>
-                    <button 
-                      onClick={() => removeFromCart(item.id)}
-                      className="text-slate-400 hover:text-red-500 transition-colors"
-                    >
-                      <TrashIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-300 font-medium tracking-tight">
-                    {isBulkDiscount ? (
-                      <>
-                        <span className="line-through text-slate-400 mr-1">Rp {item.price.toLocaleString("id-ID")}</span>
-                        <span className="text-green-600 font-bold">Rp {bulkDiscountPrice.toLocaleString("id-ID")} / pcs</span>
-                      </>
-                    ) : (
-                      <>Rp {item.price.toLocaleString("id-ID")} / pcs</>
-                    )}
-                  </p>
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 rounded-lg px-2 py-1">
-                      <button 
-                        onClick={() => updateQuantity(item.id, -1)}
-                        className="w-6 h-6 flex items-center justify-center text-primary font-bold hover:bg-primary/20 rounded-md transition-colors"
-                      >
-                        -
-                      </button>
-                      <span className="text-sm font-black w-6 text-center text-slate-900 dark:text-slate-100">{item.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(item.id, 1)}
-                        className="w-6 h-6 flex items-center justify-center text-primary font-bold hover:bg-primary/20 rounded-md transition-colors"
-                      >
-                        +
-                      </button>
+            <div className="space-y-6">
+              {cart.map((item) => {
+                const effectiveItemPrice = getEffectiveItemPrice(item);
+                const hasDiscount = effectiveItemPrice < item.price;
+                
+                return (
+                  <div key={item.id} className="flex items-center gap-4 group">
+                    <div className="relative w-20 h-20 rounded-lg border border-slate-100 dark:border-slate-800 shrink-0 overflow-hidden bg-slate-50 dark:bg-slate-900">
+                      <Image 
+                        src={item.image} 
+                        alt={item.name} 
+                        fill 
+                        sizes="80px"
+                        className="object-cover"
+                      />
                     </div>
-                    <span className="font-bold text-slate-900 dark:text-white">
-                      Rp {(getEffectiveItemPrice(item) * item.quantity).toLocaleString("id-ID")}
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start gap-2">
+                        <p className="font-bold text-foreground wrap-break-word leading-tight">{item.name}</p>
+                        <button 
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-slate-400 hover:text-red-500 transition-colors"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <p className="text-xs text-slate-700 dark:text-slate-300 font-medium tracking-tight">
+                        {hasDiscount ? (
+                          <>
+                            <span className="line-through text-slate-400 mr-1 text-[10px]">Rp {item.price.toLocaleString("id-ID")}</span>
+                            <span className="text-green-600 font-bold">Rp {effectiveItemPrice.toLocaleString("id-ID")} / pcs</span>
+                          </>
+                        ) : (
+                          <>Rp {item.price.toLocaleString("id-ID")} / pcs</>
+                        )}
+                      </p>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 rounded-lg p-1">
+                          <button 
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="w-7 h-7 flex items-center justify-center text-primary font-bold hover:bg-primary/10 rounded-md transition-colors"
+                          >
+                            -
+                          </button>
+                          <input 
+                            type="number" 
+                            min="1"
+                            value={item.quantity}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value);
+                              if (!isNaN(val)) setCartQuantity(item.id, val);
+                            }}
+                            className="text-sm font-black w-12 text-center bg-transparent border-none focus:ring-0 text-slate-900 dark:text-slate-100 p-0"
+                          />
+                          <button 
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="w-7 h-7 flex items-center justify-center text-primary font-bold hover:bg-primary/10 rounded-md transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className="font-bold text-slate-900 dark:text-white">
+                          Rp {(effectiveItemPrice * item.quantity).toLocaleString("id-ID")}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Bulk Discount Tiers / Info Banner (High Contrast) */}
+          {cart.length > 0 && (
+            <div className="rounded-3xl p-5 bg-slate-900 dark:bg-slate-800 text-white shadow-2xl space-y-4 border-2 border-primary/30">
+              <div className="flex items-center gap-2 border-b border-white/10 pb-3">
+                <span className="text-2xl">💰</span>
+                <p className="text-xs font-black uppercase tracking-widest text-primary-light">Daftar Harga Grosir</p>
               </div>
-            ))
+              <div className="grid grid-cols-1 gap-2.5 text-xs font-bold font-mono">
+                {priceTiers.map((tier, idx) => {
+                  const isActive = totalItems >= tier.min && (!tier.max || totalItems <= tier.max);
+                  return (
+                    <div key={idx} className={`flex justify-between items-center px-4 py-3 rounded-xl transition-all duration-300 ${
+                      isActive ? 'bg-primary text-white scale-[1.03] shadow-lg shadow-primary/40 ring-2 ring-white/20' : 'bg-white/5 text-slate-400'
+                    }`}>
+                      <span className="flex items-center gap-2">
+                        {isActive && <span className="w-2 h-2 rounded-full bg-white animate-pulse" />}
+                        {tier.max ? `${tier.min} - ${tier.max} Pcs` : `> ${tier.min - 1} Pcs`}
+                      </span>
+                      <span className={isActive ? 'text-white text-lg' : 'text-primary-light'}>
+                        Rp {tier.price.toLocaleString('id-ID')}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-slate-400 text-center font-medium leading-relaxed">
+                ☕ *Harga di atas berlaku untuk pembelian donat eceran. Sistem otomatis menghitung harga terbaik untuk Anda.
+              </p>
+            </div>
           )}
 
           {/* Delivery Method Selection */}
           {cart.length > 0 && (
-            <div className="pt-4 space-y-3">
+            <div className="pt-2 space-y-3">
               <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">{t('cart.delivery_method_title')}</h3>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setDeliveryMethod('delivery')}
-                  className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all gap-1 ${
+                  className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all gap-1.5 ${
                     deliveryMethod === 'delivery' 
-                    ? 'border-primary bg-primary/5 text-primary' 
+                    ? 'border-primary bg-primary/5 text-primary shadow-sm' 
                     : 'border-slate-100 dark:border-slate-800 text-slate-500 hover:border-slate-200'
                   }`}
                 >
-                  <span className="material-symbols-outlined">local_shipping</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider">{t('cart.delivery')}</span>
+                  <span className="material-symbols-outlined text-2xl">local_shipping</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.1em]">{t('cart.delivery')}</span>
                 </button>
                 <button
                   onClick={() => setDeliveryMethod('pickup')}
-                  className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all gap-1 ${
+                  className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all gap-1.5 ${
                     deliveryMethod === 'pickup' 
-                    ? 'border-primary bg-primary/5 text-primary' 
+                    ? 'border-primary bg-primary/5 text-primary shadow-sm' 
                     : 'border-slate-100 dark:border-slate-800 text-slate-500 hover:border-slate-200'
                   }`}
                 >
-                  <span className="material-symbols-outlined">storefront</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider">{t('cart.pickup')}</span>
+                  <span className="material-symbols-outlined text-2xl">storefront</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.1em]">{t('cart.pickup')}</span>
                 </button>
               </div>
               {deliveryMethod === 'delivery' && (
-                <p className="text-[10px] text-slate-400 italic text-center">
-                  {t('cart.shipping_note')}
-                </p>
+                <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 italic text-center leading-relaxed">
+                    {t('cart.shipping_note')}
+                  </p>
+                </div>
               )}
             </div>
           )}
         </div>
 
-        {/* Bulk Discount Banner */}
-        {cart.length > 0 && (
-          <div className={`mx-6 mb-2 rounded-2xl p-4 border-2 transition-all ${
-            isBulkDiscount 
-              ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
-              : 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-100 dark:border-amber-800/40'
-          }`}>
-            {isBulkDiscount ? (
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🎉</span>
-                <div>
-                  <p className="text-sm font-bold text-green-700 dark:text-green-400">Diskon Grosir Aktif!</p>
-                  <p className="text-[10px] text-green-600 dark:text-green-500">Semua donat @ Rp {bulkDiscountPrice.toLocaleString('id-ID')}/pcs</p>
-                </div>
-              </div>
-            ) : (() => {
-              const remaining = bulkDiscountThreshold - cart.reduce((s, i) => s + i.quantity, 0);
-              return remaining > 0 ? (
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">💡</span>
-                  <div>
-                    <p className="text-[11px] font-bold text-amber-800 dark:text-amber-300">Beli &gt;{bulkDiscountThreshold} pcs = Rp {bulkDiscountPrice.toLocaleString('id-ID')}/pcs</p>
-                    <p className="text-[10px] text-amber-600 dark:text-amber-400">Tambah {remaining} lagi untuk diskon grosir!</p>
-                  </div>
-                </div>
-              ) : null;
-            })()}
-          </div>
-        )}
-
         {/* Footer */}
         {cart.length > 0 && (
-          <div className="p-6 bg-background border-t border-slate-100 dark:border-white/10">
+          <div className="p-6 bg-background border-t border-slate-100 dark:border-white/10 shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.1)]">
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span className="text-sm font-medium">{t('cart.subtotal')}</span>
-                <span className="text-sm font-bold">Rp {totalPrice.toLocaleString("id-ID")}</span>
+                <span className="text-sm font-bold text-slate-900 dark:text-white">Rp {totalPrice.toLocaleString("id-ID")}</span>
               </div>
               {deliveryMethod === 'delivery' && (
                 <div className="flex justify-between text-slate-600 dark:text-slate-400">
                   <span className="text-sm font-medium">{t('cart.shipping_fee')}</span>
-                  <span className="text-sm font-bold">Rp {shippingFee.toLocaleString("id-ID")}</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-white">Rp {shippingFee.toLocaleString("id-ID")}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center pt-3 border-t border-slate-200 dark:border-slate-800">
-                <span className="text-lg font-bold text-primary dark:text-primary-light">{t('cart.total_estimate')}</span>
-                <span className="text-2xl font-extrabold text-primary">Rp {finalTotal.toLocaleString("id-ID")}</span>
+              <div className="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-slate-800">
+                <span className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('cart.total_estimate')}</span>
+                <span className="text-2xl font-black text-primary drop-shadow-sm">Rp {finalTotal.toLocaleString("id-ID")}</span>
               </div>
             </div>
 
             <button 
               onClick={handleWhatsAppOrder}
-              className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl py-4 flex flex-col items-center justify-center gap-1 transition-all shadow-lg shadow-[#25D366]/20 active:scale-[0.98]"
+              className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-2xl py-4 flex flex-col items-center justify-center gap-1 transition-all shadow-xl shadow-[#25D366]/30 active:scale-[0.97]"
             >
-              <div className="flex items-center gap-2 font-bold text-lg">
+              <div className="flex items-center gap-2 font-black text-lg uppercase tracking-tight">
                 <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793 0-.852.448-1.271.607-1.445.159-.173.346-.217.462-.217h.332c.101 0 .23.036.332.274.116.273.39.954.423 1.025.033.072.054.156.007.251-.047.094-.072.156-.144.239-.072.083-.151.185-.216.249-.072.072-.147.151-.063.294.083.144.368.607.789.982.541.483 1.002.632 1.144.704.144.072.23.063.315-.033.085-.097.368-.427.466-.572.101-.144.202-.123.332-.076.13.047.823.39.966.462.144.072.239.108.274.17.036.062.036.357-.108.762zM12 1a10.89 10.89 0 00-11 11c0 2.187.625 4.22 1.707 5.956L1 23l5.241-1.374A10.84 10.84 0 0012 23c6.075 0 11-4.925 11-11S18.075 1 12 1z"/>
                 </svg>
                 {t('cart.whatsapp_cta')}
               </div>
-              <span className="text-[10px] tracking-wide opacity-90 font-medium">{t('cart.whatsapp_note')}</span>
+              <span className="text-[10px] tracking-widest uppercase opacity-80 font-black">{t('cart.whatsapp_note')}</span>
             </button>
-            <p className="mt-4 text-[10px] text-center text-slate-500 dark:text-slate-400 leading-relaxed">
+            <p className="mt-4 text-[10px] text-center text-slate-400 dark:text-slate-500 leading-relaxed font-medium">
               {t('cart.service_area')}
             </p>
           </div>
@@ -466,37 +481,37 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       {/* Profile Completeness Alert Overlay */}
       {showProfileAlert && (
         <div className="fixed inset-0 z-110 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="bg-background rounded-[24px] shadow-2xl w-full max-w-sm overflow-hidden flex flex-col scale-in-95 animate-in zoom-in-95 duration-200">
-            <div className="bg-amber-500/10 p-6 flex flex-col items-center justify-center text-center">
-              <div className="size-16 bg-amber-500/20 text-amber-600 dark:text-amber-500 rounded-full flex items-center justify-center mb-4">
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <div className="bg-background rounded-[32px] shadow-2xl w-full max-w-sm overflow-hidden flex flex-col scale-in-95 animate-in zoom-in-95 duration-200">
+            <div className="bg-amber-500/10 p-8 flex flex-col items-center justify-center text-center">
+              <div className="size-20 bg-amber-500 text-white rounded-full flex items-center justify-center mb-6 shadow-lg shadow-amber-500/40">
+                <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-foreground mb-2">Alamat Pengiriman Belum Lengkap</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Untuk mengirim pesanan ke rumah, kamu perlu melengkapi alamat pengiriman terlebih dahulu di menu pengaturan akun.
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-3">Alamat Belum Lengkap</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                Untuk jasa pengiriman, mohon lengkapi alamat detail Anda di profil agar kurir kami tidak bingung.
               </p>
             </div>
             
-            <div className="p-6 space-y-3 bg-card">
+            <div className="p-8 space-y-4 bg-white dark:bg-slate-900">
               <button
                 onClick={() => {
                   window.location.href = "/settings/address";
                 }}
-                className="w-full bg-[#E11D48] hover:bg-[#BE123C] text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-rose-500/30 active:scale-[0.98] flex items-center justify-center gap-2"
+                className="w-full bg-primary hover:bg-primary/90 text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-primary/30 active:scale-[0.98] flex items-center justify-center gap-2 uppercase tracking-wider text-sm"
               >
-                <span>Lengkapi Alamat Sekarang</span>
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                <span>Lengkapi Sekarang</span>
+                <svg className="w-5 h-5 font-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </button>
               
               <button
                 onClick={() => setShowProfileAlert(false)}
-                className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold py-3.5 rounded-xl transition-colors"
+                className="w-full bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-400 dark:text-slate-500 font-bold py-3.5 rounded-xl transition-colors uppercase tracking-widest text-[10px]"
               >
-                Batal
+                Kembali ke Keranjang
               </button>
             </div>
           </div>
