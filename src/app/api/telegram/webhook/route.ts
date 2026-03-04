@@ -205,7 +205,9 @@ export async function POST(request: NextRequest) {
           `📈 /stats — Perbandingan hari ini vs kemarin\n` +
           `📦 /orders — 5 pesanan terbaru\n` +
           `👥 /users — 5 user terbaru\n` +
-          `⭐ /reviews — 5 ulasan terbaru\n` +
+          `⭐ /reviews — 5 ulasan terbaru\n\n` +
+          `🔓 /unlock — Buka kunci website (Tgl 25)\n` +
+          `📝 /update <i>kode status</i> — Update status order\n` +
           `⚙️ /help — Bantuan perintah umum`
         );
         return NextResponse.json({ ok: true });
@@ -367,6 +369,118 @@ export async function POST(request: NextRequest) {
         } catch (err) {
           console.error('[Telegram Webhook] Admin reviews error:', err);
           await sendTelegramMessage(chatId, '⚠️ Gagal mengambil data ulasan.');
+        }
+        return NextResponse.json({ ok: true });
+      }
+
+      // --- /unlock ---
+      if (command === '/unlock') {
+        try {
+          const supabase = createServiceRoleClient();
+          const { error } = await supabase
+            .from('settings')
+            .upsert({ 
+              key: 'site_lock', 
+              value: { manual_lock: false, updated_at: new Date().toISOString() } 
+            }, { onConflict: 'key' });
+
+          if (error) throw error;
+          await sendTelegramMessage(chatId, '🔓 <b>Website Berhasil Dibuka!</b>\n\nKunci otomatis tanggal 25 telah dilewati (override).');
+        } catch (err) {
+          console.error('[Telegram Webhook] Admin unlock error:', err);
+          await sendTelegramMessage(chatId, '⚠️ Gagal membuka kunci website.');
+        }
+        return NextResponse.json({ ok: true });
+      }
+
+      // --- /update <order_id> <status> ---
+      if (command.startsWith('/update')) {
+        const parts = text.split(' ');
+        if (parts.length < 3) {
+          await sendTelegramMessage(
+            chatId,
+            '📝 Gunakan format: /update &lt;kode_order&gt; &lt;status&gt;\n\n' +
+            'Contoh: /update ABC123 shipping\n\n' +
+            '<b>Status valid:</b>\n' +
+            'confirmed, processing, shipping, ready, completed'
+          );
+          return NextResponse.json({ ok: true });
+        }
+
+        const rawOrderId = parts[1].trim();
+        const newStatus = parts[2].trim().toLowerCase();
+
+        const validStatuses = ['confirmed', 'processing', 'shipping', 'ready', 'completed'];
+        if (!validStatuses.includes(newStatus)) {
+          await sendTelegramMessage(chatId, `❌ Status "${newStatus}" tidak valid.`);
+          return NextResponse.json({ ok: true });
+        }
+
+        try {
+          const supabase = createServiceRoleClient();
+          
+          // Find matching order
+          const { data: order } = await supabase
+            .from('orders')
+            .select('id, user_id')
+            .ilike('id', `%${rawOrderId}%`)
+            .limit(1)
+            .maybeSingle();
+
+          if (!order) {
+            await sendTelegramMessage(chatId, `❌ Pesanan dengan kode "<b>${rawOrderId}</b>" tidak ditemukan.`);
+            return NextResponse.json({ ok: true });
+          }
+
+          const orderId = order.id;
+
+          const { error: updateError } = await supabase
+            .from('orders')
+            .update({ status: newStatus, updated_at: new Date().toISOString() })
+            .eq('id', orderId);
+
+          if (updateError) throw updateError;
+
+          // Insert Notification for the user
+          try {
+            const titles: Record<string, string> = {
+              confirmed: 'Pesanan Dikonfirmasi',
+              processing: 'Pesanan Diproses',
+              shipping: 'Pesanan Sedang Dikirim',
+              ready: 'Pesanan Siap Diambil',
+              completed: 'Pesanan Selesai'
+            };
+            
+            const messages: Record<string, string> = {
+              confirmed: 'Pesanan Anda telah kami terima dan sedang menunggu proses.',
+              processing: 'Donat Anda sedang dibuat dengan cinta.',
+              shipping: 'Kurir kami sedang dalam perjalanan mengantar pesanan Anda.',
+              ready: 'Pesanan Anda sudah siap diambil di outlet kami.',
+              completed: 'Pesanan selesai. Jangan lupa berikan ulasan Anda!'
+            };
+
+            if (titles[newStatus] && order.user_id) {
+              await supabase.from('notifications').insert({
+                user_id: order.user_id,
+                title: titles[newStatus],
+                message: messages[newStatus],
+                type: 'order_update',
+                related_record_id: orderId
+              });
+            }
+          } catch (notifErr) {
+            console.error('[Telegram Webhook] Failed to send user notification:', notifErr);
+          }
+
+          await sendTelegramMessage(
+            chatId, 
+            `✅ <b>Status Terupdate!</b>\n\n` +
+            `🆔 #${orderId.slice(0, 8).toUpperCase()}\n` +
+            `📊 Status baru: <b>${newStatus.toUpperCase()}</b>`
+          );
+        } catch (err) {
+          console.error('[Telegram Webhook] Admin update status error:', err);
+          await sendTelegramMessage(chatId, '⚠️ Gagal memperbarui status pesanan.');
         }
         return NextResponse.json({ ok: true });
       }
