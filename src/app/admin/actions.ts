@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { Product, PromoEvent, UITheme, FlashSale, FlashSaleItem } from '@/types/cms';
 import { extractStoragePath } from '@/lib/image-utils';
 import { deleteImage } from './upload-actions';
+import { sendAdminNotification } from '@/lib/telegram';
 
 import { getAdminSession } from '@/lib/admin-auth';
 
@@ -787,7 +788,26 @@ export async function updateOrderStatus(orderId: string, status: string) {
       console.error('Gagal mengirim notifikasi:', notifErr);
     }
     
-    // 6. Broad revalidation
+    // 6. Send Telegram notification about status change
+    try {
+      const statusLabels: Record<string, string> = {
+        pending: '⏳ Menunggu',
+        shipping: '🚚 Sedang Dikirim',
+        ready: '📦 Siap Diambil',
+        completed: '✅ Selesai'
+      };
+      const label = statusLabels[status] || status;
+      await sendAdminNotification(
+        `📦 <b>Status Pesanan Diperbarui</b>\n\n` +
+        `🆔 #${orderId.slice(0, 8).toUpperCase()}\n` +
+        `📊 Status: ${label}\n` +
+        `🚗 Metode: ${method === 'pickup' ? 'Ambil di Toko' : 'Delivery'}`
+      );
+    } catch (tgErr) {
+      console.warn('[Telegram] Failed to notify about status change:', tgErr);
+    }
+    
+    // 7. Broad revalidation
     try {
       revalidatePath('/admin/orders-status');
       revalidatePath('/profile');

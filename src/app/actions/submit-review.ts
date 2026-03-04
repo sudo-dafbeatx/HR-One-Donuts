@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { sendAdminNotification } from '@/lib/telegram';
 
 export async function submitReview(
   orderId: string, 
@@ -107,6 +108,22 @@ export async function submitReview(
     revalidatePath(`/profile/orders/${orderId}`);
     revalidatePath('/profile');
     revalidatePath('/'); // Reval homepage for review stars
+
+    // Send Telegram notification for new reviews
+    try {
+      const reviewSummary = reviews.map(r => {
+        const stars = '⭐'.repeat(r.rating);
+        return `  ${stars} — ${r.comment || '(tanpa komentar)'}`;
+      }).join('\n');
+      await sendAdminNotification(
+        `⭐ <b>Review Baru!</b>\n\n` +
+        `🆔 Pesanan: #${orderId.slice(0, 8).toUpperCase()}\n` +
+        `🏆 Poin diperoleh: +${earnedPoints}\n\n` +
+        `${reviewSummary}`
+      );
+    } catch (tgErr) {
+      console.warn('[Telegram] Failed to notify admin about review:', tgErr);
+    }
 
     return { success: true, earnedPoints };
 

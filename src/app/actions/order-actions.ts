@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { sendAdminNotification } from '@/lib/telegram';
 
 export async function getCurrentUserProfile() {
   try {
@@ -140,6 +141,21 @@ export async function createOrder(data: {
 
     revalidatePath('/profile');
     revalidatePath('/admin');
+
+    // Send Telegram notification to admin
+    try {
+      const itemsList = data.items.map(i => `  • ${i.name} x${i.quantity}`).join('\n');
+      await sendAdminNotification(
+        `🍩 <b>Pesanan Baru!</b>\n\n` +
+        `🆔 #${order?.id?.slice(0, 8).toUpperCase() || 'N/A'}\n` +
+        `💰 Total: Rp ${data.total_amount.toLocaleString('id-ID')}\n` +
+        `📦 ${data.total_items} item\n` +
+        `🚗 ${finalMethod === 'pickup' ? 'Ambil di Toko' : 'Delivery'}\n\n` +
+        `<b>Item:</b>\n${itemsList}`
+      );
+    } catch (tgErr) {
+      console.warn('[Telegram] Failed to notify admin:', tgErr);
+    }
     
     return { success: true, order };
   } catch (error: unknown) {
