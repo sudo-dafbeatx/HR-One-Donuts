@@ -77,7 +77,23 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
       // Play welcome sound EVERY time the home page is visited (or refreshed)
       // ONLY if they have already granted audio permission!
       if (pathname === '/' && localStorage.getItem('audioAllowed') === 'true') {
-        playNotificationSound('/sounds/selamat-datang-full.mp3');
+        const playPromise = playNotificationSound('/sounds/selamat-datang-full.mp3');
+        if (playPromise) {
+          playPromise.catch(() => {
+            // Autoplay diblokir browser. Tunggu interaksi pertama kali.
+            const handleInteraction = () => {
+              // Hapus listener agar tidak berulang
+              document.removeEventListener('click', handleInteraction);
+              document.removeEventListener('keydown', handleInteraction);
+              document.removeEventListener('touchstart', handleInteraction);
+              playNotificationSound('/sounds/selamat-datang-full.mp3');
+            };
+            
+            document.addEventListener('click', handleInteraction);
+            document.addEventListener('keydown', handleInteraction);
+            document.addEventListener('touchstart', handleInteraction);
+          });
+        }
       }
     }
 
