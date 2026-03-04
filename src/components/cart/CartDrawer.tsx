@@ -25,7 +25,7 @@ interface CartProfile {
 }
 
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
-  const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart } = useCart();
+  const { cart, updateQuantity, totalPrice, isCartOpen, setIsCartOpen, removeFromCart, clearCart, isBulkDiscount, bulkDiscountPrice, bulkDiscountThreshold, getEffectiveItemPrice } = useCart();
   const { setIsLoading } = useLoading();
   const { showError } = useErrorPopup();
   const { t } = useTranslation();
@@ -128,7 +128,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         items: cart.map(item => ({
           product_id: item.id,
           name: item.name,
-          price: item.price,
+          price: getEffectiveItemPrice(item),
           quantity: item.quantity,
           image: item.image
         }))
@@ -165,11 +165,12 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       message += t('cart.whatsapp.detail') + "\n";
       
       cart.forEach((item) => {
+        const effectivePrice = getEffectiveItemPrice(item);
         message += t('cart.whatsapp.item_line', {
           name: item.name,
           quantity: item.quantity,
-          price: item.price.toLocaleString("id-ID"),
-          total: (item.price * item.quantity).toLocaleString("id-ID")
+          price: effectivePrice.toLocaleString("id-ID"),
+          total: (effectivePrice * item.quantity).toLocaleString("id-ID")
         }) + "\n\n";
       });
       
@@ -314,7 +315,16 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                       <TrashIcon className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-300 font-medium tracking-tight">Rp {item.price.toLocaleString("id-ID")} / pcs</p>
+                  <p className="text-xs text-slate-700 dark:text-slate-300 font-medium tracking-tight">
+                    {isBulkDiscount ? (
+                      <>
+                        <span className="line-through text-slate-400 mr-1">Rp {item.price.toLocaleString("id-ID")}</span>
+                        <span className="text-green-600 font-bold">Rp {bulkDiscountPrice.toLocaleString("id-ID")} / pcs</span>
+                      </>
+                    ) : (
+                      <>Rp {item.price.toLocaleString("id-ID")} / pcs</>
+                    )}
+                  </p>
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 rounded-lg px-2 py-1">
                       <button 
@@ -332,7 +342,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                       </button>
                     </div>
                     <span className="font-bold text-slate-900 dark:text-white">
-                      Rp {(item.price * item.quantity).toLocaleString("id-ID")}
+                      Rp {(getEffectiveItemPrice(item) * item.quantity).toLocaleString("id-ID")}
                     </span>
                   </div>
                 </div>
@@ -376,6 +386,36 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
             </div>
           )}
         </div>
+
+        {/* Bulk Discount Banner */}
+        {cart.length > 0 && (
+          <div className={`mx-6 mb-2 rounded-2xl p-4 border-2 transition-all ${
+            isBulkDiscount 
+              ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+              : 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-100 dark:border-amber-800/40'
+          }`}>
+            {isBulkDiscount ? (
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🎉</span>
+                <div>
+                  <p className="text-sm font-bold text-green-700 dark:text-green-400">Diskon Grosir Aktif!</p>
+                  <p className="text-[10px] text-green-600 dark:text-green-500">Semua donat @ Rp {bulkDiscountPrice.toLocaleString('id-ID')}/pcs</p>
+                </div>
+              </div>
+            ) : (() => {
+              const remaining = bulkDiscountThreshold - cart.reduce((s, i) => s + i.quantity, 0);
+              return remaining > 0 ? (
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">💡</span>
+                  <div>
+                    <p className="text-[11px] font-bold text-amber-800 dark:text-amber-300">Beli &gt;{bulkDiscountThreshold} pcs = Rp {bulkDiscountPrice.toLocaleString('id-ID')}/pcs</p>
+                    <p className="text-[10px] text-amber-600 dark:text-amber-400">Tambah {remaining} lagi untuk diskon grosir!</p>
+                  </div>
+                </div>
+              ) : null;
+            })()}
+          </div>
+        )}
 
         {/* Footer */}
         {cart.length > 0 && (

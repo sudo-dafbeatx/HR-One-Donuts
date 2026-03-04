@@ -20,6 +20,10 @@ interface CartContextType {
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
   clearCart: () => void;
+  isBulkDiscount: boolean;
+  bulkDiscountPrice: number;
+  bulkDiscountThreshold: number;
+  getEffectiveItemPrice: (item: CartItem) => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -82,7 +86,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  // Bulk discount: > 120 pcs → Rp 1.670 per donut
+  const BULK_DISCOUNT_THRESHOLD = 120;
+  const BULK_DISCOUNT_PRICE = 1670;
+  const isBulkDiscount = totalItems > BULK_DISCOUNT_THRESHOLD;
+
+  const getEffectiveItemPrice = (item: CartItem) => {
+    if (isBulkDiscount) return BULK_DISCOUNT_PRICE;
+    return item.price;
+  };
+
+  const totalPrice = cart.reduce((sum, item) => {
+    const effectivePrice = getEffectiveItemPrice(item);
+    return sum + effectivePrice * item.quantity;
+  }, 0);
 
   return (
     <CartContext.Provider
@@ -96,6 +114,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         isCartOpen,
         setIsCartOpen,
         clearCart,
+        isBulkDiscount,
+        bulkDiscountPrice: BULK_DISCOUNT_PRICE,
+        bulkDiscountThreshold: BULK_DISCOUNT_THRESHOLD,
+        getEffectiveItemPrice,
       }}
     >
       {children}
