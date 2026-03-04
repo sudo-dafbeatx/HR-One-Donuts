@@ -380,7 +380,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                         {isActive && <span className="w-2 h-2 rounded-full bg-white animate-pulse" />}
                         {tier.max ? `${tier.min} - ${tier.max} Pcs` : `> ${tier.min - 1} Pcs`}
                       </span>
-                      <span className={isActive ? 'text-white text-lg' : 'text-primary-light'}>
+                      <span className={isActive ? 'text-amber-300 text-lg font-black' : 'text-amber-500/70'}>
                         Rp {tier.price.toLocaleString('id-ID')}
                       </span>
                     </div>
