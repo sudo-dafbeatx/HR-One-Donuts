@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { showCartToast } from "@/components/cart/CartToast";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { logTraffic } from "@/app/actions/traffic-actions";
@@ -69,6 +70,7 @@ export default function ProductInfo({
       image
     };
     addToCart(itemToAdd, quantity);
+    showCartToast(itemToAdd.name);
   };
 
   return (

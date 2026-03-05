@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Product, ReviewStats } from '@/types/cms';
 import { useCart } from '@/context/CartContext';
+import { showCartToast } from '@/components/cart/CartToast';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from '@/context/LanguageContext';
 
@@ -284,6 +285,7 @@ export default function MarketplaceClient({
                           price: getEffectivePrice(product),
                           image: product.image_url || ''
                         }, 1);
+                        showCartToast(product.name);
                       }}
                       className="size-8 md:size-9 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white flex items-center justify-center transition-all active:scale-90"
                       aria-label="Add to cart"

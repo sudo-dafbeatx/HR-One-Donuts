@@ -5,6 +5,7 @@ import { CartProvider } from "@/context/CartContext";
 import { LoadingProvider } from "@/context/LoadingContext";
 import { ErrorPopupProvider } from "@/context/ErrorPopupContext";
 import CartDrawer from "@/components/cart/CartDrawer";
+import CartToast from "@/components/cart/CartToast";
 import TrafficTracker from "@/components/tracking/TrafficTracker";
 import BottomNav from "@/components/BottomNav";
 import ThemeProvider from "@/components/ThemeProvider";
@@ -107,6 +108,7 @@ export default async function RootLayout({
                   {children}
                 </div>
                 <CartDrawer siteSettings={siteSettings} />
+                <CartToast />
                 <BottomNav />
                 <EditModeToggle />
                 <ThemePanel />

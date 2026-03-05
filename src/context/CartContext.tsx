@@ -64,7 +64,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [...prevCart, { ...item, quantity }];
     });
-    setIsCartOpen(true); // Open cart when item added
   };
 
   const removeFromCart = (id: string) => {
