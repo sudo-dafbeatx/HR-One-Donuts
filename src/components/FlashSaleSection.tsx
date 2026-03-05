@@ -255,62 +255,79 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                 return (
                   <div 
                     key={event.id}
-                    className="relative overflow-hidden group w-full rounded-[20px] p-[1.5px] transition-all duration-300 sm:hover:scale-[1.02] sm:hover:-translate-y-1 shadow-sm hover:shadow-xl"
+                    className="relative overflow-hidden group w-full rounded-3xl p-px transition-all duration-500 sm:hover:scale-[1.02] sm:hover:-translate-y-1 shadow-md hover:shadow-2xl"
                     style={{ 
-                      background: `linear-gradient(to right, var(--color-primary, #1152d4), var(--color-secondary, #3b82f6))`
+                      background: `linear-gradient(135deg, ${event.isJumat ? '#0d9488, #14b8a6' : 'var(--color-primary, #1152d4), var(--color-secondary, #3b82f6)'})`
                     }}
                   >
-                    <div 
-                      className="relative w-full h-full rounded-[18px] p-6 sm:p-8 flex flex-col justify-between overflow-hidden z-10"
-                      style={{ 
-                        background: `linear-gradient(135deg, var(--color-primary, #1152d4) 0%, var(--color-secondary, #3b82f6) 100%)`,
-                        color: 'var(--color-text-on-primary, #ffffff)'
-                      }}
-                    >
-                      <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mx-10 -my-10 pointer-events-none" />
+                    <div className="relative w-full h-[320px] sm:h-[380px] rounded-[23px] flex flex-col justify-between overflow-hidden z-10 bg-slate-900 group">
                       
-                      <div className="flex items-start justify-between gap-4 mb-6 relative z-10">
-                        <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
-                          <IconComponent className="w-6 h-6 text-white" />
+                      {/* Background Image / Color */}
+                      {event.banner_image_url ? (
+                        <>
+                          <img 
+                            src={event.banner_image_url} 
+                            alt={event.headline} 
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                          />
+                          {/* Elegant Shadow Gradient Overlay to ensure text readability */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/20 transition-opacity duration-300" />
+                        </>
+                      ) : (
+                        <div 
+                          className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                          style={{ 
+                            background: `linear-gradient(135deg, ${event.isJumat ? '#0f766e, #0d9488' : 'var(--color-primary, #1152d4), var(--color-secondary, #3b82f6)'})`
+                          }}
+                        >
+                          <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -mx-10 -my-10 pointer-events-none" />
+                        </div>
+                      )}
+                      
+                      {/* Top Header Section */}
+                      <div className="flex items-start justify-between gap-4 p-5 sm:p-6 relative z-10 w-full">
+                        <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-lg">
+                          <IconComponent className="w-6 h-6 text-white drop-shadow-md" />
                         </div>
                         
                         <div className="flex flex-col items-end gap-2 shrink-0">
                           {event.discount_percent && serverIsActive && (
-                            <div className="px-3 py-1 bg-white text-slate-900 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest shadow-lg">
+                            <div className="px-4 py-1.5 bg-yellow-400 text-slate-900 rounded-full text-[11px] md:text-xs font-black uppercase tracking-widest shadow-lg transform rotate-2 origin-top-right">
                               {event.discount_percent}% OFF
                             </div>
                           )}
                           {!serverIsActive && (
-                             <div className="px-3 py-1 bg-black/40 text-white backdrop-blur-sm rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-sm">
+                             <div className="px-3 py-1 bg-black/60 text-white backdrop-blur-md border border-white/10 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-sm">
                               {t('promo.not_active')}
                              </div>
                           )}
                         </div>
                       </div>
 
-                      <div className="relative z-10 flex-1 flex flex-col justify-center gap-2 mb-8">
-                        <h3 className="text-2xl md:text-3xl font-black leading-tight drop-shadow-sm text-balance">
+                      {/* Bottom Content Section */}
+                      <div className="relative z-10 p-5 sm:p-6 pt-12 flex flex-col justify-end w-full">
+                        <h3 className="text-2xl md:text-3xl font-black leading-tight text-white drop-shadow-lg mb-2 inline-block">
                           {event.headline}
                         </h3>
-                        <p className="text-white/80 text-xs md:text-sm font-medium line-clamp-2 md:line-clamp-3 w-5/6">
+                        <p className="text-white/90 text-sm font-medium line-clamp-2 w-5/6 sm:w-3/4 drop-shadow-md mb-5 leading-relaxed">
                           {event.description || 'Penawaran promo spesial terbatas. Jangan sampai kelewatan periode promonya dan nikmati diskon khusus belanja hari ini!'}
                         </p>
-                      </div>
 
-                      <div className="relative z-10 flex items-center justify-between mt-auto border-t border-white/20 pt-4">
-                        <div className="flex items-center gap-1.5 opacity-90">
-                          <ClockIcon className="w-4 h-4" />
-                          <span className="text-[11px] md:text-xs font-bold uppercase tracking-wider">
-                            {statusLabel}
-                          </span>
+                        <div className="flex items-center justify-between pt-4 border-t border-white/20">
+                          <div className="flex items-center gap-2 opacity-100 text-white">
+                            <ClockIcon className="w-4 h-4 text-primary-light drop-shadow" />
+                            <span className="text-[11px] md:text-xs font-black uppercase tracking-widest text-[#FFF]">
+                              {statusLabel}
+                            </span>
+                          </div>
+
+                          <Link 
+                            href={`/promo/${event.event_slug}`} 
+                            className="px-5 py-2.5 rounded-xl bg-white text-slate-900 hover:bg-primary hover:text-white hover:border-transparent text-xs font-black transition-all shadow-xl flex items-center gap-2 active:scale-95 border border-transparent"
+                          >
+                            {t('promo.view_details')}
+                          </Link>
                         </div>
-
-                        <Link 
-                          href={`/promo/${event.event_slug}`} 
-                          className="px-4 py-2 rounded-xl bg-white/20 hover:bg-white text-white hover:text-slate-900 backdrop-blur-md text-[11px] sm:text-xs font-black transition-all shadow-sm flex items-center gap-2 active:scale-95"
-                        >
-                          {t('promo.view_details')}
-                        </Link>
                       </div>
                     </div>
                   </div>
