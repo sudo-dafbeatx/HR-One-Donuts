@@ -8,6 +8,7 @@ import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import { Product } from "@/types/cms";
 import { askDonaAI } from "@/app/actions/gemini-actions";
+import { sendFeedbackToTelegram } from "@/app/actions/bot-actions";
 
 interface Message {
   id: string;
@@ -77,6 +78,7 @@ export default function ChatbotWidget() {
   const [isDragging, setIsDragging] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [botDisabled, setBotDisabled] = useState(false);
+  const [waitingForFeedback, setWaitingForFeedback] = useState(false);
   const dragStartPos = useRef({ x: 0, y: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -193,7 +195,7 @@ export default function ChatbotWidget() {
       setTimeout(() => {
         addBotMessage(
           "Halo! 👋 Saya Dona, AI Assistant HR-One Donuts \n\nSaya siap membantu Anda! Mau lihat menu atau ada pertanyaan?",
-          ["Lihat Menu", "Cara Pesan", "Hubungi WhatsApp", "Bestseller"]
+          ["Lihat Menu", "Cara Pesan", "Masukan", "Hubungi WhatsApp", "Bestseller"]
         );
       }, 500);
     }
@@ -215,9 +217,42 @@ export default function ChatbotWidget() {
   }, [isOpen]);
 
   const handleBotResponse = async (userInput: string) => {
-    const input = userInput.toLowerCase();
+    const input = userInput.toLowerCase().trim();
 
     setIsTyping(true);
+
+    // 0. Feedback Flow
+    if (waitingForFeedback) {
+      const isRejection = [
+        "tidak", "enggak", "ga", "gak", "tidak ada", "gaada", "gak ada", "tdk", "nothin", "no", "kosong", "belum", "ga ada"
+      ].some(synonym => input === synonym || input.includes(synonym) && input.length < 15);
+
+      if (isRejection) {
+        setTimeout(() => {
+          addBotMessage(
+            "Terima kasih banyak! Terus nikmati donat kami ya. 🍩",
+            ["Lihat Menu", "Bestseller"]
+          );
+          setWaitingForFeedback(false);
+        }, 800);
+      } else {
+        // Send actual feedback to Telegram
+        try {
+          await sendFeedbackToTelegram(userInput);
+        } catch (err) {
+          console.error("Failed to send feedback:", err);
+        }
+
+        setTimeout(() => {
+          addBotMessage(
+            "Terima kasih banyak atas masukannya! Kami akan terus meningkatkan kualitas layanan kami. 🍩✨",
+            ["Lihat Menu", "Bestseller"]
+          );
+          setWaitingForFeedback(false);
+        }, 800);
+      }
+      return;
+    }
 
     // 1. Dynamic Menu / Product Search
     if (input.includes("menu") || input.includes("lihat menu") || input.includes("produk") || input.includes("bestseller") || input.includes("laris")) {
@@ -284,6 +319,17 @@ export default function ChatbotWidget() {
             ["Lihat Menu", "Selesai"]
           );
         }
+      }, 800);
+      return;
+    }
+
+    if (input.includes("masukan")) {
+      setTimeout(() => {
+        addBotMessage(
+          "Apakah kamu memiliki masukan untuk website HR-One Donuts? 🍩✨",
+          ["Tidak ada"]
+        );
+        setWaitingForFeedback(true);
       }, 800);
       return;
     }
