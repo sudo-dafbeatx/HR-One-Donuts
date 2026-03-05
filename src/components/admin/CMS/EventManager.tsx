@@ -86,13 +86,8 @@ export default function EventManager({ initialEvents }: { initialEvents: PromoEv
                   <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded">
                     {event.event_slug?.replace('_', ' ') || 'PROMO'}
                   </span>
-                  {!event.is_enabled && (
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
-                      Draft
-                    </span>
-                  )}
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                    {event.event_day}
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#FFF] bg-white/20 backdrop-blur-md px-2 py-0.5 rounded shadow-sm border border-white/10">
+                    Otomatis Aktif Hari {event.event_day === 'TUESDAY' ? 'Selasa' : event.event_day === 'FRIDAY' ? 'Jumat' : event.event_day}
                   </span>
                 </div>
               </div>
@@ -166,17 +161,24 @@ export default function EventManager({ initialEvents }: { initialEvents: PromoEv
                 </div>
 
                 <div className="space-y-4">
-                   <AdminCard title="Status & Waktu">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-bold text-slate-700 text-left">Aktif</span>
-                        <button
-                          type="button"
-                          onClick={() => setEditingEvent({...editingEvent, is_enabled: !editingEvent.is_enabled})}
-                          className={`relative inline-flex h-6 w-11 rounded-full transition-colors ${editingEvent.is_enabled ? 'bg-primary' : 'bg-slate-300'}`}
-                        >
-                          <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition ${editingEvent.is_enabled ? 'translate-x-5' : 'translate-x-0'} mt-0.5 ml-0.5`} />
-                        </button>
-                      </div>
+                    <AdminCard title="Status & Waktu">
+                      {['selasa_mega_sale', 'jumat_berkah'].includes(editingEvent.event_slug || '') ? (
+                         <div className="flex items-center justify-between mb-4 bg-primary/10 p-3 rounded-xl border border-primary/20">
+                            <span className="text-sm font-bold text-primary text-left">Status Otomatis</span>
+                            <span className="text-xs font-semibold text-primary/80">Aktif setiap {editingEvent.event_day === 'TUESDAY' ? 'Selasa' : editingEvent.event_day === 'FRIDAY' ? 'Jumat' : editingEvent.event_day}</span>
+                         </div>
+                      ) : (
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="text-sm font-bold text-slate-700 text-left">Aktif</span>
+                          <button
+                            type="button"
+                            onClick={() => setEditingEvent({...editingEvent, is_enabled: !editingEvent.is_enabled})}
+                            className={`relative inline-flex h-6 w-11 rounded-full transition-colors ${editingEvent.is_enabled ? 'bg-primary' : 'bg-slate-300'}`}
+                          >
+                            <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition ${editingEvent.is_enabled ? 'translate-x-5' : 'translate-x-0'} mt-0.5 ml-0.5`} />
+                          </button>
+                        </div>
+                      )}
                       <div className="space-y-2">
                          <div className="grid grid-cols-2 gap-4">
                            <AdminInput 
