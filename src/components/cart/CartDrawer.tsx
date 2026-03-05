@@ -58,7 +58,7 @@ function QuantityInput({ initialValue, onUpdate }: { initialValue: number, onUpd
       value={inputValue}
       onChange={handleChange}
       onBlur={handleBlur}
-      className="text-sm font-black w-12 text-center bg-transparent border-none focus:ring-0 text-slate-900 dark:text-slate-100 p-0"
+      className="text-sm font-black w-12 text-center bg-transparent border-none focus:ring-0 text-slate-900! p-0"
     />
   );
 }
@@ -514,11 +514,6 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   </button>
                 </div>
 
-                <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
-                  <p className="text-[10px] md:text-xs text-slate-500 font-medium italic text-center leading-relaxed">
-                    {deliveryMethod === 'delivery' ? t('cart.shipping_note') : t('cart.pickup_note')}
-                  </p>
-                </div>
               </div>
 
               <div className="h-6" />
@@ -534,12 +529,15 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 <span className="text-xs font-bold uppercase tracking-widest">{t('cart.subtotal')}</span>
                 <span className="text-sm font-black text-slate-900">Rp {totalPrice.toLocaleString("id-ID")}</span>
               </div>
-              {deliveryMethod === 'delivery' && (
-                <div className="flex justify-between items-center text-slate-400 pb-2">
-                  <span className="text-xs font-bold uppercase tracking-widest">{t('cart.shipping_fee')}</span>
-                  <span className="text-sm font-black text-slate-900">Rp {shippingFee.toLocaleString("id-ID")}</span>
+                <div className="flex flex-col items-end gap-1 mb-2">
+                  <div className="flex justify-between items-center text-slate-400 w-full">
+                    <span className="text-xs font-bold uppercase tracking-widest">{t('cart.shipping_fee')}</span>
+                    <span className="text-sm font-black text-slate-900">Rp {shippingFee.toLocaleString("id-ID")}</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400 font-bold italic text-right leading-tight">
+                    {deliveryMethod === 'delivery' ? t('cart.shipping_note') : t('cart.pickup_note')}
+                  </p>
                 </div>
-              )}
               <div className="flex justify-between items-end pt-3 border-t border-slate-100">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">ESTIMASI TOTAL</span>
