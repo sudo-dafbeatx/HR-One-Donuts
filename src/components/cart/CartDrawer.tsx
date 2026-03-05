@@ -521,54 +521,54 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           )}
         </div>
 
-        {/* Compact Sticky Footer - Refined */}
+        {/* Compact Sticky Footer - Seamless layout */}
         {cart.length > 0 && (
-          <div className="relative z-20 p-6 bg-white border-t border-slate-100 shadow-[0_-20px_40px_-20px_rgba(0,0,0,0.1)]">
-            <div className="space-y-2 mb-6 px-1">
-              <div className="flex justify-between items-center text-slate-400">
-                <span className="text-xs font-bold uppercase tracking-widest">{t('cart.subtotal')}</span>
-                <span className="text-sm font-black text-slate-900">Rp {totalPrice.toLocaleString("id-ID")}</span>
+          <div className="relative z-20 px-4 pb-4 pt-2">
+            <div className="space-y-1.5 mb-3">
+              <div className="flex justify-between items-center text-slate-500">
+                <span className="text-[10px] font-bold uppercase tracking-widest">{t('cart.subtotal')}</span>
+                <span className="text-xs font-black text-slate-900">Rp {totalPrice.toLocaleString("id-ID")}</span>
               </div>
-                <div className="flex flex-col items-end gap-1 mb-2">
-                  <div className="flex justify-between items-center text-slate-400 w-full">
-                    <span className="text-xs font-bold uppercase tracking-widest">{t('cart.shipping_fee')}</span>
-                    <span className="text-sm font-black text-slate-900">Rp {shippingFee.toLocaleString("id-ID")}</span>
+                <div className="flex flex-col items-end gap-0.5">
+                  <div className="flex justify-between items-center text-slate-500 w-full">
+                    <span className="text-[10px] font-bold uppercase tracking-widest">{t('cart.shipping_fee')}</span>
+                    <span className="text-xs font-black text-slate-900">Rp {shippingFee.toLocaleString("id-ID")}</span>
                   </div>
-                  <p className="text-[10px] text-slate-400 font-bold italic text-right leading-tight">
+                  <p className="text-[9px] text-slate-400 font-bold italic text-right leading-tight tracking-tight">
                     {deliveryMethod === 'delivery' ? t('cart.shipping_note') : t('cart.pickup_note')}
                   </p>
                 </div>
-              <div className="flex justify-between items-end pt-3 border-t border-slate-100">
+              <div className="flex justify-between items-end pt-2 mt-1 border-t border-slate-200">
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-0.5">ESTIMASI TOTAL</span>
-                  <span className="text-2xl font-black text-slate-900 tracking-tight leading-none">
+                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.15em]">ESTIMASI TOTAL</span>
+                  <span className="text-xl font-black text-slate-900 tracking-tight leading-none mt-0.5">
                     Rp {finalTotal.toLocaleString("id-ID")}
                   </span>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] font-bold text-slate-400 mb-0.5">TOTAL ITEM</span>
-                  <span className="text-sm font-black text-slate-600 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">{totalDonuts} Pcs</span>
+                  <span className="text-[9px] font-bold text-slate-400">TOTAL ITEM</span>
+                  <span className="text-xs font-black text-slate-600 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 mt-0.5 shadow-sm">{totalDonuts} Pcs</span>
                 </div>
               </div>
             </div>
 
             <button 
               onClick={handleWhatsAppOrder}
-              className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-[#111827] rounded-3xl py-4 flex flex-col items-center justify-center gap-0.5 transition-all shadow-xl shadow-[#25D366]/30 active:scale-[0.98] group relative overflow-hidden"
+              className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-[#111827] rounded-3xl h-12 flex flex-col items-center justify-center transition-all shadow-lg shadow-[#25D366]/20 active:scale-[0.98] group relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               
-              <div className="flex items-center gap-3 font-black text-lg uppercase tracking-tight text-[#111827] relative z-10">
-                <svg className="w-6 h-6 fill-[#111827]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <div className="flex items-center gap-2 font-black text-base uppercase tracking-tight text-[#111827] relative z-10">
+                <svg className="w-5 h-5 fill-[#111827]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793 0-.852.448-1.271.607-1.445.159-.173.346-.217.462-.217h.332c.101 0 .23.036.332.274.116.273.39.954.423 1.025.033.072.054.156.007.251-.047.094-.072.156-.144.239-.072.083-.151.185-.216.249-.072.072-.147.151-.063.294.083.144.368.607.789.982.541.483 1.002.632 1.144.704.144.072.23.063.315-.033.085-.097.368-.427.466-.572.101-.144.202-.123.332-.076.13.047.823.39.966.462.144.072.239.108.274.17.036.062.036.357-.108.762zM12 1a10.89 10.89 0 00-11 11c0 2.187.625 4.22 1.707 5.956L1 23l5.241-1.374A10.84 10.84 0 0012 23c6.075 0 11-4.925 11-11S18.075 1 12 1z"/>
                 </svg>
                 {t('cart.whatsapp_cta')}
               </div>
-              <span className="text-[10px] tracking-[0.2em] uppercase font-black text-slate-800/60 relative z-10 transition-opacity">
+              <span className="text-[9px] tracking-[0.15em] uppercase font-black text-slate-800/70 relative z-10 transition-opacity mt-px">
                 {t('cart.whatsapp_note')}
               </span>
             </button>
-            <p className="mt-4 text-[9px] text-center text-slate-400 font-bold uppercase tracking-widest px-8 leading-relaxed">
+            <p className="mt-3 text-[9px] text-center text-slate-400 font-bold uppercase tracking-widest px-8 leading-relaxed mb-4">
               {t('cart.service_area')}
             </p>
           </div>
