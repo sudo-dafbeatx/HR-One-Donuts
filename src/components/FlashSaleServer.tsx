@@ -9,7 +9,6 @@ export default async function FlashSaleServer() {
     supabase
       .from('promo_events')
       .select('*')
-      .in('event_slug', ['selasa_mega_sale', 'jumat_berkah'])
       .order('created_at', { ascending: false }),
     supabase
       .from('flash_sales')
@@ -43,16 +42,8 @@ export default async function FlashSaleServer() {
 
   // Attach server-side active flags
   const processedEvents = events.map(evt => {
-    let serverIsActive = false;
-    let serverActiveDayName = '';
-
-    if (evt.event_slug === 'selasa_mega_sale') {
-      serverIsActive = isTuesday;
-      serverActiveDayName = 'Tuesday';
-    } else if (evt.event_slug === 'jumat_berkah') {
-      serverIsActive = isFriday;
-      serverActiveDayName = 'Friday';
-    }
+    const serverIsActive = todayName.toUpperCase() === evt.event_day;
+    const serverActiveDayName = todayName; // fallback name
 
     return {
       ...evt,

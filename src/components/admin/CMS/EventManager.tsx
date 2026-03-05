@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { PromoEvent } from '@/types/cms';
-import { AdminInput, AdminButton, AdminSelect, AdminCard } from './Shared';
+import { AdminInput, AdminButton, AdminSelect } from './Shared';
 import { saveEvent, deleteEvent } from '@/app/admin/actions';
 import { TrashIcon, PencilIcon, PlusIcon, MegaphoneIcon } from '@heroicons/react/24/outline';
 import ImageUploader from '../ImageUploader';
@@ -161,41 +161,6 @@ export default function EventManager({ initialEvents }: { initialEvents: PromoEv
                 </div>
 
                 <div className="space-y-4">
-                    <AdminCard title="Status & Waktu">
-                      {['selasa_mega_sale', 'jumat_berkah'].includes(editingEvent.event_slug || '') ? (
-                         <div className="flex items-center justify-between mb-4 bg-primary/10 p-3 rounded-xl border border-primary/20">
-                            <span className="text-sm font-bold text-primary text-left">Status Otomatis</span>
-                            <span className="text-xs font-semibold text-primary/80">Aktif setiap {editingEvent.event_day === 'TUESDAY' ? 'Selasa' : editingEvent.event_day === 'FRIDAY' ? 'Jumat' : editingEvent.event_day}</span>
-                         </div>
-                      ) : (
-                        <div className="flex items-center justify-between mb-4">
-                          <span className="text-sm font-bold text-slate-700 text-left">Aktif</span>
-                          <button
-                            type="button"
-                            onClick={() => setEditingEvent({...editingEvent, is_enabled: !editingEvent.is_enabled})}
-                            className={`relative inline-flex h-6 w-11 rounded-full transition-colors ${editingEvent.is_enabled ? 'bg-primary' : 'bg-slate-300'}`}
-                          >
-                            <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition ${editingEvent.is_enabled ? 'translate-x-5' : 'translate-x-0'} mt-0.5 ml-0.5`} />
-                          </button>
-                        </div>
-                      )}
-                      <div className="space-y-2">
-                         <div className="grid grid-cols-2 gap-4">
-                           <AdminInput 
-                              label="Jam Mulai" 
-                              type="time"
-                              value={editingEvent.start_time || '00:00'} 
-                              onChange={e => setEditingEvent({...editingEvent, start_time: e.target.value})}
-                           />
-                           <AdminInput 
-                              label="Jam Selesai" 
-                              type="time"
-                              value={editingEvent.end_time || '23:59'} 
-                              onChange={e => setEditingEvent({...editingEvent, end_time: e.target.value})}
-                           />
-                         </div>
-                      </div>
-                   </AdminCard>
                    <div className="text-left">
                       <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5 ml-1">Deskripsi</label>
                       <textarea 
