@@ -395,9 +395,22 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                             +
                           </button>
                         </div>
-                        <span className="font-bold text-slate-900 dark:text-white">
-                          Rp {(effectiveItemPrice * item.quantity).toLocaleString("id-ID")}
-                        </span>
+                        <div className="font-bold flex flex-col items-end leading-tight">
+                          {hasDiscount ? (
+                            <>
+                              <span className="text-[10px] text-slate-400 line-through">
+                                Rp {(item.price * item.quantity).toLocaleString("id-ID")}
+                              </span>
+                              <span className="text-slate-900 dark:text-white">
+                                Rp {(effectiveItemPrice * item.quantity).toLocaleString("id-ID")}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-slate-900 dark:text-white">
+                              Rp {(effectiveItemPrice * item.quantity).toLocaleString("id-ID")}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
