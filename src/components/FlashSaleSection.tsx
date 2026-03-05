@@ -265,13 +265,14 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                       {/* Background Image / Color */}
                       {event.banner_image_url ? (
                         <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img 
                             src={event.banner_image_url} 
                             alt={event.headline} 
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
                           />
-                          {/* Elegant Shadow Gradient Overlay to ensure text readability */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/20 transition-opacity duration-300" />
+                          {/* Soft Gradient Overlay for Readability */}
+                          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-slate-900/90 via-slate-900/40 to-transparent pointer-events-none" />
                         </>
                       ) : (
                         <div 
