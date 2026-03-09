@@ -57,62 +57,62 @@ export default async function proxy(request: NextRequest) {
   // =====================================================
   const pathname = request.nextUrl.pathname;
   const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/api/admin');
-  const isLockedPage = pathname === '/locked';
-  const isStaticAsset = pathname.startsWith('/_next') || pathname.startsWith('/images') || !!pathname.match(/\.(svg|png|jpg|jpeg|gif|webp|ico|css|js)$/);
-  const hasAdminSession = !!request.cookies.get('admin_session')?.value;
-
-  if (!isAdminRoute && !isStaticAsset && !hasAdminSession) {
-    // 1. Determine base date condition: is it the 25th in WIB timezone?
-    const now = new Date();
-    const wibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
-    const isThe25th = wibTime.getUTCDate() === 25;
-
-    let siteLocked = isThe25th; // Default to date-based lock
-
-    // 2. Fetch overriding manual_lock setting from database
-    try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-      const res = await fetch(
-        `${supabaseUrl}/rest/v1/settings?key=eq.site_lock&select=value`,
-        {
-          headers: {
-            'apikey': supabaseKey,
-            'Authorization': `Bearer ${supabaseKey}`,
-          },
-          cache: 'no-store',
+    const isMaintenancePage = pathname === '/maintenance';
+    const isStaticAsset = pathname.startsWith('/_next') || pathname.startsWith('/images') || !!pathname.match(/\.(svg|png|jpg|jpeg|gif|webp|ico|css|js)$/);
+    const hasAdminSession = !!request.cookies.get('admin_session')?.value;
+  
+    if (!isAdminRoute && !isStaticAsset && !hasAdminSession) {
+      // 1. Determine base date condition: is it the 25th in WIB timezone?
+      const now = new Date();
+      const wibTime = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+      const isThe25th = wibTime.getUTCDate() === 25;
+  
+      let siteLocked = isThe25th; // Default to date-based lock
+  
+      // 2. Fetch overriding manual_lock setting from database
+      try {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+        const res = await fetch(
+          `${supabaseUrl}/rest/v1/settings?key=eq.site_lock&select=value`,
+          {
+            headers: {
+              'apikey': supabaseKey,
+              'Authorization': `Bearer ${supabaseKey}`,
+            },
+            cache: 'no-store',
+          }
+        );
+  
+        if (res.ok) {
+          const rows = await res.json();
+          if (rows.length > 0) {
+            const lockSetting = rows[0].value;
+            // Precedence Rules:
+            if (lockSetting?.manual_lock === true) {
+              // Rule A: Admin explicitly locked -> OVERRIDE ALL, ALWAYS SECURE
+              siteLocked = true;
+            } else if (lockSetting?.manual_lock === false) {
+              // Rule B: Admin explicitly unlocked -> OVERRIDE ALL, ALWAYS OPEN
+              siteLocked = false;
+            } 
+            // Rule C (implicit): If setting exists but no manual_lock property -> Fallback to date (isThe25th)
+          }
+        } else {
+          // FAIL-OPEN: If DB returns non-200, assume unlocked to prevent false lockouts
+          siteLocked = false;
         }
-      );
-
-      if (res.ok) {
-        const rows = await res.json();
-        if (rows.length > 0) {
-          const lockSetting = rows[0].value;
-          // Precedence Rules:
-          if (lockSetting?.manual_lock === true) {
-            // Rule A: Admin explicitly locked -> OVERRIDE ALL, ALWAYS SECURE
-            siteLocked = true;
-          } else if (lockSetting?.manual_lock === false) {
-            // Rule B: Admin explicitly unlocked -> OVERRIDE ALL, ALWAYS OPEN
-            siteLocked = false;
-          } 
-          // Rule C (implicit): If setting exists but no manual_lock property -> Fallback to date (isThe25th)
-        }
-      } else {
-        // FAIL-OPEN: If DB returns non-200, assume unlocked to prevent false lockouts
+      } catch {
+        // Rule D (FAIL-OPEN): If network fails completely, ALWAYS fail open to avoid mass lockouts
         siteLocked = false;
       }
-    } catch {
-      // Rule D (FAIL-OPEN): If network fails completely, ALWAYS fail open to avoid mass lockouts
-      siteLocked = false;
+  
+      // 3. SINGLE AUTHORITY ROUTING DECISION
+      // Middleware ONLY redirects TO /maintenance. It NEVER redirects AWAY from /maintenance.
+      if (siteLocked && !isMaintenancePage) {
+        return NextResponse.redirect(new URL('/maintenance', request.url));
+      }
     }
-
-    // 3. SINGLE AUTHORITY ROUTING DECISION
-    // Middleware ONLY redirects TO /locked. It NEVER redirects AWAY from /locked.
-    if (siteLocked && !isLockedPage) {
-      return NextResponse.redirect(new URL('/locked', request.url));
-    }
-  }
 
   // =====================================================
   // AUTH PROTECTION - Redirect to login if not logged in
