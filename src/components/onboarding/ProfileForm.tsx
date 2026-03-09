@@ -3,7 +3,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import GeoDropdown from './GeoDropdown';
-import { useLoading } from '@/context/LoadingContext';
 import { useErrorPopup } from '@/context/ErrorPopupContext';
 import { useRouter } from 'next/navigation';
 import { normalizePhoneToID } from '@/lib/phone';
@@ -35,7 +34,6 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [slowSubmission, setSlowSubmission] = useState(false);
   const [phoneDuplicate, setPhoneDuplicate] = useState(false);
   const [phoneChecking, setPhoneChecking] = useState(false);
   const phoneDebounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -45,7 +43,6 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
     cookies: false,
     notifikasi: false,
   });
-  const { setIsLoading } = useLoading();
   const { showError } = useErrorPopup();
   const router = useRouter();
   const supabase = createClient();
@@ -132,100 +129,91 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
     if (!validate() || submitting) return;
 
     const startTime = Date.now();
-    console.log(`[Onboarding] Submission started at: ${new Date(startTime).toISOString()}`);
+    console.log(`[Onboarding] Submission started (Optimistic) at: ${new Date(startTime).toISOString()}`);
     
     setSubmitting(true);
-    setSlowSubmission(false);
-    setIsLoading(true, 'Menyimpan profil kamu...');
-
-    // Timeout guard: show reassurance message if > 4s
-    const timeoutMsg = setTimeout(() => {
-      setSlowSubmission(true);
-      setIsLoading(true, 'Menyimpan data... Mohon tunggu sebentar');
-    }, 4000);
-
-    try {
-      const normalizedPhone = normalizePhoneToID(formData.phone);
-
-      if (!formData.email) {
-        throw new Error('Email akun tidak ditemukan. Mohon login ulang.');
-      }
-
-      // Update basic profiles table for phone/name sync and unique constraint
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({
-          id: userId,
-          full_name: formData.fullName,
-          phone: normalizedPhone,
-          email: formData.email,
-        }, { onConflict: 'id' });
-
-      if (profileError) {
-        if (profileError.code === '23505' || profileError.message.toLowerCase().includes('unique')) {
-           throw new Error('Nomor HP ini sudah terdaftar. Pakai nomor lain.');
+    // Optimistic UI: Don't show loading spinner, just instantly act like it worked!
+    // Set cookie immediately so the app routing knows they are 'complete'
+    document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
+    setSuccess(true);
+    
+    // Background execution decoupling
+    (async () => {
+      try {
+        const normalizedPhone = normalizePhoneToID(formData.phone);
+  
+        if (!formData.email) {
+          throw new Error('Email akun tidak ditemukan. Mohon login ulang.');
         }
-        throw profileError;
+  
+        // Update basic profiles table for phone/name sync and unique constraint
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: userId,
+            full_name: formData.fullName,
+            phone: normalizedPhone,
+            email: formData.email,
+          }, { onConflict: 'id' });
+  
+        if (profileError) {
+          if (profileError.code === '23505' || profileError.message.toLowerCase().includes('unique')) {
+             throw new Error('Nomor HP ini sudah terdaftar. Pakai nomor lain.');
+          }
+          throw profileError;
+        }
+  
+        // Update detailed user_profiles
+        const { error } = await supabase
+          .from('user_profiles')
+          .upsert({
+            id: userId,
+            full_name: formData.fullName,
+            username: formData.username.toLowerCase(),
+            email: formData.email,
+            gender: formData.gender,
+            age: parseInt(formData.age),
+            birth_place: formData.birthPlace,
+            birth_date: formData.birthDate,
+            province_id: formData.province.id,
+            province_name: formData.province.name,
+            city_id: formData.city.id,
+            city_name: formData.city.name,
+            district_id: formData.district.id,
+            district_name: formData.district.name,
+            address_detail: formData.addressDetail,
+            is_profile_complete: true
+          });
+  
+        if (error) throw error;
+  
+        // Also create an initial entry in user_addresses Table
+        const { error: addressError } = await supabase
+          .from('user_addresses')
+          .insert({
+            user_id: userId,
+            label: 'Rumah',
+            full_name: formData.fullName,
+            phone: normalizedPhone,
+            province: formData.province.name,
+            city: formData.city.name,
+            district: formData.district.name,
+            postal_code: '00000', // Required by schema, can be updated later by user
+            street_name: formData.addressDetail || 'Alamat Pendaftaran',
+            is_default: true
+          });
+  
+        if (addressError) throw addressError;
+        
+        console.log(`[Onboarding] Background sync complete in ${Date.now() - startTime}ms`);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Terjadi kesalahan sistem';
+        console.error('[Onboarding] Background Sync Error:', message, err);
+        showError('Penyimpanan Latar Belakang Gagal', 'Data profil kamu belum sepenuhnya tersimpan karena gangguan jaringan. Harap periksa profilmu nanti.');
+        // We could revert setSuccess(false) here, but since they might be reading the success screen
+        // showing a toast is usually less jarring than ripping them back to the form.
       }
-
-      // Update detailed user_profiles
-      const { error } = await supabase
-        .from('user_profiles')
-        .upsert({
-          id: userId,
-          full_name: formData.fullName,
-          username: formData.username.toLowerCase(),
-          email: formData.email,
-          gender: formData.gender,
-          age: parseInt(formData.age),
-          birth_place: formData.birthPlace,
-          birth_date: formData.birthDate,
-          province_id: formData.province.id,
-          province_name: formData.province.name,
-          city_id: formData.city.id,
-          city_name: formData.city.name,
-          district_id: formData.district.id,
-          district_name: formData.district.name,
-          address_detail: formData.addressDetail,
-          is_profile_complete: true
-        });
-
-      if (error) throw error;
-
-      // Also create an initial entry in user_addresses Table
-      const { error: addressError } = await supabase
-        .from('user_addresses')
-        .insert({
-          user_id: userId,
-          label: 'Rumah',
-          full_name: formData.fullName,
-          phone: normalizedPhone,
-          province: formData.province.name,
-          city: formData.city.name,
-          district: formData.district.name,
-          postal_code: '00000', // Required by schema, can be updated later by user
-          street_name: formData.addressDetail || 'Alamat Pendaftaran',
-          is_default: true
-        });
-
-      if (addressError) throw addressError;
-
-      // Optimistic UI: Sync cookie and state immediately
-      document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
-      setSuccess(true);
-      setIsLoading(false); // Stop general loading to show success UI
-      
-      // Removed the automatic hidden setTimeout redirect.
-      // The user will explicitly click "Mulai Berbelanja" the success screen.
-      
-    } catch (err: unknown) {
-      clearTimeout(timeoutMsg);
-      const message = err instanceof Error ? err.message : 'Terjadi kesalahan';
-      console.error('[Onboarding] Error:', message, err);
-      showError('Gagal Menyimpan', 'Terjadi kesalahan saat menyimpan data. Coba lagi.');
-      setSubmitting(false);
-      setIsLoading(false);
-    }
+    })();
   };
 
   if (success) {
@@ -451,7 +439,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
           {submitting ? (
             <>
               <div className="size-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-              <span>{slowSubmission ? 'Sedang memproses... Mohon tunggu' : 'Menyimpan...'}</span>
+              <span>Menyiapkan Profil...</span>
             </>
           ) : (
             <>
@@ -460,11 +448,6 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
             </>
           )}
         </button>
-        {slowSubmission && (
-          <p className="mt-3 text-center text-xs font-bold text-amber-600 animate-pulse">
-            Koneksi agak lambat, tetap di sini ya... 🍩
-          </p>
-        )}
         <div className="mt-4 text-center">
           <a href={`https://wa.me/${process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || '6285810658117'}`} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-primary hover:underline">
             Butuh bantuan? Hubungi Admin
