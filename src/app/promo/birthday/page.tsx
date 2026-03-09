@@ -98,7 +98,7 @@ export default function BirthdayPromoPage() {
                   { value: timeLeft.seconds, label: 'Detik' }
                 ].map((item, i) => (
                   <div key={i} className="flex flex-col items-center">
-                    <div className="text-4xl md:text-5xl font-black tabular-nums min-w-[3rem]">
+                    <div className="text-4xl md:text-5xl font-black tabular-nums min-w-12">
                       {String(item.value).padStart(2, '0')}
                     </div>
                     <span className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">{item.label}</span>
