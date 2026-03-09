@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Confetti from "@/components/animations/Confetti";
 import { useCart } from '@/context/CartContext';
 import { showCartToast } from '@/components/cart/CartToast';
+import ShareButton from '@/components/ui/ShareButton';
 
 export default function PromoDetailPage() {
   const { slug } = useParams();
@@ -80,11 +81,18 @@ export default function PromoDetailPage() {
       <main className="relative z-10 max-w-lg md:max-w-5xl mx-auto px-4 py-6 md:py-12 min-h-screen flex flex-col">
         
         {/* Navigation */}
-        <div className="flex justify-start mb-6">
+        <div className="flex items-center justify-between mb-6">
            <Link href="/" className="flex items-center gap-2 text-slate-500 hover:text-primary font-bold transition-all bg-white px-5 py-2.5 rounded-full shadow-sm border border-slate-200 hover:shadow-md">
               <span className="material-symbols-outlined text-sm">arrow_back</span>
               Beranda
            </Link>
+           {event && (
+             <ShareButton
+               title={event.headline}
+               text={`${event.headline} — Diskon ${event.discount_percent}% di HR-One Donuts! 🍩`}
+               variant="card"
+             />
+           )}
         </div>
 
         {/* Mobile/All-Device Friendly Layout */}

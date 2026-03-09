@@ -13,6 +13,7 @@ import { StarIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState, useCallback } from 'react';
 import { getEventTiming, type EventTiming } from '@/lib/date-utils';
 import { useTranslation } from '@/context/LanguageContext';
+import ShareButton from '@/components/ui/ShareButton';
 
 interface ProcessedPromoEvent extends PromoEvent {
   serverIsActive?: boolean;
@@ -302,6 +303,12 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                               {t('promo.not_active')}
                              </div>
                           )}
+                          <ShareButton
+                            title={event.headline}
+                            text={`${event.headline} — Diskon ${event.discount_percent}% di HR-One Donuts! 🍩`}
+                            url={typeof window !== 'undefined' ? `${window.location.origin}/promo/${event.event_slug}` : `/promo/${event.event_slug}`}
+                            variant="icon"
+                          />
                         </div>
                       </div>
 

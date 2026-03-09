@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Confetti from "@/components/animations/Confetti";
+import ShareButton from "@/components/ui/ShareButton";
 
 export default function BirthdayPromoPage() {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -112,9 +113,9 @@ export default function BirthdayPromoPage() {
         </div>
 
         {/* Location Section */}
-        <div className="grid md:grid-cols-2 gap-8 items-stretch max-w-3xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 items-stretch max-w-4xl mx-auto">
           <div className="bg-white rounded-3xl p-6 shadow-xl border border-rose-50 flex items-center gap-5">
-            <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
               <span className="material-symbols-outlined text-primary text-3xl">location_on</span>
             </div>
             <div className="text-left">
@@ -131,6 +132,12 @@ export default function BirthdayPromoPage() {
               </a>
             </div>
           </div>
+
+          <ShareButton
+            title="🎂 Promo Ulang Tahun HR-One Donuts"
+            text="Hari ini ulang tahunku! Dapat gratis 1 Box Donat di HR-One Donuts 🍩🎁"
+            url={typeof window !== 'undefined' ? window.location.href : '/promo/birthday'}
+          />
 
           <Link 
             href="/" 
