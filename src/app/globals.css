@@ -49,7 +49,10 @@
   &::before {
     content: "";
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     z-index: 0;
     pointer-events: none;
     opacity: 0.05;
@@ -260,6 +263,7 @@ body.edit-mode-panel-open #main-content {
 /* From Uiverse.io by SachinKumar666 */ 
 .loader-uiverse {
   height: 15px;
+  width: 60px; /* fallback for aspect-ratio: 4 */
   aspect-ratio: 4;
   --_g: no-repeat radial-gradient(farthest-side, var(--theme-primary, #4319ec) 90%, #0000);
   background:
@@ -272,6 +276,7 @@ body.edit-mode-panel-open #main-content {
 .loader-uiverse:after {
   content: "";
   height: inherit;
+  width: 15px; /* fallback for aspect-ratio: 1 */
   aspect-ratio: 1;
   grid-area: 1/1;
   margin: auto;
@@ -350,7 +355,10 @@ body.edit-mode-panel-open #main-content {
 
 .card__shine {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.05) 30%,
@@ -370,7 +378,10 @@ body.edit-mode-panel-open #main-content {
 
 .card__glow {
   position: absolute;
-  inset: -10px;
+  top: -10px;
+  right: -10px;
+  bottom: -10px;
+  left: -10px;
   background: radial-gradient(
     circle at 50% 0%,
     rgba(var(--theme-primary-rgb), 0.15) 0%,
@@ -437,7 +448,10 @@ body.edit-mode-panel-open #main-content {
 .card__image-container::after {
   content: "";
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background: radial-gradient(
       circle at 20% 80%,
       rgba(255, 255, 255, 0.05) 0%,

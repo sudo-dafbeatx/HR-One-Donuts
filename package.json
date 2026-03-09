@@ -30,9 +30,20 @@
     "@types/node-telegram-bot-api": "^0.64.14",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.27",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "postcss-preset-env": "^11.2.0",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "browserslist": [
+    "defaults",
+    "Chrome >= 51",
+    "Firefox >= 52",
+    "Samsung >= 6",
+    "Android >= 6",
+    "iOS >= 10",
+    "not dead"
+  ]
 }
