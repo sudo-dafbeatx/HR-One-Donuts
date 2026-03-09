@@ -155,7 +155,8 @@ export default async function proxy(request: NextRequest) {
                              pathname.startsWith('/privacy') ||
                              pathname.startsWith('/terms') ||
                              pathname.startsWith('/onboarding');
-  const isPublicRoute = isAuthPath || 
+  const isPublicRoute = pathname === '/' ||
+                         isAuthPath || 
                          isStorefrontRoute ||
                          pathname.startsWith('/api') ||
                          pathname.startsWith('/license-expired') ||

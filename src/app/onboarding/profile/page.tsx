@@ -36,6 +36,13 @@ export default async function OnboardingProfilePage() {
   }
 
   if (profile?.is_profile_complete) {
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    cookieStore.set('hr_profile_complete', 'true', {
+      path: '/',
+      maxAge: 31536000,
+      sameSite: 'lax'
+    });
     redirect('/');
   }
 
