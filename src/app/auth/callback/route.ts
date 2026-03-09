@@ -13,10 +13,10 @@ export async function GET(request: Request) {
     const { error, data: authData } = await supabase.auth.exchangeCodeForSession(code);
     
     if (!error && authData.user) {
-      // Log Google Login (or other OAuth) event asynchronously
-      logAuthEvent(authData.user.id, 'google_login').catch(console.error);
+      // Detach logging to background
+      logAuthEvent(authData.user.id, 'google_login').catch(() => {});
 
-      // Check if profile is complete
+      // Fetch user profile status
       const { data: profile } = await supabase
         .from('user_profiles')
         .select('is_profile_complete')
@@ -24,11 +24,13 @@ export async function GET(request: Request) {
         .maybeSingle();
 
       const isSecure = process.env.NODE_ENV === 'production';
-      const redirectUrl = !profile?.is_profile_complete ? '/onboarding/profile' : next;
+      // If profile exists and is complete, go to next, otherwise onboarding
+      const isComplete = profile?.is_profile_complete === true;
+      const redirectUrl = isComplete ? next : '/onboarding/profile';
+      
       const response = NextResponse.redirect(new URL(redirectUrl, request.url));
       
-      // Sync cookie if complete so middleware allows pass
-      if (profile?.is_profile_complete) {
+      if (isComplete) {
         response.cookies.set('hr_profile_complete', 'true', {
           path: '/',
           maxAge: 31536000,

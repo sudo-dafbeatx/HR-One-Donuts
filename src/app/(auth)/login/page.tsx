@@ -108,39 +108,31 @@ function LoginContent() {
   const handleRedirection = useCallback(async (userId: string, isAutoOnMount = false) => {
     if (redirectingRef.current) return;
     redirectingRef.current = true;
-    const attemptFetchAndRedirect = async (count: number): Promise<void> => {
+    const attemptFetchAndRedirect = async (): Promise<void> => {
       try {
-        // Do NOT check admin role here — admin panel is accessed via /admin/login only
         const { data: userProfile, error: profileError } = await supabase
           .from('user_profiles')
           .select('is_profile_complete')
           .eq('id', userId)
           .maybeSingle();
 
-        if (profileError) {
-          console.error('User Profile fetch error:', profileError);
-        }
+        if (profileError) console.error('Profile fetch error:', profileError);
 
-        if (!userProfile && count < 2) {
-          console.log(`User profile not found for ${userId}, retrying...`);
-          await new Promise(r => setTimeout(r, 1500));
-          return attemptFetchAndRedirect(count + 1);
-        }
-
-        if (!userProfile?.is_profile_complete) {
-          // If this is an auto-check when mounting the login page, don't force redirect.
-          // This allows users to stay on the login page to switch accounts even if incomplete.
+        // If profile is complete (checked via DB or cached logic)
+        if (userProfile?.is_profile_complete) {
+          document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
+          const target = redirectTo.startsWith('http') ? new URL(redirectTo).pathname : redirectTo;
+          router.push(target || '/profile');
+          setTimeout(() => router.refresh(), 100);
+        } else {
+          // If profile is not found or not complete, we might need onboarding
+          // But if this is on mount, we only redirect if we are SURE it's missing/incomplete
           if (isAutoOnMount) {
             redirectingRef.current = false;
             setIsLoading(false);
             return;
           }
           router.push('/onboarding/profile');
-        } else {
-          document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
-          const target = redirectTo.startsWith('http') ? new URL(redirectTo).pathname : redirectTo;
-          router.push(target || '/profile');
-          setTimeout(() => router.refresh(), 100);
         }
       } catch (err) {
         console.error('Critical Redirection error:', err);
@@ -149,7 +141,7 @@ function LoginContent() {
       }
     };
 
-    return attemptFetchAndRedirect(0);
+    return attemptFetchAndRedirect();
   }, [supabase, router, redirectTo, setIsLoading]);
 
   useEffect(() => {
