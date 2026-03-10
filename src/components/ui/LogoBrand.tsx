@@ -21,10 +21,10 @@ export default function LogoBrand({
 }: LogoBrandProps) {
   
   const sizeClasses = {
-    sm: 'h-10 w-10 md:h-12 md:w-12',
-    md: 'h-12 w-12 md:h-14 md:w-14',
-    lg: 'h-20 w-20 md:h-24 md:w-24',
-    xl: 'h-28 w-28 md:h-32 md:w-32'
+    sm: 'h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12',
+    md: 'h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14',
+    lg: 'h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24',
+    xl: 'h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32'
   };
 
   const [hasError, setHasError] = useState(false);

@@ -109,7 +109,7 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
     <>
       <AudioPermissionToast />
       <header className="sticky top-0 z-50 w-full transition-all duration-500 bg-white/75 backdrop-blur-xl border-b border-slate-200/50 shadow-[0_2px_15px_rgba(0,0,0,0.02)] supports-backdrop-filter:bg-white/70">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between gap-4 md:gap-8 transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 h-16 md:h-20 flex items-center justify-between gap-2 sm:gap-4 md:gap-8 transition-all duration-300">
         {/* Logo */}
         {!hideLogo && (
           <Link href="/" className="flex items-center gap-3 shrink-0 group transition-transform hover:scale-[1.02] active:scale-95">
@@ -158,7 +158,7 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
 
         {/* Search Bar - Centered (Hidden on Homepage) */}
         {!pathname || pathname !== '/' ? (
-          <div className="flex-1 max-w-md hidden md:block">
+          <div className="flex-1 max-w-md hidden lg:block">
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                 <span className="material-symbols-outlined text-xl">search</span>
@@ -177,31 +177,33 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
         )}
 
         {/* Utilities */}
-        <div className="flex items-center gap-1 md:gap-4 shrink-0 transition-opacity duration-500">
-          <div className="hidden sm:block">
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-4 shrink-0 transition-opacity duration-500">
+          <div className="block scale-[0.85] sm:scale-100 origin-right">
             <LanguageSwitcher />
           </div>
           {/* Search Mobile */}
           {(!pathname || pathname !== '/') && (
-            <button className="flex items-center justify-center p-2 rounded-xl text-slate-500 hover:bg-slate-100/80 active:bg-slate-200/50 active:scale-90 md:hidden transition-all min-h-[44px] min-w-[44px]">
-              <span className="material-symbols-outlined text-[22px]">search</span>
-            </button>
+            <Link href="/catalog" className="flex items-center justify-center p-1.5 sm:p-2 rounded-xl text-slate-500 hover:bg-slate-100/80 active:bg-slate-200/50 active:scale-90 lg:hidden transition-all min-h-[38px] min-w-[38px] md:min-h-[44px] md:min-w-[44px]">
+              <span className="material-symbols-outlined text-[20px] md:text-[22px]">search</span>
+            </Link>
           )}
 
           {/* Notifications */}
-          <NotificationBell />
+          <div className="scale-[0.9] md:scale-100">
+            <NotificationBell />
+          </div>
 
           {/* Cart */}
           <button
             onClick={() => setIsCartOpen(true)}
-            className="hidden md:flex p-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-all relative group min-h-[44px] min-w-[44px] items-center justify-center"
+            className="flex p-1.5 md:p-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-all relative group min-h-[38px] min-w-[38px] md:min-h-[44px] md:min-w-[44px] items-center justify-center"
             aria-label="View shopping cart"
           >
-            <span className="material-symbols-outlined group-hover:scale-110 transition-transform">shopping_bag</span>
+            <span className="material-symbols-outlined text-[20px] md:text-[24px] group-hover:scale-110 transition-transform">shopping_bag</span>
             {mounted && totalItems > 0 && (
               <span
                 key={totalItems}
-                className="absolute top-1.5 right-1.5 size-4 bg-red-500 text-white text-[9px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm animate-cart-bounce"
+                className="absolute top-1 right-1 md:top-1.5 md:right-1.5 size-3.5 md:size-4 bg-red-500 text-white text-[8px] md:text-[9px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm animate-cart-bounce"
               >
                 {totalItems}
               </span>
@@ -209,24 +211,24 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
           </button>
 
           {/* Account */}
-          <div className="relative hidden md:block">
+          <div className="relative block">
             <button
               onClick={() => setIsAccountOpen(!isAccountOpen)}
-              className="flex items-center gap-2 p-1.5 md:pl-4 md:pr-1.5 rounded-2xl border border-slate-200/60 hover:border-primary/30 hover:shadow-md transition-all bg-white/50 backdrop-blur-sm group"
+              className="flex items-center gap-1 sm:gap-2 p-1 md:p-1.5 md:pl-4 md:pr-1.5 rounded-[12px] md:rounded-2xl border border-slate-200/60 hover:border-primary/30 hover:shadow-md transition-all bg-white/50 backdrop-blur-sm group"
             >
-              <div className="size-8 md:size-10 rounded-xl bg-slate-100 group-hover:bg-primary/10 flex items-center justify-center transition-colors overflow-hidden relative">
+              <div className="size-7 sm:size-8 md:size-10 rounded-lg md:rounded-xl bg-slate-100 group-hover:bg-primary/10 flex items-center justify-center transition-colors overflow-hidden relative">
                 {userData?.profile?.avatar_url ? (
                   <Image src={userData.profile.avatar_url} alt="Avatar" fill className="object-cover" />
                 ) : (
-                  <UserCircleIcon className="size-6 text-slate-400" />
+                  <UserCircleIcon className="size-5 md:size-6 text-slate-400" />
                 )}
               </div>
-              <ChevronDownIcon className={`size-4 text-slate-400 group-hover:text-primary transition-transform ${isAccountOpen ? 'rotate-180' : ''}`} />
+              <ChevronDownIcon className={`hidden sm:block size-3 md:size-4 text-slate-400 group-hover:text-primary transition-transform ${isAccountOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {/* Account Dropdown */}
             {isAccountOpen && (
-              <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-3xl shadow-2xl border border-slate-100 p-2 animate-in fade-in slide-in-from-top-2 duration-300 z-50 overflow-hidden">
+              <div className="absolute top-full -right-2 sm:right-0 mt-3 w-[280px] sm:w-80 bg-white rounded-3xl shadow-2xl border border-slate-100 p-2 animate-in fade-in slide-in-from-top-2 duration-300 z-50 overflow-hidden">
                 {userData ? (
                   <div className="flex flex-col">
                     {/* Header Summary */}
