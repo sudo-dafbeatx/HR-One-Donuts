@@ -1,0 +1,27 @@
+name: Deployment Notification
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify-telegram:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram Notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          format: html
+          message: |
+            🚀 <b>Deployment Process Started</b>
+            ---------------------------
+            📦 <b>Repository:</b> ${{ github.repository }}
+            🌱 <b>Branch:</b> ${{ github.ref_name }}
+            👤 <b>By:</b> ${{ github.actor }}
+            📝 <b>Commit:</b> <i>${{ github.event.head_commit.message }}</i>
+            🔗 <a href="https://github.com/${{ github.repository }}/commit/${{ github.sha }}">Lihat Perubahan</a>
+            ---------------------------
+            <i>Sistem Notifikasi GitHub Actions Vercel</i>
