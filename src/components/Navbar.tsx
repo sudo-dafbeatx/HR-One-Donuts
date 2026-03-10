@@ -112,24 +112,24 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 h-16 md:h-20 flex items-center justify-between gap-2 sm:gap-4 md:gap-8 transition-all duration-300">
         {/* Logo */}
         {!hideLogo && (
-          <Link href="/" className="flex items-center gap-3 shrink-0 group transition-transform hover:scale-[1.02] active:scale-95">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 shrink-0 group transition-transform hover:scale-[1.02] active:scale-95">
             <div className="relative">
               <LogoBrand 
                 logoUrl={siteSettings?.logo_url} 
                 storeName={siteSettings?.store_name} 
-                size="sm"
-                className="group-hover:rotate-6 transition-transform duration-300"
+                size="md"
+                className="group-hover:rotate-6 transition-transform duration-300 scale-90 sm:scale-100 origin-left"
               />
               <div className="absolute -inset-1.5 bg-primary/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
             <div className="flex flex-col">
               {!siteSettings?.logo_url && (
-                <h1 className="font-display text-base md:text-xl font-black tracking-tight text-slate-900 leading-none">
+                <h1 className="font-display text-sm sm:text-base md:text-xl font-black tracking-tight text-slate-900 leading-none">
                   {siteSettings?.store_name || "HR-One"}
-                  <span className="text-primary ml-1">Donuts</span>
+                  <span className="text-primary ml-1 block sm:inline">Donuts</span>
                 </h1>
               )}
-              <p className="text-[10px] md:text-xs text-slate-500 font-bold hidden md:block leading-none mt-1 uppercase tracking-wider">
+              <p className="text-[9px] sm:text-[10px] md:text-xs text-slate-500 font-bold hidden xs:block leading-none mt-1 uppercase tracking-wider">
                 {siteSettings?.tagline || t('hero.subtitle')}
               </p>
             </div>
