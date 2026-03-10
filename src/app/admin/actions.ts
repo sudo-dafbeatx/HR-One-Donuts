@@ -828,6 +828,27 @@ export async function updateOrderStatus(orderId: string, status: string) {
 
 // --- User Management Actions ---
 
+export interface AdminUserDetail {
+  id: string;
+  email: string;
+  created_at: string;
+  last_sign_in_at: string | null;
+  role: string;
+  full_name: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+  is_active: boolean;
+  points: number;
+  gender: string | null;
+  age: number | null;
+  language: string | null;
+  birth_date: string | null;
+  address_detail: string | null;
+  province_name: string | null;
+  city_name: string | null;
+  district_name: string | null;
+}
+
 export async function getUserDetails(userId: string) {
   const supabase = await checkAdmin();
   
@@ -840,7 +861,7 @@ export async function getUserDetails(userId: string) {
     return null;
   }
 
-  return data;
+  return data as AdminUserDetail;
 }
 
 export async function getUserOrders(userId: string) {
