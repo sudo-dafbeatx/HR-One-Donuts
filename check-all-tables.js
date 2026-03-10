@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 
@@ -19,7 +20,7 @@ const tables = [
 async function checkTables() {
   console.log("Checking tables in", url);
   for (const table of tables) {
-    const { data, error, count } = await supabase.from(table).select('*', { count: 'exact', head: true });
+    const { error, count } = await supabase.from(table).select('*', { count: 'exact', head: true });
     if (error) {
       console.log(`Table '${table}': ERROR - ${error.message}`);
     } else {
