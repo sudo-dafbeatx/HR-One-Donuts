@@ -69,8 +69,8 @@ export default async function UserDetailPage({ params }: { params: { id: string 
           <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="h-24 bg-linear-to-r from-primary to-indigo-600 relative">
                <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-full border-4 border-white bg-slate-100 overflow-hidden shadow-md">
-                 {user.avatar_url ? (
-                   <img src={user.avatar_url} alt={user.full_name} className="w-full h-full object-cover" />
+                   {user.avatar_url ? (
+                     <img src={user.avatar_url ?? '/images/default-avatar.png'} alt={user.full_name ?? 'User'} width={96} height={96} className="w-full h-full object-cover" />
                  ) : (
                    <div className="w-full h-full flex items-center justify-center text-slate-300 bg-slate-100">
                      <UserCircleIcon className="w-16 h-16" />
