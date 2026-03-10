@@ -210,7 +210,7 @@ export async function getProductReviews(
     const [{ data: userProfiles }, { data: profiles }] = await Promise.all([
       supabase
         .from('user_profiles')
-        .select('id, full_name, avatar_url')
+        .select('id, full_name, avatar_url, is_profile_complete')
         .in('id', userIds),
       supabase
         .from('profiles')
@@ -229,6 +229,7 @@ export async function getProductReviews(
         ...review,
         reviewer_name: uProfile?.full_name || lProfile?.full_name || 'Pelanggan HR-One',
         reviewer_avatar: uProfile?.avatar_url || lProfile?.avatar_url || null,
+        reviewer_is_verified: !!uProfile?.is_profile_complete,
       };
     });
 

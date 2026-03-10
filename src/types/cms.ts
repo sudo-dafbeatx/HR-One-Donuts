@@ -109,6 +109,7 @@ export interface ProductReview {
   reviewer_name?: string;
   reviewer_avatar?: string | null;
   reviewer_email?: string;
+  reviewer_is_verified?: boolean;
 }
 
 export interface ReviewStats {

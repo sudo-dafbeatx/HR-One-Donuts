@@ -6,7 +6,7 @@ import StarRating from '@/components/ui/StarRating';
 import { deleteReview } from '@/app/actions/review-actions';
 import ReviewForm from './ReviewForm';
 import type { ProductReview } from '@/types/cms';
-import { UserCircleIcon } from '@heroicons/react/24/solid';
+import { UserCircleIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 interface ReviewListProps {
@@ -121,8 +121,11 @@ export default function ReviewList({
 
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h5 className="font-bold text-slate-800">
+                    <h5 className="font-bold text-slate-800 flex items-center gap-1">
                       {review.reviewer_name || 'Pelanggan HR-One'}
+                      {review.reviewer_is_verified && (
+                        <CheckBadgeIcon className="size-4 text-blue-500" title="Profil Lengkap Terverifikasi" />
+                      )}
                     </h5>
                     {isOwnReview && (
                       <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
