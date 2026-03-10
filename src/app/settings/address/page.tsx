@@ -48,6 +48,7 @@ export default function AddressPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isAdding, setIsAdding] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<Address>>({
     label: 'Rumah',
     phone: '+62'
@@ -89,29 +90,51 @@ export default function AddressPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.full_name || !formData.phone || !formData.province || !formData.city || !formData.district || !formData.postal_code || !formData.street_name) {
+    if (!formData.full_name || !formData.phone || !formData.province || !formData.city || !formData.district || !formData.street_name) {
       showError('Data Tidak Lengkap', 'Harap isi semua kolom alamat yang wajib.');
       return;
     }
 
+    setSaving(true);
+
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) { setSaving(false); return; }
 
     const payload = { ...formData, user_id: user.id };
-    // Remove id from payload if it's undefined to allow Postgres to auto-generate
     if (!payload.id) delete payload.id;
 
     const { error } = await supabase
       .from('user_addresses')
       .upsert(payload);
 
+    setSaving(false);
+
     if (!error) {
       setIsAdding(false);
-      window.location.reload(); // Refresh to show new list
+      setFormData({ label: 'Rumah', phone: '+62' });
+      // Refetch
+      const { data } = await supabase
+        .from('user_addresses')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('is_default', { ascending: false });
+      setAddresses(data || []);
     } else {
       console.error('Address save error:', error);
       showError('Gagal Simpan', error.message || 'Terjadi kesalahan saat menyimpan alamat.');
     }
+  };
+
+  const handleSetDefault = async (id: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Unset all defaults first
+    await supabase.from('user_addresses').update({ is_default: false }).eq('user_id', user.id);
+    // Set this one as default
+    await supabase.from('user_addresses').update({ is_default: true }).eq('id', id);
+    
+    setAddresses(prev => prev.map(a => ({ ...a, is_default: a.id === id })));
   };
 
   const handleDelete = async (id: string) => {
@@ -134,177 +157,290 @@ export default function AddressPage() {
 
   return (
     <div className="space-y-6 px-4 py-6 pb-24">
-      <div className="flex items-center justify-between mb-2">
-        <h2 className="text-xl font-bold text-slate-800">{t('settings.address.title')}</h2>
-        <button 
-          onClick={() => setIsAdding(true)}
-          className="flex items-center gap-1 text-primary font-bold text-sm bg-primary/5 px-4 py-2 rounded-xl active:scale-95 transition-all"
-        >
-          <PlusIcon className="size-4" />
-          {t('settings.address.add_cta')}
-        </button>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-slate-800">{t('settings.address.title')}</h2>
+          <p className="text-xs text-slate-400 font-medium mt-0.5">Kelola alamat pengiriman Anda</p>
+        </div>
+        {!isAdding && (
+          <button 
+            onClick={() => setIsAdding(true)}
+            className="flex items-center gap-1.5 text-white font-bold text-xs bg-primary px-4 py-2.5 rounded-xl active:scale-95 transition-all shadow-md shadow-primary/20"
+          >
+            <PlusIcon className="size-4" />
+            {t('settings.address.add_cta')}
+          </button>
+        )}
       </div>
 
-      {isAdding ? (
-        <form onSubmit={handleSave} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-5 animate-in slide-in-from-bottom-5 fade-in duration-300">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{t('settings.address.form.title_add')}</p>
-            <button type="button" onClick={() => setIsAdding(false)} className="text-xs text-slate-400 font-bold hover:text-slate-600">{t('settings.address.form.cancel')}</button>
+      {/* Form */}
+      {isAdding && (
+        <form onSubmit={handleSave} className="bg-white rounded-3xl p-5 sm:p-6 shadow-lg border border-slate-100 space-y-5 animate-in slide-in-from-bottom-5 fade-in duration-300">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-sm font-bold text-slate-800">{t('settings.address.form.title_add')}</p>
+            <button type="button" onClick={() => { setIsAdding(false); setFormData({ label: 'Rumah', phone: '+62' }); }} className="text-xs text-slate-400 font-bold hover:text-red-500 transition-colors">
+              ✕ {t('settings.address.form.cancel')}
+            </button>
           </div>
 
+          {/* Label Selector */}
           <div className="grid grid-cols-2 gap-3">
-             <button 
-               type="button"
-               onClick={() => setFormData({...formData, label: 'Rumah'})}
-               className={`flex items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all font-bold text-xs ${formData.label === 'Rumah' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-50 text-slate-400'}`}
-             >
-               <HomeIcon className="size-4" /> {t('settings.address.form.labels.home')}
-             </button>
-             <button 
-               type="button"
-               onClick={() => setFormData({...formData, label: 'Kantor'})}
-               className={`flex items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all font-bold text-xs ${formData.label === 'Kantor' ? 'border-primary bg-primary/5 text-primary' : 'border-slate-50 text-slate-400'}`}
-             >
-               <BriefcaseIcon className="size-4" /> {t('settings.address.form.labels.office')}
-             </button>
+            <button 
+              type="button"
+              onClick={() => setFormData({...formData, label: 'Rumah'})}
+              className={`flex items-center justify-center gap-2 p-3.5 rounded-2xl border-2 transition-all font-bold text-xs ${formData.label === 'Rumah' ? 'border-primary bg-primary/5 text-primary shadow-sm' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}
+            >
+              <HomeIcon className="size-4" /> {t('settings.address.form.labels.home')}
+            </button>
+            <button 
+              type="button"
+              onClick={() => setFormData({...formData, label: 'Kantor'})}
+              className={`flex items-center justify-center gap-2 p-3.5 rounded-2xl border-2 transition-all font-bold text-xs ${formData.label === 'Kantor' ? 'border-primary bg-primary/5 text-primary shadow-sm' : 'border-slate-100 text-slate-400 hover:border-slate-200'}`}
+            >
+              <BriefcaseIcon className="size-4" /> {t('settings.address.form.labels.office')}
+            </button>
           </div>
 
+          {/* Contact Section */}
+          <div className="space-y-1 pt-2">
+            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.15em] ml-1">Kontak Penerima</p>
+          </div>
           <div className="space-y-4">
-            <Input label={t('settings.address.form.labels.name')} value={formData.full_name} onChange={v => setFormData({...formData, full_name: v})} placeholder={t('settings.address.form.placeholders.name')} />
-            <Input label={t('settings.address.form.labels.phone')} value={formData.phone} onChange={v => setFormData({...formData, phone: v})} placeholder={t('settings.address.form.placeholders.phone')} />
-            
-            <div className="grid grid-cols-2 gap-4">
-              <Input label={t('settings.address.form.labels.province')} value={formData.province} onChange={v => setFormData({...formData, province: v})} placeholder={t('settings.address.form.placeholders.province')} />
-              <Input label={t('settings.address.form.labels.city')} value={formData.city} onChange={v => setFormData({...formData, city: v})} placeholder={t('settings.address.form.placeholders.city')} />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <Input label={t('settings.address.form.labels.district')} value={formData.district} onChange={v => setFormData({...formData, district: v})} placeholder={t('settings.address.form.placeholders.district')} />
-              <Input label={t('settings.address.form.labels.postal_code')} value={formData.postal_code} onChange={v => setFormData({...formData, postal_code: v})} placeholder={t('settings.address.form.placeholders.postal_code')} />
-            </div>
-
-            <Input label={t('settings.address.form.labels.street')} value={formData.street_name} onChange={v => setFormData({...formData, street_name: v})} placeholder={t('settings.address.form.placeholders.street')} />
-            
-            <div className="grid grid-cols-2 gap-4">
-              <Input label={t('settings.address.form.labels.building')} value={formData.building_name} onChange={v => setFormData({...formData, building_name: v})} />
-              <Input label={t('settings.address.form.labels.house_no')} value={formData.house_no} onChange={v => setFormData({...formData, house_no: v})} />
-            </div>
-
-            <textarea 
-              placeholder={t('settings.address.form.placeholders.details')}
-              className="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-medium focus:ring-2 focus:ring-primary/20 transition-all outline-none min-h-[100px] resize-none"
-              value={formData.additional_details}
-              onChange={e => setFormData({...formData, additional_details: e.target.value})}
+            <FormInput 
+              icon="person" 
+              label={t('settings.address.form.labels.name')} 
+              value={formData.full_name} 
+              onChange={v => setFormData({...formData, full_name: v})} 
+              placeholder={t('settings.address.form.placeholders.name')} 
+              required 
             />
+            <FormInput 
+              icon="call" 
+              label={t('settings.address.form.labels.phone')} 
+              value={formData.phone} 
+              onChange={v => setFormData({...formData, phone: v})} 
+              placeholder={t('settings.address.form.placeholders.phone')} 
+              required 
+            />
+          </div>
 
-            {/* Map Placeholder / Functional Map */}
-            <div className="space-y-3">
-              <div className={`h-64 bg-slate-100 rounded-3xl overflow-hidden flex flex-col items-center justify-center gap-2 border border-dashed border-slate-200 relative`}>
-                {showMap && (mapQuery || (formData.latitude && formData.longitude)) ? (
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    frameBorder="0"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    allowFullScreen
-                    src={formData.latitude && formData.longitude 
-                      ? `https://maps.google.com/maps?q=${formData.latitude},${formData.longitude}&t=&z=15&ie=UTF8&iwloc=&output=embed`
-                      : `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=15&ie=UTF8&iwloc=&output=embed`
-                    }
-                    className="absolute inset-0"
-                  />
-                ) : (
-                  <>
-                    <MapIcon className="size-8 text-slate-300" />
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-6 text-center">
-                      Visual Bantu Peta (OpenStreetMap)
-                    </p>
-                    {!showMap && (
-                      <p className="text-[9px] text-slate-400 font-medium px-8 text-center italic">
-                        Lengkapi alamat atau klik tombol di bawah untuk melihat lokasi
-                      </p>
-                    )}
-                  </>
-                )}
-              </div>
-              <button 
-                type="button" 
-                onClick={() => {
-                  const query = [formData.street_name, formData.district, formData.city, formData.province]
-                    .filter(Boolean)
-                    .join(', ');
-                  if (query) {
-                    setMapQuery(query);
-                    setShowMap(true);
-                  } else {
-                    showError('Alamat Kosong', t('settings.address.form.map.error_empty'));
-                  }
-                }}
-                className="w-full py-2 text-[10px] text-primary font-black underline uppercase tracking-widest hover:text-primary/80 transition-colors"
-              >
-                {showMap ? t('settings.address.form.map.refresh') : t('settings.address.form.map.show')}
-              </button>
+          {/* Address Section */}
+          <div className="space-y-1 pt-3">
+            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.15em] ml-1">Detail Alamat</p>
+          </div>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormInput 
+                icon="map" 
+                label={t('settings.address.form.labels.province')} 
+                value={formData.province} 
+                onChange={v => setFormData({...formData, province: v})} 
+                placeholder={t('settings.address.form.placeholders.province')} 
+                required 
+              />
+              <FormInput 
+                icon="location_city" 
+                label={t('settings.address.form.labels.city')} 
+                value={formData.city} 
+                onChange={v => setFormData({...formData, city: v})} 
+                placeholder={t('settings.address.form.placeholders.city')} 
+                required 
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormInput 
+                icon="holiday_village" 
+                label={t('settings.address.form.labels.district')} 
+                value={formData.district} 
+                onChange={v => setFormData({...formData, district: v})} 
+                placeholder={t('settings.address.form.placeholders.district')} 
+                required 
+              />
+              <FormInput 
+                icon="markunread_mailbox" 
+                label={t('settings.address.form.labels.postal_code')} 
+                value={formData.postal_code} 
+                onChange={v => setFormData({...formData, postal_code: v})} 
+                placeholder={t('settings.address.form.placeholders.postal_code')} 
+              />
+            </div>
+
+            <FormInput 
+              icon="signpost" 
+              label={t('settings.address.form.labels.street')} 
+              value={formData.street_name} 
+              onChange={v => setFormData({...formData, street_name: v})} 
+              placeholder={t('settings.address.form.placeholders.street')} 
+              required 
+            />
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <FormInput 
+                icon="apartment" 
+                label={t('settings.address.form.labels.building')} 
+                value={formData.building_name} 
+                onChange={v => setFormData({...formData, building_name: v})} 
+                placeholder="Nama gedung/apartemen" 
+              />
+              <FormInput 
+                icon="home" 
+                label={t('settings.address.form.labels.house_no')} 
+                value={formData.house_no} 
+                onChange={v => setFormData({...formData, house_no: v})} 
+                placeholder="No. rumah/unit" 
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[14px] text-slate-300">edit_note</span>
+                Catatan Tambahan
+              </label>
+              <textarea 
+                placeholder={t('settings.address.form.placeholders.details')}
+                className="w-full bg-slate-50/80 border border-slate-100 rounded-2xl p-4 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all outline-none min-h-[90px] resize-none"
+                value={formData.additional_details || ''}
+                onChange={e => setFormData({...formData, additional_details: e.target.value})}
+              />
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 active:scale-[0.98] transition-all">
-            {t('settings.address.form.submit')}
+          {/* Map Preview */}
+          <div className="space-y-2 pt-2">
+            <div className={`h-48 sm:h-56 bg-slate-50 rounded-2xl overflow-hidden flex flex-col items-center justify-center gap-2 border border-slate-100 relative`}>
+              {showMap && (mapQuery || (formData.latitude && formData.longitude)) ? (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  src={formData.latitude && formData.longitude 
+                    ? `https://maps.google.com/maps?q=${formData.latitude},${formData.longitude}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+                    : `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+                  }
+                  className="absolute inset-0"
+                />
+              ) : (
+                <>
+                  <MapIcon className="size-7 text-slate-200" />
+                  <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest px-6 text-center">
+                    Pratinjau Peta
+                  </p>
+                  <p className="text-[9px] text-slate-300 font-medium px-8 text-center">
+                    Lengkapi alamat lalu klik tombol di bawah
+                  </p>
+                </>
+              )}
+            </div>
+            <button 
+              type="button" 
+              onClick={() => {
+                const query = [formData.street_name, formData.district, formData.city, formData.province]
+                  .filter(Boolean)
+                  .join(', ');
+                if (query) {
+                  setMapQuery(query);
+                  setShowMap(true);
+                } else {
+                  showError('Alamat Kosong', t('settings.address.form.map.error_empty'));
+                }
+              }}
+              className="w-full py-2.5 text-[10px] text-primary font-black uppercase tracking-widest hover:text-primary/80 transition-colors flex items-center justify-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-[14px]">map</span>
+              {showMap ? t('settings.address.form.map.refresh') : t('settings.address.form.map.show')}
+            </button>
+          </div>
+
+          {/* Submit */}
+          <button 
+            type="submit" 
+            disabled={saving}
+            className="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {saving ? (
+              <>
+                <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Menyimpan...
+              </>
+            ) : (
+              t('settings.address.form.submit')
+            )}
           </button>
         </form>
-      ) : (
+      )}
+
+      {/* Address List */}
+      {!isAdding && (
         <div className="space-y-4">
           {addresses.length > 0 ? addresses.map((addr) => (
-            <div key={addr.id} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 relative group overflow-hidden">
-               {addr.is_default && <div className="absolute top-0 right-0 bg-primary text-white text-[8px] font-black uppercase px-3 py-1 rounded-bl-xl tracking-widest">{t('settings.address.list.default_badge')}</div>}
-               
-               <div className="flex items-start gap-4 mb-4">
-                 <div className="p-3 bg-slate-50 text-slate-400 rounded-2xl">
-                    {addr.label === 'Kantor' ? <BriefcaseIcon className="size-6" /> : <HomeIcon className="size-6" />}
-                 </div>
-                 <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-0.5">{addr.label}</p>
-                    <p className="font-bold text-slate-800 truncate">{addr.full_name}</p>
-                    <p className="text-xs text-slate-500 font-medium">({addr.phone})</p>
-                 </div>
-               </div>
+            <div key={addr.id} className="bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-slate-100 relative group overflow-hidden hover:shadow-md hover:border-primary/10 transition-all">
+              {addr.is_default && (
+                <div className="absolute top-0 right-0 bg-primary text-white text-[8px] font-black uppercase px-3 py-1 rounded-bl-xl tracking-widest">
+                  {t('settings.address.list.default_badge')}
+                </div>
+              )}
+              
+              <div className="flex items-start gap-4 mb-4">
+                <div className={`p-3 rounded-2xl shrink-0 ${addr.is_default ? 'bg-primary/10 text-primary' : 'bg-slate-50 text-slate-400'}`}>
+                  {addr.label === 'Kantor' ? <BriefcaseIcon className="size-5" /> : <HomeIcon className="size-5" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{addr.label}</p>
+                  <p className="font-bold text-slate-800 truncate text-sm">{addr.full_name}</p>
+                  <p className="text-xs text-slate-500 font-medium">{addr.phone}</p>
+                </div>
+              </div>
 
-               <div className="space-y-1 mb-6">
-                 <p className="text-sm font-medium text-slate-600 leading-relaxed italic">
-                   {addr.building_name ? `${addr.building_name}, ` : ''}
-                   {addr.street_name} No. {addr.house_no}, {addr.district}, {addr.city}, {addr.province} {addr.postal_code}
-                 </p>
-                 {addr.additional_details && (
-                   <p className="text-xs text-slate-400 font-medium font-serif                   p-2 rounded-lg border-l-2 border-slate-200 mt-2">
-                     📝 &quot;{addr.additional_details}&quot;
-                   </p>
-                 )}
-               </div>
+              <div className="space-y-1.5 mb-5">
+                <p className="text-sm font-medium text-slate-600 leading-relaxed">
+                  {addr.street_name}
+                  {addr.house_no ? ` No. ${addr.house_no}` : ''}
+                  {addr.building_name ? `, ${addr.building_name}` : ''}
+                </p>
+                <p className="text-xs text-slate-400 font-medium">
+                  {addr.district}, {addr.city}, {addr.province} {addr.postal_code}
+                </p>
+                {addr.additional_details && (
+                  <p className="text-xs text-slate-400 font-medium p-2.5 rounded-xl bg-slate-50 border-l-2 border-primary/20 mt-2 italic">
+                    📝 &quot;{addr.additional_details}&quot;
+                  </p>
+                )}
+              </div>
 
-               <div className="flex gap-2">
-                 {!addr.is_default && (
-                   <button className="flex-1 h-10 border border-slate-100 text-slate-400 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors">{t('settings.address.list.set_default')}</button>
-                 )}
-                 <button className="flex-1 h-10 border border-slate-100 text-slate-400 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors">{t('settings.address.list.edit')}</button>
-                 <button 
-                   onClick={() => handleDelete(addr.id)}
-                   className="size-10 flex items-center justify-center text-red-100 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+              <div className="flex gap-2">
+                {!addr.is_default && (
+                  <button 
+                    onClick={() => handleSetDefault(addr.id)}
+                    className="flex-1 h-10 border border-slate-100 text-slate-500 rounded-xl text-xs font-bold hover:bg-primary/5 hover:text-primary hover:border-primary/20 transition-all"
                   >
-                   <TrashIcon className="size-5" />
-                 </button>
-               </div>
+                    {t('settings.address.list.set_default')}
+                  </button>
+                )}
+                <button 
+                  onClick={() => handleDelete(addr.id)}
+                  className="h-10 px-4 flex items-center justify-center gap-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all text-xs font-bold border border-slate-100 hover:border-red-100"
+                >
+                  <TrashIcon className="size-4" />
+                  Hapus
+                </button>
+              </div>
             </div>
           )) : (
-            <div className="bg-white rounded-4xl border border-dashed border-slate-200 p-12 text-center">
-              <div className="size-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+            <div className="bg-white rounded-3xl border border-dashed border-slate-200 p-10 sm:p-12 text-center">
+              <div className="size-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-5 text-slate-200">
                 <MapPinIcon className="size-8" />
               </div>
               <h3 className="text-lg font-bold text-slate-800 mb-2">{t('settings.address.list.empty_title')}</h3>
-              <p className="text-slate-500 text-sm font-medium mb-8">{t('settings.address.list.empty_desc')}</p>
+              <p className="text-slate-400 text-sm font-medium mb-6 max-w-xs mx-auto">{t('settings.address.list.empty_desc')}</p>
               
               {profileAddress && (
-                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 text-left animate-in slide-in-from-top-4 duration-500">
-                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3">{t('settings.address.list.suggestion_title')}</p>
+                <div className="bg-primary/5 border border-primary/10 rounded-2xl p-5 text-left animate-in slide-in-from-top-4 duration-500">
+                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.15em] mb-3">{t('settings.address.list.suggestion_title')}</p>
                   <p className="text-sm font-bold text-slate-800 mb-1">{profileAddress.full_name}</p>
                   <p className="text-xs text-slate-500 mb-4 whitespace-pre-line">
                     {profileAddress.district_name}, {profileAddress.city_name}, {profileAddress.province_name}
@@ -313,7 +449,7 @@ export default function AddressPage() {
                   <button 
                     onClick={() => {
                       setFormData({
-                        label: 'Utama',
+                        label: 'Rumah',
                         full_name: profileAddress.full_name || '',
                         phone: profileAddress.phone || '+62',
                         province: profileAddress.province_name,
@@ -330,6 +466,14 @@ export default function AddressPage() {
                   </button>
                 </div>
               )}
+
+              <button
+                onClick={() => setIsAdding(true)}
+                className="mt-4 inline-flex items-center gap-1.5 text-primary font-bold text-sm hover:underline"
+              >
+                <PlusIcon className="size-4" />
+                Tambah Alamat Baru
+              </button>
             </div>
           )}
         </div>
@@ -338,16 +482,28 @@ export default function AddressPage() {
   );
 }
 
-function Input({ label, value, onChange, placeholder }: { label: string, value: string | undefined, onChange: (v: string) => void, placeholder?: string }) {
+function FormInput({ icon, label, value, onChange, placeholder, required }: { 
+  icon: string; 
+  label: string; 
+  value: string | undefined; 
+  onChange: (v: string) => void; 
+  placeholder?: string;
+  required?: boolean;
+}) {
   return (
     <div className="space-y-1.5">
-      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">{label}</label>
+      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+        <span className="material-symbols-outlined text-[14px] text-slate-300">{icon}</span>
+        {label}
+        {required && <span className="text-red-400">*</span>}
+      </label>
       <input 
         type="text" 
         value={value || ''}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-slate-50 border-none rounded-2xl p-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+        required={required}
+        className="w-full bg-slate-50/80 border border-slate-100 rounded-2xl p-3.5 sm:p-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all outline-none placeholder:font-medium placeholder:text-slate-300"
       />
     </div>
   );
