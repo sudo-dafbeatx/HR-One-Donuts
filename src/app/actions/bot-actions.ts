@@ -54,3 +54,25 @@ export async function forwardChatToTelegram(botName: string, userInput: string) 
     return { success: false };
   }
 }
+
+export async function reportGlobalError(errorMessage: string, errorStack: string | undefined, digest: string | undefined) {
+  const message = `
+🚨 <b>Aplikasi Mengalami Error Global!</b>
+---------------------------
+<b>Pesan:</b>
+<i>${errorMessage || 'Unknown Error'}</i>
+
+<b>Tumpukan (Stack):</b>
+<pre>${(errorStack || '').substring(0, 500) || '-'}</pre>
+
+<b>Digest:</b> ${digest || '-'}
+`;
+  
+  try {
+    const result = await sendAdminNotification(message);
+    return { success: result.ok };
+  } catch (e) {
+    console.error('Failed to report global error to Telegram via server action', e);
+    return { success: false };
+  }
+}
