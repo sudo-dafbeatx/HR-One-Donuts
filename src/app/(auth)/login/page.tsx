@@ -225,7 +225,7 @@ function LoginContent() {
             address: address,
             birth_date: birthDate,
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback?next=${redirectTo}`,
         }
       });
 
@@ -405,7 +405,7 @@ function LoginContent() {
     const { error: authError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || window.location.origin}/auth/callback?next=${redirectTo}`,
       },
     });
     if (authError) {
