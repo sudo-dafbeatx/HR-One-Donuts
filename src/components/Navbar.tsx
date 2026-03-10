@@ -108,8 +108,8 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
   return (
     <>
       <AudioPermissionToast />
-      <header className="sticky top-0 z-50 w-full transition-all duration-300 bg-white/70 backdrop-blur-md border-b border-white/20 shadow-[0_4px_30px_rgba(0,0,0,0.03)] supports-backdrop-filter:bg-white/60">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-20 flex items-center justify-between gap-4 md:gap-8">
+      <header className="sticky top-0 z-50 w-full transition-all duration-500 bg-white/75 backdrop-blur-xl border-b border-slate-200/50 shadow-[0_2px_15px_rgba(0,0,0,0.02)] supports-backdrop-filter:bg-white/70">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between gap-4 md:gap-8 transition-all duration-300">
         {/* Logo */}
         {!hideLogo && (
           <Link href="/" className="flex items-center gap-3 shrink-0 group transition-transform hover:scale-[1.02] active:scale-95">
@@ -124,7 +124,7 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
             </div>
             <div className="flex flex-col">
               {!siteSettings?.logo_url && (
-                <h1 className="font-display text-lg md:text-xl font-black tracking-tight text-slate-900 leading-none">
+                <h1 className="font-display text-base md:text-xl font-black tracking-tight text-slate-900 leading-none">
                   {siteSettings?.store_name || "HR-One"}
                   <span className="text-primary ml-1">Donuts</span>
                 </h1>
@@ -177,12 +177,14 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
         )}
 
         {/* Utilities */}
-        <div className="flex items-center gap-1.5 md:gap-4 shrink-0">
-          <LanguageSwitcher />
+        <div className="flex items-center gap-1 md:gap-4 shrink-0 transition-opacity duration-500">
+          <div className="hidden sm:block">
+            <LanguageSwitcher />
+          </div>
           {/* Search Mobile */}
           {(!pathname || pathname !== '/') && (
-            <button className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 md:hidden transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
-              <span className="material-symbols-outlined text-xl">search</span>
+            <button className="flex items-center justify-center p-2 rounded-xl text-slate-500 hover:bg-slate-100/80 active:bg-slate-200/50 active:scale-90 md:hidden transition-all min-h-[44px] min-w-[44px]">
+              <span className="material-symbols-outlined text-[22px]">search</span>
             </button>
           )}
 
