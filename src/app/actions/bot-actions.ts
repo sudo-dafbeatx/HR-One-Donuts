@@ -30,3 +30,27 @@ export async function sendFeedbackToTelegram(feedback: string) {
     return { success: false, message: "An error occurred while sending feedback." };
   }
 }
+
+export async function forwardChatToTelegram(botName: string, userInput: string) {
+  if (!userInput.trim()) return { success: false, message: "Input is empty." };
+
+  const message = `
+💬 <b>Pesan Baru di Bot ${botName}</b>
+---------------------------
+<b>Pesan:</b>
+<i>${userInput}</i>
+  `;
+
+  try {
+    const result = await sendAdminNotification(message);
+    if (result.ok) {
+      return { success: true };
+    } else {
+      console.warn(`[Telegram] Failed to forward ${botName} chat:`, result.description);
+      return { success: false };
+    }
+  } catch (error) {
+    console.error(`Error in forwardChatToTelegram for ${botName}:`, error);
+    return { success: false };
+  }
+}

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { PaperAirplaneIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { forwardChatToTelegram } from "@/app/actions/bot-actions";
 
 interface Message {
   id: string;
@@ -125,6 +126,9 @@ export default function HROneSupportWidget() {
   const handleBotResponse = async (userInput: string) => {
     const input = userInput.toLowerCase();
     setIsTyping(true);
+
+    // Forward to Telegram implicitly for ALL chats
+    forwardChatToTelegram("Onat 🤖", userInput).catch(console.error);
 
     const { data: kbData, error } = await supabase
       .from("knowledge_base")

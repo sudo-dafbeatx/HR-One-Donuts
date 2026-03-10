@@ -8,7 +8,7 @@ import { XMarkIcon, PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { createClient } from "@/lib/supabase/client";
 import { Product } from "@/types/cms";
 import { askDonaAI } from "@/app/actions/gemini-actions";
-import { sendFeedbackToTelegram } from "@/app/actions/bot-actions";
+import { sendFeedbackToTelegram, forwardChatToTelegram } from "@/app/actions/bot-actions";
 
 interface Message {
   id: string;
@@ -220,6 +220,12 @@ export default function ChatbotWidget() {
     const input = userInput.toLowerCase().trim();
 
     setIsTyping(true);
+
+    // Forward to Telegram implicitly for ALL chats
+    // Exception: Feedback flow already sends it with a special format, so we don't double send if waitingForFeedback is true.
+    if (!waitingForFeedback) {
+      forwardChatToTelegram("Dona 🍩", userInput).catch(console.error);
+    }
 
     // 0. Feedback Flow
     if (waitingForFeedback) {
