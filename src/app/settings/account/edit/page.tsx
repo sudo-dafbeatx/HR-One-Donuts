@@ -183,7 +183,7 @@ export default function EditProfilePage() {
                 {avatarUrl ? (
                   <Image src={avatarUrl} alt="Avatar" fill className="object-cover" sizes="112px" />
                 ) : (
-                  <div className="size-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
+                  <div className="size-full flex items-center justify-center bg-linear-to-br from-primary/10 to-primary/5">
                     <span className="material-symbols-outlined text-4xl text-primary/40">person</span>
                   </div>
                 )}
@@ -237,12 +237,16 @@ export default function EditProfilePage() {
           </FormField>
 
           <FormField label="Email" icon="mail">
-            <input 
-              type="email"
-              value={email}
-              disabled
-              className="form-input !bg-slate-100 !text-slate-400 cursor-not-allowed"
-            />
+            <div className="relative">
+              <input 
+                type="email"
+                value={email}
+                disabled
+                className="form-input bg-slate-100! text-slate-400! border-slate-200! cursor-not-allowed pr-10"
+              />
+              <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-[18px] text-slate-300">lock</span>
+            </div>
+            <p className="text-[10px] text-slate-400 font-medium ml-1 mt-1">Email adalah identitas utama dan tidak dapat diubah.</p>
           </FormField>
 
           <FormField label="Nomor Handphone" icon="call">
@@ -352,18 +356,22 @@ export default function EditProfilePage() {
           </FormField>
         </div>
 
-        {/* Bottom Save Button (mobile) */}
-        <button 
-          type="submit"
-          disabled={saved}
-          className={`w-full py-4 font-black rounded-2xl shadow-xl active:scale-[0.98] transition-all uppercase tracking-widest text-sm flex items-center justify-center gap-2 ${saved ? 'bg-green-500 text-white shadow-green-500/20' : 'bg-primary text-white shadow-primary/20'}`}
-        >
-          {saved ? (
-            <><CheckCircleIcon className="size-5" /> Perubahan Tersimpan</>
-          ) : (
-            'Simpan Perubahan'
-          )}
-        </button>
+        {/* Bottom Save Button (Sticky for mobile) */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-xl border-t border-slate-100 mb-[env(safe-area-inset-bottom)] z-40">
+          <div className="max-w-lg mx-auto">
+            <button 
+              type="submit"
+              disabled={saved}
+              className={`w-full py-4 font-black rounded-2xl shadow-xl active:scale-[0.98] transition-all uppercase tracking-widest text-sm flex items-center justify-center gap-2 ${saved ? 'bg-green-500 text-white shadow-green-500/20' : 'bg-primary text-white shadow-primary/20'}`}
+            >
+              {saved ? (
+                <><CheckCircleIcon className="size-5" /> Perubahan Tersimpan</>
+              ) : (
+                'Simpan Perubahan'
+              )}
+            </button>
+          </div>
+        </div>
       </form>
 
       <style jsx>{`

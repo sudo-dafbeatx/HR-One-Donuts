@@ -123,9 +123,11 @@ export default function AccountSettingsPage() {
       {activeTab === 'profile' ? (
         <div className="space-y-6 px-4">
           {/* Profile Basic */}
-          <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col items-center text-center">
-            <div className="relative size-24 mb-4">
-              <div className="size-full bg-slate-100 rounded-full flex items-center justify-center border-4 border-white shadow-md overflow-hidden relative">
+          <section className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col items-center text-center relative overflow-hidden">
+            <div className="absolute top-0 inset-x-0 h-24 bg-linear-to-br from-primary/20 to-primary/5"></div>
+            
+            <div className="relative size-24 mb-3 mt-4">
+              <div className="size-full bg-slate-100 rounded-full flex items-center justify-center border-4 border-white shadow-lg overflow-hidden relative">
                 {profile?.avatar_url ? (
                   <Image src={profile.avatar_url} alt="Profile" fill className="object-cover" />
                 ) : (
@@ -133,13 +135,19 @@ export default function AccountSettingsPage() {
                 )}
               </div>
               {profile?.is_verified && (
-                <div className="absolute bottom-0 right-0 bg-white rounded-full border-2 border-primary">
+                <div className="absolute bottom-0 right-0 bg-white rounded-full border-2 border-white shadow-sm">
                   <CheckBadgeIcon className="size-6 text-primary" />
                 </div>
               )}
             </div>
-            <h3 className="text-xl font-bold text-slate-800">{profile?.full_name || t('profile.default_name')}</h3>
-            <p className="text-sm text-slate-500 font-medium">@{profile?.username || 'user' + profile?.id?.slice(0,5)}</p>
+            
+            <h3 className="text-xl font-bold text-slate-800 tracking-tight leading-tight">{profile?.full_name || t('profile.default_name')}</h3>
+            <p className="text-sm text-slate-500 font-medium mb-3">@{profile?.username || 'user' + profile?.id?.slice(0,5)}</p>
+            
+            <div className="flex items-center gap-2 bg-green-50 text-green-600 px-3 py-1.5 rounded-full border border-green-100">
+              <CheckBadgeIcon className="size-4" />
+              <span className="text-[10px] uppercase tracking-wider font-bold">Profil Spesial Lengkap</span>
+            </div>
           </section>
 
           {/* Details Section */}
@@ -279,16 +287,19 @@ function SocialLink({ icon: Icon, label, href }: { icon: React.ElementType, labe
 }
 
 function EditableItem({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: string }) {
+  const isPlaceHolder = value === '-' || !value;
   return (
-    <div className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 transition-colors cursor-pointer group">
-      <div className="flex items-center gap-4 overflow-hidden">
-        <Icon className="size-5 text-slate-400 group-hover:text-primary transition-colors shrink-0" />
-        <div className="min-w-0">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</p>
-          <p className="text-sm font-bold text-slate-700 truncate">{value}</p>
+    <div className="flex items-center justify-between px-5 py-4 min-h-[72px] hover:bg-slate-50 transition-colors cursor-pointer group active:bg-slate-100">
+      <div className="flex items-center gap-4 overflow-hidden flex-1 pr-2">
+        <Icon className={`size-6 transition-colors shrink-0 ${isPlaceHolder ? 'text-slate-200' : 'text-slate-400 group-hover:text-primary'}`} />
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+          <p className={`text-sm tracking-tight truncate w-full ${isPlaceHolder ? 'font-medium text-slate-400 italic' : 'font-bold text-slate-800'}`}>
+            {isPlaceHolder ? 'Belum Diisi' : value}
+          </p>
         </div>
       </div>
-      <div className="flex items-center justify-center text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all">
+      <div className="flex items-center justify-center text-slate-200 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0">
         <ChevronRightIcon className="size-5" />
       </div>
     </div>
