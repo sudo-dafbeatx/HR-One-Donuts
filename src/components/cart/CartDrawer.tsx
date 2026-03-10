@@ -146,17 +146,22 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           return;
         }
 
-        finalShippingNotes = activeAddress.additional_details;
+        finalShippingNotes = activeAddress.additional_details || undefined;
 
         // Construct full address from user_addresses table structure - detailed version
+        const streetWithNo = [
+          activeAddress.street_name,
+          activeAddress.house_no ? `No. ${activeAddress.house_no}` : null
+        ].filter(Boolean).join(' ');
+
         finalShippingAddress = [
-          activeAddress.building_name,
-          activeAddress.street_name + (activeAddress.house_no ? ` No. ${activeAddress.house_no}` : ""),
-          activeAddress.district,
-          activeAddress.city,
-          activeAddress.province,
-          activeAddress.postal_code
-        ].filter(Boolean).map(s => s.trim()).filter(s => s !== "" && s !== ",").join(", ");
+          activeAddress.building_name || null,
+          streetWithNo || null,
+          activeAddress.district || null,
+          activeAddress.city || null,
+          activeAddress.province || null,
+          activeAddress.postal_code || null
+        ].filter(Boolean).map(s => (s as string).trim()).filter(s => s !== "").join(", ");
       }
 
       // 3. Save Order to Database
