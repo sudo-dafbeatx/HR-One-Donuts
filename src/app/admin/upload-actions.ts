@@ -1,87 +1,46 @@
 'use server';
 
-import sharp from 'sharp';
 import { getAdminSession } from '@/lib/admin-auth';
 import { generateImageName } from '@/lib/image-utils';
-
-const MAX_WIDTH = 1000;
-const WEBP_QUALITY = 75;
+import { processImage, fileToBuffer } from '@/lib/image-processing';
 
 export async function uploadImage(formData: FormData) {
-  console.log('🚀 [uploadImage] Starting upload process...');
-  
-  // Verify admin access and get service role client
   const { supabase } = await getAdminSession();
-  
+
   const file = formData.get('file') as File;
   if (!file) {
-    console.error('❌ [uploadImage] No file in FormData');
     return { success: false, error: 'No file provided' };
   }
-  
-  console.log('📁 [uploadImage] File info:', {
-    name: file.name,
-    type: file.type,
-    size: `${(file.size / 1024).toFixed(2)} KB`
-  });
-  
+
   try {
-    // Convert file to buffer
-    console.log('🔄 [uploadImage] Converting to buffer...');
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    console.log('✅ [uploadImage] Buffer created:', buffer.length, 'bytes');
-    
-    // Process image with sharp
-    console.log('🖼️  [uploadImage] Processing with sharp...');
-    const processedImage = await sharp(buffer)
-      .resize(MAX_WIDTH, null, {
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-      .webp({ quality: WEBP_QUALITY })
-      .toBuffer();
-    
-    console.log('✅ [uploadImage] Sharp processing complete:', processedImage.length, 'bytes');
-    
-    // Generate unique filename
+    const buffer = await fileToBuffer(file);
+    const { buffer: processed } = await processImage(buffer, 'product');
+
     const fileName = generateImageName(file.name);
     const filePath = `products/${fileName}`;
-    console.log('📝 [uploadImage] Generated path:', filePath);
-    
-    // Upload to Supabase Storage
-    console.log('☁️  [uploadImage] Uploading to Supabase Storage...');
+
     const { error } = await supabase.storage
       .from('images')
-      .upload(filePath, processedImage, {
+      .upload(filePath, processed, {
         contentType: 'image/webp',
         cacheControl: '3600',
         upsert: false,
       });
-    
+
     if (error) {
-      console.error('❌ [uploadImage] Supabase upload error:', error);
       return { success: false, error: error.message };
     }
-    
-    console.log('✅ [uploadImage] Upload successful');
-    
-    // Get public URL
+
     const { data: { publicUrl } } = supabase.storage
       .from('images')
       .getPublicUrl(filePath);
-    
-    console.log('🔗 [uploadImage] Public URL:', publicUrl);
-    
+
     return {
       success: true,
       url: publicUrl,
       path: filePath,
     };
   } catch (error: unknown) {
-    console.error('💥 [uploadImage] Error details:', error);
-    
-    // Better error messages
     if (error instanceof Error) {
       if (error.message.includes('Bucket not found')) {
         return { success: false, error: 'Storage bucket "images" belum dibuat. Silakan buat bucket di Supabase Dashboard terlebih dahulu.' };
@@ -91,19 +50,19 @@ export async function uploadImage(formData: FormData) {
       }
       return { success: false, error: error.message };
     }
-    
-    return { success: false, error: 'Gagal upload gambar. Cek console untuk detail error.' };
+
+    return { success: false, error: 'Gagal mengoptimalkan gambar. Pastikan file adalah gambar yang valid.' };
   }
 }
 
 export async function deleteImage(filePath: string) {
   const { supabase } = await getAdminSession();
-  
+
   const { error } = await supabase.storage
     .from('images')
     .remove([filePath]);
-  
+
   if (error) throw error;
-  
+
   return { success: true };
 }

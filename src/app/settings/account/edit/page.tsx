@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { CameraIcon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { useLoading } from '@/context/LoadingContext';
 import { useErrorPopup } from '@/context/ErrorPopupContext';
+import { uploadAvatar as uploadAvatarAction } from '@/app/actions/avatar-actions';
 import Image from 'next/image';
 
 interface UserProfile {
@@ -69,71 +70,26 @@ export default function EditProfilePage() {
     fetchProfileData();
   }, [supabase]);
 
-  const compressImage = (file: File): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = document.createElement('img');
-        img.src = event.target?.result as string;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 400; // Smaller for mobile as requested
-          const scaleSize = MAX_WIDTH / img.width;
-          canvas.width = MAX_WIDTH;
-          canvas.height = img.height * scaleSize;
-          
-          const ctx = canvas.getContext('2d');
-          ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-          
-          canvas.toBlob((blob) => {
-            if (blob) resolve(blob);
-            else reject(new Error('Canvas to Blob failed'));
-          }, 'image/webp', 0.82); // 0.82 quality target
-        };
-      };
-      reader.onerror = error => reject(error);
-    });
-  };
-
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true);
       if (!e.target.files || e.target.files.length === 0) return;
       const file = e.target.files[0];
-      
+
       setIsLoading(true, 'Mengoptimalkan foto...');
-      const compressedBlob = await compressImage(file);
-      
-      const fileName = `${profile?.id}-${Date.now()}.webp`;
-      const filePath = `avatars/${fileName}`;
+      const formData = new FormData();
+      formData.append('file', file);
 
-      const { error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(filePath, compressedBlob, {
-          contentType: 'image/webp',
-          upsert: true
-        });
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('images')
-        .getPublicUrl(filePath);
-
-      setAvatarUrl(publicUrl);
-      
-      // Update profile immediately
-      await supabase
-        .from('user_profiles')
-        .update({ avatar_url: publicUrl })
-        .eq('id', profile?.id);
-
+      const result = await uploadAvatarAction(formData);
+      if (result.url) {
+        setAvatarUrl(result.url);
+      }
     } catch (error) {
       console.error('Avatar upload error:', error);
       showError('Gagal Upload', 'Gagal mengunggah foto. Coba lagi.');
     } finally {
       setUploading(false);
+      setIsLoading(false);
     }
   };
 

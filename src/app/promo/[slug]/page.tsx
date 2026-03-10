@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import { PromoEvent } from '@/types/cms';
 import { getEventTiming, formatCountdown } from '@/lib/date-utils';
 import Link from 'next/link';
+import Image from 'next/image';
 import Confetti from "@/components/animations/Confetti";
 import { useCart } from '@/context/CartContext';
 import { showCartToast } from '@/components/cart/CartToast';
@@ -103,11 +104,13 @@ export default function PromoDetailPage() {
             {/* Banner Image as a Card */}
             {hasImage && (
               <div className="w-full aspect-4/3 sm:aspect-video lg:aspect-3/2 relative rounded-3xl overflow-hidden shadow-lg border border-slate-100">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={event.banner_image_url} 
-                  alt={event.headline} 
-                  className="w-full h-full object-cover"
+                <Image 
+                  src={event.banner_image_url!} 
+                  alt={event.headline}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  className="object-cover"
+                  priority
                 />
               </div>
             )}

@@ -2,6 +2,7 @@
 
 import { PromoEvent, FlashSale, FlashSaleItem } from '@/types/cms';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   MegaphoneIcon, 
   GiftIcon, 
@@ -108,22 +109,18 @@ const FlashSaleCard = ({ item }: { item: FlashSaleItem }) => {
       {/* Area Gambar */}
       <div className="relative aspect-square overflow-hidden bg-slate-50 p-2 sm:p-4 transition-all duration-300 group-hover:bg-white group-hover:-translate-y-1">
         {product.image_url ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
+          <Image
             src={product.image_url}
             alt={product.name}
-            loading="lazy"
-            className="w-full h-full object-cover rounded-xl transform group-hover:scale-110 group-hover:drop-shadow-xl transition-all duration-500"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=500&auto=format&fit=crop';
-            }}
+            fill
+            sizes="(max-width: 768px) 50vw, 25vw"
+            className="object-cover rounded-xl transform group-hover:scale-110 group-hover:drop-shadow-xl transition-all duration-500"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-200">
             <GiftIcon className="w-16 h-16" />
           </div>
         )}
-        {/* Overlay saat hover */}
         <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
       </div>
 
@@ -267,11 +264,12 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                       {/* Background Image / Color */}
                       {event.banner_image_url ? (
                         <>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img 
+                          <Image 
                             src={event.banner_image_url} 
-                            alt={event.headline} 
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                            alt={event.headline}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
                           />
                           {/* Soft Gradient Overlay for Readability */}
                           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-slate-900/90 via-slate-900/40 to-transparent pointer-events-none" />
