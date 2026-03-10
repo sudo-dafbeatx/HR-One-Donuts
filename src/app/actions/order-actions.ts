@@ -145,15 +145,15 @@ export async function createOrder(data: {
 
     // Send Telegram notification to admin
     try {
-      // Fetch customer details for more context
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, phone')
-        .eq('id', user.id)
-        .maybeSingle();
+      // Fetch customer details from multiple sources for complete data
+      const [profileRes, userProfileRes, addressRes] = await Promise.all([
+        supabase.from('profiles').select('full_name').eq('id', user.id).maybeSingle(),
+        supabase.from('user_profiles').select('full_name, phone').eq('id', user.id).maybeSingle(),
+        supabase.from('user_addresses').select('full_name, phone').eq('user_id', user.id).eq('is_default', true).maybeSingle()
+      ]);
 
-      const customerName = profile?.full_name || user.user_metadata?.full_name || 'Pelanggan';
-      const customerPhone = profile?.phone || user.user_metadata?.phone || 'Tidak ada nomor';
+      const customerName = userProfileRes.data?.full_name || profileRes.data?.full_name || user.user_metadata?.full_name || 'Pelanggan';
+      const customerPhone = userProfileRes.data?.phone || addressRes.data?.phone || user.user_metadata?.phone || 'Tidak ada nomor';
 
       const itemsList = data.items.map(i => `  • ${i.name} x${i.quantity}`).join('\n');
       await sendAdminNotification(
