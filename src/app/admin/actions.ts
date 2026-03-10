@@ -831,28 +831,16 @@ export async function updateOrderStatus(orderId: string, status: string) {
 export async function getUserDetails(userId: string) {
   const supabase = await checkAdmin();
   
-  // Fetch from user_profiles for detailed info
-  const { data: profile, error: profileError } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .eq('id', userId)
-    .maybeSingle();
+  const { data, error } = await supabase
+    .rpc('get_admin_user_detail', { lookup_id: userId })
+    .single();
 
-  if (profileError) {
-    console.error('Error fetching user profile:', profileError);
+  if (error) {
+    console.error('Error fetching user detail:', error);
+    return null;
   }
 
-  // Fetch from profiles as fallback/merged data
-  const { data: legacyProfile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .maybeSingle();
-
-  return {
-    ...legacyProfile,
-    ...profile
-  };
+  return data;
 }
 
 export async function getUserOrders(userId: string) {
