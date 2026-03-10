@@ -825,3 +825,93 @@ export async function updateOrderStatus(orderId: string, status: string) {
     };
   }
 }
+
+// --- User Management Actions ---
+
+export async function getUserDetails(userId: string) {
+  const supabase = await checkAdmin();
+  
+  // Fetch from user_profiles for detailed info
+  const { data: profile, error: profileError } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (profileError) {
+    console.error('Error fetching user profile:', profileError);
+  }
+
+  // Fetch from profiles as fallback/merged data
+  const { data: legacyProfile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .maybeSingle();
+
+  return {
+    ...legacyProfile,
+    ...profile
+  };
+}
+
+export async function getUserOrders(userId: string) {
+  const supabase = await checkAdmin();
+  
+  const { data: orders, error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user orders:', error);
+    return [];
+  }
+
+  return orders;
+}
+
+export async function updateUserRole(userId: string, newRole: 'admin' | 'user') {
+  const supabase = await checkAdmin();
+
+  // 1. Update profiles table
+  const { error: pError } = await supabase
+    .from('profiles')
+    .update({ role: newRole })
+    .eq('id', userId);
+
+  if (pError) throw pError;
+
+  // 2. Manage admin_users table
+  if (newRole === 'admin') {
+    // Ensure they are in admin_users
+    const { data: profile } = await supabase.from('profiles').select('email').eq('id', userId).maybeSingle();
+    await supabase.from('admin_users').upsert({
+      id: userId,
+      email: profile?.email || '',
+      role: 'admin'
+    });
+  } else {
+    // Remove from admin_users
+    await supabase.from('admin_users').delete().eq('id', userId);
+  }
+
+  revalidatePath('/admin/users');
+  revalidatePath(`/admin/users/${userId}`);
+  return { success: true };
+}
+
+export async function updateUserPoints(userId: string, points: number) {
+  const supabase = await checkAdmin();
+
+  const { error } = await supabase
+    .from('user_profiles')
+    .update({ points })
+    .eq('id', userId);
+
+  if (error) throw error;
+
+  revalidatePath(`/admin/users/${userId}`);
+  return { success: true };
+}

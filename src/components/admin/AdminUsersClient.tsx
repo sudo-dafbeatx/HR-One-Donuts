@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { ShieldCheckIcon, UserIcon, ArrowPathIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { toggleUserBan } from '@/app/admin/actions';
 
 interface UserData {
@@ -13,7 +14,10 @@ interface UserData {
   role: 'admin' | 'user' | null;
   full_name: string | null;
   phone: string | null;
+  avatar_url?: string | null;
   is_active?: boolean;
+  points?: number;
+  total_orders?: number;
 }
 
 export default function AdminUsersClient({ initialUsers }: { initialUsers: UserData[] }) {
@@ -76,6 +80,11 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
 
   const isRoleAdmin = (role: string | null) => role === 'admin';
 
+  const getInitials = (name: string | null) => {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-[0_0_28px_0_rgba(82,63,105,0.08)] border border-slate-100/50">
       <div className="p-6 border-b border-slate-100">
@@ -98,9 +107,10 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
           <thead className="text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100">
             <tr>
               <th className="px-6 py-4 font-semibold">Pengguna</th>
+              <th className="px-6 py-4 font-semibold">Kontak</th>
+              <th className="px-6 py-4 font-semibold text-center">Poin</th>
+              <th className="px-6 py-4 font-semibold text-center">Order</th>
               <th className="px-6 py-4 font-semibold">Status Role</th>
-              <th className="px-6 py-4 font-semibold">Terdaftar Pada</th>
-              <th className="px-6 py-4 font-semibold">Login Terakhir</th>
               <th className="px-6 py-4 font-semibold text-right">Aksi</th>
             </tr>
           </thead>
@@ -111,13 +121,52 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
               <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
-                      {isRoleAdmin(u.role) ? <ShieldCheckIcon className="w-5 h-5 text-indigo-600" /> : <UserIcon className="w-5 h-5 text-slate-500" />}
-                    </div>
+                    <Link 
+                      href={`/admin/users/${u.id}`}
+                      className="group/avatar relative w-10 h-10 rounded-full bg-linear-to-br from-slate-100 to-slate-200 flex items-center justify-center shrink-0 border border-slate-300/50 overflow-hidden shadow-sm"
+                    >
+                      {u.avatar_url ? (
+                        <img 
+                          src={u.avatar_url} 
+                          alt={u.full_name || 'User'} 
+                          width={40}
+                          height={40}
+                          className="w-full h-full object-cover group-hover/avatar:scale-110 transition-transform"
+                        />
+                      ) : (
+                        <span className="text-xs font-black text-slate-500 group-hover/avatar:scale-110 transition-transform">
+                          {getInitials(u.full_name)}
+                        </span>
+                      )}
+                      <div className="absolute inset-0 bg-black/5 opacity-0 group-hover/avatar:opacity-100 transition-opacity" />
+                    </Link>
                     <div>
-                      <div className="font-semibold text-slate-800">{u.full_name || 'Tanpa Nama'}</div>
+                      <Link 
+                        href={`/admin/users/${u.id}`}
+                        className="font-semibold text-slate-800 hover:text-indigo-600 transition-colors block"
+                      >
+                        {u.full_name || 'Tanpa Nama'}
+                      </Link>
                       <div className="text-slate-500 text-xs">{u.email}</div>
                     </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex flex-col">
+                    <span className="font-medium text-slate-700">{u.phone || '-'}</span>
+                    <span className="text-[10px] text-slate-400">WhatsApp</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <div className="inline-flex flex-col items-center px-3 py-1 bg-amber-50 rounded-lg border border-amber-100">
+                    <span className="font-bold text-amber-700 leading-none">{u.points || 0}</span>
+                    <span className="text-[8px] uppercase font-black text-amber-500 mt-0.5">Poin</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <div className="flex flex-col">
+                    <span className="font-black text-slate-700 leading-none">{u.total_orders || 0}</span>
+                    <span className="text-[9px] text-slate-400 uppercase mt-0.5">Order</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -138,18 +187,16 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-slate-600" suppressHydrationWarning>
-                  {new Date(u.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </td>
-                <td className="px-6 py-4 text-slate-600" suppressHydrationWarning>
-                   {u.last_sign_in_at 
-                      ? new Date(u.last_sign_in_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) 
-                      : '-'}
-                </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex flex-col items-end gap-2">
                     <div className="flex items-center gap-2">
                       {loadingId === u.id && <ArrowPathIcon className="w-4 h-4 text-indigo-600 animate-spin" />}
+                      <Link 
+                        href={`/admin/users/${u.id}`}
+                        className="text-[10px] bg-indigo-600 text-white px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-700 transition-all shadow-sm shadow-indigo-200 flex items-center gap-1.5"
+                      >
+                         Detail User
+                      </Link>
                     </div>
                     
                     <div className="flex items-center gap-2 mt-1">
@@ -166,7 +213,7 @@ export default function AdminUsersClient({ initialUsers }: { initialUsers: UserD
                         className="text-[10px] bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 px-2 py-1 rounded font-semibold transition-colors disabled:opacity-50 title-tooltip"
                         title="Akhiri Sesi Login"
                       >
-                        Paksa Logout
+                        Kick Out
                       </button>
                     </div>
                   </div>
