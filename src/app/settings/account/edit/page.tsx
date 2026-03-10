@@ -15,6 +15,9 @@ interface UserProfile {
   username: string | null;
   phone_number: string | null;
   avatar_url: string | null;
+  gender: string | null;
+  birth_date: string | null;
+  address_detail: string | null;
   social_links: {
     facebook?: string;
     instagram?: string;
@@ -34,6 +37,9 @@ export default function EditProfilePage() {
     username: '',
     phoneNumber: '',
     birthPlace: '',
+    birthDate: '',
+    gender: '',
+    addressDetail: '',
     fb: '',
     ig: '',
     tt: ''
@@ -58,6 +64,9 @@ export default function EditProfilePage() {
             username: data.username || '',
             phoneNumber: data.phone_number || '',
             birthPlace: data.birth_place || '',
+            birthDate: data.birth_date || '',
+            gender: data.gender || '',
+            addressDetail: data.address_detail || '',
             fb: data.social_links?.facebook || '',
             ig: data.social_links?.instagram || '',
             tt: data.social_links?.tiktok || ''
@@ -105,6 +114,10 @@ export default function EditProfilePage() {
           username: formData.username.toLowerCase(),
           phone_number: formData.phoneNumber,
           birth_place: formData.birthPlace,
+          birth_date: formData.birthDate,
+          gender: formData.gender,
+          address_detail: formData.addressDetail,
+          age: formData.birthDate ? calculateAge(formData.birthDate) : null,
           social_links: {
             facebook: formData.fb,
             instagram: formData.ig,
@@ -124,6 +137,18 @@ export default function EditProfilePage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const calculateAge = (dateStr: string) => {
+    if (!dateStr) return null;
+    const birthDate = new Date(dateStr);
+    const today = new Date();
+    let computedAge = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      computedAge--;
+    }
+    return computedAge;
   };
 
   if (loading) return null;
@@ -209,14 +234,50 @@ export default function EditProfilePage() {
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tempat Lahir</label>
-            <input 
-              type="text"
-              value={formData.birthPlace}
-              onChange={(e) => setFormData({...formData, birthPlace: e.target.value})}
-              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-              placeholder="Contoh: Jakarta"
+          <div className="space-y-4">
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Profil & Kelahiran</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">Jenis Kelamin</label>
+                <select 
+                  value={formData.gender}
+                  onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                  className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none"
+                >
+                  <option value="">Pilih</option>
+                  <option value="male">Laki-laki</option>
+                  <option value="female">Perempuan</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider ml-1">Tempat Lahir</label>
+                <input 
+                  type="text"
+                  value={formData.birthPlace}
+                  onChange={(e) => setFormData({...formData, birthPlace: e.target.value})}
+                  className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                  placeholder="Jakarta"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tanggal Lahir</label>
+              <input 
+                type="date"
+                value={formData.birthDate}
+                onChange={(e) => setFormData({...formData, birthDate: e.target.value})}
+                className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2 pt-4">
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Alamat Domisili</h3>
+            <textarea 
+              value={formData.addressDetail}
+              onChange={(e) => setFormData({...formData, addressDetail: e.target.value})}
+              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all min-h-[100px] resize-none"
+              placeholder="Nama jalan, nomor rumah, RT/RW..."
             />
           </div>
 

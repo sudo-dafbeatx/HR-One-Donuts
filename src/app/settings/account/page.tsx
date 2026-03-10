@@ -9,7 +9,9 @@ import {
   EnvelopeIcon,
   ClockIcon,
   FingerPrintIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  CalendarIcon,
+  MapPinIcon
 } from '@heroicons/react/24/outline';
 import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
@@ -29,9 +31,16 @@ interface UserProfile {
   full_name: string | null;
   username: string | null;
   phone_number: string | null;
-  email: string; // Assuming email is always present after initial fetch
+  email: string;
   is_verified: boolean;
   birth_place?: string | null;
+  birth_date?: string | null;
+  gender?: string | null;
+  age?: number | null;
+  address_detail?: string | null;
+  province_name?: string | null;
+  city_name?: string | null;
+  district_name?: string | null;
   social_links: {
     facebook?: string;
     instagram?: string;
@@ -134,32 +143,64 @@ export default function AccountSettingsPage() {
           </section>
 
           {/* Details Section */}
-          <div className="space-y-4"> {/* Added a wrapper div for the new structure */}
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('settings.account.basic_info.title')}</h3>
-              <Link
-                href="/settings/account/edit"
-                className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline"
-              >
-                {t('settings.account.basic_info.edit_cta')}
-              </Link>
-            </div>
-            <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 divide-y divide-slate-50">
-              <EditableItem icon={UserCircleIcon} label={t('settings.account.basic_info.labels.name')} value={profile?.full_name || '-'} />
-              <EditableItem icon={FingerPrintIcon} label={t('settings.account.basic_info.labels.username')} value={profile?.username || '-'} />
-              <EditableItem icon={DevicePhoneMobileIcon} label={t('settings.account.basic_info.labels.phone')} value={profile?.phone_number || '-'} />
-              <EditableItem icon={EnvelopeIcon} label={t('settings.account.basic_info.labels.email')} value={profile?.email || '-'} />
-              {profile?.birth_place && <EditableItem icon={ClockIcon} label="Tempat Lahir" value={profile.birth_place} />}
-            </div>
-          </div>
-
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2">{t('settings.account.social')}</p>
-          <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100">
-              <div className="px-6 py-4 grid grid-cols-2 gap-3">
-                <SocialLink icon={CheckBadgeIcon} label="Facebook" href={profile?.social_links?.facebook} />
-                <SocialLink icon={CheckBadgeIcon} label="Instagram" href={profile?.social_links?.instagram} />
-                <SocialLink icon={CheckBadgeIcon} label="TikTok" href={profile?.social_links?.tiktok} />
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Informasi Pribadi</h3>
+                <Link
+                  href="/settings/account/edit"
+                  className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline"
+                >
+                  {t('settings.account.basic_info.edit_cta')}
+                </Link>
               </div>
+              <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 divide-y divide-slate-50">
+                <EditableItem icon={UserCircleIcon} label={t('settings.account.basic_info.labels.name')} value={profile?.full_name || '-'} />
+                <EditableItem icon={FingerPrintIcon} label={t('settings.account.basic_info.labels.username')} value={profile?.username || '-'} />
+                <EditableItem icon={CheckBadgeIcon} label="Jenis Kelamin" value={profile?.gender === 'male' ? 'Laki-laki' : profile?.gender === 'female' ? 'Perempuan' : '-'} />
+                <EditableItem icon={ClockIcon} label="Usia" value={profile?.age ? `${profile.age} Tahun` : '-'} />
+                <EditableItem icon={CalendarIcon} label="Tanggal Lahir" value={profile?.birth_date ? new Date(profile.birth_date).toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'} />
+                <EditableItem icon={MapPinIcon} label="Tempat Lahir" value={profile?.birth_place || '-'} />
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 ml-1">Kontak & Keanggotaan</p>
+              <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 divide-y divide-slate-50">
+                <EditableItem icon={DevicePhoneMobileIcon} label={t('settings.account.basic_info.labels.phone')} value={profile?.phone_number || '-'} />
+                <EditableItem icon={EnvelopeIcon} label={t('settings.account.basic_info.labels.email')} value={profile?.email || '-'} />
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 ml-1">Alamat Pengiriman</p>
+              <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 p-6 space-y-4">
+                <div className="flex gap-4 items-start">
+                  <div className="p-2 bg-slate-50 rounded-xl">
+                    <MapPinIcon className="size-5 text-slate-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-800 leading-snug">
+                      {profile?.address_detail || 'Belum ada detail alamat'}
+                    </p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1">
+                      {[profile?.district_name, profile?.city_name, profile?.province_name].filter(Boolean).join(', ') || 'Wilayah tidak diketahui'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 ml-1 italic">{t('settings.account.social')}</p>
+              <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100">
+                  <div className="px-6 py-5 grid grid-cols-2 gap-3">
+                    <SocialLink icon={CheckBadgeIcon} label="Facebook" href={profile?.social_links?.facebook} />
+                    <SocialLink icon={CheckBadgeIcon} label="Instagram" href={profile?.social_links?.instagram} />
+                    <SocialLink icon={CheckBadgeIcon} label="TikTok" href={profile?.social_links?.tiktok} />
+                  </div>
+              </div>
+            </div>
           </div>
 
           <div className="px-2">
