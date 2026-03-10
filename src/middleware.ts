@@ -172,13 +172,29 @@ export default async function proxy(request: NextRequest) {
   const isAdminLoginPage = pathname === '/admin/login';
   const isAdminApi = pathname.startsWith('/api/admin');
 
-  if (isAdminPath && !isAdminLoginPage && !isAdminApi) {
+  if (isAdminPath && !isAdminApi) {
     const adminSession = request.cookies.get('admin_session');
+    
+    if (isAdminLoginPage) {
+      if (adminSession?.value) {
+        // If already logged in, redirect away from login page to dashboard
+        return NextResponse.redirect(new URL('/admin', request.url));
+      }
+      // Not logged in -> allow access to login page
+      return NextResponse.next();
+    }
+
     if (!adminSession?.value) {
+      // Trying to access protected admin page without session
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
+    
     // Admin session is valid — allow through without Supabase auth
     return NextResponse.next();
+  }
+  
+  if (isAdminApi) {
+     return NextResponse.next();
   }
   
   if (!isPublicRoute) {
