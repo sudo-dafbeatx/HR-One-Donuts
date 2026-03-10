@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { useLoading } from '@/context/LoadingContext';
+import Link from 'next/link';
 
 import { logTraffic } from '@/app/actions/traffic-actions';
 import { verifyCaptcha } from '@/app/actions/verify-captcha';
@@ -556,7 +557,12 @@ function LoginContent() {
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="text-sm font-medium text-gray-600">Password</label>
-            <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-xs text-primary font-medium">{showPassword ? 'Sembunyikan' : 'Lihat'}</button>
+            <div className="flex items-center space-x-4">
+               <Link href="/forgot-password" className="text-xs text-primary hover:underline" tabIndex={-1}>
+                  Lupa Password?
+               </Link>
+               <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-xs text-primary font-medium">{showPassword ? 'Sembunyikan' : 'Lihat'}</button>
+            </div>
           </div>
           <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base focus:border-primary focus:outline-none" required />
         </div>
