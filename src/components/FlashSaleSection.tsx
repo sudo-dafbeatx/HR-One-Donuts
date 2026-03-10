@@ -259,7 +259,7 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                       background: `linear-gradient(135deg, ${event.isJumat ? '#0d9488, #14b8a6' : 'var(--color-primary, #1152d4), var(--color-secondary, #3b82f6)'})`
                     }}
                   >
-                    <div className="relative w-full h-[320px] sm:h-[380px] rounded-[23px] flex flex-col justify-between overflow-hidden z-10 bg-slate-900 group">
+                    <div className="relative w-full min-h-[360px] sm:min-h-[400px] h-full rounded-[23px] flex flex-col justify-start overflow-hidden z-10 bg-slate-900 group">
                       
                       {/* Background Image / Color */}
                       {event.banner_image_url ? (
@@ -312,7 +312,7 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                       </div>
 
                       {/* Bottom Content Section */}
-                      <div className="relative z-10 p-5 sm:p-6 pt-12 flex flex-col justify-end w-full">
+                      <div className="relative z-10 p-5 sm:p-6 pt-12 mt-auto flex flex-col justify-end w-full">
                         <h3 className="text-2xl md:text-3xl font-black leading-tight text-white drop-shadow-lg mb-2 inline-block">
                           {event.headline}
                         </h3>
