@@ -141,8 +141,8 @@ export default function BottomNav() {
   ) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/80 backdrop-blur-xl border-t border-slate-100 pb-safe-area-inset-bottom">
-      <div className="grid grid-cols-6 h-16">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/90 backdrop-blur-xl border-t border-slate-200 pb-safe-area-inset-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+      <div className="grid grid-cols-6 h-[72px]">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = isActive ? item.activeIcon : item.icon;
@@ -157,10 +157,10 @@ export default function BottomNav() {
                   </span>
                 )}
                 {item.isProfile && hasActiveOrders && (
-                  <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-red-500 border-2 border-white animate-pulse" />
+                  <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 border-2 border-white animate-pulse" />
                 )}
               </div>
-              <span className="text-[10px] font-medium text-center px-1 truncate w-full">
+              <span className="text-[11px] leading-tight font-bold text-center px-0.5 truncate w-full mt-1">
                 {item.label}
               </span>
               {isActive && (
@@ -174,7 +174,7 @@ export default function BottomNav() {
               <button
                 key={item.label}
                 onClick={() => setIsCartOpen(true)}
-                className={`relative flex flex-col items-center justify-center gap-1 w-full h-full transition-all text-slate-400`}
+                className={`relative flex flex-col items-center justify-center gap-0.5 w-full h-full transition-all text-slate-400 active:scale-95`}
               >
                 {content}
               </button>
@@ -185,7 +185,7 @@ export default function BottomNav() {
             <Link 
               key={item.label} 
               href={item.href}
-              className={`relative flex flex-col items-center justify-center gap-1 w-full h-full transition-all ${
+              className={`relative flex flex-col items-center justify-center gap-0.5 w-full h-full transition-all active:scale-95 ${
                 isActive ? "text-primary" : "text-slate-400"
               }`}
             >

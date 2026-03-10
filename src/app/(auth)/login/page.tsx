@@ -426,19 +426,19 @@ function LoginContent() {
         <form onSubmit={handleProfileCompletion} className="space-y-6">
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-600">Nama Lengkap</label>
-            <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-primary focus:outline-none" required />
+            <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base focus:border-primary focus:outline-none" required />
           </div>
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-600">Nomor WhatsApp</label>
-            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-primary focus:outline-none" required />
+            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base focus:border-primary focus:outline-none" required />
           </div>
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-600">Tanggal Lahir</label>
-            <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-700 focus:border-primary focus:outline-none" required />
+            <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base text-gray-700 focus:border-primary focus:outline-none" required />
           </div>
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-600">Alamat Pengiriman</label>
-            <textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={3} className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-primary focus:outline-none resize-none" required />
+            <textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={3} className="w-full rounded-md border border-gray-300 p-3 text-base focus:border-primary focus:outline-none resize-none" required />
           </div>
           <button type="submit" disabled={loading} className="w-full rounded-md bg-primary px-6 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-50">{loading ? 'Menyimpan...' : 'Selesai & Lanjut'}</button>
         </form>
@@ -492,37 +492,37 @@ function LoginContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">Nama</label>
-              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
+              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base" required />
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">Tanggal Lahir</label>
-              <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-700" required />
+              <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base text-gray-700" required />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">WhatsApp</label>
-              <input type="tel" value={phone} onChange={(e) => handlePhoneChange(e.target.value)} className={`w-full rounded-md border p-3 text-sm ${phoneDuplicate ? 'border-red-400 bg-red-50' : 'border-gray-300'}`} placeholder="Contoh: 0812..." required />
+              <input type="tel" value={phone} onChange={(e) => handlePhoneChange(e.target.value)} className={`w-full rounded-md border p-3 text-base ${phoneDuplicate ? 'border-red-400 bg-red-50' : 'border-gray-300'}`} placeholder="Contoh: 0812..." required />
               {phoneChecking && <p className="mt-1 text-xs text-gray-400">Memeriksa nomor...</p>}
               {phoneDuplicate && <p className="mt-1 text-xs font-bold text-red-500">Nomor HP sudah terdaftar</p>}
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base" required />
             </div>
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-gray-500">Alamat</label>
-            <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
+            <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base" required />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base" required />
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-gray-500">Konfirmasi</label>
-              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm" required />
+              <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base" required />
             </div>
           </div>
           {TURNSTILE_SITE_KEY && (<div className="flex justify-center"><Turnstile ref={turnstileRef} siteKey={TURNSTILE_SITE_KEY} onSuccess={(token) => setCaptchaToken(token)} /></div>)}
@@ -551,14 +551,14 @@ function LoginContent() {
       <form onSubmit={handleLogin} className="space-y-6">
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-600">Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-primary focus:outline-none" required />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base focus:border-primary focus:outline-none" required />
         </div>
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="text-sm font-medium text-gray-600">Password</label>
             <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-xs text-primary font-medium">{showPassword ? 'Sembunyikan' : 'Lihat'}</button>
           </div>
-          <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-sm focus:border-primary focus:outline-none" required />
+          <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base focus:border-primary focus:outline-none" required />
         </div>
         <div className="flex items-center">
           <input

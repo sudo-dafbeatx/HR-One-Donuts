@@ -224,7 +224,7 @@ export default function EditProfilePage() {
               type="text"
               value={formData.fullName}
               onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
               placeholder="Nama kamu"
               required
             />
@@ -236,7 +236,7 @@ export default function EditProfilePage() {
               type="text"
               value={formData.username}
               onChange={(e) => setFormData({...formData, username: e.target.value.replace(/\s/g, '').toLowerCase()})}
-              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
               placeholder="username_unik"
               required
             />
@@ -248,7 +248,7 @@ export default function EditProfilePage() {
               type="tel"
               value={formData.phoneNumber}
               onChange={(e) => setFormData({...formData, phoneNumber: e.target.value.replace(/\D/g, '')})}
-              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
               placeholder="08123456789"
             />
           </div>
@@ -259,7 +259,7 @@ export default function EditProfilePage() {
               type="text"
               value={formData.birthPlace}
               onChange={(e) => setFormData({...formData, birthPlace: e.target.value})}
-              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+              className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-base font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
               placeholder="Contoh: Jakarta"
             />
           </div>
@@ -272,21 +272,21 @@ export default function EditProfilePage() {
                   value={formData.fb}
                   onChange={(e) => setFormData({...formData, fb: e.target.value})}
                   placeholder="ID Facebook / URL"
-                  className="w-full px-5 py-3 bg-slate-50/50 border border-slate-100 rounded-xl text-xs font-medium focus:ring-2 focus:ring-primary/10 outline-none"
+                  className="w-full px-5 py-3 bg-slate-50/50 border border-slate-100 rounded-xl text-base font-medium focus:ring-2 focus:ring-primary/10 outline-none"
                 />
                 <input 
                   type="text" 
                   value={formData.ig}
                   onChange={(e) => setFormData({...formData, ig: e.target.value})}
                   placeholder="@username_instagram"
-                  className="w-full px-5 py-3 bg-slate-50/50 border border-slate-100 rounded-xl text-xs font-medium focus:ring-2 focus:ring-primary/10 outline-none"
+                  className="w-full px-5 py-3 bg-slate-50/50 border border-slate-100 rounded-xl text-base font-medium focus:ring-2 focus:ring-primary/10 outline-none"
                 />
                 <input 
                   type="text" 
                   value={formData.tt}
                   onChange={(e) => setFormData({...formData, tt: e.target.value})}
                   placeholder="@username_tiktok"
-                  className="w-full px-5 py-3 bg-slate-50/50 border border-slate-100 rounded-xl text-xs font-medium focus:ring-2 focus:ring-primary/10 outline-none"
+                  className="w-full px-5 py-3 bg-slate-50/50 border border-slate-100 rounded-xl text-base font-medium focus:ring-2 focus:ring-primary/10 outline-none"
                 />
              </div>
           </div>

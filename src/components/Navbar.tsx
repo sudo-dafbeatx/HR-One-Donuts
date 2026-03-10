@@ -181,8 +181,8 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
           <LanguageSwitcher />
           {/* Search Mobile */}
           {(!pathname || pathname !== '/') && (
-            <button className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 md:hidden transition-colors">
-              <span className="material-symbols-outlined">search</span>
+            <button className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-500 md:hidden transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+              <span className="material-symbols-outlined text-xl">search</span>
             </button>
           )}
 
@@ -192,7 +192,7 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
           {/* Cart */}
           <button
             onClick={() => setIsCartOpen(true)}
-            className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-all relative group"
+            className="hidden md:flex p-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-all relative group min-h-[44px] min-w-[44px] items-center justify-center"
             aria-label="View shopping cart"
           >
             <span className="material-symbols-outlined group-hover:scale-110 transition-transform">shopping_bag</span>
@@ -207,7 +207,7 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
           </button>
 
           {/* Account */}
-          <div className="relative">
+          <div className="relative hidden md:block">
             <button
               onClick={() => setIsAccountOpen(!isAccountOpen)}
               className="flex items-center gap-2 p-1.5 md:pl-4 md:pr-1.5 rounded-2xl border border-slate-200/60 hover:border-primary/30 hover:shadow-md transition-all bg-white/50 backdrop-blur-sm group"

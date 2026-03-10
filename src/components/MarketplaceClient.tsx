@@ -111,7 +111,7 @@ export default function MarketplaceClient({
           </div>
           <input 
             type="text" 
-            className="w-full bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-28 focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 font-medium transition-all text-sm outline-none shadow-sm text-ellipsis overflow-hidden whitespace-nowrap" 
+            className="w-full bg-white border border-slate-200 rounded-2xl py-3 pl-12 pr-28 focus:ring-4 focus:ring-primary/10 focus:border-primary/20 placeholder:text-slate-400 font-medium transition-all text-base outline-none shadow-sm text-ellipsis overflow-hidden whitespace-nowrap" 
             placeholder={t('search.placeholder')} 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -208,14 +208,14 @@ export default function MarketplaceClient({
                 {/* Content Area */}
                 <div className="p-3 md:p-4 flex flex-col flex-1 gap-2">
                   <div className="flex-1">
-                    <h3 className="text-slate-900 font-bold text-xs md:text-sm leading-tight line-clamp-2 min-h-[2.5em] mb-1 group-hover:text-primary transition-colors">
+                    <h3 className="text-slate-900 font-bold text-sm md:text-base leading-tight line-clamp-2 min-h-[2.5em] mb-1 group-hover:text-primary transition-colors">
                       {product.name}
                     </h3>
                     
                     {/* Rating & Sold Row */}
                     <div className="flex items-center justify-between gap-1 flex-wrap">
                       {renderRating(stats)}
-                      <span className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase tracking-tight">
+                      <span className="text-[10px] md:text-[11px] text-slate-400 font-bold uppercase tracking-tight">
                         {product.sold_count || 0}+ {t('common.sold')}
                       </span>
                     </div>
@@ -225,11 +225,11 @@ export default function MarketplaceClient({
                   <div className="flex items-end justify-between gap-2 mt-1">
                     <div className="flex flex-col">
                       {hasDiscount && (
-                        <span className="text-[9px] md:text-[10px] text-slate-400 line-through">
+                        <span className="text-[11px] md:text-xs text-slate-400 line-through">
                           Rp {product.price.toLocaleString("id-ID")}
                         </span>
                       )}
-                      <span className="text-primary font-bold text-sm md:text-base leading-none">
+                      <span className="text-primary font-bold text-base md:text-lg leading-none">
                         Rp {getEffectivePrice(product).toLocaleString("id-ID")}
                       </span>
                     </div>
@@ -287,10 +287,10 @@ export default function MarketplaceClient({
                         }, 1);
                         showCartToast(product.name);
                       }}
-                      className="size-8 md:size-9 rounded-full bg-primary/5 text-primary hover:bg-primary hover:text-white flex items-center justify-center transition-all active:scale-90"
+                      className="size-11 md:size-10 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white flex items-center justify-center transition-all active:scale-90"
                       aria-label="Add to cart"
                     >
-                      <span className="material-symbols-outlined text-sm md:text-base transition-transform group-active:translate-y-px">add_shopping_cart</span>
+                      <span className="material-symbols-outlined text-lg md:text-base transition-transform group-active:translate-y-px">add_shopping_cart</span>
                     </button>
                   </div>
                 </div>

@@ -58,7 +58,7 @@ function QuantityInput({ initialValue, onUpdate }: { initialValue: number, onUpd
       value={inputValue}
       onChange={handleChange}
       onBlur={handleBlur}
-      className="text-sm font-black w-12 text-center bg-transparent border-none focus:ring-0 text-slate-900! p-0"
+      className="text-base font-black w-12 text-center bg-transparent border-none focus:ring-0 text-slate-900! p-0"
     />
   );
 }
