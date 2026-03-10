@@ -145,10 +145,22 @@ export async function createOrder(data: {
 
     // Send Telegram notification to admin
     try {
+      // Fetch customer details for more context
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name, phone')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const customerName = profile?.full_name || user.user_metadata?.full_name || 'Pelanggan';
+      const customerPhone = profile?.phone || user.user_metadata?.phone || 'Tidak ada nomor';
+
       const itemsList = data.items.map(i => `  • ${i.name} x${i.quantity}`).join('\n');
       await sendAdminNotification(
         `🍩 <b>Pesanan Baru!</b>\n\n` +
         `🆔 #${order?.id?.slice(0, 8).toUpperCase() || 'N/A'}\n` +
+        `👤 <b>Customer:</b> ${customerName}\n` +
+        `📱 <b>WhatsApp:</b> ${customerPhone}\n` +
         `💰 Total: Rp ${data.total_amount.toLocaleString('id-ID')}\n` +
         `📦 ${data.total_items} item\n` +
         `🚗 ${finalMethod === 'pickup' ? 'Ambil di Toko' : 'Delivery'}\n\n` +

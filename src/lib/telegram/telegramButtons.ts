@@ -3,11 +3,12 @@ import TelegramBot from 'node-telegram-bot-api';
 export const VALID_ORDER_STATUSES = ['confirmed', 'processing', 'shipping', 'ready', 'completed'];
 
 const STATUS_LABELS: Record<string, string> = {
-  confirmed: '✅ Confirmed',
-  processing: '👨‍🍳 Processing',
-  shipping: '🚚 Shipping',
-  ready: '📦 Ready',
-  completed: '✔️ Completed',
+  pending: '⏳ Menunggu',
+  confirmed: '✅ Konfirmasi',
+  processing: '👨‍🍳 Diproses',
+  shipping: '🚚 Diantar',
+  ready: '📦 Siap Diambil',
+  completed: '✔️ Selesai (Sukses)',
 };
 
 /**
