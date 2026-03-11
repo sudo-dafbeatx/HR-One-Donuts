@@ -1,4 +1,4 @@
-import { getUserDetails, getUserOrders } from '@/app/admin/actions';
+import { getUserDetails, getUserOrders, getUserAuthLogs, getUserTrafficLogs } from '@/app/admin/actions';
 import Link from 'next/link';
 import UserManageClient from '@/components/admin/UserManageClient';
 import { 
@@ -11,13 +11,30 @@ import {
   ShoppingBagIcon,
   StarIcon,
   ClockIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  CursorArrowRaysIcon,
+  ArrowRightCircleIcon
 } from '@heroicons/react/24/outline';
+import Image from 'next/image';
+
+function formatEventLabel(event_type: string) {
+  switch (event_type) {
+    case 'page_view': return { label: 'Lihat Halaman', color: 'bg-blue-100 text-blue-700' };
+    case 'click_buy': return { label: 'Masuk Keranjang', color: 'bg-emerald-100 text-emerald-700' };
+    case 'login_view': return { label: 'Buka Login', color: 'bg-purple-100 text-purple-700' };
+    case 'login_success': return { label: 'Berhasil Login', color: 'bg-indigo-100 text-indigo-700' };
+    default: return { label: event_type, color: 'bg-slate-100 text-slate-700' };
+  }
+}
 
 export default async function UserDetailPage({ params }: { params: { id: string } }) {
   const userId = params.id;
-  const user = await getUserDetails(userId);
-  const orders = await getUserOrders(userId);
+  const [user, orders, authLogs, trafficLogs] = await Promise.all([
+    getUserDetails(userId),
+    getUserOrders(userId),
+    getUserAuthLogs(userId),
+    getUserTrafficLogs(userId)
+  ]);
 
   const totalSpend = orders.reduce((sum, order) => {
     if (order.status === 'completed') return sum + (order.total_amount || 0);
@@ -70,7 +87,7 @@ export default async function UserDetailPage({ params }: { params: { id: string 
             <div className="h-24 bg-linear-to-r from-primary to-indigo-600 relative">
                <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-full border-4 border-white bg-slate-100 overflow-hidden shadow-md">
                    {user.avatar_url ? (
-                     <img src={user.avatar_url ?? '/images/default-avatar.png'} alt={user.full_name ?? 'User'} width={96} height={96} className="w-full h-full object-cover" />
+                     <Image src={user.avatar_url ?? '/images/default-avatar.png'} alt={user.full_name ?? 'User'} width={96} height={96} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out" />
                  ) : (
                    <div className="w-full h-full flex items-center justify-center text-slate-300 bg-slate-100">
                      <UserCircleIcon className="w-16 h-16" />
@@ -182,19 +199,40 @@ export default async function UserDetailPage({ params }: { params: { id: string 
                   </div>
                 </div>
 
-                <div>
-                   <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block mb-2">Riwayat Login</label>
-                   <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-4">
-                      <ClockIcon className="w-8 h-8 text-slate-300" />
-                      <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Login Terakhir</p>
-                        <p className="text-sm font-bold text-slate-700">
-                          {user.last_sign_in_at 
-                            ? new Date(user.last_sign_in_at).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-                            : 'Belum pernah login'}
-                        </p>
-                      </div>
-                   </div>
+                <div className="flex flex-col gap-4">
+                   <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest block">Riwayat Login & Verifikasi</label>
+                   
+                   {authLogs.length === 0 ? (
+                     <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-4">
+                        <ClockIcon className="w-8 h-8 text-slate-300" />
+                        <div>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Login Terakhir</p>
+                          <p className="text-sm font-bold text-slate-700">Belum pernah login secara tercatat</p>
+                        </div>
+                     </div>
+                   ) : (
+                     <div className="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                       {authLogs.map((log) => (
+                         <div key={log.id} className="p-3 bg-slate-50 border border-slate-100 rounded-xl flex justify-between items-center group hover:border-slate-300 transition-colors">
+                            <div>
+                               <p className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                 <ShieldCheckIcon className="w-4 h-4 text-emerald-500" />
+                                 {log.event_type.replace(/_/g, ' ').toUpperCase()}
+                               </p>
+                               <p className="text-[10px] text-slate-500 font-mono mt-1">{log.ip_address || 'IP Unknown'}</p>
+                            </div>
+                            <div className="text-right">
+                               <p className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">
+                                  {new Date(log.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                               </p>
+                               <p className="text-xs font-bold text-slate-700">
+                                  {new Date(log.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                               </p>
+                            </div>
+                         </div>
+                       ))}
+                     </div>
+                   )}
                 </div>
               </div>
 
@@ -294,6 +332,60 @@ export default async function UserDetailPage({ params }: { params: { id: string 
                 </table>
               </div>
             )}
+          </div>
+
+          {/* Activity Tracking Timeline */}
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 overflow-hidden">
+             <div className="flex items-center justify-between mb-6">
+               <h3 className="font-bold text-slate-800 flex items-center gap-2 text-lg">
+                 <CursorArrowRaysIcon className="w-6 h-6 text-indigo-500" /> Tracking Aktivitas Klik
+               </h3>
+               <span className="text-xs font-bold px-2 py-1 bg-slate-100 text-slate-500 rounded-lg">
+                 100 Klik Terakhir
+               </span>
+             </div>
+
+             {trafficLogs.length === 0 ? (
+               <div className="py-8 text-center text-slate-500">
+                 <CursorArrowRaysIcon className="w-12 h-12 text-slate-200 mx-auto mb-3" />
+                 <p className="text-sm italic">Belum ada rekaman klik dari user ini.</p>
+               </div>
+             ) : (
+               <div className="relative border-l border-slate-200 ml-3 space-y-6">
+                 {trafficLogs.map((tLog) => {
+                   const formatInfo = formatEventLabel(tLog.event_type);
+                   return (
+                     <div key={tLog.id} className="relative pl-6">
+                        <div className="absolute w-3 h-3 bg-indigo-500 rounded-full -left-[6.5px] top-1.5 border-2 border-white ring-4 ring-indigo-50"></div>
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                           <div>
+                             <div className="flex items-center gap-2">
+                               <span className={`px-2 py-1 rounded text-[10px] font-black tracking-widest uppercase ${formatInfo.color}`}>
+                                 {formatInfo.label}
+                               </span>
+                               <span className="text-xs font-semibold text-slate-800 flex items-center gap-1">
+                                 <ArrowRightCircleIcon className="w-3.5 h-3.5 text-slate-400" /> 
+                                 <span className="truncate max-w-[150px] sm:max-w-xs" title={tLog.path}>{tLog.path}</span>
+                               </span>
+                             </div>
+                             <p className="text-[10px] text-slate-500 mt-1 truncate max-w-xs sm:max-w-md font-mono" title={tLog.user_agent || ''}>
+                               Device: {tLog.user_agent || 'Unknown'}
+                             </p>
+                           </div>
+                           <div className="text-left sm:text-right shrink-0">
+                               <p className="text-xs font-bold text-slate-700">
+                                 {new Date(tLog.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
+                               </p>
+                               <p className="text-[11px] text-slate-500 font-medium">
+                                 {new Date(tLog.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
+                               </p>
+                           </div>
+                        </div>
+                     </div>
+                   );
+                 })}
+               </div>
+             )}
           </div>
         </div>
       </div>

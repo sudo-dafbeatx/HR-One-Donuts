@@ -881,6 +881,42 @@ export async function getUserOrders(userId: string) {
   return orders;
 }
 
+export async function getUserAuthLogs(userId: string) {
+  const supabase = await checkAdmin();
+  
+  const { data: logs, error } = await supabase
+    .from('auth_logs')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error) {
+    console.error('Error fetching auth logs:', error);
+    return [];
+  }
+
+  return logs || [];
+}
+
+export async function getUserTrafficLogs(userId: string) {
+  const supabase = await checkAdmin();
+  
+  const { data: logs, error } = await supabase
+    .from('traffic_logs')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(100);
+
+  if (error) {
+    console.error('Error fetching traffic logs:', error);
+    return [];
+  }
+
+  return logs || [];
+}
+
 export async function updateUserRole(userId: string, newRole: 'admin' | 'user') {
   const supabase = await checkAdmin();
 
