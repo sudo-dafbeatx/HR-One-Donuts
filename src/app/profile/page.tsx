@@ -764,7 +764,7 @@ export default function ProfilePage() {
                             icon={KeyIcon} 
                             label="Ganti Password" 
                             subtitle="Keamanan akun kamu" 
-                            href="/auth/forgot-password" 
+                            href="/settings/password" 
                           />
                           <MobileNavItem 
                             icon={ShieldCheckIcon} 

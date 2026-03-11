@@ -243,7 +243,7 @@ export default function AccountSettingsPage() {
             {/* Conditional rendering for password change button */}
             {!isGoogleUser && (
               <Link
-                href="/auth/forgot-password"
+                href="/settings/password"
                 className="w-full flex items-center justify-between p-4 bg-primary/5 border border-primary/10 rounded-2xl group active:scale-[0.98] transition-all"
               >
                 <div className="flex items-center gap-4">
