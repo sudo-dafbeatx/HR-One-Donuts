@@ -921,7 +921,10 @@ export default function ProfilePage() {
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{t('profile.info.identity_title')}</p>
                           <p className="font-bold text-slate-700">
                             {profile?.gender ? (profile.gender === 'male' ? t('profile.info.gender.male') : t('profile.info.gender.female')) : '-'} 
-                            { (calculateAge(profile?.birth_date) || profile?.age) ? `, ${t('profile.info.age_suffix', { age: calculateAge(profile?.birth_date) || profile?.age })}` : ''}
+                            { (() => {
+                              const displayAge = calculateAge(profile?.birth_date) || profile?.age;
+                              return displayAge ? `, ${t('profile.info.age_suffix', { age: displayAge })}` : '';
+                            })()}
                           </p>
                         </div>
                       </div>
