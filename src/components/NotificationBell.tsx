@@ -130,38 +130,44 @@ export default function NotificationBell() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className="flex p-2.5 rounded-full hover:bg-slate-50 text-slate-700 transition-all relative group items-center justify-center min-h-[44px] min-w-[44px]"
+        className="flex p-2.5 rounded-full hover:bg-slate-50 text-slate-700 transition-all relative group items-center justify-center min-h-[44px] min-w-[44px] active:scale-95"
         aria-label="View notifications"
       >
-        <span className="material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform">notifications</span>
+        <span className={`material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform ${unreadCount > 0 ? 'text-primary' : 'text-slate-600'}`}>
+          notifications
+        </span>
         {unreadCount > 0 && (
-          <span className="absolute top-2 right-2 size-3.5 bg-primary text-white text-[8px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm animate-cart-bounce">
+          <span className="absolute top-2 right-2 size-3.5 bg-red-500 text-white text-[8px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm animate-cart-bounce">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="fixed inset-x-4 top-[72px] sm:absolute sm:inset-auto sm:top-full sm:-right-8 sm:mt-3 w-auto sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300 z-100 origin-top">
-          <div className="p-5 border-b border-slate-50 flex items-center justify-between">
+        <div className="fixed inset-x-4 top-[72px] sm:absolute sm:inset-auto sm:top-full sm:-right-8 sm:mt-3 w-auto sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300 z-100 origin-top ring-1 ring-black/5">
+          <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-white">
             <h3 className="text-sm font-black tracking-tight text-slate-900 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[22px]">mark_email_unread</span>
+              <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary text-[20px] fill-1">notifications</span>
+              </div>
               Notifikasi
             </h3>
             {unreadCount > 0 && (
-              <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase">
+              <span className="px-2 py-0.5 rounded-full bg-red-50 text-red-500 text-[10px] font-black uppercase tracking-wider animate-pulse">
                 {unreadCount} Baru
               </span>
             )}
           </div>
           
-          <div className="max-h-[70vh] sm:max-h-[450px] overflow-y-auto w-full no-scrollbar">
+          <div className="max-h-[70vh] sm:max-h-[450px] overflow-y-auto w-full no-scrollbar overscroll-contain">
             {notifications.length === 0 ? (
-              <div className="p-10 text-center flex flex-col items-center justify-center">
-                 <div className="size-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
-                   <BellIcon className="size-8 text-slate-200" />
+              <div className="p-12 text-center flex flex-col items-center justify-center">
+                 <div className="size-20 rounded-full bg-slate-50 flex items-center justify-center mb-5 relative">
+                   <BellIcon className="size-10 text-slate-200" />
+                   <div className="absolute top-0 right-0 size-4 bg-slate-100 rounded-full border-4 border-white" />
                  </div>
-                 <p className="text-xs font-bold text-slate-400">Belum ada kabar terbaru untukmu</p>
+                 <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Kosong Nih</p>
+                 <p className="text-[11px] text-slate-300 mt-1 font-bold">Belum ada kabar terbaru untukmu</p>
               </div>
             ) : (
               <div className="divide-y divide-slate-50">
@@ -170,24 +176,31 @@ export default function NotificationBell() {
                     key={notif.id}
                     href={notif.related_record_id ? `/profile/orders/${notif.related_record_id}` : '/profile'}
                     onClick={() => setIsOpen(false)}
-                    className="p-5 flex gap-4 hover:bg-slate-50/80 transition-all active:bg-slate-100 group"
+                    className="p-5 flex gap-4 hover:bg-slate-50/80 transition-all active:bg-slate-100 group relative border-l-4 border-transparent hover:border-primary/30"
                   >
-                    <div className="shrink-0 mt-1">
-                       <span className={`size-2.5 rounded-full inline-block ${notif.is_read ? 'bg-slate-200' : 'bg-primary ring-4 ring-primary/10 animate-pulse'}`}></span>
+                    <div className="shrink-0 mt-1 relative">
+                       <div className={`size-10 rounded-2xl flex items-center justify-center transition-colors ${notif.is_read ? 'bg-slate-100' : 'bg-primary/5'}`}>
+                         <span className={`material-symbols-outlined text-[20px] ${notif.is_read ? 'text-slate-400' : 'text-primary fill-1'}`}>
+                           {notif.type === 'order_update' ? 'local_shipping' : 'notifications'}
+                         </span>
+                       </div>
+                       {!notif.is_read && (
+                         <span className="absolute -top-1 -right-1 size-3 bg-red-500 rounded-full border-2 border-white ring-4 ring-red-500/10 animate-pulse" />
+                       )}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${notif.is_read ? 'text-slate-400' : 'text-primary'}`}>
                           {notif.type === 'order_update' ? 'Pesanan' : 'Sistem'}
                         </span>
                         <span className="text-[10px] font-bold text-slate-300">
                           {timeAgo(notif.created_at)}
                         </span>
                       </div>
-                      <h4 className={`text-sm tracking-tight leading-tight mb-1 ${notif.is_read ? 'font-bold text-slate-600' : 'font-black text-slate-900'}`}>
+                      <h4 className={`text-sm tracking-tight leading-snug mb-1 transition-colors ${notif.is_read ? 'font-bold text-slate-600' : 'font-black text-slate-900 group-hover:text-primary'}`}>
                         {notif.title}
                       </h4>
-                      <p className="text-[11px] text-slate-500 font-medium leading-relaxed line-clamp-2">
+                      <p className={`text-[11px] font-medium leading-relaxed line-clamp-2 ${notif.is_read ? 'text-slate-400' : 'text-slate-500'}`}>
                         {notif.message}
                       </p>
                     </div>
@@ -197,10 +210,10 @@ export default function NotificationBell() {
             )}
           </div>
           
-          <div className="p-4 bg-slate-50/50">
+          <div className="p-4 bg-slate-50/30 border-t border-slate-50">
             <button 
               onClick={() => setIsOpen(false)}
-              className="w-full py-2.5 bg-white border border-slate-200 text-[11px] font-black text-slate-600 hover:text-slate-900 rounded-2xl shadow-sm transition-all uppercase tracking-widest active:scale-[0.98]"
+              className="w-full py-3 bg-white border border-slate-200 text-[11px] font-black text-slate-600 hover:text-primary hover:border-primary/30 rounded-2xl shadow-sm transition-all uppercase tracking-widest active:scale-[0.98] flex items-center justify-center gap-2"
             >
               Tutup Panel
             </button>
