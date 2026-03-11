@@ -34,35 +34,53 @@ export default function EditProfilePage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
+    let retryCount = 0;
+    const maxRetries = 3;
+
     const fetchProfileData = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session && retryCount < maxRetries) {
+          retryCount++;
+          setTimeout(fetchProfileData, 1000);
+          return;
+        }
 
-      setEmail(user.email || '');
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setLoading(false);
+          return;
+        }
 
-      const { data } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
-      
-      if (data) {
-        setProfileId(data.id);
-        setFormData({
-          fullName: data.full_name || '',
-          username: data.username || '',
-          phoneNumber: data.phone_number || data.phone || '',
-          birthPlace: data.birth_place || '',
-          birthDate: data.birth_date || '',
-          gender: data.gender || '',
-          addressDetail: data.address_detail || '',
-          fb: data.social_links?.facebook || '',
-          ig: data.social_links?.instagram || '',
-          tt: data.social_links?.tiktok || ''
-        });
-        setAvatarUrl(data.avatar_url);
+        setEmail(user.email || '');
+
+        const { data } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (data) {
+          setProfileId(data.id);
+          setFormData({
+            fullName: data.full_name || '',
+            username: data.username || '',
+            phoneNumber: data.phone_number || data.phone || '',
+            birthPlace: data.birth_place || '',
+            birthDate: data.birth_date || '',
+            gender: data.gender || '',
+            addressDetail: data.address_detail || '',
+            fb: data.social_links?.facebook || '',
+            ig: data.social_links?.instagram || '',
+            tt: data.social_links?.tiktok || ''
+          });
+          setAvatarUrl(data.avatar_url);
+        }
+      } catch (err) {
+        console.error("Fetch profile error:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchProfileData();
   }, [supabase]);

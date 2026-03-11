@@ -60,41 +60,69 @@ export default function AccountSettingsPage() {
   const supabase = createClient();
 
   useEffect(() => {
-    const fetchUser = async () => { // Renamed fetchData to fetchUser
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+    let retryCount = 0;
+    const maxRetries = 3;
 
-      setIsGoogleUser(user.app_metadata.provider === 'google'); // Set isGoogleUser
+    const fetchUser = async () => {
+      try {
+        // Coba dapatkan session terlebih dahulu untuk mobile browser
+        const { data: sessionData } = await supabase.auth.getSession();
+        
+        if (!sessionData.session && retryCount < maxRetries) {
+          retryCount++;
+          setTimeout(fetchUser, 1000);
+          return;
+        }
 
-      const { data: profileData } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError || !user) {
+          setLoading(false);
+          return;
+        }
 
-      const { data: logsData } = await supabase
-        .from('auth_logs')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10);
+        setIsGoogleUser(user.app_metadata.provider === 'google'); // Set isGoogleUser
 
-      let finalLogs = logsData || [];
-      if (finalLogs.length === 0 && user.last_sign_in_at) {
-        finalLogs = [{
-          id: 'fallback_initial_login',
-          event_type: user.app_metadata?.provider === 'google' ? 'google_login' : 'login',
-          ip_address: 'unknown',
-          user_agent: 'Local Session',
-          created_at: user.last_sign_in_at
-        }];
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        const { data: logsData } = await supabase
+          .from('auth_logs')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        let finalLogs = logsData || [];
+        if (finalLogs.length === 0 && user.last_sign_in_at) {
+          finalLogs = [{
+            id: 'fallback_initial_login',
+            event_type: user.app_metadata?.provider === 'google' ? 'google_login' : 'login',
+            ip_address: 'unknown',
+            user_agent: 'Local Session',
+            created_at: user.last_sign_in_at
+          }];
+        }
+
+        // Map address to address_detail for UI compatibility
+        const mappedProfile = profileData ? {
+          ...profileData,
+          address_detail: profileData.address || profileData.address_detail,
+          phone_number: profileData.phone || profileData.phone_number
+        } : { email: user.email };
+
+        setProfile(mappedProfile);
+        setAuthLogs(finalLogs);
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
       }
-
-      setProfile(profileData || { email: user.email });
-      setAuthLogs(finalLogs);
-      setLoading(false);
     }
-    fetchUser(); // Called fetchUser
+    fetchUser();
   }, [supabase]);
 
   if (loading) return (
