@@ -30,17 +30,20 @@ CREATE POLICY "Public Access"
 -- Allow creation/upload. 
 -- In this case, service role handles the admin uploads so it automatically bypasses RLS,
 -- but we'll add policies for authenticated users anyway in case you use client-side uploads later.
+DROP POLICY IF EXISTS "Authenticated users can upload" ON storage.objects;
 CREATE POLICY "Authenticated users can upload" 
   ON storage.objects FOR INSERT 
   TO authenticated
   WITH CHECK (bucket_id = 'images');
 
+DROP POLICY IF EXISTS "Authenticated users can update" ON storage.objects;
 CREATE POLICY "Authenticated users can update" 
   ON storage.objects FOR UPDATE 
   TO authenticated
   USING (bucket_id = 'images')
   WITH CHECK (bucket_id = 'images');
 
+DROP POLICY IF EXISTS "Authenticated users can delete" ON storage.objects;
 CREATE POLICY "Authenticated users can delete" 
   ON storage.objects FOR DELETE
   TO authenticated
