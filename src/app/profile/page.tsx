@@ -410,7 +410,7 @@ export default function ProfilePage() {
 
           {/* Avatar Selection Modal/Overlay */}
           {showAvatarSelector && (
-            <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
               <div 
                 className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
                 onClick={() => setShowAvatarSelector(false)}
@@ -500,13 +500,13 @@ export default function ProfilePage() {
 
           {/* Full Profile Detail Modal (Mobile) */}
           {showProfileDetail && profile && (
-            <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[100] flex items-end justify-center p-4 pb-[calc(68px+env(safe-area-inset-bottom)+1rem)]">
               <div 
-                className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"
                 onClick={() => setShowProfileDetail(false)}
               ></div>
               
-              <div className="relative w-full max-w-md bg-white rounded-4xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-300 max-h-[90vh] flex flex-col">
+              <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-500 max-h-[80vh] flex flex-col border border-slate-100">
                 <div className="p-6 border-b border-slate-100 flex items-center justify-between shrink-0">
                   <div>
                     <h3 className="text-lg font-bold text-slate-800">Detail Profil</h3>
@@ -632,64 +632,147 @@ export default function ProfilePage() {
               
               {/* Main Content Info */}
               <div className="lg:col-span-8 space-y-6">
-                
-                {/* Mobile Navigation List (Shopee Style) */}
+                              {/* Mobile Navigation List / Edit Form */}
                 <div className="md:hidden space-y-6">
-                  {/* Primary Actions */}
-                  <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
-                    <MobileNavItem 
-                      icon={UserCircleIcon} 
-                      label="Profil Saya" 
-                      subtitle="Cek info lengkap data diri" 
-                      onClick={() => setShowProfileDetail(true)} 
-                    />
-                    <MobileNavItem 
-                      icon={ShoppingBagIcon} 
-                      label="Riwayat Pesanan" 
-                      subtitle="Cek status donut kamu" 
-                      href="/profile/orders" 
-                    />
-                    <MobileNavItem 
-                      icon={BellIcon} 
-                      label="Notifikasi" 
-                      subtitle="Promo & update pesanan" 
-                      href="/settings/preferences" 
-                    />
-                  </div>
+                  {isEditing ? (
+                    <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-bold text-slate-800">Edit Profil</h3>
+                        <button 
+                          onClick={() => setIsEditing(false)}
+                          className="text-xs font-bold text-slate-400 uppercase tracking-widest"
+                        >
+                          Batal
+                        </button>
+                      </div>
+                      
+                      <form onSubmit={handleUpdateProfile} className="space-y-5">
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">{t('profile.info.labels.name')}</label>
+                          <input 
+                            type="text" 
+                            value={editFullName}
+                            onChange={(e) => setEditFullName(e.target.value)}
+                            className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-sm"
+                            placeholder={t('profile.info.placeholders.name')}
+                            required
+                          />
+                        </div>
 
-                  {/* Settings Section */}
-                  <div>
-                    <h3 className="px-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Pengaturan</h3>
-                    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
-                      <MobileNavItem 
-                        icon={KeyIcon} 
-                        label="Ganti Password" 
-                        subtitle="Keamanan akun kamu" 
-                        href="/auth/forgot-password" 
-                      />
-                      <MobileNavItem 
-                        icon={ShieldCheckIcon} 
-                        label="Preferensi Notifikasi" 
-                        subtitle="Atur apa yang kamu terima" 
-                        href="/settings/preferences" 
-                      />
-                      <button 
-                        onClick={handleLogout}
-                        className="w-full p-4 flex items-center justify-between group active:bg-red-50/30 transition-colors text-left"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="p-2.5 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-100 transition-colors">
-                            <ArrowRightOnRectangleIcon className="size-5" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Jenis Kelamin</label>
+                            <select 
+                              value={editGender}
+                              onChange={(e) => setEditGender(e.target.value)}
+                              className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-sm appearance-none"
+                            >
+                              <option value="">Pilih Jenis Kelamin</option>
+                              <option value="male">Laki-laki</option>
+                              <option value="female">Perempuan</option>
+                            </select>
                           </div>
-                          <div>
-                            <p className="text-sm font-bold text-red-500">Logout</p>
-                            <p className="text-[10px] text-red-400 font-medium">Keluar dari akun ini</p>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tempat Lahir</label>
+                            <input 
+                              type="text" 
+                              value={editBirthPlace}
+                              onChange={(e) => setEditBirthPlace(e.target.value)}
+                              className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-sm"
+                              placeholder="Contoh: Bogor"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">Tanggal Lahir</label>
+                            <input 
+                              type="date" 
+                              value={editBirthDate}
+                              onChange={(e) => setEditBirthDate(e.target.value)}
+                              className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-sm"
+                            />
                           </div>
                         </div>
-                        <ChevronRightIcon className="size-4 text-slate-300 group-active:translate-x-1 transition-transform" />
-                      </button>
+
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">{t('profile.info.labels.address')}</label>
+                          <textarea 
+                            value={editAddress}
+                            onChange={(e) => setEditAddress(e.target.value)}
+                            className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-sm min-h-[80px]"
+                            placeholder={t('profile.info.placeholders.address')}
+                            required
+                          />
+                        </div>
+
+                        <div className="pt-2">
+                          <button 
+                            type="submit"
+                            className="w-full h-12 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/25 active:scale-[0.98] transition-all"
+                          >
+                            Simpan Perubahan
+                          </button>
+                        </div>
+                      </form>
                     </div>
-                  </div>
+                  ) : (
+                    <>
+                      {/* Primary Actions */}
+                      <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
+                        <MobileNavItem 
+                          icon={UserCircleIcon} 
+                          label="Profil Saya" 
+                          subtitle="Cek info lengkap data diri" 
+                          onClick={() => setShowProfileDetail(true)} 
+                        />
+                        <MobileNavItem 
+                          icon={ShoppingBagIcon} 
+                          label="Riwayat Pesanan" 
+                          subtitle="Cek status donut kamu" 
+                          href="/profile/orders" 
+                        />
+                        <MobileNavItem 
+                          icon={BellIcon} 
+                          label="Notifikasi" 
+                          subtitle="Promo & update pesanan" 
+                          href="/settings/preferences" 
+                        />
+                      </div>
+
+                      {/* Settings Section */}
+                      <div>
+                        <h3 className="px-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Pengaturan</h3>
+                        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
+                          <MobileNavItem 
+                            icon={KeyIcon} 
+                            label="Ganti Password" 
+                            subtitle="Keamanan akun kamu" 
+                            href="/auth/forgot-password" 
+                          />
+                          <MobileNavItem 
+                            icon={ShieldCheckIcon} 
+                            label="Preferensi Notifikasi" 
+                            subtitle="Atur apa yang kamu terima" 
+                            href="/settings/preferences" 
+                          />
+                          <button 
+                            onClick={handleLogout}
+                            className="w-full p-4 flex items-center justify-between group active:bg-red-50/30 transition-colors text-left"
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="p-2.5 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-100 transition-colors">
+                                <ArrowRightOnRectangleIcon className="size-5" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-red-500">Logout</p>
+                                <p className="text-[10px] text-red-400 font-medium">Keluar dari akun ini</p>
+                              </div>
+                            </div>
+                            <ChevronRightIcon className="size-4 text-slate-300 group-active:translate-x-1 transition-transform" />
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Desktop "Informasi Pribadi" stays as is */}
