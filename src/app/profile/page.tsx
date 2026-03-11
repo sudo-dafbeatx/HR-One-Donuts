@@ -76,6 +76,20 @@ interface Order {
   status: string;
 }
 
+const calculateAge = (birthDate: string | undefined | null) => {
+  if (!birthDate) return null;
+  const today = new Date();
+  const birth = new Date(birthDate);
+  if (isNaN(birth.getTime())) return null;
+  
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+};
+
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -217,6 +231,7 @@ export default function ProfilePage() {
             gender: editGender,
             birth_place: editBirthPlace,
             birth_date: editBirthDate,
+            age: calculateAge(editBirthDate),
             social_links: {
               facebook: editFacebook,
               instagram: editInstagram,
@@ -241,6 +256,7 @@ export default function ProfilePage() {
         gender: editGender,
         birth_place: editBirthPlace,
         birth_date: editBirthDate,
+        age: calculateAge(editBirthDate) || undefined,
         social_links: {
           facebook: editFacebook,
           instagram: editInstagram,
@@ -545,7 +561,9 @@ export default function ProfilePage() {
                       </div>
                       <div className="pt-4 flex flex-col gap-1">
                         <span className="text-[9px] font-bold text-slate-400 uppercase">Usia</span>
-                        <span className="text-sm font-bold text-slate-700">{profile.age ? `${profile.age} Tahun` : '-'}</span>
+                        <span className="text-sm font-bold text-slate-700">
+                          {calculateAge(profile.birth_date) || profile.age ? `${calculateAge(profile.birth_date) || profile.age} Tahun` : '-'}
+                        </span>
                       </div>
                       <div className="pt-4 flex flex-col gap-1">
                         <span className="text-[9px] font-bold text-slate-400 uppercase">Tanggal Lahir</span>
@@ -903,7 +921,7 @@ export default function ProfilePage() {
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{t('profile.info.identity_title')}</p>
                           <p className="font-bold text-slate-700">
                             {profile?.gender ? (profile.gender === 'male' ? t('profile.info.gender.male') : t('profile.info.gender.female')) : '-'} 
-                            {profile?.age ? `, ${t('profile.info.age_suffix', { age: profile.age })}` : ''}
+                            { (calculateAge(profile?.birth_date) || profile?.age) ? `, ${t('profile.info.age_suffix', { age: calculateAge(profile?.birth_date) || profile?.age })}` : ''}
                           </p>
                         </div>
                       </div>
