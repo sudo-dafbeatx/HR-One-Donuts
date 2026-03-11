@@ -84,7 +84,7 @@ export default function AccountSettingsPage() {
         setIsGoogleUser(user.app_metadata.provider === 'google'); // Set isGoogleUser
 
         const { data: profileData } = await supabase
-          .from('profiles')
+          .from('user_profiles')
           .select('*')
           .eq('id', user.id)
           .maybeSingle();
@@ -107,11 +107,10 @@ export default function AccountSettingsPage() {
           }];
         }
 
-        // Map address to address_detail for UI compatibility
         const mappedProfile = profileData ? {
           ...profileData,
-          address_detail: profileData.address || profileData.address_detail,
-          phone_number: profileData.phone || profileData.phone_number
+          address_detail: profileData.address_detail || profileData.address,
+          phone_number: profileData.phone_number || profileData.phone
         } : { email: user.email };
 
         setProfile(mappedProfile);
