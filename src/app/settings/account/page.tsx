@@ -31,6 +31,7 @@ interface UserProfile {
   full_name: string | null;
   username: string | null;
   phone_number: string | null;
+  phone?: string | null;
   email: string;
   is_verified: boolean;
   birth_place?: string | null;
@@ -175,23 +176,23 @@ export default function AccountSettingsPage() {
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 ml-1">Kontak & Keanggotaan</p>
               <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 divide-y divide-slate-50">
-                <EditableItem icon={DevicePhoneMobileIcon} label={t('settings.account.basic_info.labels.phone')} value={profile?.phone_number || '-'} />
+                <EditableItem icon={DevicePhoneMobileIcon} label={t('settings.account.basic_info.labels.phone')} value={profile?.phone_number || profile?.phone || '-'} />
                 <EditableItem icon={EnvelopeIcon} label={t('settings.account.basic_info.labels.email')} value={profile?.email || '-'} />
               </div>
             </div>
 
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 ml-1">Alamat Pengiriman</p>
-              <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 p-6 space-y-4">
-                <div className="flex gap-4 items-start">
-                  <div className="p-2 bg-slate-50 rounded-xl">
+              <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 p-4 md:p-6 space-y-4">
+                <div className="flex gap-3 md:gap-4 items-start">
+                  <div className="p-2 bg-slate-50 rounded-xl shrink-0">
                     <MapPinIcon className="size-5 text-slate-400" />
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-800 leading-snug">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-slate-800 leading-snug break-words whitespace-normal">
                       {profile?.address_detail || 'Belum ada detail alamat'}
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1 break-words whitespace-normal">
                       {[profile?.district_name, profile?.city_name, profile?.province_name].filter(Boolean).join(', ') || 'Wilayah tidak diketahui'}
                     </p>
                   </div>
@@ -202,7 +203,7 @@ export default function AccountSettingsPage() {
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 ml-1 italic">{t('settings.account.social')}</p>
               <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100">
-                  <div className="px-6 py-5 grid grid-cols-2 gap-3">
+                  <div className="px-4 md:px-6 py-4 md:py-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <SocialLink icon={CheckBadgeIcon} label="Facebook" href={profile?.social_links?.facebook} />
                     <SocialLink icon={CheckBadgeIcon} label="Instagram" href={profile?.social_links?.instagram} />
                     <SocialLink icon={CheckBadgeIcon} label="TikTok" href={profile?.social_links?.tiktok} />
@@ -280,8 +281,8 @@ function SocialLink({ icon: Icon, label, href }: { icon: React.ElementType, labe
       href={href || '#'} 
       className={`flex items-center gap-2 p-3 rounded-2xl border transition-all ${href ? 'border-primary/10 bg-primary/5 text-primary' : 'border-slate-50 text-slate-300 grayscale opacity-50'}`}
     >
-      <Icon className="size-4" />
-      <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+      <Icon className="size-4 shrink-0" />
+      <span className="text-[10px] font-bold uppercase tracking-wider break-words whitespace-normal">{label}</span>
     </a>
   );
 }
@@ -289,18 +290,18 @@ function SocialLink({ icon: Icon, label, href }: { icon: React.ElementType, labe
 function EditableItem({ icon: Icon, label, value }: { icon: React.ElementType, label: string, value: string }) {
   const isPlaceHolder = value === '-' || !value;
   return (
-    <div className="flex items-center justify-between px-5 py-4 min-h-[72px] hover:bg-slate-50 transition-colors cursor-pointer group active:bg-slate-100">
-      <div className="flex items-center gap-4 overflow-hidden flex-1 pr-2">
-        <Icon className={`size-6 transition-colors shrink-0 ${isPlaceHolder ? 'text-slate-200' : 'text-slate-400 group-hover:text-primary'}`} />
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
-          <p className={`text-sm tracking-tight truncate w-full ${isPlaceHolder ? 'font-medium text-slate-400 italic' : 'font-bold text-slate-800'}`}>
+    <div className="flex items-center justify-between px-4 py-3 md:px-5 md:py-4 min-h-[64px] md:min-h-[72px] hover:bg-slate-50 transition-colors cursor-pointer group active:bg-slate-100">
+      <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-0 pr-2">
+        <Icon className={`size-5 md:size-6 transition-colors shrink-0 ${isPlaceHolder ? 'text-slate-200' : 'text-slate-400 group-hover:text-primary'}`} />
+        <div className="flex-1 min-w-0">
+          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+          <p className={`text-xs md:text-sm tracking-tight break-words whitespace-normal ${isPlaceHolder ? 'font-medium text-slate-400 italic' : 'font-bold text-slate-800'}`}>
             {isPlaceHolder ? 'Belum Diisi' : value}
           </p>
         </div>
       </div>
       <div className="flex items-center justify-center text-slate-200 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0">
-        <ChevronRightIcon className="size-5" />
+        <ChevronRightIcon className="size-4 md:size-5" />
       </div>
     </div>
   );
