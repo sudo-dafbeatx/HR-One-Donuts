@@ -137,8 +137,6 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       const detail = profile.address_detail || profile.address || "";
       const profileAddressStr = [detail, district, city, province].filter(Boolean).join(", ");
 
-      const isMissingAddress = !profileAddressStr && deliveryMethod === 'delivery';
-
       if (isMissingBasicInfo || (deliveryMethod === 'delivery' && !profileAddressStr)) {
         setIsLoading(false);
         setShowProfileAlert(true);
@@ -608,7 +606,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         <div className="fixed inset-0 z-110 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-sm overflow-hidden flex flex-col scale-in-95 animate-in zoom-in-95 duration-200 border border-slate-100">
             <div className="bg-amber-500/5 p-8 sm:p-10 flex flex-col items-center justify-center text-center">
-              <div className="size-20 sm:size-24 bg-amber-500 text-slate-900 rounded-[2rem] sm:rounded-4xl flex items-center justify-center mb-6 shadow-2xl shadow-amber-500/40 rotate-3">
+              <div className="size-20 sm:size-24 bg-amber-500 text-slate-900 rounded-4xl flex items-center justify-center mb-6 shadow-2xl shadow-amber-500/40 rotate-3">
                 <svg className="w-10 h-10 sm:w-12 sm:h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
