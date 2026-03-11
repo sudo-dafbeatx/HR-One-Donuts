@@ -189,10 +189,10 @@ export default function AccountSettingsPage() {
                     <MapPinIcon className="size-5 text-slate-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-800 leading-snug break-words whitespace-normal">
+                    <p className="text-sm font-bold text-slate-800 leading-snug wrap-break-word whitespace-normal">
                       {profile?.address_detail || 'Belum ada detail alamat'}
                     </p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1 break-words whitespace-normal">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mt-1 wrap-break-word whitespace-normal">
                       {[profile?.district_name, profile?.city_name, profile?.province_name].filter(Boolean).join(', ') || 'Wilayah tidak diketahui'}
                     </p>
                   </div>
@@ -282,7 +282,7 @@ function SocialLink({ icon: Icon, label, href }: { icon: React.ElementType, labe
       className={`flex items-center gap-2 p-3 rounded-2xl border transition-all ${href ? 'border-primary/10 bg-primary/5 text-primary' : 'border-slate-50 text-slate-300 grayscale opacity-50'}`}
     >
       <Icon className="size-4 shrink-0" />
-      <span className="text-[10px] font-bold uppercase tracking-wider break-words whitespace-normal">{label}</span>
+      <span className="text-[10px] font-bold uppercase tracking-wider wrap-break-word whitespace-normal">{label}</span>
     </a>
   );
 }
@@ -295,7 +295,7 @@ function EditableItem({ icon: Icon, label, value }: { icon: React.ElementType, l
         <Icon className={`size-5 md:size-6 transition-colors shrink-0 ${isPlaceHolder ? 'text-slate-200' : 'text-slate-400 group-hover:text-primary'}`} />
         <div className="flex-1 min-w-0">
           <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
-          <p className={`text-xs md:text-sm tracking-tight break-words whitespace-normal ${isPlaceHolder ? 'font-medium text-slate-400 italic' : 'font-bold text-slate-800'}`}>
+          <p className={`text-xs md:text-sm tracking-tight wrap-break-word whitespace-normal ${isPlaceHolder ? 'font-medium text-slate-400 italic' : 'font-bold text-slate-800'}`}>
             {isPlaceHolder ? 'Belum Diisi' : value}
           </p>
         </div>
