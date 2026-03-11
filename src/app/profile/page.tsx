@@ -743,10 +743,10 @@ export default function ProfilePage() {
                           onClick={() => setShowProfileDetail(true)} 
                         />
                         <MobileNavItem 
-                          icon={ShoppingBagIcon} 
-                          label="Riwayat Pesanan" 
-                          subtitle="Cek status donut kamu" 
-                          href="/profile/orders" 
+                          icon={MapPinIcon} 
+                          label="Alamat Saya" 
+                          subtitle="Kelola alamat pengiriman" 
+                          href="/settings/address" 
                         />
                         <MobileNavItem 
                           icon={BellIcon} 

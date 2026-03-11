@@ -127,6 +127,9 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         return;
       }
 
+      // 2. Check Profile Completeness (Name & Phone are critical for WA)
+      const isMissingBasicInfo = !profile.full_name || !profile.phone;
+      
       // Pre-calculate full address from profile as legacy/backup
       const province = profile.province_name || "";
       const city = profile.city_name || "";
@@ -134,34 +137,47 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       const detail = profile.address_detail || profile.address || "";
       const profileAddressStr = [detail, district, city, province].filter(Boolean).join(", ");
 
+      const isMissingAddress = !profileAddressStr && deliveryMethod === 'delivery';
+
+      if (isMissingBasicInfo || (deliveryMethod === 'delivery' && !profileAddressStr)) {
+        setIsLoading(false);
+        setShowProfileAlert(true);
+        return;
+      }
+
       let finalShippingAddress = undefined;
       let finalShippingNotes = undefined;
 
       if (deliveryMethod === 'delivery') {
         const activeAddress = await getUserActiveAddress();
         
-        if (!activeAddress) {
+        // If they have profile address but no detailed address record, we can still proceed 
+        // but if BOTH are missing, we block.
+        // Actually, let's be strict: for delivery, we want a detailed address record if possible.
+        if (!activeAddress && !profileAddressStr) {
           setIsLoading(false);
           setShowProfileAlert(true);
           return;
         }
 
-        finalShippingNotes = activeAddress.additional_details || undefined;
+        if (activeAddress) {
+          finalShippingNotes = activeAddress.additional_details || undefined;
 
-        // Construct full address from user_addresses table structure - detailed version
-        const streetWithNo = [
-          activeAddress.street_name,
-          activeAddress.house_no ? `No. ${activeAddress.house_no}` : null
-        ].filter(Boolean).join(' ');
+          // Construct full address from user_addresses table structure - detailed version
+          const streetWithNo = [
+            activeAddress.street_name,
+            activeAddress.house_no ? `No. ${activeAddress.house_no}` : null
+          ].filter(Boolean).join(' ');
 
-        finalShippingAddress = [
-          activeAddress.building_name || null,
-          streetWithNo || null,
-          activeAddress.district || null,
-          activeAddress.city || null,
-          activeAddress.province || null,
-          activeAddress.postal_code || null
-        ].filter(Boolean).map(s => (s as string).trim()).filter(s => s !== "").join(", ");
+          finalShippingAddress = [
+            activeAddress.building_name || null,
+            streetWithNo || null,
+            activeAddress.district || null,
+            activeAddress.city || null,
+            activeAddress.province || null,
+            activeAddress.postal_code || null
+          ].filter(Boolean).map(s => (s as string).trim()).filter(s => s !== "").join(", ");
+        }
       }
 
       // 3. Save Order to Database
@@ -591,15 +607,15 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       {showProfileAlert && (
         <div className="fixed inset-0 z-110 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-sm overflow-hidden flex flex-col scale-in-95 animate-in zoom-in-95 duration-200 border border-slate-100">
-            <div className="bg-amber-500/5 p-10 flex flex-col items-center justify-center text-center">
-              <div className="size-24 bg-amber-500 text-slate-900 rounded-4xl flex items-center justify-center mb-6 shadow-2xl shadow-amber-500/40 rotate-3">
-                <svg className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="bg-amber-500/5 p-8 sm:p-10 flex flex-col items-center justify-center text-center">
+              <div className="size-20 sm:size-24 bg-amber-500 text-slate-900 rounded-[2rem] sm:rounded-4xl flex items-center justify-center mb-6 shadow-2xl shadow-amber-500/40 rotate-3">
+                <svg className="w-10 h-10 sm:w-12 sm:h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Alamat Belum Lengkap</h3>
-              <p className="text-sm text-slate-500 font-bold leading-relaxed">
-                Untuk jasa pengiriman, mohon lengkapi alamat detail Anda di profil agar kurir kami tidak bingung. 🍩
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 mb-3 tracking-tight px-4">Data Belum Lengkap</h3>
+              <p className="text-[13px] sm:text-sm text-slate-500 font-bold leading-relaxed px-4">
+                Mohon lengkapi data profil dan alamat Anda terlebih dahulu agar pesanan dapat kami proses dengan lancar. 🍩
               </p>
             </div>
             
