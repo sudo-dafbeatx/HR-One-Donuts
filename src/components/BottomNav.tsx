@@ -2,22 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  HomeIcon, 
-  ShoppingBagIcon, 
-  ShoppingCartIcon,
-  QuestionMarkCircleIcon,
-  UserCircleIcon,
-  Cog6ToothIcon
-} from "@heroicons/react/24/outline";
-import { 
-  HomeIcon as HomeIconSolid, 
-  ShoppingBagIcon as ShoppingBagIconSolid,
-  ShoppingCartIcon as ShoppingCartIconSolid,
-  QuestionMarkCircleIcon as QuestionMarkCircleIconSolid,
-  UserCircleIcon as UserCircleIconSolid,
-  Cog6ToothIcon as Cog6ToothIconSolid
-} from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { createClient } from "@/lib/supabase/client";
@@ -31,7 +15,6 @@ export default function BottomNav() {
   const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
-    // 0. Listen for chatbot state
     const handleChatState = (e: Event) => {
       const customEvent = e as CustomEvent;
       setIsChatOpen(!!customEvent.detail?.isOpen);
@@ -41,7 +24,6 @@ export default function BottomNav() {
     const supabase = createClient();
     let channel: RealtimeChannel;
 
-    // 1. Initial Check
     const checkActiveOrders = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -57,7 +39,6 @@ export default function BottomNav() {
 
     checkActiveOrders();
 
-    // 2. Realtime subscription
     const setupSubscription = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -93,41 +74,30 @@ export default function BottomNav() {
     { 
       label: "Beranda", 
       href: "/", 
-      icon: HomeIcon, 
-      activeIcon: HomeIconSolid 
+      icon: "home"
     },
     { 
       label: "Menu", 
       href: "/catalog", 
-      icon: ShoppingBagIcon, 
-      activeIcon: ShoppingBagIconSolid 
+      icon: "fastfood"
     },
     { 
       label: "Keranjang", 
       href: "#cart", 
-      icon: ShoppingCartIcon, 
-      activeIcon: ShoppingCartIconSolid,
+      icon: "shopping_bag",
       isCart: true
     },
     { 
       label: "Cara Pesan", 
       href: "/cara-pesan", 
-      icon: QuestionMarkCircleIcon, 
-      activeIcon: QuestionMarkCircleIconSolid 
+      icon: "menu_book"
     },
     { 
       label: "Akun", 
       href: profileLink, 
-      icon: UserCircleIcon, 
-      activeIcon: UserCircleIconSolid,
+      icon: "person",
       isProfile: true
-    },
-    { 
-      label: "Pengaturan", 
-      href: "/settings", 
-      icon: Cog6ToothIcon, 
-      activeIcon: Cog6ToothIconSolid 
-    },
+    }
   ];
 
   if (
@@ -141,32 +111,30 @@ export default function BottomNav() {
   ) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white/90 backdrop-blur-xl border-t border-slate-200 pb-safe-area-inset-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-      <div className="grid grid-cols-6 h-[72px]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-slate-100 pb-safe-area-inset-bottom shadow-[0_-2px_15px_rgba(0,0,0,0.05)]">
+      <div className="grid grid-cols-5 h-[64px]">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
-          const Icon = isActive ? item.activeIcon : item.icon;
 
           const content = (
-            <>
-              <div className="relative">
-                <Icon className="size-6" />
+            <div className={`flex flex-col items-center justify-center gap-1 w-full h-full transition-all ${isActive ? "text-primary" : "text-slate-400 font-medium"}`}>
+              <div className="relative flex items-center justify-center h-6 w-6">
+                <span className={`material-symbols-outlined text-[26px] ${isActive ? 'fill-1' : ''}`}>
+                  {item.icon}
+                </span>
                 {item.isCart && totalItems > 0 && (
-                  <span key={totalItems} className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white animate-cart-bounce">
+                  <span key={totalItems} className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-black text-white border-2 border-white animate-cart-bounce">
                     {totalItems}
                   </span>
                 )}
                 {item.isProfile && hasActiveOrders && (
-                  <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-red-500 border-2 border-white animate-pulse" />
+                  <span className="absolute top-0 right-0 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-red-500 border-2 border-white" />
                 )}
               </div>
-              <span className="text-[11px] leading-tight font-bold text-center px-0.5 truncate w-full mt-1">
+              <span className={`text-[10px] uppercase tracking-wider font-extrabold ${isActive ? 'text-primary' : 'text-slate-400'}`}>
                 {item.label}
               </span>
-              {isActive && (
-                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 size-1 bg-primary rounded-full" />
-              )}
-            </>
+            </div>
           );
 
           if (item.isCart) {
@@ -174,7 +142,7 @@ export default function BottomNav() {
               <button
                 key={item.label}
                 onClick={() => setIsCartOpen(true)}
-                className={`relative flex flex-col items-center justify-center gap-0.5 w-full h-full transition-all text-slate-400 active:scale-95`}
+                className="relative flex items-center justify-center w-full h-full active:scale-90 transition-transform"
               >
                 {content}
               </button>
@@ -185,9 +153,7 @@ export default function BottomNav() {
             <Link 
               key={item.label} 
               href={item.href}
-              className={`relative flex flex-col items-center justify-center gap-0.5 w-full h-full transition-all active:scale-95 ${
-                isActive ? "text-primary" : "text-slate-400"
-              }`}
+              className="relative flex items-center justify-center w-full h-full active:scale-90 transition-transform"
             >
               {content}
             </Link>

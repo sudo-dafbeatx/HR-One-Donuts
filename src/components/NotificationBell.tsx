@@ -23,7 +23,6 @@ export default function NotificationBell() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 1. Initial Fetch
     const fetchNotifications = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -43,12 +42,10 @@ export default function NotificationBell() {
 
     fetchNotifications();
 
-    // 2. Setup Realtime Subscription
     const setupRealtime = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Request browser notification permission
       if ("Notification" in window && Notification.permission === "default") {
         Notification.requestPermission();
       }
@@ -68,11 +65,10 @@ export default function NotificationBell() {
             setNotifications((prev) => [newNotif, ...prev]);
             setUnreadCount((prev) => prev + 1);
 
-            // Trigger browser notification
             if ("Notification" in window && Notification.permission === "granted") {
               new Notification(newNotif.title, {
                 body: newNotif.message,
-                icon: '/window.svg' // Placeholder icon
+                icon: '/images/logo-hr-one.webp'
               });
             }
           }
@@ -91,7 +87,6 @@ export default function NotificationBell() {
     };
   }, [supabase]);
 
-  // Handle closing dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -107,7 +102,6 @@ export default function NotificationBell() {
   const toggleDropdown = async () => {
     setIsOpen(!isOpen);
     
-    // Mark as read when opening
     if (!isOpen && unreadCount > 0) {
       const unreadIds = notifications.filter(n => !n.is_read).map(n => n.id);
       
@@ -136,35 +130,38 @@ export default function NotificationBell() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
-        className="p-2.5 rounded-xl hover:bg-slate-100 text-slate-700 transition-all relative group"
+        className="flex p-2.5 rounded-full hover:bg-slate-50 text-slate-700 transition-all relative group items-center justify-center min-h-[44px] min-w-[44px]"
         aria-label="View notifications"
       >
-        <span className="material-symbols-outlined group-hover:scale-110 transition-transform">notifications</span>
+        <span className="material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform">notifications</span>
         {unreadCount > 0 && (
-          <span className="absolute top-1.5 right-1.5 size-4 bg-primary text-white text-[9px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm animate-cart-bounce">
+          <span className="absolute top-2 right-2 size-3.5 bg-primary text-white text-[8px] flex items-center justify-center rounded-full font-black border-2 border-white shadow-sm animate-cart-bounce">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <>
-          {/* Mobile Overlay (Optional for better focus) */}
-          <div className="fixed inset-0 z-40 sm:hidden" onClick={() => setIsOpen(false)} />
-          
-          <div className="fixed inset-x-2 top-[68px] sm:absolute sm:inset-auto sm:top-full sm:-right-2 sm:mt-3 w-auto sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-50">
-          <div className="p-4 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
-            <h3 className="font-black tracking-tight text-slate-800 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[20px]">mark_email_unread</span>
+        <div className="fixed inset-x-4 top-[72px] sm:absolute sm:inset-auto sm:top-full sm:-right-8 sm:mt-3 w-auto sm:w-96 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300 z-100 origin-top">
+          <div className="p-5 border-b border-slate-50 flex items-center justify-between">
+            <h3 className="text-sm font-black tracking-tight text-slate-900 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-[22px]">mark_email_unread</span>
               Notifikasi
             </h3>
+            {unreadCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase">
+                {unreadCount} Baru
+              </span>
+            )}
           </div>
           
-          <div className="max-h-[400px] overflow-y-auto w-full">
+          <div className="max-h-[70vh] sm:max-h-[450px] overflow-y-auto w-full no-scrollbar">
             {notifications.length === 0 ? (
-              <div className="p-8 text-center flex flex-col items-center justify-center opacity-60">
-                 <BellIcon className="size-8 text-slate-300 mb-2" />
-                 <p className="text-xs font-bold text-slate-400">Belum ada notifikasi</p>
+              <div className="p-10 text-center flex flex-col items-center justify-center">
+                 <div className="size-16 rounded-full bg-slate-50 flex items-center justify-center mb-4">
+                   <BellIcon className="size-8 text-slate-200" />
+                 </div>
+                 <p className="text-xs font-bold text-slate-400">Belum ada kabar terbaru untukmu</p>
               </div>
             ) : (
               <div className="divide-y divide-slate-50">
@@ -173,20 +170,24 @@ export default function NotificationBell() {
                     key={notif.id}
                     href={notif.related_record_id ? `/profile/orders/${notif.related_record_id}` : '/profile'}
                     onClick={() => setIsOpen(false)}
-                    className={`p-4 flex gap-4 hover:bg-slate-50 transition-colors cursor-pointer w-full text-left ${notif.is_read ? 'opacity-70' : ''}`}
+                    className="p-5 flex gap-4 hover:bg-slate-50/80 transition-all active:bg-slate-100 group"
                   >
                     <div className="shrink-0 mt-1">
-                       <span className={`size-2 rounded-full inline-block ${notif.is_read ? 'bg-transparent' : 'bg-primary animate-pulse'}`}></span>
+                       <span className={`size-2.5 rounded-full inline-block ${notif.is_read ? 'bg-slate-200' : 'bg-primary ring-4 ring-primary/10 animate-pulse'}`}></span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center justify-between">
-                        <span>{notif.type === 'order_update' ? 'Pesanan' : 'Sistem'}</span>
-                        <span>{timeAgo(notif.created_at)}</span>
-                      </p>
-                      <h4 className={`text-sm tracking-tight ${notif.is_read ? 'font-bold text-slate-700' : 'font-black text-slate-800'}`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                          {notif.type === 'order_update' ? 'Pesanan' : 'Sistem'}
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-300">
+                          {timeAgo(notif.created_at)}
+                        </span>
+                      </div>
+                      <h4 className={`text-sm tracking-tight leading-tight mb-1 ${notif.is_read ? 'font-bold text-slate-600' : 'font-black text-slate-900'}`}>
                         {notif.title}
                       </h4>
-                      <p className="text-xs text-slate-500 font-medium leading-relaxed mt-1 line-clamp-2">
+                      <p className="text-[11px] text-slate-500 font-medium leading-relaxed line-clamp-2">
                         {notif.message}
                       </p>
                     </div>
@@ -196,16 +197,15 @@ export default function NotificationBell() {
             )}
           </div>
           
-          <div className="p-2 border-t border-slate-50 bg-slate-50/30">
+          <div className="p-4 bg-slate-50/50">
             <button 
               onClick={() => setIsOpen(false)}
-              className="w-full py-2 text-[10px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors"
+              className="w-full py-2.5 bg-white border border-slate-200 text-[11px] font-black text-slate-600 hover:text-slate-900 rounded-2xl shadow-sm transition-all uppercase tracking-widest active:scale-[0.98]"
             >
-              Tutup
+              Tutup Panel
             </button>
           </div>
         </div>
-        </>
       )}
     </div>
   );
