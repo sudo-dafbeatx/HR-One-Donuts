@@ -410,7 +410,7 @@ export default function ProfilePage() {
 
           {/* Avatar Selection Modal/Overlay */}
           {showAvatarSelector && (
-            <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-110 flex items-center justify-center p-4">
               <div 
                 className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
                 onClick={() => setShowAvatarSelector(false)}
@@ -500,7 +500,7 @@ export default function ProfilePage() {
 
           {/* Full Profile Detail Modal (Mobile) */}
           {showProfileDetail && profile && (
-            <div className="fixed inset-0 z-[100] flex items-end justify-center p-4 pb-[calc(68px+env(safe-area-inset-bottom)+1rem)]">
+            <div className="fixed inset-0 z-100 flex items-end justify-center p-4 pb-[calc(68px+env(safe-area-inset-bottom)+1rem)]">
               <div 
                 className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"
                 onClick={() => setShowProfileDetail(false)}
