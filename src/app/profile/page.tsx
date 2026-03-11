@@ -473,20 +473,12 @@ export default function ProfilePage() {
                       subtitle="Cek status donut kamu" 
                       href="/profile/orders" 
                     />
-                    <div className="p-4 flex items-center justify-between group active:bg-slate-50 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <div className="p-2.5 bg-blue-50 text-primary rounded-xl">
-                          <BellIcon className="size-5" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold text-slate-800">Notifikasi</p>
-                          <p className="text-[10px] text-slate-400 font-medium">Promo & update pesanan</p>
-                        </div>
-                      </div>
-                      <Link href="/settings/preferences" className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-3 py-1.5 rounded-lg active:scale-95 transition-all">
-                        Atur
-                      </Link>
-                    </div>
+                    <MobileNavItem 
+                      icon={BellIcon} 
+                      label="Notifikasi" 
+                      subtitle="Promo & update pesanan" 
+                      href="/settings/preferences" 
+                    />
                   </div>
 
                   {/* Settings Section */}
