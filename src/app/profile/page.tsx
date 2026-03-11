@@ -49,7 +49,13 @@ interface Profile {
   address_detail?: string;
   is_verified?: boolean;
   birth_place?: string;
+  birth_date?: string;
   points?: number;
+  social_links?: {
+    facebook?: string;
+    instagram?: string;
+    tiktok?: string;
+  } | null;
 }
 
 interface OrderItem {
@@ -79,6 +85,13 @@ export default function ProfilePage() {
   const [editFullName, setEditFullName] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [editAddress, setEditAddress] = useState('');
+  const [editGender, setEditGender] = useState('');
+  const [editBirthPlace, setEditBirthPlace] = useState('');
+  const [editBirthDate, setEditBirthDate] = useState('');
+  const [editFacebook, setEditFacebook] = useState('');
+  const [editInstagram, setEditInstagram] = useState('');
+  const [editTiktok, setEditTiktok] = useState('');
+  const [showProfileDetail, setShowProfileDetail] = useState(false);
   
   const { setIsLoading } = useLoading();
   const { t } = useTranslation();
@@ -116,12 +129,20 @@ export default function ProfilePage() {
       if (profileData) {
         setProfile({
           ...legacyProfile,
-          ...profileData
+          ...profileData,
+          address_detail: profileData.address_detail || legacyProfile?.address || '',
+          phone: legacyProfile?.phone || profileData.phone_number || ''
         } as unknown as Profile);
         
         setEditFullName(profileData.full_name || legacyProfile?.full_name || '');
-        setEditPhone(legacyProfile?.phone || ''); 
+        setEditPhone(legacyProfile?.phone || profileData.phone_number || ''); 
         setEditAddress(profileData.address_detail || legacyProfile?.address || '');
+        setEditGender(profileData.gender || '');
+        setEditBirthPlace(profileData.birth_place || '');
+        setEditBirthDate(profileData.birth_date || '');
+        setEditFacebook(profileData.social_links?.facebook || '');
+        setEditInstagram(profileData.social_links?.instagram || '');
+        setEditTiktok(profileData.social_links?.tiktok || '');
       } else if (legacyProfile) {
         setProfile(legacyProfile as unknown as Profile);
         setEditFullName(legacyProfile.full_name || '');
@@ -187,6 +208,24 @@ export default function ProfilePage() {
         })
         .eq('id', profile.id);
 
+      if (!error) {
+        await supabase
+          .from('user_profiles')
+          .update({
+            full_name: editFullName,
+            address_detail: editAddress,
+            gender: editGender,
+            birth_place: editBirthPlace,
+            birth_date: editBirthDate,
+            social_links: {
+              facebook: editFacebook,
+              instagram: editInstagram,
+              tiktok: editTiktok
+            }
+          })
+          .eq('id', profile.id);
+      }
+
       if (error) {
         if (error.code === '23505' || error.message.toLowerCase().includes('unique')) {
           throw new Error(t('profile.phone_taken'));
@@ -198,7 +237,15 @@ export default function ProfilePage() {
         ...profile,
         full_name: editFullName,
         phone: normalizedPhone,
-        address: editAddress
+        address: editAddress,
+        gender: editGender,
+        birth_place: editBirthPlace,
+        birth_date: editBirthDate,
+        social_links: {
+          facebook: editFacebook,
+          instagram: editInstagram,
+          tiktok: editTiktok
+        }
       });
       setIsEditing(false);
       // Success feedback would be nice, but keeping it simple as per request
@@ -451,6 +498,135 @@ export default function ProfilePage() {
             </div>
           )}
 
+          {/* Full Profile Detail Modal (Mobile) */}
+          {showProfileDetail && profile && (
+            <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+              <div 
+                className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                onClick={() => setShowProfileDetail(false)}
+              ></div>
+              
+              <div className="relative w-full max-w-md bg-white rounded-4xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-300 max-h-[90vh] flex flex-col">
+                <div className="p-6 border-b border-slate-100 flex items-center justify-between shrink-0">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-800">Detail Profil</h3>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Informasi Lengkap Akun</p>
+                  </div>
+                  <button 
+                    onClick={() => setShowProfileDetail(false)}
+                    className="size-10 bg-slate-50 rounded-full flex items-center justify-center hover:bg-slate-100 active:scale-90 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-slate-400">close</span>
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                  {/* Basic Info */}
+                  <div className="space-y-4">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Data Diri</h4>
+                    <div className="bg-slate-50 rounded-3xl p-5 space-y-4 divide-y divide-slate-100">
+                      <div className="pt-0 flex flex-col gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Nama Lengkap</span>
+                        <span className="text-sm font-bold text-slate-700">{profile.full_name || '-'}</span>
+                      </div>
+                      <div className="pt-4 flex flex-col gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Email</span>
+                        <span className="text-sm font-bold text-slate-700">{profile.email || '-'}</span>
+                      </div>
+                      <div className="pt-4 flex flex-col gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">No. Telepon</span>
+                        <span className="text-sm font-bold text-slate-700">{profile.phone || '-'}</span>
+                      </div>
+                      <div className="pt-4 flex flex-col gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Jenis Kelamin</span>
+                        <span className="text-sm font-bold text-slate-700">
+                          {profile.gender === 'male' ? 'Laki-laki' : profile.gender === 'female' ? 'Perempuan' : '-'}
+                        </span>
+                      </div>
+                      <div className="pt-4 flex flex-col gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Usia</span>
+                        <span className="text-sm font-bold text-slate-700">{profile.age ? `${profile.age} Tahun` : '-'}</span>
+                      </div>
+                      <div className="pt-4 flex flex-col gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Tanggal Lahir</span>
+                        <span className="text-sm font-bold text-slate-700">
+                          {profile.birth_date ? new Date(profile.birth_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}
+                        </span>
+                      </div>
+                      <div className="pt-4 flex flex-col gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Tempat Lahir</span>
+                        <span className="text-sm font-bold text-slate-700">{profile.birth_place || '-'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Address Info */}
+                  <div className="space-y-4">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Alamat & Lokasi</h4>
+                    <div className="bg-slate-50 rounded-3xl p-5 space-y-4">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Detail Alamat</span>
+                        <span className="text-sm font-bold text-slate-700 leading-snug">{profile.address_detail || '-'}</span>
+                      </div>
+                      <div className="flex flex-col gap-1 pt-2 border-t border-slate-100">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Wilayah</span>
+                        <span className="text-sm font-bold text-slate-700 leading-snug">
+                          {[profile.district_name, profile.city_name, profile.province_name].filter(Boolean).join(', ') || '-'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Social Links */}
+                  <div className="space-y-4">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Media Sosial</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className={`p-3 rounded-2xl border ${profile.social_links?.facebook ? 'bg-blue-50/50 border-blue-100 text-blue-600' : 'bg-slate-50 border-slate-100 text-slate-300 grayscale opacity-50'}`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          <CheckBadgeIcon className="size-3" />
+                          <span className="text-[8px] font-black uppercase">Facebook</span>
+                        </div>
+                        <span className="text-[10px] font-bold truncate block">{profile.social_links?.facebook || 'Belum diisi'}</span>
+                      </div>
+                      <div className={`p-3 rounded-2xl border ${profile.social_links?.instagram ? 'bg-pink-50/50 border-pink-100 text-pink-600' : 'bg-slate-50 border-slate-100 text-slate-300 grayscale opacity-50'}`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          <CheckBadgeIcon className="size-3" />
+                          <span className="text-[8px] font-black uppercase">Instagram</span>
+                        </div>
+                        <span className="text-[10px] font-bold truncate block">{profile.social_links?.instagram || 'Belum diisi'}</span>
+                      </div>
+                      <div className={`p-3 rounded-2xl border ${profile.social_links?.tiktok ? 'bg-slate-900/5 border-slate-200 text-slate-900' : 'bg-slate-50 border-slate-100 text-slate-300 grayscale opacity-50'}`}>
+                        <div className="flex items-center gap-2 mb-1">
+                          <CheckBadgeIcon className="size-3" />
+                          <span className="text-[8px] font-black uppercase">TikTok</span>
+                        </div>
+                        <span className="text-[10px] font-bold truncate block">{profile.social_links?.tiktok || 'Belum diisi'}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50 p-6 flex gap-3 shrink-0">
+                  <button 
+                    onClick={() => {
+                      setShowProfileDetail(false);
+                      setIsEditing(true);
+                    }}
+                    className="flex-1 h-12 bg-primary text-white font-bold rounded-2xl shadow-lg shadow-primary/25 active:scale-95 transition-all text-sm"
+                  >
+                    Edit Profil
+                  </button>
+                  <button 
+                    onClick={() => setShowProfileDetail(false)}
+                    className="flex-1 h-12 bg-white text-slate-500 font-bold rounded-2xl border border-slate-200 active:scale-95 transition-all text-sm"
+                  >
+                    Tutup
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="max-w-5xl mx-auto px-4 md:px-6 -mt-8 md:-mt-12 relative z-20">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
               
@@ -464,8 +640,8 @@ export default function ProfilePage() {
                     <MobileNavItem 
                       icon={UserCircleIcon} 
                       label="Profil Saya" 
-                      subtitle="Atur informasi diri" 
-                      onClick={() => setIsEditing(true)} 
+                      subtitle="Cek info lengkap data diri" 
+                      onClick={() => setShowProfileDetail(true)} 
                     />
                     <MobileNavItem 
                       icon={ShoppingBagIcon} 
@@ -549,23 +725,71 @@ export default function ProfilePage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <label className="text-sm font-bold text-slate-700 ml-1">{t('profile.info.labels.phone')}</label>
+                          <label className="text-sm font-bold text-slate-700 ml-1">Jenis Kelamin</label>
+                          <select 
+                            value={editGender}
+                            onChange={(e) => setEditGender(e.target.value)}
+                            className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium appearance-none"
+                          >
+                            <option value="">Pilih Jenis Kelamin</option>
+                            <option value="male">Laki-laki</option>
+                            <option value="female">Perempuan</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-slate-700 ml-1">Tempat Lahir</label>
                           <input 
-                            type="tel" 
-                            value={editPhone}
-                            onChange={(e) => setEditPhone(e.target.value)}
+                            type="text" 
+                            value={editBirthPlace}
+                            onChange={(e) => setEditBirthPlace(e.target.value)}
                             className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
-                            placeholder={t('profile.info.placeholders.phone')}
-                            required
+                            placeholder="Contoh: Bogor"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <label className="text-sm font-bold text-slate-700 ml-1">Tanggal Lahir</label>
+                          <input 
+                            type="date" 
+                            value={editBirthDate}
+                            onChange={(e) => setEditBirthDate(e.target.value)}
+                            className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
                           />
                         </div>
                       </div>
+                      
+                      <div className="space-y-4">
+                        <label className="text-sm font-bold text-slate-700 ml-1">Media Sosial</label>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <input 
+                            type="text" 
+                            value={editFacebook}
+                            onChange={(e) => setEditFacebook(e.target.value)}
+                            className="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-sm"
+                            placeholder="Facebook username"
+                          />
+                          <input 
+                            type="text" 
+                            value={editInstagram}
+                            onChange={(e) => setEditInstagram(e.target.value)}
+                            className="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-sm"
+                            placeholder="Instagram username"
+                          />
+                          <input 
+                            type="text" 
+                            value={editTiktok}
+                            onChange={(e) => setEditTiktok(e.target.value)}
+                            className="w-full px-5 py-3 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium text-sm"
+                            placeholder="TikTok username"
+                          />
+                        </div>
+                      </div>
+
                       <div className="space-y-2">
                         <label className="text-sm font-bold text-slate-700 ml-1">{t('profile.info.labels.address')}</label>
                         <textarea 
                           value={editAddress}
                           onChange={(e) => setEditAddress(e.target.value)}
-                          className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium min-h-[120px]"
+                          className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium min-h-[100px]"
                           placeholder={t('profile.info.placeholders.address')}
                           required
                         />
