@@ -12,7 +12,11 @@ import {
   ArrowRightOnRectangleIcon,
   CalendarDaysIcon,
   CurrencyDollarIcon,
-  StarIcon
+  StarIcon,
+  BellIcon,
+  KeyIcon,
+  ShieldCheckIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useLoading } from '@/context/LoadingContext';
@@ -250,6 +254,15 @@ export default function ProfilePage() {
     fileInputRef.current?.click();
   };
 
+  const handleLogout = async () => {
+    setIsLoading(true, t('common.loading'));
+    await supabase.auth.signOut();
+    document.cookie = "hr_profile_complete=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    router.push('/');
+    router.refresh();
+    setIsLoading(false);
+  };
+
 
   if (loading) {
     return (
@@ -443,7 +456,75 @@ export default function ProfilePage() {
               
               {/* Main Content Info */}
               <div className="lg:col-span-8 space-y-6">
-                {/* Desktop "Informasi Pribadi" is HIDDEN on Mobile */}
+                
+                {/* Mobile Navigation List (Shopee Style) */}
+                <div className="md:hidden space-y-6">
+                  {/* Primary Actions */}
+                  <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
+                    <MobileNavItem 
+                      icon={UserCircleIcon} 
+                      label="Profil Saya" 
+                      subtitle="Atur informasi diri" 
+                      onClick={() => setIsEditing(true)} 
+                    />
+                    <MobileNavItem 
+                      icon={ShoppingBagIcon} 
+                      label="Riwayat Pesanan" 
+                      subtitle="Cek status donut kamu" 
+                      href="/profile/orders" 
+                    />
+                    <div className="p-4 flex items-center justify-between group active:bg-slate-50 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="p-2.5 bg-blue-50 text-primary rounded-xl">
+                          <BellIcon className="size-5" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-slate-800">Notifikasi</p>
+                          <p className="text-[10px] text-slate-400 font-medium">Promo & update pesanan</p>
+                        </div>
+                      </div>
+                      <Link href="/settings/preferences" className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/5 px-3 py-1.5 rounded-lg active:scale-95 transition-all">
+                        Atur
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Settings Section */}
+                  <div>
+                    <h3 className="px-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Pengaturan</h3>
+                    <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden divide-y divide-slate-50">
+                      <MobileNavItem 
+                        icon={KeyIcon} 
+                        label="Ganti Password" 
+                        subtitle="Keamanan akun kamu" 
+                        href="/auth/forgot-password" 
+                      />
+                      <MobileNavItem 
+                        icon={ShieldCheckIcon} 
+                        label="Preferensi Notifikasi" 
+                        subtitle="Atur apa yang kamu terima" 
+                        href="/settings/preferences" 
+                      />
+                      <button 
+                        onClick={handleLogout}
+                        className="w-full p-4 flex items-center justify-between group active:bg-red-50/30 transition-colors text-left"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="p-2.5 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-100 transition-colors">
+                            <ArrowRightOnRectangleIcon className="size-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-red-500">Logout</p>
+                            <p className="text-[10px] text-red-400 font-medium">Keluar dari akun ini</p>
+                          </div>
+                        </div>
+                        <ChevronRightIcon className="size-4 text-slate-300 group-active:translate-x-1 transition-transform" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Desktop "Informasi Pribadi" stays as is */}
                 <div className="hidden md:block bg-white rounded-4xl shadow-xl shadow-slate-200/50 p-8 border border-white">
                   <div className="flex items-center justify-between mb-8">
                     <div>
@@ -754,3 +835,32 @@ const Content = styled.div`
   padding: 0;
   color: #0f172a;
 `;
+
+function MobileNavItem({ icon: Icon, label, subtitle, href, onClick }: { 
+  icon: React.ElementType, 
+  label: string, 
+  subtitle: string, 
+  href?: string, 
+  onClick?: () => void 
+}) {
+  const content = (
+    <div className="flex items-center justify-between w-full p-4 group active:bg-slate-50 transition-colors">
+      <div className="flex items-center gap-4">
+        <div className="p-2.5 bg-slate-50 text-slate-400 rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+          <Icon className="size-5" />
+        </div>
+        <div>
+          <p className="text-sm font-bold text-slate-800">{label}</p>
+          <p className="text-[10px] text-slate-400 font-medium">{subtitle}</p>
+        </div>
+      </div>
+      <ChevronRightIcon className="size-4 text-slate-200 group-active:translate-x-1 transition-transform" />
+    </div>
+  );
+
+  if (href) {
+    return <Link href={href} className="block">{content}</Link>;
+  }
+
+  return <button onClick={onClick} className="w-full text-left">{content}</button>;
+}
