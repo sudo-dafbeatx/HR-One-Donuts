@@ -3,6 +3,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import type { ProductReview, ReviewStats } from '@/types/cms';
+import { addNotification } from './notification-actions';
 
 /**
  * Create a new product review
@@ -61,6 +62,24 @@ export async function createReview(
 
     // Revalidate product page
     revalidatePath(`/catalog/${productId}`);
+
+    // Add User Notifications for Review & Points
+    await Promise.all([
+      addNotification({
+        userId: user.id,
+        type: 'review',
+        title: 'Ulasan Terkirim',
+        content: `Terima kasih! Ulasan Anda untuk produk telah berhasil kami terima.`,
+        data: { product_id: productId, rating }
+      }),
+      addNotification({
+        userId: user.id,
+        type: 'points',
+        title: 'Poin Ditambahkan!',
+        content: `Selamat! Anda mendapatkan +10 poin Shopee-style dari ulasan produk ini.`,
+        data: { points: 10, source: 'review', product_id: productId }
+      })
+    ]);
     
     return { success: true, data };
   } catch (error) {

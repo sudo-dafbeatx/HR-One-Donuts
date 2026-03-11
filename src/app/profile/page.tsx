@@ -752,7 +752,7 @@ export default function ProfilePage() {
                           icon={BellIcon} 
                           label="Notifikasi" 
                           subtitle="Promo & update pesanan" 
-                          href="/settings/preferences" 
+                          href="/profile/notifications" 
                         />
                       </div>
 

@@ -3,6 +3,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { headers } from 'next/headers';
 import { sendAdminNotification } from '@/lib/telegram';
+import { addNotification } from './notification-actions';
 
 /**
  * Log an authentication event (login, logout, etc.) to the auth_logs table.
@@ -71,6 +72,17 @@ export async function logAuthEvent(
       // Only send if there is a message defined
       if (message) {
         await sendAdminNotification(message);
+      }
+
+      // Add User Notification for Logins
+      if (eventType === 'login' || eventType === 'otp_login' || eventType === 'google_login') {
+        await addNotification({
+          userId,
+          type: 'login',
+          title: 'Login Berhasil',
+          content: `Anda baru saja masuk dari perangkat baru. (${ipAddress})`,
+          data: { ip_address: ipAddress, user_agent: userAgent }
+        });
       }
     } catch (tgError) {
       console.error('[AuthLog] Failed to send Telegram notification:', tgError);

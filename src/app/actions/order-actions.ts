@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { sendAdminNotification } from '@/lib/telegram';
 import { getOrderStatusKeyboard } from '@/lib/telegram/telegramButtons';
+import { addNotification } from './notification-actions';
 
 export async function getCurrentUserProfile() {
   try {
@@ -170,6 +171,15 @@ export async function createOrder(data: {
     } catch (tgErr) {
       console.warn('[Telegram] Failed to notify admin:', tgErr);
     }
+
+    // Add User Notification for Orders
+    await addNotification({
+      userId: user.id,
+      type: 'order',
+      title: 'Pesanan Diterima',
+      content: `Pesanan #${order?.id?.slice(0, 8).toUpperCase()} seharga Rp ${data.total_amount.toLocaleString('id-ID')} telah berhasil dibuat.`,
+      data: { order_id: order?.id, total_amount: data.total_amount }
+    });
     
     return { success: true, order };
   } catch (error: unknown) {
