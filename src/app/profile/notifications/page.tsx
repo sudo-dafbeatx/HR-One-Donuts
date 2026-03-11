@@ -121,12 +121,12 @@ export default function NotificationsPage() {
                   </p>
                   
                   {/* Detailed Data if 'login' */}
-                  {notif.type === 'login' && notif.data?.ip_address && (
+                  {notif.type === 'login' && !!notif.data?.ip_address && (
                     <div className="bg-slate-50 rounded-xl p-3 mb-3 border border-slate-100 flex items-center gap-3">
                       <MapPinIcon className="size-4 text-slate-400" />
                       <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">
-                        IP: {notif.data.ip_address as string}
-                        {notif.data.location && <span className="ml-2">• {notif.data.location as string}</span>}
+                        IP: {String(notif.data.ip_address)}
+                        {!!notif.data.location && <span className="ml-2">• {String(notif.data.location)}</span>}
                       </div>
                     </div>
                   )}
