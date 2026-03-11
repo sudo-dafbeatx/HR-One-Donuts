@@ -16,13 +16,16 @@
     "@supabase/supabase-js": "^2.95.3",
     "@types/bcryptjs": "^3.0.0",
     "bcryptjs": "^3.0.3",
+    "core-js": "^3.48.0",
     "next": "16.1.6",
     "node-telegram-bot-api": "^0.67.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "recharts": "^3.7.0",
+    "regenerator-runtime": "^0.14.1",
     "sharp": "^0.33.5",
-    "styled-components": "^6.3.11"
+    "styled-components": "^6.3.11",
+    "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -38,12 +41,11 @@
     "typescript": "^5"
   },
   "browserslist": [
-    "defaults",
-    "Chrome >= 51",
-    "Firefox >= 52",
-    "Samsung >= 6",
+    "> 0.2%",
+    "not dead",
+    "not op_mini all",
     "Android >= 6",
-    "iOS >= 10",
-    "not dead"
+    "Firefox >= 52",
+    "iOS >= 10"
   ]
 }

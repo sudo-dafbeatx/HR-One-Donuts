@@ -1,3 +1,6 @@
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+import 'whatwg-fetch';
 import '@/lib/env-check';
 export const dynamic = 'force-dynamic';
 import type { Metadata } from "next";

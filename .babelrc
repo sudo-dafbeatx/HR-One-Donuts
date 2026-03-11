@@ -1,0 +1,14 @@
+{
+  "presets": [
+    [
+      "next/babel",
+      {
+        "preset-env": {
+          "targets": "> 0.2%, not dead, not op_mini all, Android >= 6",
+          "useBuiltIns": "entry",
+          "corejs": 3
+        }
+      }
+    ]
+  ]
+}
