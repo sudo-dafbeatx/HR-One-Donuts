@@ -56,12 +56,24 @@ export default function Hero({
               )}
             </div>
 
-            {/* Content Overlay (Optional, but using copy here makes it dynamic) */}
-            <div className="absolute inset-x-4 bottom-6 md:inset-x-12 md:bottom-12 z-10 pointer-events-none">
-                <h2 className="text-white text-3xl md:text-6xl font-black tracking-tight drop-shadow-2xl">
+            {/* Gradient Overlay for Text Readability */}
+            <div 
+              className="absolute inset-x-0 bottom-0 h-3/5 z-5 pointer-events-none"
+              style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0.15), transparent)' }}
+            />
+
+            {/* Content Overlay */}
+            <div className="absolute inset-x-0 bottom-0 z-10 pointer-events-none p-4 pb-5 md:p-8 md:pb-10">
+                <h2 
+                  className="text-white text-[28px] md:text-[48px] font-bold tracking-tight leading-tight"
+                  style={{ textShadow: '0 2px 10px rgba(0,0,0,0.35)' }}
+                >
                     {t('hero.title') || siteSettings?.store_name}
                 </h2>
-                <p className="text-slate-200 text-sm md:text-xl font-bold mt-1 md:mt-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] max-w-lg leading-snug">
+                <p 
+                  className="text-white/90 text-[16px] md:text-[20px] font-medium mt-1.5 md:mt-2 max-w-lg leading-snug"
+                  style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
+                >
                     {t('hero.subtitle') || siteSettings?.tagline}
                 </p>
             </div>
