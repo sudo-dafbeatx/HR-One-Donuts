@@ -414,102 +414,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
             </div>
           ) : (
             <div className="space-y-4">
-              {cart.map((item) => {
-                const effectiveItemPrice = getEffectiveItemPrice(item);
-                const hasDiscount = effectiveItemPrice < item.price;
-                
-                return (
-                  <div key={item.id} className="bg-white p-4 rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] flex gap-4">
-                    {/* Product Image */}
-                    <div className="relative w-20 h-20 rounded-[12px] overflow-hidden shrink-0 border border-gray-100">
-                      <Image 
-                        src={item.image} 
-                        alt={item.name} 
-                        fill 
-                        sizes="80px"
-                        className="object-cover"
-                      />
-                    </div>
-
-                    {/* Info & Quantity */}
-                    <div className="flex-1 flex flex-col justify-between gap-1">
-                      <div className="flex justify-between items-start gap-2">
-                        <h3 className="text-[18px] font-semibold text-[#1a1a1a] leading-tight">
-                          {item.name}
-                        </h3>
-                        <button 
-                          onClick={() => removeFromCart(item.id)}
-                          className="text-gray-400 hover:text-red-500 transition-colors p-1"
-                        >
-                          <TrashIcon className="w-5 h-5" />
-                        </button>
-                      </div>
-
-                      {hasDiscount && (
-                        <p className="text-[12px] font-medium text-gray-400 line-through">
-                          Rp {item.price.toLocaleString("id-ID")}
-                        </p>
-                      )}
-
-                      <div className="flex items-end justify-between mt-auto">
-                        <span className="text-[20px] font-bold text-[#1a1a1a]">
-                          Rp {(effectiveItemPrice * item.quantity).toLocaleString("id-ID")}
-                        </span>
-
-                        <div className="flex items-center gap-1 bg-[#f5f7fb] rounded-lg p-1 border border-gray-100">
-                          <button 
-                            onClick={() => updateQuantity(item.id, -1)}
-                            className="w-7 h-7 flex items-center justify-center text-primary font-bold hover:bg-white rounded-md transition-all"
-                          >
-                            −
-                          </button>
-                          <QuantityInput 
-                            initialValue={item.quantity} 
-                            onUpdate={(val) => setCartQuantity(item.id, val)} 
-                          />
-                          <button 
-                            onClick={() => updateQuantity(item.id, 1)}
-                            className="w-7 h-7 flex items-center justify-center text-primary font-bold hover:bg-white rounded-md transition-all"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Wholesale Info */}
-              <div className="bg-white p-4 rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] space-y-4">
-                <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
-                  <span className="material-symbols-outlined text-primary text-[20px]">sell</span>
-                  <h3 className="text-[14px] font-bold text-[#1a1a1a]">Daftar Harga Grosir</h3>
-                </div>
-
-                <div className="space-y-3">
-                  {priceTiers.map((tier, idx) => {
-                    const isActive = totalDonuts >= tier.min && (!tier.max || totalDonuts <= tier.max);
-                    return (
-                      <div key={idx} className={`flex justify-between items-center p-3 rounded-[12px] transition-all ${
-                        isActive 
-                        ? 'bg-[#eef2ff] border border-primary/20' 
-                        : 'bg-[#f5f7fb] border border-transparent'
-                      }`}>
-                        <span className="flex items-center gap-2 text-[14px] font-normal text-[#1a1a1a]">
-                          {isActive && <span className="w-2 h-2 rounded-full bg-primary" />}
-                          {tier.max ? `${tier.min} - ${tier.max} Pcs` : `> ${tier.min - 1} Pcs`}
-                        </span>
-                        <span className={`text-[14px] font-bold ${isActive ? 'text-primary' : 'text-[#1a1a1a]'}`}>
-                          Rp {tier.price.toLocaleString('id-ID')}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Delivery Method */}
+              {/* Delivery Method + Address — TOP of checkout */}
               <div className="bg-white p-4 rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] space-y-4">
                 <h3 className="text-[18px] font-semibold text-[#1a1a1a]">{t('cart.delivery_method_title')}</h3>
                 
@@ -572,6 +477,105 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                   </div>
                 )}
               </div>
+
+              {/* Product Items */}
+              {cart.map((item) => {
+                const effectiveItemPrice = getEffectiveItemPrice(item);
+                const hasDiscount = effectiveItemPrice < item.price;
+                
+                return (
+                  <div key={item.id} className="bg-white p-4 rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] flex gap-3">
+                    {/* Product Image */}
+                    <div className="relative w-16 h-16 rounded-[12px] overflow-hidden shrink-0 border border-gray-100">
+                      <Image 
+                        src={item.image} 
+                        alt={item.name} 
+                        fill 
+                        sizes="64px"
+                        className="object-cover"
+                      />
+                    </div>
+
+                    {/* Info & Quantity */}
+                    <div className="flex-1 min-w-0 flex flex-col gap-1">
+                      {/* Row 1: Name + Price aligned horizontally */}
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="text-[14px] font-semibold text-[#1a1a1a] leading-tight truncate">
+                          {item.name}
+                        </h3>
+                        <span className="text-[14px] font-bold text-[#1a1a1a] shrink-0 whitespace-nowrap">
+                          Rp {(effectiveItemPrice * item.quantity).toLocaleString("id-ID")}
+                        </span>
+                      </div>
+
+                      {hasDiscount && (
+                        <p className="text-[11px] font-medium text-gray-400 line-through">
+                          Rp {(item.price * item.quantity).toLocaleString("id-ID")}
+                        </p>
+                      )}
+
+                      {/* Row 2: Quantity selector + delete */}
+                      <div className="flex items-center justify-between mt-1">
+                        <div className="flex items-center gap-1 bg-[#f5f7fb] rounded-lg p-0.5 border border-gray-100">
+                          <button 
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="w-6 h-6 flex items-center justify-center text-primary font-bold hover:bg-white rounded-md transition-all text-[14px]"
+                          >
+                            −
+                          </button>
+                          <QuantityInput 
+                            initialValue={item.quantity} 
+                            onUpdate={(val) => setCartQuantity(item.id, val)} 
+                          />
+                          <button 
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="w-6 h-6 flex items-center justify-center text-primary font-bold hover:bg-white rounded-md transition-all text-[14px]"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button 
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-gray-300 hover:text-red-500 transition-colors p-1"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Wholesale Info */}
+              <div className="bg-white p-4 rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] space-y-4">
+                <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
+                  <span className="material-symbols-outlined text-primary text-[20px]">sell</span>
+                  <h3 className="text-[14px] font-bold text-[#1a1a1a]">Daftar Harga Grosir</h3>
+                </div>
+
+                <div className="space-y-3">
+                  {priceTiers.map((tier, idx) => {
+                    const isActive = totalDonuts >= tier.min && (!tier.max || totalDonuts <= tier.max);
+                    return (
+                      <div key={idx} className={`flex justify-between items-center p-3 rounded-[12px] transition-all ${
+                        isActive 
+                        ? 'bg-[#eef2ff] border border-primary/20' 
+                        : 'bg-[#f5f7fb] border border-transparent'
+                      }`}>
+                        <span className="flex items-center gap-2 text-[14px] font-normal text-[#1a1a1a]">
+                          {isActive && <span className="w-2 h-2 rounded-full bg-primary" />}
+                          {tier.max ? `${tier.min} - ${tier.max} Pcs` : `> ${tier.min - 1} Pcs`}
+                        </span>
+                        <span className={`text-[14px] font-bold ${isActive ? 'text-primary' : 'text-[#1a1a1a]'}`}>
+                          Rp {tier.price.toLocaleString('id-ID')}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+
 
               <div className="h-6" />
             </div>
