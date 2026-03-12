@@ -65,13 +65,13 @@ export default function Hero({
             {/* Content Overlay */}
             <div className="absolute inset-x-0 bottom-0 z-10 pointer-events-none p-4 pb-5 md:p-8 md:pb-10">
                 <h2 
-                  className="text-white text-[28px] md:text-[48px] font-bold tracking-tight leading-tight"
+                  className="text-white text-[28px] md:text-[48px] font-bold tracking-tight leading-[1.1]"
                   style={{ textShadow: '0 2px 10px rgba(0,0,0,0.35)' }}
                 >
                     {t('hero.title') || siteSettings?.store_name}
                 </h2>
                 <p 
-                  className="text-white/90 text-[16px] md:text-[20px] font-medium mt-1.5 md:mt-2 max-w-lg leading-snug"
+                  className="text-white/90 text-[16px] md:text-[20px] font-medium mt-1 md:mt-1.5 max-w-lg leading-[1.2]"
                   style={{ textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
                 >
                     {t('hero.subtitle') || siteSettings?.tagline}
