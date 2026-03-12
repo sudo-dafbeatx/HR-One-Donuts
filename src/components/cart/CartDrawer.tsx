@@ -74,6 +74,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const [showCheckoutAnim, setShowCheckoutAnim] = useState(false);
   const [showProfileAlert, setShowProfileAlert] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery');
+  const [activeAddressStr, setActiveAddressStr] = useState<string | null>(null);
+  const [isAddressLoading, setIsAddressLoading] = useState(false);
 
   const shippingFee = (deliveryMethod === 'delivery' && totalDonuts <= 36) ? (siteSettings?.shipping_fee || 0) : 0;
   const finalTotal = totalPrice + shippingFee;
@@ -85,6 +87,50 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
   }, []);
+
+  // Load Address effect
+  useEffect(() => {
+    async function loadAddress() {
+      if (isCartOpen && deliveryMethod === 'delivery') {
+        setIsAddressLoading(true);
+        try {
+          const profile = await getCurrentUserProfile() as CartProfile | null;
+          let addressStr = null;
+
+          if (profile) {
+            const activeAddress = await getUserActiveAddress();
+            if (activeAddress) {
+              const streetWithNo = [
+                activeAddress.street_name,
+                activeAddress.house_no ? `No. ${activeAddress.house_no}` : null
+              ].filter(Boolean).join(' ');
+
+              addressStr = [
+                activeAddress.building_name || null,
+                streetWithNo || null,
+                activeAddress.district || null,
+                activeAddress.city || null,
+                activeAddress.province || null,
+                activeAddress.postal_code || null
+              ].filter(Boolean).map(s => (s as string).trim()).filter(s => s !== "").join(", ");
+            } else if (profile.address) {
+              const province = profile.province_name || "";
+              const city = profile.city_name || "";
+              const district = profile.district_name || "";
+              const detail = profile.address_detail || profile.address || "";
+              addressStr = [detail, district, city, province].filter(Boolean).join(", ");
+            }
+          }
+          setActiveAddressStr(addressStr);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setIsAddressLoading(false);
+        }
+      }
+    }
+    loadAddress();
+  }, [isCartOpen, deliveryMethod]);
 
   // Handle Back Button for Drawer (Mobile focus) without cascading state renders
   useEffect(() => {
@@ -532,6 +578,40 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                     <span className="text-[10px] font-black uppercase tracking-widest">{t('cart.pickup')}</span>
                   </button>
                 </div>
+
+                {deliveryMethod === 'delivery' && (
+                  <div className="mt-4 p-4 rounded-3xl border border-slate-200 bg-white shadow-sm flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Alamat Pengiriman</span>
+                      {activeAddressStr && (
+                        <button onClick={() => window.location.href = "/settings/address"} className="text-[10px] text-primary font-bold uppercase hover:underline">Ubah</button>
+                      )}
+                    </div>
+                    {isAddressLoading ? (
+                      <div className="h-10 animate-pulse bg-slate-100 rounded-xl w-full"></div>
+                    ) : activeAddressStr ? (
+                      <div className="flex gap-2 items-start mt-1">
+                        <span className="material-symbols-outlined text-sm text-primary mt-0.5">location_on</span>
+                        <p className="text-xs text-slate-600 font-medium leading-relaxed">{activeAddressStr}</p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-3 mt-1 items-start">
+                        <p className="text-xs text-amber-600 font-bold bg-amber-50 px-3 py-2 rounded-xl border border-amber-100 w-full flex items-center gap-2">
+                          <span className="material-symbols-outlined text-sm">warning</span> Belum ada alamat
+                        </p>
+                        <button 
+                          onClick={() => {
+                            setIsCartOpen(false);
+                            window.location.href = "/settings/address";
+                          }}
+                          className="w-full text-center bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-widest shadow-md hover:bg-slate-800 transition-colors"
+                        >
+                          Tambah Alamat
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
 
               </div>
 

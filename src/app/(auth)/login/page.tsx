@@ -58,7 +58,6 @@ function LoginContent() {
   // New State for Registration & OTP
   const [isRegistering, setIsRegistering] = useState(false);
   const [otpStep, setOtpStep] = useState(false);
-  const [profileCompletionStep, setProfileCompletionStep] = useState(false);
   const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
   const [countdown, setCountdown] = useState(60);
   const [throttleWarning, setThrottleWarning] = useState(false);
@@ -124,30 +123,15 @@ function LoginContent() {
     redirectingRef.current = true;
     const attemptFetchAndRedirect = async (): Promise<void> => {
       try {
-        const { data: userProfile, error: profileError } = await supabase
-          .from('user_profiles')
-          .select('is_profile_complete')
-          .eq('id', userId)
-          .maybeSingle();
-
-        if (profileError) console.error('Profile fetch error:', profileError);
-
-        // If profile is complete (checked via DB or cached logic)
-        if (userProfile?.is_profile_complete) {
-          document.cookie = "hr_profile_complete=true; path=/; max-age=31536000; SameSite=Lax";
-          const target = redirectTo.startsWith('http') ? new URL(redirectTo).pathname : redirectTo;
-          router.push(target || '/profile');
-          setTimeout(() => router.refresh(), 100);
-        } else {
-          // If profile is not found or not complete, we might need onboarding
-          // But if this is on mount, we only redirect if we are SURE it's missing/incomplete
-          if (isAutoOnMount) {
-            redirectingRef.current = false;
-            setIsLoading(false);
-            return;
-          }
-          router.push('/onboarding/profile');
+        if (isAutoOnMount) {
+          redirectingRef.current = false;
+          setIsLoading(false);
+          return;
         }
+        
+        const target = redirectTo.startsWith('http') ? new URL(redirectTo).pathname : redirectTo;
+        router.push(target || '/');
+        setTimeout(() => router.refresh(), 100);
       } catch (err) {
         console.error('Critical Redirection error:', err);
         redirectingRef.current = false;
@@ -156,7 +140,7 @@ function LoginContent() {
     };
 
     return attemptFetchAndRedirect();
-  }, [supabase, router, redirectTo, setIsLoading]);
+  }, [router, redirectTo, setIsLoading]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -307,57 +291,7 @@ function LoginContent() {
       setLoading(false);
     } else if (authData.user) {
       setLoading(false);
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('id', authData.user.id)
-        .single();
-      
-      if (!profile?.full_name && !isRegistering) {
-        setOtpStep(false);
-        setProfileCompletionStep(true);
-      } else {
-        finishOtpLogin(authData.user.id);
-      }
-    }
-  };
-
-  const handleProfileCompletion = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit()) return;
-    setError('');
-    setLoading(true);
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setError('Sesi telah berakhir. Silakan login kembali.');
-      setLoading(false);
-      return;
-    }
-
-    const normalizedPhone = normalizePhoneToID(phone);
-
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({
-        full_name: fullName,
-        phone: normalizedPhone,
-        address,
-        birth_date: birthDate
-      })
-      .eq('id', user.id);
-
-    if (updateError) {
-      console.error('Profile update error detail:', updateError);
-      if (updateError.code === '23505' || updateError.message.toLowerCase().includes('unique')) {
-        setError('Nomor HP ini sudah terdaftar. Pakai nomor lain.');
-      } else {
-        setError(`Gagal menyimpan profil: ${updateError.message} (Kode: ${updateError.code})`);
-      }
-      setLoading(false);
-    } else {
-      setLoading(false);
-      finishOtpLogin(user.id);
+      finishOtpLogin(authData.user.id);
     }
   };
 
@@ -428,42 +362,6 @@ function LoginContent() {
   };
 
   if (checking) return null;
-
-  if (profileCompletionStep) {
-    return (
-      <div className="bg-white rounded-2xl shadow-xl p-10 animate-in fade-in duration-500">
-        <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-800">Lengkapi Profil</h2>
-          <p className="mt-2 text-sm text-gray-500 font-medium">Bantu kami mengenal Anda untuk pengiriman yang pas!</p>
-        </div>
-        {error && <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-lg text-sm">{error}</div>}
-        <form onSubmit={handleProfileCompletion} className="space-y-6">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-600">Nama Lengkap</label>
-            <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base focus:border-primary focus:outline-none" required />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-600">Nomor WhatsApp</label>
-            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base focus:border-primary focus:outline-none" required />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-600">Tanggal Lahir</label>
-            <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} className="w-full rounded-md border border-gray-300 p-3 text-base text-gray-700 focus:border-primary focus:outline-none" required />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-600">Alamat Pengiriman</label>
-            <textarea value={address} onChange={(e) => setAddress(e.target.value)} rows={3} className="w-full rounded-md border border-gray-300 p-3 text-base focus:border-primary focus:outline-none resize-none" required />
-          </div>
-          <button type="submit" disabled={loading} className="w-full rounded-md bg-primary px-6 py-3 font-medium text-white transition hover:bg-primary/90 disabled:opacity-50">{loading ? 'Menyimpan...' : 'Selesai & Lanjut'}</button>
-        </form>
-        <div className="mt-6 text-center">
-          <a href={`https://wa.me/${process.env.NEXT_PUBLIC_ADMIN_WA_NUMBER || '6285810658117'}`} target="_blank" rel="noopener noreferrer" className="text-sm font-bold text-primary hover:underline">
-            Butuh bantuan? Hubungi Admin
-          </a>
-        </div>
-      </div>
-    );
-  }
 
   if (otpStep) {
     return (

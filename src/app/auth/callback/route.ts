@@ -16,29 +16,11 @@ export async function GET(request: Request) {
       // Detach logging to background
       logAuthEvent(authData.user.id, 'google_login').catch(() => {});
 
-      // Fetch user profile status
-      const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('is_profile_complete')
-        .eq('id', authData.user.id)
-        .maybeSingle();
-
-      const isSecure = process.env.NODE_ENV === 'production';
-      // If profile exists and is complete, go to next, otherwise onboarding
-      const isComplete = profile?.is_profile_complete === true;
-      const redirectUrl = isComplete ? next : '/onboarding/profile';
+      const targetUrl = next.startsWith('http') ? new URL(next).pathname : next;
       
-      const response = NextResponse.redirect(new URL(redirectUrl, request.url));
+      // Removed the forced redirect to /onboarding/profile
+      const response = NextResponse.redirect(new URL(targetUrl || '/', request.url));
       
-      if (isComplete) {
-        response.cookies.set('hr_profile_complete', 'true', {
-          path: '/',
-          maxAge: 31536000,
-          sameSite: 'lax',
-          secure: isSecure,
-        });
-      }
-
       return response;
     }
   }
