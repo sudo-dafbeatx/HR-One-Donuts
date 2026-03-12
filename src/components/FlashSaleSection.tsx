@@ -259,7 +259,7 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                       background: `linear-gradient(135deg, ${event.isJumat ? '#0d9488, #14b8a6' : 'var(--color-primary, #1152d4), var(--color-secondary, #3b82f6)'})`
                     }}
                   >
-                    <div className="relative w-full min-h-[360px] sm:min-h-[400px] h-full rounded-[23px] flex flex-col justify-start overflow-hidden z-10 bg-slate-900 group">
+                    <div className="relative w-full aspect-21/9 rounded-[23px] flex flex-col justify-between overflow-hidden z-10 bg-slate-900 group">
                       
                       {/* Background Image / Color */}
                       {event.banner_image_url ? (
@@ -286,7 +286,7 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                       )}
                       
                       {/* Top Header Section */}
-                      <div className="flex items-start justify-between gap-4 p-5 sm:p-6 relative z-10 w-full">
+                      <div className="flex items-start justify-between gap-4 p-4 sm:p-6 relative z-10 w-full">
                         <div className="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-lg">
                           <IconComponent className="w-6 h-6 text-white drop-shadow-md" />
                         </div>
@@ -312,11 +312,11 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                       </div>
 
                       {/* Bottom Content Section */}
-                      <div className="relative z-10 p-5 sm:p-6 pt-12 mt-auto flex flex-col justify-end w-full">
-                        <h3 className="text-2xl md:text-3xl font-black leading-tight text-white drop-shadow-lg mb-2 inline-block">
+                      <div className="relative z-10 p-4 sm:p-6 mt-auto flex flex-col justify-end w-full">
+                        <h3 className="text-lg md:text-2xl font-black leading-tight text-white drop-shadow-lg mb-1 inline-block">
                           {event.headline}
                         </h3>
-                        <p className="text-white/90 text-sm font-medium line-clamp-2 w-5/6 sm:w-3/4 drop-shadow-md mb-5 leading-relaxed">
+                        <p className="text-white/90 text-xs sm:text-sm font-medium line-clamp-1 sm:line-clamp-2 w-5/6 sm:w-3/4 drop-shadow-md mb-3 leading-relaxed">
                           {event.description || 'Penawaran promo spesial terbatas. Jangan sampai kelewatan periode promonya dan nikmati diskon khusus belanja hari ini!'}
                         </p>
 
