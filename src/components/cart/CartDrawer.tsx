@@ -355,59 +355,42 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
       {/* Drawer */}
       <aside 
-        className={`fixed right-0 top-0 h-dvh w-full max-w-md bg-slate-50 text-slate-900 shadow-2xl z-70 flex flex-col transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${
+        className={`fixed right-0 top-0 h-dvh w-full max-w-md bg-[#f5f7fb] text-[#1a1a1a] shadow-2xl z-70 flex flex-col transform transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) ${
           isCartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Dot Pattern Background */}
-        <div 
-          className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none" 
-          style={{ backgroundImage: "radial-gradient(#000 2px, transparent 2px)", backgroundSize: "28px 28px" }} 
-        />
-
-        {/* Header - Refined */}
-        <div className="relative z-10 px-6 py-6 bg-white border-b border-slate-200 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="relative size-10 bg-slate-50 rounded-2xl p-2 border border-slate-100 shadow-inner">
-              <Image 
-                src="/images/logo-hr-one.webp"
-                alt="HR-One Donuts"
-                fill
-                className="object-contain p-1"
-              />
-            </div>
-            <div className="flex flex-col">
-              <h2 className="text-xl font-black tracking-tight text-slate-900 leading-none">
-                {t('cart.title')}
-              </h2>
-              <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">{t('cart.subtitle')}</p>
-            </div>
+        {/* Header */}
+        <div className="relative z-10 p-4 bg-white flex items-center justify-between shadow-[0_4px_10px_rgba(0,0,0,0.05)] rounded-b-[16px]">
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsCartOpen(false)}
+              className="w-10 h-10 flex items-center justify-center bg-[#f5f7fb] hover:bg-gray-200 rounded-full transition-all"
+            >
+              <XMarkIcon className="w-6 h-6 text-[#1a1a1a]" />
+            </button>
+            <h2 className="text-[24px] font-bold text-[#1a1a1a] leading-none">
+              {t('cart.title')}
+            </h2>
           </div>
-          <button 
-            onClick={() => setIsCartOpen(false)}
-            className="w-10 h-10 flex items-center justify-center bg-slate-50 hover:bg-slate-100 rounded-2xl transition-all border border-slate-200 group active:scale-90"
-          >
-            <XMarkIcon className="w-6 h-6 text-slate-500 group-hover:text-slate-900 transition-colors" />
-          </button>
         </div>
 
         {/* List Content */}
-        <div className="relative z-10 flex-1 overflow-y-auto px-6 py-8 space-y-8 scrollbar-hide">
+        <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
           {cart.length === 0 ? (
-            <div className="h-[60vh] flex flex-col items-center justify-center text-center gap-6">
-              <div className="size-24 bg-white rounded-4xl shadow-xl shadow-slate-200 flex items-center justify-center border border-slate-100 animate-pulse">
-                <ShoppingCartIcon className="w-12 h-12 text-slate-300" />
+            <div className="h-[60vh] flex flex-col items-center justify-center text-center gap-6 bg-white rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] p-6">
+              <div className="size-20 bg-[#f5f7fb] rounded-full flex items-center justify-center">
+                <ShoppingCartIcon className="w-10 h-10 text-gray-400" />
               </div>
               <div className="space-y-2">
-                <p className="font-black text-xl text-slate-900">{t('cart.empty_title')}</p>
-                <p className="text-sm font-medium text-slate-400 max-w-[200px] mx-auto leading-relaxed">{t('cart.empty_subtitle')}</p>
+                <p className="text-[18px] font-semibold text-[#1a1a1a]">{t('cart.empty_title')}</p>
+                <p className="text-[14px] font-normal text-gray-400 max-w-[200px] mx-auto leading-relaxed">{t('cart.empty_subtitle')}</p>
               </div>
               <button 
                 onClick={() => {
                   setIsCartOpen(false);
                   window.location.href = "/catalog";
                 }}
-                className="mt-4 bg-primary text-white px-8 py-3.5 rounded-2xl text-sm font-black shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all"
+                className="mt-4 bg-primary text-white px-8 py-3 rounded-[12px] text-[14px] font-bold transition-all"
               >
                 {t('cart.view_catalog')}
               </button>
@@ -419,83 +402,60 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 const hasDiscount = effectiveItemPrice < item.price;
                 
                 return (
-                  <div key={item.id} className="relative group bg-white p-4 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300">
-                    <div className="flex gap-4">
-                      {/* Product Image */}
-                      <div className="relative w-20 h-20 rounded-2xl border border-slate-100 shrink-0 overflow-hidden bg-slate-50 shadow-inner">
-                        <Image 
-                          src={item.image} 
-                          alt={item.name} 
-                          fill 
-                          sizes="80px"
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
+                  <div key={item.id} className="bg-white p-4 rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] flex gap-4">
+                    {/* Product Image */}
+                    <div className="relative w-20 h-20 rounded-[12px] overflow-hidden shrink-0 border border-gray-100">
+                      <Image 
+                        src={item.image} 
+                        alt={item.name} 
+                        fill 
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    </div>
+
+                    {/* Info & Quantity */}
+                    <div className="flex-1 flex flex-col justify-between gap-1">
+                      <div className="flex justify-between items-start gap-2">
+                        <h3 className="text-[18px] font-semibold text-[#1a1a1a] leading-tight">
+                          {item.name}
+                        </h3>
+                        <button 
+                          onClick={() => removeFromCart(item.id)}
+                          className="text-gray-400 hover:text-red-500 transition-colors p-1"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
                       </div>
 
-                      {/* Info & Quantity */}
-                      <div className="flex-1 min-w-0 flex flex-col justify-between">
-                        <div>
-                          <div className="flex justify-between items-start gap-2">
-                            <h3 className="font-black text-slate-900 text-sm md:text-base leading-tight truncate pr-2">
-                              {item.name}
-                            </h3>
-                            <button 
-                              onClick={() => removeFromCart(item.id)}
-                              className="text-slate-300 hover:text-red-500 transition-colors p-1"
-                            >
-                              <TrashIcon className="w-4 h-4" />
-                            </button>
-                          </div>
-                          <p className="text-[10px] md:text-xs font-bold mt-1 inline-flex items-center gap-2">
-                            {hasDiscount ? (
-                              <>
-                                <span className="line-through text-slate-300">Rp {item.price.toLocaleString("id-ID")}</span>
-                                <span className="text-green-600 px-2 py-0.5 bg-green-50 rounded-full border border-green-100">Sale</span>
-                              </>
-                            ) : (
-                              <span className="text-slate-500">Harga Satuan: Rp {item.price.toLocaleString("id-ID")}</span>
-                            )}
-                          </p>
-                        </div>
+                      {hasDiscount && (
+                        <p className="text-[12px] font-medium text-gray-400 line-through">
+                          Rp {item.price.toLocaleString("id-ID")}
+                        </p>
+                      )}
 
-                        <div className="flex items-center justify-between mt-3">
-                          {/* Modern Quantity Selector */}
-                          <div className="flex items-center gap-1 bg-slate-50 rounded-xl p-1 border border-slate-100">
-                            <button 
-                              onClick={() => updateQuantity(item.id, -1)}
-                              className="w-8 h-8 flex items-center justify-center text-primary font-black hover:bg-white hover:shadow-sm rounded-lg transition-all"
-                            >
-                              −
-                            </button>
-                            <QuantityInput 
-                              initialValue={item.quantity} 
-                              onUpdate={(val) => setCartQuantity(item.id, val)} 
-                            />
-                            <button 
-                              onClick={() => updateQuantity(item.id, 1)}
-                              className="w-8 h-8 flex items-center justify-center text-primary font-black hover:bg-white hover:shadow-sm rounded-lg transition-all"
-                            >
-                              +
-                            </button>
-                          </div>
+                      <div className="flex items-end justify-between mt-auto">
+                        <span className="text-[20px] font-bold text-[#1a1a1a]">
+                          Rp {(effectiveItemPrice * item.quantity).toLocaleString("id-ID")}
+                        </span>
 
-                          {/* Price Stack */}
-                          <div className="flex flex-col items-end leading-none">
-                            {hasDiscount ? (
-                              <>
-                                <span className="text-[10px] font-bold text-slate-300 line-through mb-1">
-                                  Rp {(item.price * item.quantity).toLocaleString("id-ID")}
-                                </span>
-                                <span className="text-sm md:text-base font-black text-slate-900">
-                                  Rp {(effectiveItemPrice * item.quantity).toLocaleString("id-ID")}
-                                </span>
-                              </>
-                            ) : (
-                              <span className="text-sm md:text-base font-black text-slate-900">
-                                Rp {(effectiveItemPrice * item.quantity).toLocaleString("id-ID")}
-                              </span>
-                            )}
-                          </div>
+                        <div className="flex items-center gap-1 bg-[#f5f7fb] rounded-lg p-1 border border-gray-100">
+                          <button 
+                            onClick={() => updateQuantity(item.id, -1)}
+                            className="w-7 h-7 flex items-center justify-center text-primary font-bold hover:bg-white rounded-md transition-all"
+                          >
+                            −
+                          </button>
+                          <QuantityInput 
+                            initialValue={item.quantity} 
+                            onUpdate={(val) => setCartQuantity(item.id, val)} 
+                          />
+                          <button 
+                            onClick={() => updateQuantity(item.id, 1)}
+                            className="w-7 h-7 flex items-center justify-center text-primary font-bold hover:bg-white rounded-md transition-all"
+                          >
+                            +
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -503,108 +463,90 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 );
               })}
 
-              {/* High Contrast Wholesale Info */}
-              <div className="mt-8 rounded-[2.5rem] p-6 bg-slate-900 text-white shadow-2xl space-y-5 border border-slate-800 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-                  <span className="material-symbols-outlined text-[100px] text-white">loyalty</span>
-                </div>
-                
-                <div className="flex items-center gap-3 border-b border-white/10 pb-4 relative z-10">
-                  <div className="size-8 bg-primary rounded-xl flex items-center justify-center rotate-3">
-                    <span className="text-slate-900 font-black text-lg">%</span>
-                  </div>
-                  <p className="text-xs font-black uppercase tracking-widest text-primary-light">Daftar Harga Grosir</p>
+              {/* Wholesale Info */}
+              <div className="bg-white p-4 rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] space-y-4">
+                <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
+                  <span className="material-symbols-outlined text-primary text-[20px]">sell</span>
+                  <h3 className="text-[14px] font-bold text-[#1a1a1a]">Daftar Harga Grosir</h3>
                 </div>
 
-                <div className="grid grid-cols-1 gap-2.5 relative z-10">
+                <div className="space-y-3">
                   {priceTiers.map((tier, idx) => {
                     const isActive = totalDonuts >= tier.min && (!tier.max || totalDonuts <= tier.max);
                     return (
-                      <div key={idx} className={`flex justify-between items-center px-5 py-3.5 rounded-2xl transition-all duration-500 ${
+                      <div key={idx} className={`flex justify-between items-center p-3 rounded-[12px] transition-all ${
                         isActive 
-                        ? 'bg-primary text-slate-900 scale-[1.02] shadow-xl shadow-primary/20 ring-1 ring-white/30' 
-                        : 'bg-white/5 text-slate-400 border border-white/5'
+                        ? 'bg-[#eef2ff] border border-primary/20' 
+                        : 'bg-[#f5f7fb] border border-transparent'
                       }`}>
-                        <span className="flex items-center gap-3 text-xs font-bold leading-none">
-                          {isActive && <span className="w-1.5 h-1.5 rounded-full bg-slate-900 animate-pulse" />}
+                        <span className="flex items-center gap-2 text-[14px] font-normal text-[#1a1a1a]">
+                          {isActive && <span className="w-2 h-2 rounded-full bg-primary" />}
                           {tier.max ? `${tier.min} - ${tier.max} Pcs` : `> ${tier.min - 1} Pcs`}
                         </span>
-                        <span className={`text-sm font-black ${isActive ? 'text-slate-900' : 'text-slate-200'}`}>
+                        <span className={`text-[14px] font-bold ${isActive ? 'text-primary' : 'text-[#1a1a1a]'}`}>
                           Rp {tier.price.toLocaleString('id-ID')}
                         </span>
                       </div>
                     );
                   })}
                 </div>
-                <p className="text-[10px] text-slate-500 text-center font-medium leading-relaxed italic relative z-10">
-                  * Sistem otomatis menarik harga terbaik sesuai jumlah pesanan Anda.
-                </p>
               </div>
 
               {/* Delivery Method */}
-              <div className="pt-4 space-y-4">
-                <div className="flex items-center gap-2 px-1">
-                  <span className="material-symbols-outlined text-primary text-lg">local_shipping</span>
-                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t('cart.delivery_method_title')}</h3>
-                </div>
+              <div className="bg-white p-4 rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] space-y-4">
+                <h3 className="text-[18px] font-semibold text-[#1a1a1a]">{t('cart.delivery_method_title')}</h3>
                 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setDeliveryMethod('delivery')}
-                    className={`flex flex-col items-center justify-center p-5 rounded-3xl border-2 transition-all duration-300 gap-2 relative overflow-hidden ${
+                    className={`flex flex-col items-center justify-center py-4 px-2 rounded-[12px] border-2 transition-all gap-2 ${
                       deliveryMethod === 'delivery' 
-                      ? 'border-primary bg-white text-primary shadow-lg shadow-primary/5' 
-                      : 'border-white bg-white/50 text-slate-400 hover:border-slate-200'
+                      ? 'border-primary bg-[#eef2ff] text-primary' 
+                      : 'border-gray-100 bg-white text-gray-500'
                     }`}
                   >
-                    {deliveryMethod === 'delivery' && (
-                      <div className="absolute top-2 right-2 size-2 bg-primary rounded-full" />
-                    )}
-                    <span className="material-symbols-outlined text-3xl">local_shipping</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest">{t('cart.delivery')}</span>
+                    <span className="material-symbols-outlined text-[24px]">local_shipping</span>
+                    <span className="text-[14px] font-medium">{t('cart.delivery')}</span>
                   </button>
                   <button
                     onClick={() => setDeliveryMethod('pickup')}
-                    className={`flex flex-col items-center justify-center p-5 rounded-3xl border-2 transition-all duration-300 gap-2 relative overflow-hidden ${
+                    className={`flex flex-col items-center justify-center py-4 px-2 rounded-[12px] border-2 transition-all gap-2 ${
                       deliveryMethod === 'pickup' 
-                      ? 'border-primary bg-white text-primary shadow-lg shadow-primary/5' 
-                      : 'border-white bg-white/50 text-slate-400 hover:border-slate-200'
+                      ? 'border-primary bg-[#eef2ff] text-primary' 
+                      : 'border-gray-100 bg-white text-gray-500'
                     }`}
                   >
-                    {deliveryMethod === 'pickup' && (
-                      <div className="absolute top-2 right-2 size-2 bg-primary rounded-full" />
-                    )}
-                    <span className="material-symbols-outlined text-3xl">storefront</span>
-                    <span className="text-[10px] font-black uppercase tracking-widest">{t('cart.pickup')}</span>
+                    <span className="material-symbols-outlined text-[24px]">storefront</span>
+                    <span className="text-[14px] font-medium">{t('cart.pickup')}</span>
                   </button>
                 </div>
 
                 {deliveryMethod === 'delivery' && (
-                  <div className="mt-4 p-4 rounded-3xl border border-slate-200 bg-white shadow-sm flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Alamat Pengiriman</span>
+                  <div className="mt-2 p-4 rounded-[12px] border border-gray-100 bg-[#f5f7fb] flex flex-col gap-2">
+                    <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                      <span className="text-[12px] font-medium text-gray-500 uppercase tracking-wide">Alamat Pengiriman</span>
                       {activeAddressStr && (
-                        <button onClick={() => window.location.href = "/settings/address"} className="text-[10px] text-primary font-bold uppercase hover:underline">Ubah</button>
+                        <button onClick={() => window.location.href = "/settings/address"} className="text-[12px] text-primary font-bold hover:underline">UBAH</button>
                       )}
                     </div>
                     {isAddressLoading ? (
-                      <div className="h-10 animate-pulse bg-slate-100 rounded-xl w-full"></div>
+                      <div className="h-10 animate-pulse bg-gray-200 rounded-lg w-full mt-2"></div>
                     ) : activeAddressStr ? (
-                      <div className="flex gap-2 items-start mt-1">
-                        <span className="material-symbols-outlined text-sm text-primary mt-0.5">location_on</span>
-                        <p className="text-xs text-slate-600 font-medium leading-relaxed">{activeAddressStr}</p>
+                      <div className="flex gap-2 items-start mt-2">
+                        <span className="material-symbols-outlined text-[16px] text-primary mt-0.5">location_on</span>
+                        <p className="text-[14px] text-[#1a1a1a] font-normal leading-relaxed">{activeAddressStr}</p>
                       </div>
                     ) : (
-                      <div className="flex flex-col gap-3 mt-1 items-start">
-                        <p className="text-xs text-amber-600 font-bold bg-amber-50 px-3 py-2 rounded-xl border border-amber-100 w-full flex items-center gap-2">
-                          <span className="material-symbols-outlined text-sm">warning</span> Belum ada alamat
+                      <div className="flex flex-col gap-3 mt-2 items-start">
+                        <p className="text-[12px] text-amber-700 font-medium bg-amber-50 px-3 py-2 rounded-lg w-full flex items-center gap-2 border border-amber-100">
+                          <span className="material-symbols-outlined text-[14px]">warning</span> Belum ada alamat
                         </p>
                         <button 
                           onClick={() => {
                             setIsCartOpen(false);
                             window.location.href = "/settings/address";
                           }}
-                          className="w-full text-center bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-widest shadow-md hover:bg-slate-800 transition-colors"
+                          className="w-full text-center bg-white text-[#1a1a1a] border border-gray-300 font-bold py-2 rounded-lg text-[14px] shadow-sm hover:bg-gray-50 transition-colors"
                         >
                           Tambah Alamat
                         </button>
@@ -612,7 +554,6 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                     )}
                   </div>
                 )}
-
               </div>
 
               <div className="h-6" />
@@ -620,56 +561,35 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           )}
         </div>
 
-        {/* Compact Sticky Footer - Seamless layout */}
+        {/* Sticky Order Summary Footer */}
         {cart.length > 0 && (
-          <div className="relative z-20 px-4 pb-4 pt-2">
-            <div className="space-y-1.5 mb-3">
-              <div className="flex justify-between items-center text-slate-500">
-                <span className="text-[10px] font-bold uppercase tracking-widest">{t('cart.subtotal')}</span>
-                <span className="text-xs font-black text-slate-900">Rp {totalPrice.toLocaleString("id-ID")}</span>
+          <div className="sticky bottom-0 z-20 bg-white p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] rounded-t-[24px] border-t border-gray-100">
+            <div className="space-y-3 mb-4">
+              <div className="flex justify-between items-center">
+                <span className="text-[14px] font-normal text-gray-500">{t('cart.subtotal')}</span>
+                <span className="text-[14px] font-medium text-[#1a1a1a]">Rp {totalPrice.toLocaleString("id-ID")}</span>
               </div>
-                <div className="flex flex-col items-end gap-0.5">
-                  <div className="flex justify-between items-center text-slate-500 w-full">
-                    <span className="text-[10px] font-bold uppercase tracking-widest">{t('cart.shipping_fee')}</span>
-                    <span className="text-xs font-black text-slate-900">Rp {shippingFee.toLocaleString("id-ID")}</span>
-                  </div>
-                  <p className="text-[9px] text-slate-400 font-bold italic text-right leading-tight tracking-tight">
-                    {deliveryMethod === 'delivery' ? t('cart.shipping_note') : t('cart.pickup_note')}
-                  </p>
-                </div>
-              <div className="flex justify-between items-end pt-2 mt-1 border-t border-slate-200">
-                <div className="flex flex-col">
-                  <span className="text-[9px] font-black text-primary uppercase tracking-[0.15em]">ESTIMASI TOTAL</span>
-                  <span className="text-xl font-black text-slate-900 tracking-tight leading-none mt-0.5">
-                    Rp {finalTotal.toLocaleString("id-ID")}
-                  </span>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-[9px] font-bold text-slate-400">TOTAL ITEM</span>
-                  <span className="text-xs font-black text-slate-600 bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 mt-0.5 shadow-sm">{totalDonuts} Pcs</span>
-                </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[14px] font-normal text-gray-500">{t('cart.shipping_fee')} <span className="text-[12px] italic text-gray-400">({deliveryMethod === 'delivery' ? 'Antar' : 'Ambil'})</span></span>
+                <span className="text-[14px] font-medium text-[#1a1a1a]">Rp {shippingFee.toLocaleString("id-ID")}</span>
+              </div>
+              <div className="flex justify-between items-end pt-3 border-t border-gray-100 mt-2">
+                <span className="text-[18px] font-semibold text-[#1a1a1a]">Total Tagihan</span>
+                <span className="text-[20px] font-bold text-primary">
+                  Rp {finalTotal.toLocaleString("id-ID")}
+                </span>
               </div>
             </div>
 
             <button 
               onClick={handleWhatsAppOrder}
-              className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-[#111827] rounded-3xl h-12 flex flex-col items-center justify-center transition-all shadow-lg shadow-[#25D366]/20 active:scale-[0.98] group relative overflow-hidden"
+              className="w-full bg-primary hover:bg-blue-600 text-white rounded-[12px] h-[48px] flex items-center justify-center gap-2 font-bold text-[16px] transition-colors shadow-md"
             >
-              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-              
-              <div className="flex items-center gap-2 font-black text-base uppercase tracking-tight text-[#111827] relative z-10">
-                <svg className="w-5 h-5 fill-[#111827]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793 0-.852.448-1.271.607-1.445.159-.173.346-.217.462-.217h.332c.101 0 .23.036.332.274.116.273.39.954.423 1.025.033.072.054.156.007.251-.047.094-.072.156-.144.239-.072.083-.151.185-.216.249-.072.072-.147.151-.063.294.083.144.368.607.789.982.541.483 1.002.632 1.144.704.144.072.23.063.315-.033.085-.097.368-.427.466-.572.101-.144.202-.123.332-.076.13.047.823.39.966.462.144.072.239.108.274.17.036.062.036.357-.108.762zM12 1a10.89 10.89 0 00-11 11c0 2.187.625 4.22 1.707 5.956L1 23l5.241-1.374A10.84 10.84 0 0012 23c6.075 0 11-4.925 11-11S18.075 1 12 1z"/>
-                </svg>
-                {t('cart.whatsapp_cta')}
-              </div>
-              <span className="text-[9px] tracking-[0.15em] uppercase font-black text-slate-800/70 relative z-10 transition-opacity mt-px">
-                {t('cart.whatsapp_note')}
-              </span>
+              <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793 0-.852.448-1.271.607-1.445.159-.173.346-.217.462-.217h.332c.101 0 .23.036.332.274.116.273.39.954.423 1.025.033.072.054.156.007.251-.047.094-.072.156-.144.239-.072.083-.151.185-.216.249-.072.072-.147.151-.063.294.083.144.368.607.789.982.541.483 1.002.632 1.144.704.144.072.23.063.315-.033.085-.097.368-.427.466-.572.101-.144.202-.123.332-.076.13.047.823.39.966.462.144.072.239.108.274.17.036.062.036.357-.108.762zM12 1a10.89 10.89 0 00-11 11c0 2.187.625 4.22 1.707 5.956L1 23l5.241-1.374A10.84 10.84 0 0012 23c6.075 0 11-4.925 11-11S18.075 1 12 1z"/>
+              </svg>
+              {t('cart.whatsapp_cta')}
             </button>
-            <p className="mt-3 text-[9px] text-center text-slate-400 font-bold uppercase tracking-widest px-8 leading-relaxed mb-4">
-              {t('cart.service_area')}
-            </p>
           </div>
         )}
       </aside>
