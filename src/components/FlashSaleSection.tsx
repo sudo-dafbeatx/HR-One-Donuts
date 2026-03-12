@@ -269,10 +269,12 @@ export default function FlashSaleSection({ events, flashSales = [] }: FlashSaleS
                             alt={event.headline}
                             fill
                             sizes="(max-width: 768px) 100vw, 50vw"
-                            className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                            className="object-contain transition-transform duration-700 group-hover:scale-105"
                           />
+                          {/* Dark fill behind image to prevent gaps */}
+                          <div className="absolute inset-0 bg-slate-900 -z-10" />
                           {/* Soft Gradient Overlay for Readability */}
-                          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-slate-900/90 via-slate-900/40 to-transparent pointer-events-none" />
+                          <div className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-t from-slate-900/80 via-slate-900/30 to-transparent pointer-events-none" />
                         </>
                       ) : (
                         <div 
