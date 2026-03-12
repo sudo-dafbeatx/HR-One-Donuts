@@ -12,6 +12,7 @@ import { getCurrentUserProfile, createOrder, getUserActiveAddress } from "@/app/
 import { useRouter, usePathname } from "next/navigation";
 import CheckoutAnimation from "./CheckoutAnimation";
 import { useTranslation } from "@/context/LanguageContext";
+import CartAddressForm from "./CartAddressForm";
 
 interface CartProfile {
   id: string;
@@ -76,6 +77,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery');
   const [activeAddressStr, setActiveAddressStr] = useState<string | null>(null);
   const [isAddressLoading, setIsAddressLoading] = useState(false);
+  const [isCheckingOutAddress, setIsCheckingOutAddress] = useState(false);
+  const [activeUserId, setActiveUserId] = useState<string | null>(null);
 
   const shippingFee = (deliveryMethod === 'delivery' && totalDonuts <= 36) ? (siteSettings?.shipping_fee || 0) : 0;
   const finalTotal = totalPrice + shippingFee;
@@ -172,6 +175,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         router.push("/login?redirect=/");
         return;
       }
+      setActiveUserId(profile.id);
 
       // 2. Check Profile Completeness (Name & Phone are critical for WA)
       const isMissingBasicInfo = !profile.full_name || !profile.phone;
@@ -185,7 +189,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
       if (isMissingBasicInfo || (deliveryMethod === 'delivery' && !profileAddressStr)) {
         setIsLoading(false);
-        setShowProfileAlert(true);
+        setIsCheckingOutAddress(true);
         return;
       }
 
@@ -200,7 +204,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         // Actually, let's be strict: for delivery, we want a detailed address record if possible.
         if (!activeAddress && !profileAddressStr) {
           setIsLoading(false);
-          setShowProfileAlert(true);
+          setIsCheckingOutAddress(true);
           return;
         }
 
@@ -374,8 +378,21 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           </div>
         </div>
 
-        {/* List Content */}
-        <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
+        {/* Dynamic Display based on isCheckingOutAddress */}
+        {isCheckingOutAddress && activeUserId ? (
+          <CartAddressForm 
+            userId={activeUserId} 
+            onCancel={() => setIsCheckingOutAddress(false)} 
+            onSuccess={() => {
+              setIsCheckingOutAddress(false);
+              // Retry checkout after address save
+              handleWhatsAppOrder();
+            }} 
+          />
+        ) : (
+          <>
+            {/* List Content */}
+            <div className="relative z-10 flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
           {cart.length === 0 ? (
             <div className="h-[60vh] flex flex-col items-center justify-center text-center gap-6 bg-white rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] p-6">
               <div className="size-20 bg-[#f5f7fb] rounded-full flex items-center justify-center">
@@ -591,6 +608,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
               {t('cart.whatsapp_cta')}
             </button>
           </div>
+        )}
+          </>
         )}
       </aside>
 

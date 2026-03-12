@@ -231,20 +231,9 @@ export default async function proxy(request: NextRequest) {
     }
 
     // =====================================================
-    // ONBOARDING PROTECTION - Customer Profile Check
+    // ONBOARDING PROTECTION (REMOVED) - Allow users to browse without profile completion
+    // Address will be requested at checkout instead.
     // =====================================================
-    const isOnboardingPath = pathname.startsWith('/onboarding');
-    const isSettingsPath = pathname.startsWith('/settings');
-
-    if (!isOnboardingPath && !isAdminPath && !isSettingsPath) {
-      const profileCompleteCookie = request.cookies.get('hr_profile_complete');
-      
-      if (!profileCompleteCookie || profileCompleteCookie.value !== 'true') {
-        const url = request.nextUrl.clone();
-        url.pathname = '/onboarding/profile';
-        return NextResponse.redirect(url);
-      }
-    }
 
     return supabaseResponse;
   }
