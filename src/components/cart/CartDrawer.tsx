@@ -15,6 +15,10 @@ import { useRouter, usePathname } from "next/navigation";
 import CheckoutAnimation from "./CheckoutAnimation";
 import { useTranslation } from "@/context/LanguageContext";
 import CartAddressForm from "./CartAddressForm";
+import OrderSummary from "../checkout/OrderSummary";
+import VoucherAppliedBanner from "../checkout/VoucherAppliedBanner";
+import VoucherDetailModal from "../voucher/VoucherDetailModal";
+import { generateWhatsAppMessage } from "@/utils/generateWhatsAppMessage";
 
 interface CartProfile {
   id: string;
@@ -86,6 +90,7 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const [voucherInput, setVoucherInput] = useState("");
   const [voucherError, setVoucherError] = useState<string | null>(null);
   const [isVoucherLoading, setIsVoucherLoading] = useState(false);
+  const [showVoucherDetail, setShowVoucherDetail] = useState(false);
 
   const shippingFee = (deliveryMethod === 'delivery' && totalDonuts <= 36) ? (siteSettings?.shipping_fee || 0) : 0;
   const finalTotal = totalPrice + shippingFee;
@@ -293,76 +298,24 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       const rawPhone = siteSettings?.whatsapp_number || process.env.NEXT_PUBLIC_CONTACT_WA_NUMBER || "6285810658117";
       const phone = rawPhone.replace(/\D/g, ""); // Ensure digits only
       
-      let message = t('cart.whatsapp.greeting', { store_name: siteSettings?.store_name || "HR-One Donuts" }) + "\n\n";
-      message += t('cart.whatsapp.new_order') + "\n";
-      message += `-------------------\n`;
-      message += t('cart.whatsapp.customer_data') + "\n";
-      message += t('cart.whatsapp.name', { name: profile.full_name || "" }) + "\n";
-      message += t('cart.whatsapp.wa', { phone: profile.phone || "" }) + "\n";
-      
-      if (deliveryMethod === 'delivery') {
-        message += t('cart.whatsapp.address', { address: fullAddressForWA }) + "\n";
-        if (finalShippingNotes) {
-          message += `Catatan Alamat: ${finalShippingNotes}\n`;
-        }
-        message += "\n";
-      } else {
-        message += "\n";
-      }
-
-      message += t('cart.whatsapp.reception') + "\n";
-      message += deliveryMethod === 'delivery' ? t('cart.whatsapp.delivery_method') + "\n" : t('cart.whatsapp.pickup_method') + "\n";
-      message += `\n`;
-
-      message += t('cart.whatsapp.detail') + "\n";
-      
-      cart.forEach((item) => {
-        const effectivePrice = getEffectiveItemPrice(item);
-        message += t('cart.whatsapp.item_line', {
-          name: item.name,
-          quantity: item.quantity,
-          price: effectivePrice.toLocaleString("id-ID"),
-          total: (effectivePrice * item.quantity).toLocaleString("id-ID")
-        }) + "\n\n";
-      });
-      
-      message += `-------------------\n`;
-      
       const rawSubtotal = cart.reduce((sum, item) => sum + getEffectiveItemPrice(item) * item.quantity, 0);
       const promoDiscount = rawSubtotal - totalPrice;
 
-      if (activeVoucher && promoDiscount > 0) {
-        message += `Voucher Dipakai: ${activeVoucher.code} (${activeVoucher.title})\n`;
-        message += `Subtotal: Rp ${rawSubtotal.toLocaleString("id-ID")}\n`;
-        message += `Diskon Promo: -Rp ${promoDiscount.toLocaleString("id-ID")}\n`;
-        message += `Total Bersih: Rp ${totalPrice.toLocaleString("id-ID")}\n`;
-      } else if (promoDiscount > 0) {
-        message += `Subtotal: Rp ${rawSubtotal.toLocaleString("id-ID")}\n`;
-        message += `Diskon Promo: -Rp ${promoDiscount.toLocaleString("id-ID")}\n`;
-        message += `Total Bersih: Rp ${totalPrice.toLocaleString("id-ID")}\n`;
-      } else {
-        message += t('cart.whatsapp.subtotal', { amount: totalPrice.toLocaleString("id-ID") }) + "\n";
-      }
-      if (deliveryMethod === 'delivery') {
-        message += t('cart.whatsapp.shipping', { amount: shippingFee.toLocaleString("id-ID") }) + "\n";
-      }
-      message += t('cart.whatsapp.total_payment', { amount: finalTotal.toLocaleString("id-ID") }) + "\n\n";
-      
-      // Add OFF-HOURS NOTE if outside of Senin-Sabtu, 08:00-17:00 WIB
-      const wibOptions = { timeZone: 'Asia/Jakarta' };
-      const now = new Date();
-      
-      const currentDay = now.getDay(); 
-      const wibHourString = now.toLocaleTimeString('en-US', { ...wibOptions, hour12: false, hour: '2-digit' });
-      const currentHour = parseInt(wibHourString.split(':')[0], 10);
-      
-      const isOffHours = currentDay === 0 || currentHour < 8 || currentHour >= 17;
-      
-      if (isOffHours) {
-        message += "*Catatan:* Pesanan diterima di luar jam operasional. Kami akan memproses pesanan Anda pada jam kerja berikutnya (Senin - Sabtu, 08.00 - 17.00 WIB).\n\n";
-      }
-
-      message += t('cart.whatsapp.footer');
+      const message = generateWhatsAppMessage({
+        cart: cart.map(i => ({ name: i.name, quantity: i.quantity, price: getEffectiveItemPrice(i) })),
+        profile,
+        deliveryMethod,
+        shippingAddress: fullAddressForWA,
+        shippingNotes: finalShippingNotes,
+        subtotal: rawSubtotal,
+        promoDiscount,
+        totalPrice,
+        shippingFee,
+        finalTotal,
+        activeVoucher,
+        siteSettings,
+        t
+      });
       
       const encodedMessage = encodeURIComponent(message);
       
@@ -631,18 +584,11 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 </div>
 
                 {activeVoucher ? (
-                  <div className="bg-[#eef2ff] border border-primary/20 rounded-xl p-3 flex items-center justify-between animate-fade-in">
-                    <div className="flex flex-col">
-                      <span className="text-[12px] font-bold text-primary uppercase tracking-wider">{activeVoucher.code}</span>
-                      <span className="text-[13px] text-primary">{activeVoucher.title}</span>
-                    </div>
-                    <button 
-                      onClick={handleRemoveVoucher}
-                      className="text-[12px] font-bold text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
-                    >
-                      Hapus
-                    </button>
-                  </div>
+                  <VoucherAppliedBanner
+                    activeVoucher={activeVoucher}
+                    onShowDetail={() => setShowVoucherDetail(true)}
+                    onRemove={handleRemoveVoucher}
+                  />
                 ) : (
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
@@ -680,21 +626,17 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         {/* Sticky Order Summary Footer */}
         {cart.length > 0 && (
           <div className="sticky bottom-0 z-20 bg-white p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] rounded-t-[24px] border-t border-gray-100">
-            <div className="space-y-3 mb-4">
-              <div className="flex justify-between items-center">
-                <span className="text-[14px] font-normal text-gray-500">{t('cart.subtotal')}</span>
-                <span className="text-[14px] font-medium text-[#1a1a1a]">Rp {totalPrice.toLocaleString("id-ID")}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-[14px] font-normal text-gray-500">{t('cart.shipping_fee')} <span className="text-[12px] italic text-gray-400">({deliveryMethod === 'delivery' ? 'Antar' : 'Ambil'})</span></span>
-                <span className="text-[14px] font-medium text-[#1a1a1a]">Rp {shippingFee.toLocaleString("id-ID")}</span>
-              </div>
-              <div className="flex justify-between items-end pt-3 border-t border-gray-100 mt-2">
-                <span className="text-[18px] font-semibold text-[#1a1a1a]">Total Tagihan</span>
-                <span className="text-[20px] font-bold text-primary">
-                  Rp {finalTotal.toLocaleString("id-ID")}
-                </span>
-              </div>
+            <div className="mb-4">
+              <OrderSummary
+                subtotal={cart.reduce((sum, item) => sum + getEffectiveItemPrice(item) * item.quantity, 0)}
+                promoDiscount={cart.reduce((sum, item) => sum + getEffectiveItemPrice(item) * item.quantity, 0) - totalPrice}
+                totalPrice={totalPrice}
+                shippingFee={shippingFee}
+                finalTotal={finalTotal}
+                deliveryMethod={deliveryMethod}
+                activeVoucher={activeVoucher}
+                t={t}
+              />
             </div>
 
             <button 
@@ -755,6 +697,14 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
             </div>
           </div>
         </div>
+      )}
+      
+      {/* Voucher Detail Modal */}
+      {showVoucherDetail && activeVoucher && (
+        <VoucherDetailModal
+          voucher={activeVoucher}
+          onClose={() => setShowVoucherDetail(false)}
+        />
       )}
     </>
   );
