@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { sendAdminNotification } from '@/lib/telegram';
 import { getOrderStatusKeyboard } from '@/lib/telegram/telegramButtons';
 import { addNotification } from './notification-actions';
+import { incrementVoucherUsage } from './voucher-actions';
 
 export async function getCurrentUserProfile() {
   try {
@@ -100,6 +101,7 @@ export async function createOrder(data: {
   shipping_fee?: number;
   shipping_address?: string;
   shipping_address_notes?: string;
+  voucher_id?: string;
 }) {
   try {
     const supabase = await createServerSupabaseClient();
@@ -130,6 +132,14 @@ export async function createOrder(data: {
     if (error) {
       console.error('Supabase error creating order:', error);
       throw new Error(`Gagal menyimpan pesanan: ${error.message}`);
+    }
+
+    if (data.voucher_id) {
+      try {
+        await incrementVoucherUsage(data.voucher_id);
+      } catch (e) {
+        console.warn('Failed to increment voucher usage:', e);
+      }
     }
 
     // Attempt to track sales volume as well

@@ -9,6 +9,7 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outl
 
 import { SiteSettings } from "@/types/cms";
 import { getCurrentUserProfile, createOrder, getUserActiveAddress } from "@/app/actions/order-actions";
+import { validateVoucher } from "@/app/actions/voucher-actions";
 import { useRouter, usePathname } from "next/navigation";
 import CheckoutAnimation from "./CheckoutAnimation";
 import { useTranslation } from "@/context/LanguageContext";
@@ -65,7 +66,7 @@ function QuantityInput({ initialValue, onUpdate }: { initialValue: number, onUpd
 }
 
 export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettings }) {
-  const { cart, updateQuantity, setCartQuantity, totalPrice, totalDonuts, isCartOpen, setIsCartOpen, removeFromCart, clearCart, getEffectiveItemPrice, priceTiers } = useCart();
+  const { cart, updateQuantity, setCartQuantity, totalPrice, totalDonuts, isCartOpen, setIsCartOpen, removeFromCart, clearCart, getEffectiveItemPrice, priceTiers, activeVoucher, applyVoucher } = useCart();
   const { setIsLoading } = useLoading();
   const { showError } = useErrorPopup();
   const { t } = useTranslation();
@@ -79,6 +80,11 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const [isAddressLoading, setIsAddressLoading] = useState(false);
   const [isCheckingOutAddress, setIsCheckingOutAddress] = useState(false);
   const [activeUserId, setActiveUserId] = useState<string | null>(null);
+
+  // Voucher state
+  const [voucherInput, setVoucherInput] = useState("");
+  const [voucherError, setVoucherError] = useState<string | null>(null);
+  const [isVoucherLoading, setIsVoucherLoading] = useState(false);
 
   const shippingFee = (deliveryMethod === 'delivery' && totalDonuts <= 36) ? (siteSettings?.shipping_fee || 0) : 0;
   const finalTotal = totalPrice + shippingFee;
@@ -162,6 +168,32 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
 
   if (!mounted) return null;
 
+  const handleApplyVoucher = async () => {
+    if (!voucherInput.trim()) return;
+    setIsVoucherLoading(true);
+    setVoucherError(null);
+    try {
+      const rawSubtotal = cart.reduce((sum, item) => sum + getEffectiveItemPrice(item) * item.quantity, 0);
+      const res = await validateVoucher(voucherInput.trim(), rawSubtotal);
+      if (res.isValid && res.data) {
+        applyVoucher(res.data);
+        setVoucherInput("");
+      } else {
+        setVoucherError(res.message || "Voucher tidak valid");
+      }
+    } catch (e: unknown) {
+      const err = e as Error;
+      setVoucherError(err.message || "Gagal memvalidasi voucher");
+    } finally {
+      setIsVoucherLoading(false);
+    }
+  };
+
+  const handleRemoveVoucher = () => {
+    applyVoucher(null);
+    setVoucherError(null);
+  };
+
   const handleWhatsAppOrder = async () => {
     setIsLoading(true, t('cart.processing'));
     
@@ -242,7 +274,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           price: getEffectiveItemPrice(item),
           quantity: item.quantity,
           image: item.image
-        }))
+        })),
+        voucher_id: activeVoucher ? activeVoucher.id : undefined
       });
 
       // Update fullAddress for WA message
@@ -290,7 +323,12 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       const rawSubtotal = cart.reduce((sum, item) => sum + getEffectiveItemPrice(item) * item.quantity, 0);
       const promoDiscount = rawSubtotal - totalPrice;
 
-      if (promoDiscount > 0) {
+      if (activeVoucher && promoDiscount > 0) {
+        message += `Voucher Dipakai: ${activeVoucher.code} (${activeVoucher.title})\n`;
+        message += `Subtotal: Rp ${rawSubtotal.toLocaleString("id-ID")}\n`;
+        message += `Diskon Promo: -Rp ${promoDiscount.toLocaleString("id-ID")}\n`;
+        message += `Total Bersih: Rp ${totalPrice.toLocaleString("id-ID")}\n`;
+      } else if (promoDiscount > 0) {
         message += `Subtotal: Rp ${rawSubtotal.toLocaleString("id-ID")}\n`;
         message += `Diskon Promo: -Rp ${promoDiscount.toLocaleString("id-ID")}\n`;
         message += `Total Bersih: Rp ${totalPrice.toLocaleString("id-ID")}\n`;
@@ -575,7 +613,56 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                 </div>
               </div>
 
+              {/* Voucher Input */}
+              <div className="bg-white p-4 rounded-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.05)] space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 border-b border-gray-100 w-full pb-3">
+                    <span className="material-symbols-outlined text-primary text-[20px]">confirmation_number</span>
+                    <h3 className="text-[14px] font-bold text-[#1a1a1a]">Makin hemat pakai promo!</h3>
+                  </div>
+                </div>
 
+                {activeVoucher ? (
+                  <div className="bg-[#eef2ff] border border-primary/20 rounded-xl p-3 flex items-center justify-between animate-fade-in">
+                    <div className="flex flex-col">
+                      <span className="text-[12px] font-bold text-primary uppercase tracking-wider">{activeVoucher.code}</span>
+                      <span className="text-[13px] text-primary">{activeVoucher.title}</span>
+                    </div>
+                    <button 
+                      onClick={handleRemoveVoucher}
+                      className="text-[12px] font-bold text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
+                    >
+                      Hapus
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="text" 
+                        value={voucherInput}
+                        onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
+                        placeholder="Masukkan kode promo"
+                        className="flex-1 bg-[#f5f7fb] border border-gray-100 text-[#1a1a1a] text-[14px] rounded-xl px-4 py-2.5 focus:border-primary focus:ring-1 focus:ring-primary outline-none uppercase placeholder:normal-case placeholder:text-gray-400"
+                        onKeyDown={(e) => e.key === 'Enter' && handleApplyVoucher()}
+                      />
+                      <button 
+                        onClick={handleApplyVoucher}
+                        disabled={!voucherInput.trim() || isVoucherLoading}
+                        className="bg-[#1a1a1a] text-white px-4 py-2.5 rounded-xl text-[14px] font-bold hover:bg-black transition-colors disabled:opacity-50 min-w-[90px]"
+                      >
+                        {isVoucherLoading ? 'Cek...' : 'Terapkan'}
+                      </button>
+                    </div>
+                    {voucherError && (
+                      <p className="text-[12px] text-red-500 font-medium px-1 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">error</span>
+                        {voucherError}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div className="h-6" />
             </div>

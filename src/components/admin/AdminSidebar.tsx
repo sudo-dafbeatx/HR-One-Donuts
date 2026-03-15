@@ -15,7 +15,8 @@ import {
   UserGroupIcon,
   ChatBubbleLeftRightIcon,
   Cog8ToothIcon,
-  ShoppingBagIcon
+  ShoppingBagIcon,
+  TagIcon
 } from '@heroicons/react/24/outline';
 
 const navGroups = [
@@ -25,6 +26,7 @@ const navGroups = [
       { name: 'Dashboard', href: '/admin', icon: HomeIcon },
       { name: 'Status Pesanan', href: '/admin/orders-status', icon: ShoppingBagIcon },
       { name: 'Menu Produk', href: '/admin/products', icon: ArchiveBoxIcon },
+      { name: 'Voucher', href: '/admin/vouchers', icon: TagIcon },
       { name: 'Manajemen Pengguna', href: '/admin/users', icon: UserGroupIcon },
     ]
   },

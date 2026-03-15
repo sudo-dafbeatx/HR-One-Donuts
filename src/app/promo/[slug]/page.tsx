@@ -15,7 +15,7 @@ import ShareButton from '@/components/ui/ShareButton';
 export default function PromoDetailPage() {
   const { slug } = useParams();
   const router = useRouter();
-  const { claimPromo } = useCart();
+  const { applyVoucher } = useCart();
   const [event, setEvent] = useState<PromoEvent | null>(null);
   const [loading, setLoading] = useState(true);
   const [, setTick] = useState(0);
@@ -226,7 +226,23 @@ export default function PromoDetailPage() {
                <button 
                  onClick={() => {
                    if (timing.isActive) {
-                     claimPromo(event.discount_percent);
+                     applyVoucher({
+                        id: event.id,
+                        code: event.event_slug.toUpperCase(),
+                        title: event.headline,
+                        description: event.description || '',
+                        discount_type: 'percentage',
+                        discount_value: event.discount_percent,
+                        min_purchase: 0,
+                        max_discount: null,
+                        usage_limit: null,
+                        used_count: 0,
+                        start_date: null,
+                        end_date: null,
+                        status: true,
+                        created_at: event.created_at || new Date().toISOString(),
+                        updated_at: event.updated_at || new Date().toISOString()
+                     } as any);
                      showCartToast(`🎁 Promo Berhasil Diklaim! Diskon ${event.discount_percent}% otomatis aktif.`);
                      router.push('/catalog?filter=promo');
                    }

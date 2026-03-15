@@ -13,7 +13,8 @@ import {
   PaintBrushIcon, 
   SparklesIcon,
   ArrowTopRightOnSquareIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  TagIcon
 } from '@heroicons/react/24/outline';
 
 const navGroups = [
@@ -22,6 +23,7 @@ const navGroups = [
     items: [
       { name: 'Dashboard', href: '/admin', icon: HomeIcon },
       { name: 'Menu Produk', href: '/admin/products', icon: ArchiveBoxIcon },
+      { name: 'Voucher', href: '/admin/vouchers', icon: TagIcon },
     ]
   },
   {

@@ -47,6 +47,25 @@ CREATE TABLE IF NOT EXISTS profiles (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Vouchers table
+CREATE TABLE IF NOT EXISTS vouchers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code TEXT UNIQUE NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  discount_type TEXT NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
+  discount_value INTEGER NOT NULL,
+  min_purchase INTEGER DEFAULT 0,
+  max_discount INTEGER,
+  usage_limit INTEGER,
+  used_count INTEGER DEFAULT 0,
+  start_date TIMESTAMPTZ,
+  end_date TIMESTAMPTZ,
+  status BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- 2. CREATE INDEXES
 -- =====================================================
 
@@ -62,6 +81,7 @@ ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE visitors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE vouchers ENABLE ROW LEVEL SECURITY;
 
 -- 4. CREATE RLS POLICIES
 -- =====================================================
@@ -111,6 +131,23 @@ CREATE POLICY "Admins can read visitors"
 DROP POLICY IF EXISTS "Admins can view profiles" ON profiles;
 CREATE POLICY "Admins can view profiles"
   ON profiles FOR SELECT
+  USING (auth.role() = 'authenticated');
+
+-- Vouchers: Public can read active vouchers
+DROP POLICY IF EXISTS "Public can read active vouchers" ON vouchers;
+CREATE POLICY "Public can read active vouchers"
+  ON vouchers FOR SELECT
+  USING (
+    status = true 
+    AND (start_date IS NULL OR start_date <= NOW())
+    AND (end_date IS NULL OR end_date >= NOW())
+    AND (usage_limit IS NULL OR used_count < usage_limit)
+  );
+
+-- Vouchers: Admins can manage vouchers
+DROP POLICY IF EXISTS "Admins can manage vouchers" ON vouchers;
+CREATE POLICY "Admins can manage vouchers"
+  ON vouchers FOR ALL
   USING (auth.role() = 'authenticated');
 
 -- 5. CREATE VIEWS FOR ANALYTICS

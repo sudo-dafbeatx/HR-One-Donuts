@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import type { Voucher } from "@/app/actions/voucher-actions";
 
 export interface CartItem {
   id: string;
@@ -24,8 +25,8 @@ interface CartContextType {
   clearCart: () => void;
   getEffectiveItemPrice: (item: CartItem) => number;
   priceTiers: { min: number; max?: number; price: number }[];
-  claimedPromoDiscount: number | null;
-  claimPromo: (discountPercent: number) => void;
+  activeVoucher: Voucher | null;
+  applyVoucher: (voucher: Voucher | null) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -33,19 +34,19 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [claimedPromoDiscount, setClaimedPromoDiscount] = useState<number | null>(null);
+  const [activeVoucher, setActiveVoucher] = useState<Voucher | null>(null);
 
   // Load cart and promo from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem("donut-cart");
-    const savedPromo = localStorage.getItem("donut-promo");
+    const savedPromo = localStorage.getItem("donut-active-voucher");
     
     if (savedCart) {
       try {
         const timer = setTimeout(() => {
           setCart(JSON.parse(savedCart));
           if (savedPromo) {
-             setClaimedPromoDiscount(Number(savedPromo));
+             setActiveVoucher(JSON.parse(savedPromo));
           }
         }, 0);
         return () => clearTimeout(timer);
@@ -59,16 +60,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("donut-cart", JSON.stringify(cart));
-      if (claimedPromoDiscount !== null) {
-        localStorage.setItem("donut-promo", claimedPromoDiscount.toString());
+      if (activeVoucher !== null) {
+        localStorage.setItem("donut-active-voucher", JSON.stringify(activeVoucher));
       } else {
-        localStorage.removeItem("donut-promo");
+        localStorage.removeItem("donut-active-voucher");
       }
     }
-  }, [cart, claimedPromoDiscount]);
+  }, [cart, activeVoucher]);
 
-  const claimPromo = (discountPercent: number) => {
-    setClaimedPromoDiscount(discountPercent);
+  const applyVoucher = (voucher: Voucher | null) => {
+    setActiveVoucher(voucher);
   };
 
   const addToCart = (item: Omit<CartItem, "quantity">, quantity: number) => {
@@ -145,20 +146,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return sum + getEffectiveItemPrice(item) * item.quantity;
     }, 0);
 
-    // Dynamic Promo Logic: 
-    // Apply claimedPromoDiscount exclusively to "Box" items (units > 1).
-    if (claimedPromoDiscount !== null && claimedPromoDiscount > 0) {
-      const discountPercentage = claimedPromoDiscount / 100;
-      let totalDiscount = 0;
+    // Dynamic Promo Logic with activeVoucher
+    if (activeVoucher) {
+      // Check min purchase
+      if (baseTotal < activeVoucher.min_purchase) {
+        return baseTotal; // fallback if somehow cart drops below min
+      }
 
-      cart.forEach(item => {
-        const units = getItemUnits(item.name);
-        if (units > 1) { // It's a Box
-           const itemEffectivePrice = getEffectiveItemPrice(item);
-           const itemDiscount = itemEffectivePrice * discountPercentage;
-           totalDiscount += (itemDiscount * item.quantity);
-        }
-      });
+      let totalDiscount = 0;
+      
+      if (activeVoucher.discount_type === 'percentage') {
+        totalDiscount = baseTotal * (activeVoucher.discount_value / 100);
+      } else if (activeVoucher.discount_type === 'fixed') {
+        totalDiscount = activeVoucher.discount_value;
+      }
+
+      // Check max discount
+      if (activeVoucher.max_discount && totalDiscount > activeVoucher.max_discount) {
+        totalDiscount = activeVoucher.max_discount;
+      }
 
       return Math.max(0, baseTotal - Math.round(totalDiscount));
     }
@@ -182,8 +188,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart,
         getEffectiveItemPrice,
         priceTiers,
-        claimedPromoDiscount,
-        claimPromo,
+        activeVoucher,
+        applyVoucher,
       }}
     >
       {children}
