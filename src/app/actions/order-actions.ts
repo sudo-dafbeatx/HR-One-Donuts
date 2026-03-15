@@ -104,6 +104,7 @@ export async function createOrder(data: {
   voucher_id?: string;
   voucher_code?: string;
   voucher_discount?: number;
+  device_id?: string;
 }) {
   try {
     const supabase = await createServerSupabaseClient();
@@ -144,6 +145,7 @@ export async function createOrder(data: {
           voucherCode: data.voucher_code || '',
           discountValue: data.voucher_discount || 0,
           orderId: order?.id,
+          deviceId: data.device_id,
         });
       } catch (e) {
         console.warn('Failed to track voucher usage:', e);

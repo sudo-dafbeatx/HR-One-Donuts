@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS user_voucher_usage (
   voucher_code TEXT NOT NULL,
   discount_value INTEGER NOT NULL DEFAULT 0,
   order_id UUID REFERENCES orders(id) ON DELETE SET NULL,
+  device_id TEXT,
+  ip_address TEXT,
   used_at TIMESTAMPTZ DEFAULT NOW()
 );
 

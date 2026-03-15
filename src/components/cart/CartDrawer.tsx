@@ -10,6 +10,7 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outl
 import { SiteSettings } from "@/types/cms";
 import { getCurrentUserProfile, createOrder, getUserActiveAddress } from "@/app/actions/order-actions";
 import { validateVoucher } from "@/app/actions/voucher-actions";
+import { getDeviceId } from "@/lib/device-fingerprint";
 import { useRouter, usePathname } from "next/navigation";
 import CheckoutAnimation from "./CheckoutAnimation";
 import { useTranslation } from "@/context/LanguageContext";
@@ -174,7 +175,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     setVoucherError(null);
     try {
       const rawSubtotal = cart.reduce((sum, item) => sum + getEffectiveItemPrice(item) * item.quantity, 0);
-      const res = await validateVoucher(voucherInput.trim(), rawSubtotal);
+      const deviceId = getDeviceId();
+      const res = await validateVoucher(voucherInput.trim(), rawSubtotal, deviceId);
       if (res.isValid && res.data) {
         applyVoucher(res.data);
         setVoucherInput("");
@@ -280,7 +282,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         voucher_discount: activeVoucher ? (() => {
           const rawSub = cart.reduce((s, i) => s + getEffectiveItemPrice(i) * i.quantity, 0);
           return rawSub - totalPrice;
-        })() : undefined
+        })() : undefined,
+        device_id: getDeviceId()
       });
 
       // Update fullAddress for WA message

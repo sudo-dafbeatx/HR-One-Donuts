@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { headers } from 'next/headers';
 
 export interface Voucher {
   id: string;
@@ -28,6 +29,8 @@ export interface VoucherUsage {
   voucher_code: string;
   discount_value: number;
   order_id: string | null;
+  device_id: string | null;
+  ip_address: string | null;
   used_at: string;
 }
 
@@ -169,11 +172,10 @@ export async function toggleVoucherStatus(id: string, currentStatus: boolean) {
   return await updateVoucher(id, { status: !currentStatus });
 }
 
-export async function validateVoucher(code: string, cartTotal: number) {
+export async function validateVoucher(code: string, cartTotal: number, deviceId?: string) {
   try {
     const supabase = await createServerSupabaseClient();
     
-    // code must be uppercase
     const upperCode = code.toUpperCase();
     
     const { data: voucher, error } = await supabase
@@ -186,12 +188,10 @@ export async function validateVoucher(code: string, cartTotal: number) {
       return { isValid: false, message: 'Kode voucher tidak ditemukan' };
     }
 
-    // 1. Check if active
     if (!voucher.status) {
       return { isValid: false, message: 'Voucher sedang tidak aktif' };
     }
 
-    // 2. Check date limits
     const now = new Date();
     if (voucher.start_date && new Date(voucher.start_date) > now) {
       return { isValid: false, message: 'Voucher belum berlaku' };
@@ -200,17 +200,64 @@ export async function validateVoucher(code: string, cartTotal: number) {
       return { isValid: false, message: 'Voucher sudah kadaluwarsa' };
     }
 
-    // 3. Check usage limit
     if (voucher.usage_limit !== null && voucher.used_count >= voucher.usage_limit) {
       return { isValid: false, message: 'Kuota penggunaan voucher sudah habis' };
     }
 
-    // 4. Check min purchase
     if (cartTotal < voucher.min_purchase) {
       return { 
         isValid: false, 
         message: `Minimum belanja Rp ${voucher.min_purchase.toLocaleString('id-ID')} tidak terpenuhi` 
       };
+    }
+
+    // Anti-abuse checks
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      // 1. Check if user already used this voucher
+      const { data: userUsage } = await supabase
+        .from('user_voucher_usage')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('voucher_code', upperCode)
+        .limit(1);
+
+      if (userUsage && userUsage.length > 0) {
+        return { isValid: false, message: 'Anda sudah pernah menggunakan voucher ini' };
+      }
+    }
+
+    // 2. Check if device already used this voucher
+    if (deviceId) {
+      const { data: deviceUsage } = await supabase
+        .from('user_voucher_usage')
+        .select('id')
+        .eq('device_id', deviceId)
+        .eq('voucher_code', upperCode)
+        .limit(1);
+
+      if (deviceUsage && deviceUsage.length > 0) {
+        return { isValid: false, message: 'Perangkat ini sudah pernah menggunakan voucher ini' };
+      }
+    }
+
+    // 3. Check IP usage limit (max 3 per voucher per IP)
+    const headerStore = await headers();
+    const ipAddress = headerStore.get('x-forwarded-for')?.split(',')[0]?.trim() 
+      || headerStore.get('x-real-ip') 
+      || 'unknown';
+
+    if (ipAddress !== 'unknown') {
+      const { data: ipUsage } = await supabase
+        .from('user_voucher_usage')
+        .select('id')
+        .eq('ip_address', ipAddress)
+        .eq('voucher_code', upperCode);
+
+      if (ipUsage && ipUsage.length >= 3) {
+        return { isValid: false, message: 'Batas penggunaan voucher dari jaringan Anda sudah tercapai' };
+      }
     }
 
     return { isValid: true, data: voucher as Voucher };
@@ -279,11 +326,17 @@ export async function recordVoucherUsage(params: {
   voucherCode: string;
   discountValue: number;
   orderId?: string;
+  deviceId?: string;
 }) {
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return false;
+
+    const headerStore = await headers();
+    const ipAddress = headerStore.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || headerStore.get('x-real-ip')
+      || 'unknown';
 
     const { error } = await supabase
       .from('user_voucher_usage')
@@ -293,6 +346,8 @@ export async function recordVoucherUsage(params: {
         voucher_code: params.voucherCode.toUpperCase(),
         discount_value: params.discountValue,
         order_id: params.orderId || null,
+        device_id: params.deviceId || null,
+        ip_address: ipAddress,
       });
 
     if (error) {

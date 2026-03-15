@@ -148,7 +148,7 @@ export default function UserVouchersPage() {
                 className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden"
               >
                 {/* Voucher Header */}
-                <div className="bg-gradient-to-r from-primary to-blue-500 p-5 relative overflow-hidden">
+                <div className="bg-linear-to-r from-primary to-blue-500 p-5 relative overflow-hidden">
                   <div className="absolute -right-4 -top-4 w-20 h-20 bg-white/10 rounded-full blur-xl" />
                   <div className="relative z-10 flex items-center gap-4">
                     <div className="size-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shrink-0">
@@ -291,7 +291,7 @@ export default function UserVouchersPage() {
 
       {/* Share Modal */}
       {showShareModal && (
-        <div className="fixed inset-0 z-[110] flex items-end justify-center p-4 pb-[calc(68px+env(safe-area-inset-bottom)+1rem)]">
+        <div className="fixed inset-0 z-110 flex items-end justify-center p-4 pb-[calc(68px+env(safe-area-inset-bottom)+1rem)]">
           <div
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"
             onClick={() => setShowShareModal(null)}
