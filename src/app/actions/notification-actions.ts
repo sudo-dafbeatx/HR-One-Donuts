@@ -3,7 +3,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export type NotificationType = 'login' | 'order' | 'review' | 'event' | 'points';
+export type NotificationType = 'login' | 'order' | 'review' | 'event' | 'points' | 'system';
 
 export async function addNotification(params: {
   userId: string;
@@ -30,9 +30,10 @@ export async function addNotification(params: {
 
     revalidatePath('/profile/notifications');
     return { success: true };
-  } catch (err) {
+  } catch (error: unknown) {
+    const err = error as Error;
     console.error('[NotificationActions] Unexpected error:', err);
-    return { success: false, error: 'Internal server error' };
+    return { success: false, error: err.message || 'Internal server error' };
   }
 }
 

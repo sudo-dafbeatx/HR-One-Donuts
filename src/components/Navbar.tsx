@@ -18,6 +18,7 @@ import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 import NotificationBell from "@/components/NotificationBell";
 import { playNotificationSound } from "@/lib/audio-utils";
 import AudioPermissionToast from "@/components/ui/AudioPermissionToast";
+import VerifiedBadge from "@/components/ui/VerifiedBadge";
 
 interface NavbarProps {
   siteSettings?: SiteSettings;
@@ -36,6 +37,7 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
       district_name: string | null;
       city_name: string | null;
       privacy_location: boolean;
+      is_verified?: boolean;
     } | null;
   } | null>(null);
   
@@ -158,6 +160,12 @@ export default function Navbar({ siteSettings, hideLogo }: NavbarProps) {
                   <Image src={userData.profile.avatar_url} alt="Avatar" fill className="object-cover" />
                 ) : (
                   <UserCircleIcon className="size-6 text-slate-400" />
+                )}
+                {userData?.profile?.is_verified && (
+                  <VerifiedBadge 
+                    size="sm" 
+                    className="absolute -bottom-1 -right-1 border-2 border-white scale-75" 
+                  />
                 )}
               </div>
             </Link>

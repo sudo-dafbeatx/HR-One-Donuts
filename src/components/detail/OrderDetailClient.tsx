@@ -14,6 +14,7 @@ import { getOrderStatus } from '@/lib/order-status';
 import OrderReviewModal from '@/components/detail/OrderReviewModal';
 import OrderCompleteButton from '@/components/detail/OrderCompleteButton';
 import { useTranslation } from '@/context/LanguageContext';
+import VerifiedBadge from '@/components/ui/VerifiedBadge';
 
 interface OrderItem {
   product_id: string;
@@ -104,8 +105,9 @@ export default function OrderDetailClient({
               {t(`orders.status.${order.status}`)}
             </span>
           </div>
-          <p className="text-xl font-black text-slate-800 mb-2 font-mono">
+          <p className="text-xl font-black text-slate-800 mb-2 font-mono flex items-center gap-2">
             #{order.id.split('-')[0].toUpperCase()}
+            <VerifiedBadge size="sm" />
           </p>
           <div className="flex items-center gap-1.5 text-sm font-medium text-slate-500">
              <CalendarDaysIcon className="size-4" />

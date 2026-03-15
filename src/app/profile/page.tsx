@@ -31,6 +31,9 @@ import Pattern from "@/components/Pattern";
 import { useTranslation } from '@/context/LanguageContext';
 import { useErrorPopup } from '@/context/ErrorPopupContext';
 import OrderCompleteButton from '@/components/detail/OrderCompleteButton';
+import ProfileCompletionBar from '@/components/account/ProfileCompletionBar';
+import ClaimVerificationButton from '@/components/account/ClaimVerificationButton';
+import VerifiedBadge from '@/components/ui/VerifiedBadge';
 
 interface Profile {
   id: string;
@@ -107,6 +110,7 @@ export default function ProfilePage() {
   const [editInstagram, setEditInstagram] = useState('');
   const [editTiktok, setEditTiktok] = useState('');
   const [showProfileDetail, setShowProfileDetail] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   const { setIsLoading } = useLoading();
   const { t } = useTranslation();
@@ -114,6 +118,10 @@ export default function ProfilePage() {
   const router = useRouter();
   const supabase = createClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const predefinedAvatars = [
     { id: '1', name: 'Classic Pink', url: '/avatars/classic.png' },
@@ -204,6 +212,22 @@ export default function ProfilePage() {
       cleanupPromise.then(cleanup => cleanup && cleanup());
     };
   }, [supabase, router]);
+
+  if (!mounted) return null;
+
+  // Calculate profile completion percentage (5 fields @ 20% each)
+  const calculateCompletion = () => {
+    if (!profile) return 0;
+    let score = 0;
+    if (profile.full_name?.trim()) score += 20;
+    if (profile.phone?.trim()) score += 20;
+    if (profile.email?.trim()) score += 20;
+    if (profile.address_detail?.trim() || profile.address?.trim()) score += 20;
+    if (profile.avatar_url?.trim()) score += 20;
+    return score;
+  };
+
+  const completionPercent = calculateCompletion();
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -392,14 +416,7 @@ export default function ProfilePage() {
                   <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-1 drop-shadow-sm truncate flex flex-wrap items-center gap-2">
                     <span className="truncate">{profile?.full_name || t('profile.default_name')}</span>
                     {profile?.is_verified && (
-                      <div className="hidden md:flex items-center justify-center bg-blue-500 rounded-full p-1 shadow-md shrink-0 mb-1 z-10" title={t('profile.verified')}>
-                        <CheckBadgeIcon className="size-5 md:size-6 text-white" />
-                      </div>
-                    )}
-                    {profile?.full_name && profile?.username && profile?.address_detail && (
-                      <div className="md:hidden flex items-center justify-center rounded-full shadow-md shrink-0 mb-1 z-10" title={t('profile.complete_data')}>
-                        <CheckBadgeIcon className="size-6 text-white" />
-                      </div>
+                      <VerifiedBadge size="lg" />
                     )}
                   </h1>
                   <p className="text-blue-50/80 font-medium mb-1 opacity-90 text-sm md:text-base truncate">{profile?.email}</p>
@@ -651,7 +668,18 @@ export default function ProfilePage() {
               
               {/* Main Content Info */}
               <div className="lg:col-span-8 space-y-6">
-                              {/* Mobile Navigation List / Edit Form */}
+                {!profile?.is_verified && (
+                  <div className="space-y-4">
+                    <ProfileCompletionBar completion={completionPercent} />
+                    {completionPercent === 100 && (
+                      <ClaimVerificationButton 
+                        onSuccess={() => setProfile(prev => prev ? { ...prev, is_verified: true } : null)} 
+                      />
+                    )}
+                  </div>
+                )}
+
+                {/* Mobile Navigation List / Edit Form */}
                 <div className="md:hidden space-y-6">
                   {isEditing ? (
                     <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
