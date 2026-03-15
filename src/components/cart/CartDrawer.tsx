@@ -9,7 +9,7 @@ import { XMarkIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outl
 
 import { SiteSettings } from "@/types/cms";
 import { getCurrentUserProfile, createOrder, getUserActiveAddress } from "@/app/actions/order-actions";
-import { validateVoucher } from "@/app/actions/voucher-actions";
+import { validateVoucher, getPublicVouchers, Voucher } from "@/app/actions/voucher-actions";
 import { getDeviceId } from "@/lib/device-fingerprint";
 import { useRouter, usePathname } from "next/navigation";
 import CheckoutAnimation from "./CheckoutAnimation";
@@ -18,6 +18,8 @@ import CartAddressForm from "./CartAddressForm";
 import OrderSummary from "../checkout/OrderSummary";
 import VoucherAppliedBanner from "../checkout/VoucherAppliedBanner";
 import VoucherDetailModal from "../voucher/VoucherDetailModal";
+import PromoSection from "../checkout/PromoSection";
+import VoucherListModal from "../voucher/VoucherListModal";
 import { generateWhatsAppMessage } from "@/utils/generateWhatsAppMessage";
 
 interface CartProfile {
@@ -91,6 +93,8 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
   const [voucherError, setVoucherError] = useState<string | null>(null);
   const [isVoucherLoading, setIsVoucherLoading] = useState(false);
   const [showVoucherDetail, setShowVoucherDetail] = useState(false);
+  const [publicVouchers, setPublicVouchers] = useState<Voucher[]>([]);
+  const [isVoucherListOpen, setIsVoucherListOpen] = useState(false);
 
   const shippingFee = (deliveryMethod === 'delivery' && totalDonuts <= 36) ? (siteSettings?.shipping_fee || 0) : 0;
   const finalTotal = totalPrice + shippingFee;
@@ -102,6 +106,17 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
     const timer = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(timer);
   }, []);
+
+  // Fetch Public Vouchers
+  useEffect(() => {
+    async function loadVouchers() {
+      if (isCartOpen) {
+        const vouchers = await getPublicVouchers();
+        setPublicVouchers(vouchers || []);
+      }
+    }
+    loadVouchers();
+  }, [isCartOpen]);
 
   // Load Address effect
   useEffect(() => {
@@ -171,6 +186,28 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
       }
     };
   }, [isCartOpen, setIsCartOpen, mounted]);
+
+  const handleApplyVoucherFromList = async (voucher: Voucher) => {
+    setIsVoucherLoading(true);
+    setVoucherError(null);
+    try {
+      const deviceId = getDeviceId();
+      const rawSubtotal = cart.reduce((sum, item) => sum + getEffectiveItemPrice(item) * item.quantity, 0);
+      const result = await validateVoucher(voucher.code, rawSubtotal, deviceId);
+      if (result.isValid && result.data) {
+        applyVoucher(result.data);
+        setVoucherInput("");
+        setIsVoucherListOpen(false);
+      } else {
+        setVoucherError(result.message || "Gagal memasukkan voucher");
+      }
+    } catch (e: unknown) {
+      const err = e as Error;
+      setVoucherError(err.message || "Terjadi kesalahan");
+    } finally {
+      setIsVoucherLoading(false);
+    }
+  };
 
   if (!mounted) return null;
 
@@ -590,31 +627,15 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
                     onRemove={handleRemoveVoucher}
                   />
                 ) : (
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <input 
-                        type="text" 
-                        value={voucherInput}
-                        onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
-                        placeholder="Masukkan kode promo"
-                        className="flex-1 bg-[#f5f7fb] border border-gray-100 text-[#1a1a1a] text-[14px] rounded-xl px-4 py-2.5 focus:border-primary focus:ring-1 focus:ring-primary outline-none uppercase placeholder:normal-case placeholder:text-gray-400"
-                        onKeyDown={(e) => e.key === 'Enter' && handleApplyVoucher()}
-                      />
-                      <button 
-                        onClick={handleApplyVoucher}
-                        disabled={!voucherInput.trim() || isVoucherLoading}
-                        className="bg-[#1a1a1a] text-white px-4 py-2.5 rounded-xl text-[14px] font-bold hover:bg-black transition-colors disabled:opacity-50 min-w-[90px]"
-                      >
-                        {isVoucherLoading ? 'Cek...' : 'Terapkan'}
-                      </button>
-                    </div>
-                    {voucherError && (
-                      <p className="text-[12px] text-red-500 font-medium px-1 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">error</span>
-                        {voucherError}
-                      </p>
-                    )}
-                  </div>
+                  <PromoSection
+                    voucherInput={voucherInput}
+                    setVoucherInput={setVoucherInput}
+                    onApplyCode={handleApplyVoucher}
+                    isVoucherLoading={isVoucherLoading}
+                    voucherError={voucherError}
+                    publicVouchers={publicVouchers}
+                    onOpenVoucherList={() => setIsVoucherListOpen(true)}
+                  />
                 )}
               </div>
 
@@ -704,6 +725,16 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
         <VoucherDetailModal
           voucher={activeVoucher}
           onClose={() => setShowVoucherDetail(false)}
+        />
+      )}
+
+      {/* Voucher List Modal */}
+      {isVoucherListOpen && (
+        <VoucherListModal
+          vouchers={publicVouchers}
+          subtotal={cart.reduce((s, i) => s + getEffectiveItemPrice(i) * i.quantity, 0)}
+          onClose={() => setIsVoucherListOpen(false)}
+          onApplyVoucher={handleApplyVoucherFromList}
         />
       )}
     </>
