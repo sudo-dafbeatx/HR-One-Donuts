@@ -32,6 +32,7 @@ import { useTranslation } from '@/context/LanguageContext';
 import { useErrorPopup } from '@/context/ErrorPopupContext';
 import OrderCompleteButton from '@/components/detail/OrderCompleteButton';
 import ProfileCompletionBar from '@/components/account/ProfileCompletionBar';
+import { MissingField } from '@/components/account/ProfileMissingFields';
 import ClaimVerificationButton from '@/components/account/ClaimVerificationButton';
 import VerifiedBadge from '@/components/ui/VerifiedBadge';
 
@@ -217,17 +218,49 @@ export default function ProfilePage() {
 
   // Calculate profile completion percentage (5 fields @ 20% each)
   const calculateCompletion = () => {
-    if (!profile) return 0;
+    if (!profile) return { score: 0, missing: [] };
     let score = 0;
-    if (profile.full_name?.trim()) score += 20;
-    if (profile.phone?.trim()) score += 20;
-    if (profile.email?.trim()) score += 20;
-    if (profile.address_detail?.trim() || profile.address?.trim()) score += 20;
-    if (profile.avatar_url?.trim()) score += 20;
-    return score;
+    const missing: MissingField[] = [];
+
+    // Full Name
+    if (profile.full_name?.trim()) {
+      score += 20;
+    } else {
+      missing.push({ label: 'Nama Lengkap', field: 'full_name' });
+    }
+
+    // Phone
+    if (profile.phone?.trim()) {
+      score += 20;
+    } else {
+      missing.push({ label: 'Nomor Telepon', field: 'phone' });
+    }
+
+    // Email
+    if (profile.email?.trim()) {
+      score += 20;
+    } else {
+      missing.push({ label: 'Alamat Email', field: 'email' });
+    }
+
+    // Address
+    if (profile.address_detail?.trim() || profile.address?.trim()) {
+      score += 20;
+    } else {
+      missing.push({ label: 'Alamat Pengiriman', field: 'address' });
+    }
+
+    // Profile Photo
+    if (profile.avatar_url?.trim()) {
+      score += 20;
+    } else {
+      missing.push({ label: 'Foto Profil', field: 'avatar_url' });
+    }
+
+    return { score, missing };
   };
 
-  const completionPercent = calculateCompletion();
+  const { score: completionPercent, missing: missingFields } = calculateCompletion();
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -670,7 +703,10 @@ export default function ProfilePage() {
               <div className="lg:col-span-8 space-y-6">
                 {!profile?.is_verified && (
                   <div className="space-y-4">
-                    <ProfileCompletionBar completion={completionPercent} />
+                    <ProfileCompletionBar 
+                      completion={completionPercent} 
+                      missingFields={missingFields}
+                    />
                     {completionPercent === 100 && (
                       <ClaimVerificationButton 
                         onSuccess={() => setProfile(prev => prev ? { ...prev, is_verified: true } : null)} 
