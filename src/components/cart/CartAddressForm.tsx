@@ -111,7 +111,7 @@ export default function CartAddressForm({ onCancel, onSuccess, userId }: CartAdd
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[12px] font-medium text-gray-500">Alamat Lengkap (Jalan, No. Rumah) <span className="text-red-500">*</span></label>
+              <label className="text-[12px] font-medium text-gray-500">Alamat Pengiriman (Jalan, No. Rumah) <span className="text-red-500">*</span></label>
               <textarea value={formData.street_name} onChange={e => setFormData({...formData, street_name: e.target.value})} required rows={2} className="w-full border border-gray-200 p-3 rounded-[12px] text-[14px] outline-none focus:border-primary resize-none"></textarea>
             </div>
             <div className="space-y-2">

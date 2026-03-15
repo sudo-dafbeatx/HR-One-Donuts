@@ -385,7 +385,7 @@ export default function ProfileForm({ userId, initialData }: ProfileFormProps) {
         />
 
         <div>
-          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Alamat Lengkap (Opsional)</label>
+          <label className="block text-[11px] md:text-sm font-bold text-slate-500 mb-1.5 ml-1 uppercase tracking-wider">Alamat Pengiriman (Opsional)</label>
           <textarea
             value={formData.addressDetail}
             onChange={(e) => setFormData({ ...formData, addressDetail: e.target.value })}

@@ -327,7 +327,7 @@ export default function EditProfilePage() {
 
         {/* Address */}
         <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-5">
-          <SectionHeader icon="home" title="Alamat Domisili" />
+          <SectionHeader icon="home" title="Alamat Pengiriman" />
           
           <FormField label="Detail Alamat" icon="edit_location_alt">
             <textarea 

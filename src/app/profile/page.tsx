@@ -634,8 +634,8 @@ export default function ProfilePage() {
                     <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Alamat & Lokasi</h4>
                     <div className="bg-slate-50 rounded-3xl p-5 space-y-4">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[9px] font-bold text-slate-400 uppercase">Detail Alamat</span>
-                        <span className="text-sm font-bold text-slate-700 leading-snug">{profile.address_detail || '-'}</span>
+                        <span className="text-[9px] font-bold text-slate-400 uppercase">Alamat Pengiriman</span>
+                        <span className="text-sm font-bold text-slate-700 leading-relaxed italic">{profile.address_detail || profile.address || '-'}</span>
                       </div>
                       <div className="flex flex-col gap-1 pt-2 border-t border-slate-100">
                         <span className="text-[9px] font-bold text-slate-400 uppercase">Wilayah</span>
