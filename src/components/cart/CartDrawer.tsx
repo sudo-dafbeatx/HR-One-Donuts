@@ -275,7 +275,12 @@ export default function CartDrawer({ siteSettings }: { siteSettings?: SiteSettin
           quantity: item.quantity,
           image: item.image
         })),
-        voucher_id: activeVoucher ? activeVoucher.id : undefined
+        voucher_id: activeVoucher ? activeVoucher.id : undefined,
+        voucher_code: activeVoucher ? activeVoucher.code : undefined,
+        voucher_discount: activeVoucher ? (() => {
+          const rawSub = cart.reduce((s, i) => s + getEffectiveItemPrice(i) * i.quantity, 0);
+          return rawSub - totalPrice;
+        })() : undefined
       });
 
       // Update fullAddress for WA message

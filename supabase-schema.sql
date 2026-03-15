@@ -150,6 +150,22 @@ CREATE POLICY "Admins can manage vouchers"
   ON vouchers FOR ALL
   USING (auth.role() = 'authenticated');
 
+-- User Voucher Usage: Users can read own usage history
+DROP POLICY IF EXISTS "Users can read own voucher usage" ON user_voucher_usage;
+CREATE POLICY "Users can read own voucher usage"
+  ON user_voucher_usage FOR SELECT
+  USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can insert own voucher usage" ON user_voucher_usage;
+CREATE POLICY "Users can insert own voucher usage"
+  ON user_voucher_usage FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Admins can manage voucher usage" ON user_voucher_usage;
+CREATE POLICY "Admins can manage voucher usage"
+  ON user_voucher_usage FOR ALL
+  USING (auth.role() = 'authenticated');
+
 -- 5. CREATE VIEWS FOR ANALYTICS
 -- =====================================================
 

@@ -18,6 +18,17 @@ export interface Voucher {
   end_date: string | null;
   status: boolean;
   created_at: string;
+  updated_at: string;
+}
+
+export interface VoucherUsage {
+  id: string;
+  user_id: string;
+  voucher_id: string | null;
+  voucher_code: string;
+  discount_value: number;
+  order_id: string | null;
+  used_at: string;
 }
 
 export async function getPublicVouchers() {
@@ -235,6 +246,63 @@ export async function incrementVoucherUsage(code: string) {
     return true;
   } catch (error) {
     console.warn('Failed to increment voucher usage:', error);
+    return false;
+  }
+}
+
+export async function getUserVoucherUsage(): Promise<VoucherUsage[]> {
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    const { data, error } = await supabase
+      .from('user_voucher_usage')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('used_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching user voucher usage:', error);
+      return [];
+    }
+
+    return (data || []) as VoucherUsage[];
+  } catch (error) {
+    console.error('Server error getUserVoucherUsage:', error);
+    return [];
+  }
+}
+
+export async function recordVoucherUsage(params: {
+  voucherId: string;
+  voucherCode: string;
+  discountValue: number;
+  orderId?: string;
+}) {
+  try {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
+
+    const { error } = await supabase
+      .from('user_voucher_usage')
+      .insert({
+        user_id: user.id,
+        voucher_id: params.voucherId,
+        voucher_code: params.voucherCode.toUpperCase(),
+        discount_value: params.discountValue,
+        order_id: params.orderId || null,
+      });
+
+    if (error) {
+      console.error('Error recording voucher usage:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.warn('Failed to record voucher usage:', error);
     return false;
   }
 }

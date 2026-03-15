@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { sendAdminNotification } from '@/lib/telegram';
 import { getOrderStatusKeyboard } from '@/lib/telegram/telegramButtons';
 import { addNotification } from './notification-actions';
-import { incrementVoucherUsage } from './voucher-actions';
+import { incrementVoucherUsage, recordVoucherUsage } from './voucher-actions';
 
 export async function getCurrentUserProfile() {
   try {
@@ -102,6 +102,8 @@ export async function createOrder(data: {
   shipping_address?: string;
   shipping_address_notes?: string;
   voucher_id?: string;
+  voucher_code?: string;
+  voucher_discount?: number;
 }) {
   try {
     const supabase = await createServerSupabaseClient();
@@ -136,9 +138,15 @@ export async function createOrder(data: {
 
     if (data.voucher_id) {
       try {
-        await incrementVoucherUsage(data.voucher_id);
+        await incrementVoucherUsage(data.voucher_code || data.voucher_id);
+        await recordVoucherUsage({
+          voucherId: data.voucher_id,
+          voucherCode: data.voucher_code || '',
+          discountValue: data.voucher_discount || 0,
+          orderId: order?.id,
+        });
       } catch (e) {
-        console.warn('Failed to increment voucher usage:', e);
+        console.warn('Failed to track voucher usage:', e);
       }
     }
 

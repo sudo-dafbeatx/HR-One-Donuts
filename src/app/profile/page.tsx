@@ -16,7 +16,8 @@ import {
   BellIcon,
   KeyIcon,
   ShieldCheckIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  TagIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { useLoading } from '@/context/LoadingContext';
@@ -753,6 +754,12 @@ export default function ProfilePage() {
                           label="Notifikasi" 
                           subtitle="Promo & update pesanan" 
                           href="/profile/notifications" 
+                        />
+                        <MobileNavItem 
+                          icon={TagIcon} 
+                          label="Voucher Saya" 
+                          subtitle="Lihat & bagikan voucher" 
+                          href="/profile/vouchers" 
                         />
                       </div>
 
