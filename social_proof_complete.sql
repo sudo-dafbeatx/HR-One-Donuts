@@ -37,6 +37,9 @@ ALTER TABLE public.product_reviews ADD COLUMN IF NOT EXISTS user_name TEXT DEFAU
 ALTER TABLE public.product_reviews ADD COLUMN IF NOT EXISTS verified_purchase BOOLEAN DEFAULT true;
 ALTER TABLE public.product_reviews ADD COLUMN IF NOT EXISTS user_id UUID;
 
+-- Allow NULL user_id for seeded reviews (existing table may have NOT NULL)
+ALTER TABLE public.product_reviews ALTER COLUMN user_id DROP NOT NULL;
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_product_reviews_product_id ON public.product_reviews(product_id);
 CREATE INDEX IF NOT EXISTS idx_product_reviews_rating ON public.product_reviews(rating DESC);
