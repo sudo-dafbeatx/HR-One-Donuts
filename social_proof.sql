@@ -37,7 +37,7 @@ CREATE POLICY "Public can read product reviews"
 DROP POLICY IF EXISTS "Authenticated users can insert reviews" ON public.product_reviews;
 CREATE POLICY "Authenticated users can insert reviews"
   ON public.product_reviews FOR INSERT
-  USING (auth.role() = 'authenticated');
+  WITH CHECK (auth.role() = 'authenticated');
 
 -- Admin can manage all reviews
 DROP POLICY IF EXISTS "Admins can manage product reviews" ON public.product_reviews;
