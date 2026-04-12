@@ -191,6 +191,8 @@ export async function getProductReviews(
     const supabase = await createServerSupabaseClient();
 
     // First try the RPC function for reviews with user info (name, avatar)
+    // BYPASSED: We query the table directly so we retain 'user_name' and 'verified_purchase' seeded data.
+    /*
     try {
       const { data: rpcData, error: rpcError } = await supabase.rpc('get_product_reviews_with_user_info', {
         p_product_id: productId,
@@ -204,6 +206,7 @@ export async function getProductReviews(
     } catch (rpcErr) {
       console.warn('RPC get_product_reviews_with_user_info unavailable:', rpcErr);
     }
+    */
 
     // Fallback: query product_reviews table directly
     const { data: reviews, error } = await supabase
@@ -223,18 +226,17 @@ export async function getProductReviews(
     }
 
     // Enrich reviews with profile data (name, avatar) from both tables
-    const userIds = [...new Set(reviews.map(r => r.user_id))];
+    const userIds = [...new Set(reviews.map(r => r.user_id).filter(id => !!id))];
     
-    // Fetch from both profile tables
     const [{ data: userProfiles }, { data: profiles }] = await Promise.all([
-      supabase
+      userIds.length > 0 ? supabase
         .from('user_profiles')
         .select('id, full_name, avatar_url, is_profile_complete')
-        .in('id', userIds),
-      supabase
+        .in('id', userIds) : { data: [] },
+      userIds.length > 0 ? supabase
         .from('profiles')
         .select('id, full_name, avatar_url')
-        .in('id', userIds)
+        .in('id', userIds) : { data: [] }
     ]);
 
     const userProfileMap = new Map((userProfiles || []).map(p => [p.id, p]));
