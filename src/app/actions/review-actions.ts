@@ -248,9 +248,9 @@ export async function getProductReviews(
       
       return {
         ...review,
-        reviewer_name: uProfile?.full_name || lProfile?.full_name || 'Pelanggan HR-One',
+        reviewer_name: uProfile?.full_name || lProfile?.full_name || review.user_name || 'Pelanggan HR-One',
         reviewer_avatar: uProfile?.avatar_url || lProfile?.avatar_url || null,
-        reviewer_is_verified: !!uProfile?.is_profile_complete,
+        reviewer_is_verified: !!uProfile?.is_profile_complete || !!review.verified_purchase,
       };
     });
 
