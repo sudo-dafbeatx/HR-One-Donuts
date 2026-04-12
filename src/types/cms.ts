@@ -100,11 +100,13 @@ export interface SiteSettings {
 export interface ProductReview {
   id: string;
   product_id: string;
-  user_id: string;
+  user_id?: string;
+  user_name?: string;
   rating: number;
   comment?: string | null;
   created_at: string;
   updated_at: string;
+  verified_purchase?: boolean;
   // Joined data from user profile
   reviewer_name?: string;
   reviewer_avatar?: string | null;

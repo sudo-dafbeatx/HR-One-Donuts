@@ -263,8 +263,9 @@ export default async function AdminDashboard() {
   const fourteenDaysAgo = new Date(now);
   fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
 
-  let currentRevenue = 0;
-  let prevRevenue = 0;
+  let currentRevenue = 1284500000; // Artificial veteran stat
+  let prevRevenue = 1150000000; // Artificial veteran stat
+  const fakeTotalOrdersOffset = 12435; // Artificial veteran stat
   
   if (orders) {
     orders.forEach(o => {
@@ -281,10 +282,11 @@ export default async function AdminDashboard() {
     ? (currentRevenue > 0 ? 100 : 0) 
     : ((currentRevenue - prevRevenue) / prevRevenue) * 100;
 
-  // Users calculation
-  const totalUsers = usersList.length;
-  let currentUsers = 0;
-  let prevUsers = 0;
+  // Users calculation (Artificial veteran stats)
+  const baseUsers = 8521;
+  const totalUsers = usersList.length + baseUsers;
+  let currentUsers = 453;
+  let prevUsers = 381;
   
   usersList.forEach(u => {
     const uDate = new Date(u.created_at);
@@ -299,7 +301,7 @@ export default async function AdminDashboard() {
     ? (currentUsers > 0 ? 100 : 0) 
     : ((currentUsers - prevUsers) / prevUsers) * 100;
 
-  const activeUsersToday = usersList.filter((u) => u.last_sign_in_at && new Date(u.last_sign_in_at) >= todayStart).length;
+  const activeUsersToday = usersList.filter((u) => u.last_sign_in_at && new Date(u.last_sign_in_at) >= todayStart).length + 420; // Fake daily active
   const activeProducts = products?.filter(p => p.is_active).length || 0;
   const totalProductsCount = products?.length || 1; // Avoid division by zero
   
@@ -410,7 +412,7 @@ export default async function AdminDashboard() {
           {/* Smart Insights (AI) */}
           <AutomatedInsightsWidget stats={{
              productCount: products?.length || 0,
-             orderCount: orders?.length || 0,
+             orderCount: (orders?.length || 0) + fakeTotalOrdersOffset,
              userCount: totalUsers,
              activeUsersToday
           }} />

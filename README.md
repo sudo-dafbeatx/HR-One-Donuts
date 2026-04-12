@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍩 HR-One Donuts: Premium Donut Shop
 
-## Getting Started
+HR-One Donuts adalah platform e-commerce donat premium yang dibangun dengan teknologi web modern untuk memberikan pengalaman belanja yang cepat, aman, dan memuaskan.
 
-First, run the development server:
+## 🚀 Fitur Utama
+- **Storefront Responsif**: Desain mobile-first yang dioptimalkan untuk performa tinggi.
+- **Admin Dashboard**: Manajemen produk, statistik penjualan, dan pelacakan pengunjung.
+- **Dona AI**: Chatbot pintar berbasis Gemini AI untuk melayani pertanyaan pelanggan secara real-time.
+- **Sistem Voucher**: Dukungan potongan harga (persentase/nominal) dengan validasi cerdas.
+- **Notifikasi Telegram**: Integrasi bot untuk monitoring aktivitas pesanan dan masukan pelanggan.
+- **Pemesanan WhatsApp**: Konversi keranjang belanja ke format pesan WhatsApp yang siap kirim.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠️ Tech Stack
+- **Frontend**: Next.js 16 (App Router), Tailwind CSS 4, React 19.
+- **Backend & Database**: Supabase (PostgreSQL, Auth, Storage).
+- **AI**: Google Generative AI (Gemini).
+- **Integrasi**: Telegram Bot API.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🤖 AI Assistance
+Jika Anda adalah agen AI yang bekerja pada proyek ini, silakan baca dokumentasi teknis mendalam di link berikut untuk memahami arsitektur, skema database, dan logika bisnis secara detail:
+👉 **[AI_PROJECT_CONTEXT.md](./AI_PROJECT_CONTEXT.md)**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🏁 Memulai Pengembangan
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Clone repository:
+   ```bash
+   git clone [url-repo]
+   ```
 
-## Learn More
+2. Install dependensi:
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. Konfigurasi Environment Variables:
+   Buat file `.env.local` dan isi dengan kredensial Supabase serta API key lainnya (lihat `.env.example`).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. Jalankan server pembangunan:
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 Dokumentasi Tambahan
+- [Panduan Pengembang](./DEVELOPER_GUIDE.md)
+- [Pengaturan Vercel](./VERCEL_SETUP.md)
+- [Pemetaan Ikon](./ICON_MAPPING.md)
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+© 2026 HR-One Donuts. All rights reserved.

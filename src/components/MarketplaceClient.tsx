@@ -58,6 +58,13 @@ export default function MarketplaceClient({
     return p.price;
   }
 
+  const formatSoldCount = (count: number) => {
+    if (count >= 1000) {
+      return (count / 1000).toFixed(1).replace('.0', '') + 'rb+';
+    }
+    return count.toString() + '+';
+  };
+
   const renderRating = (stats?: ReviewStats) => {
     const rating = stats?.average_rating || 0;
     const total = stats?.total_reviews || 0;
@@ -177,6 +184,15 @@ export default function MarketplaceClient({
                     {t('common.promo_badge')}
                   </div>
                 )}
+                {!hasDiscount && (product.sold_count || 0) >= 4000 && (
+                  <div className="absolute top-2 left-2 z-20 bg-amber-500 text-white text-[8px] md:text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg flex items-center gap-1">
+                    <span 
+                      className="material-symbols-outlined text-[10px]"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >local_fire_department</span>
+                    Best Seller
+                  </div>
+                )}
                 
                 {/* Image Area - Fixed 1:1 Aspect Ratio */}
                 <div className="relative aspect-square w-full bg-slate-50 overflow-hidden">
@@ -216,7 +232,7 @@ export default function MarketplaceClient({
                     <div className="flex items-center justify-between gap-1 flex-wrap">
                       {renderRating(stats)}
                       <span className="text-[10px] md:text-[11px] text-slate-400 font-bold uppercase tracking-tight">
-                        {product.sold_count || 0}+ {t('common.sold')}
+                        {product.sold_count ? formatSoldCount(product.sold_count) : '1rb+'} Terjual
                       </span>
                     </div>
                   </div>

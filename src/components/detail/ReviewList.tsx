@@ -122,9 +122,9 @@ export default function ReviewList({
                 <div className="flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h5 className="font-bold text-slate-800 flex items-center gap-1">
-                      {review.reviewer_name || 'Pelanggan HR-One'}
-                      {review.reviewer_is_verified && (
-                        <CheckBadgeIcon className="size-4 text-blue-500" title="Profil Lengkap Terverifikasi" />
+                      {review.user_name || review.reviewer_name || 'Pelanggan HR-One'}
+                      {(review.reviewer_is_verified || review.verified_purchase) && (
+                        <CheckBadgeIcon className="size-4 text-blue-500" title="Pembelian Terverifikasi" />
                       )}
                     </h5>
                     {isOwnReview && (
